@@ -157,6 +157,7 @@
   "ui.keeping.tab_mementos": "Kenangan",
   "ui.keeping.found": "{n}/{total} ditemukan",
   "ui.keeping.unknown": "Belum ditemukan",
+  "ui.keeping.unknown_name": "???",
   "ui.keeping.unlock": "Buka",
   "ui.keeping.owned": "Dimiliki",
   "ui.keeping.kind_class": "Tersimpan",

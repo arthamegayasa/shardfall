@@ -1,0 +1,442 @@
+{
+ "peak-high": {
+  "floor": [
+   93,
+   83,
+   82
+  ],
+  "floor_samples": 10906,
+  "player_highlight_vs_floor": 7.31,
+  "unlit_n": 78,
+  "unlit_vs_floor_median": 2.2,
+  "unlit_vs_floor_p10": 1.09,
+  "unlit_vs_floor_min": 1.03,
+  "unlit_below_1_5": [
+   [
+    1196,
+    689,
+    1.21
+   ],
+   [
+    1619,
+    389,
+    1.26
+   ],
+   [
+    865,
+    423,
+    1.03
+   ],
+   [
+    901,
+    430,
+    1.03
+   ],
+   [
+    923,
+    411,
+    1.03
+   ],
+   [
+    1092,
+    437,
+    1.03
+   ],
+   [
+    1114,
+    456,
+    1.03
+   ],
+   [
+    1162,
+    473,
+    1.04
+   ],
+   [
+    1246,
+    457,
+    1.09
+   ],
+   [
+    1364,
+    505,
+    1.12
+   ],
+   [
+    1397,
+    528,
+    1.43
+   ],
+   [
+    1422,
+    557,
+    1.46
+   ]
+  ],
+  "enemy_shot_core_vs_floor_min": null,
+  "enemy_shot_n": 0,
+  "gray_player_mean": 130.1,
+  "gray_floor": 85.9,
+  "gray_unlit_median": 36.9,
+  "pixel_scale": 3,
+  "player_blocks_uniform_pct": 100.0,
+  "grid_offset": [
+   0,
+   0
+  ]
+ },
+ "peak-low": {
+  "floor": [
+   93,
+   83,
+   82
+  ],
+  "floor_samples": 10882,
+  "player_highlight_vs_floor": 7.09,
+  "unlit_n": 78,
+  "unlit_vs_floor_median": 2.2,
+  "unlit_vs_floor_p10": 1.21,
+  "unlit_vs_floor_min": 1.03,
+  "unlit_below_1_5": [
+   [
+    1619,
+    389,
+    1.21
+   ],
+   [
+    1600,
+    403,
+    1.21
+   ],
+   [
+    865,
+    423,
+    1.03
+   ],
+   [
+    901,
+    430,
+    1.03
+   ],
+   [
+    923,
+    411,
+    1.03
+   ],
+   [
+    1092,
+    437,
+    1.03
+   ],
+   [
+    1114,
+    456,
+    1.03
+   ],
+   [
+    1162,
+    473,
+    1.03
+   ],
+   [
+    1364,
+    505,
+    1.21
+   ]
+  ],
+  "enemy_shot_core_vs_floor_min": null,
+  "enemy_shot_n": 0,
+  "gray_player_mean": 130.1,
+  "gray_floor": 85.9,
+  "gray_unlit_median": 36.9,
+  "pixel_scale": 3,
+  "player_blocks_uniform_pct": 100.0,
+  "grid_offset": [
+   0,
+   0
+  ]
+ },
+ "peak-reduce": {
+  "floor": [
+   93,
+   83,
+   82
+  ],
+  "floor_samples": 10861,
+  "player_highlight_vs_floor": 7.09,
+  "unlit_n": 78,
+  "unlit_vs_floor_median": 2.2,
+  "unlit_vs_floor_p10": 1.21,
+  "unlit_vs_floor_min": 1.03,
+  "unlit_below_1_5": [
+   [
+    1196,
+    689,
+    1.21
+   ],
+   [
+    1619,
+    389,
+    1.26
+   ],
+   [
+    865,
+    423,
+    1.03
+   ],
+   [
+    901,
+    430,
+    1.03
+   ],
+   [
+    923,
+    411,
+    1.03
+   ],
+   [
+    1092,
+    437,
+    1.03
+   ],
+   [
+    1114,
+    456,
+    1.03
+   ],
+   [
+    1162,
+    473,
+    1.03
+   ],
+   [
+    1246,
+    457,
+    1.21
+   ],
+   [
+    1364,
+    505,
+    1.21
+   ]
+  ],
+  "enemy_shot_core_vs_floor_min": null,
+  "enemy_shot_n": 0,
+  "gray_player_mean": 130.1,
+  "gray_floor": 85.9,
+  "gray_unlit_median": 36.9,
+  "pixel_scale": 3,
+  "player_blocks_uniform_pct": 100.0,
+  "grid_offset": [
+   0,
+   0
+  ]
+ },
+ "shots-before-rite": {
+  "floor": [
+   95,
+   85,
+   83
+  ],
+  "floor_samples": 17593,
+  "player_highlight_vs_floor": 7.1,
+  "unlit_n": 8,
+  "unlit_vs_floor_median": 1.76,
+  "unlit_vs_floor_p10": 1.74,
+  "unlit_vs_floor_min": 1.74,
+  "unlit_below_1_5": [],
+  "enemy_shot_core_vs_floor_min": 7.21,
+  "enemy_shot_n": 8,
+  "gray_player_mean": 98.0,
+  "gray_floor": 87.7,
+  "gray_unlit_median": 53.8
+ },
+ "glance-1-peak": {
+  "floor": [
+   93,
+   83,
+   82
+  ],
+  "floor_samples": 10936,
+  "player_highlight_vs_floor": 7.31,
+  "unlit_n": 78,
+  "unlit_vs_floor_median": 2.2,
+  "unlit_vs_floor_p10": 1.11,
+  "unlit_vs_floor_min": 1.03,
+  "unlit_below_1_5": [
+   [
+    1619,
+    389,
+    1.21
+   ],
+   [
+    1600,
+    403,
+    1.21
+   ],
+   [
+    865,
+    423,
+    1.03
+   ],
+   [
+    901,
+    430,
+    1.03
+   ],
+   [
+    923,
+    411,
+    1.03
+   ],
+   [
+    1092,
+    437,
+    1.03
+   ],
+   [
+    1114,
+    456,
+    1.03
+   ],
+   [
+    1162,
+    473,
+    1.04
+   ],
+   [
+    1246,
+    457,
+    1.37
+   ],
+   [
+    1316,
+    489,
+    1.44
+   ],
+   [
+    1364,
+    505,
+    1.11
+   ],
+   [
+    1397,
+    528,
+    1.43
+   ]
+  ],
+  "enemy_shot_core_vs_floor_min": null,
+  "enemy_shot_n": 0,
+  "gray_player_mean": 130.1,
+  "gray_floor": 85.9,
+  "gray_unlit_median": 36.9
+ },
+ "draworder-rite": {
+  "shots": 8,
+  "danger_coloured": 8,
+  "samples": [
+   [
+    1109,
+    600,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    1065,
+    646,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    960,
+    664,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    855,
+    646,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    811,
+    600,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    855,
+    554,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    960,
+    536,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ],
+   [
+    1065,
+    554,
+    [
+     255,
+     255,
+     255
+    ],
+    0,
+    true
+   ]
+  ]
+ },
+ "cvd-simulation-shots": {
+  "protan": {
+   "enemy_shot_core_vs_floor_min": 7.34,
+   "player_highlight_vs_floor": 7.21
+  },
+  "deutan": {
+   "enemy_shot_core_vs_floor_min": 7.14,
+   "player_highlight_vs_floor": 7.03
+  },
+  "tritan": {
+   "enemy_shot_core_vs_floor_min": 7.22,
+   "player_highlight_vs_floor": 7.1
+  }
+ }
+}

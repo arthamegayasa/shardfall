@@ -1,0 +1,15 @@
+lantern Pulse 1 real time: {"seconds":19.97,"riteCasts":1,"maxEnemies":17,"glintStart":0,"glintEnd":23,"hpEnd":30,"keyChanges":109}
+lantern Glazier: glint 23 -> buy 2 -> reroll 0; keys to leave 887 ms (scripted, not a human time)
+lantern Pulse 2 (6 s): hp 30
+lantern run end: Silt 0 -> 6; screen mentions Silt: true
+lantern focus after returning from The Keeping: end-again
+blade Pulse 1 real time: {"seconds":19.959,"riteCasts":2,"maxEnemies":38,"glintStart":0,"glintEnd":5,"hpEnd":31.941176470588232,"keyChanges":70}
+blade Glazier: glint 5 -> buy 5 -> reroll 3; keys to leave 962 ms (scripted, not a human time)
+blade Pulse 2 (6 s): hp 38
+blade run end: Silt 0 -> 1; screen mentions Silt: true
+blade focus after returning from The Keeping: end-again
+bell Pulse 1 real time: {"seconds":20.026,"riteCasts":1,"maxEnemies":21,"glintStart":0,"glintEnd":23,"hpEnd":5.75,"keyChanges":64}
+bell Glazier: glint 23 -> buy 5 -> reroll 3; keys to leave 980 ms (scripted, not a human time)
+bell Pulse 2 (6 s): hp 32
+bell run end: Silt 1 -> 2; screen mentions Silt: true
+meta at the end: {"v":1,"silt":2,"unlocked":["bell","blade","unlock_bell","unlock_blade"],"mementosFound":["magpie_tin"],"highestDifficultyWon":-1,"lastClassId":"bell","runs":3}

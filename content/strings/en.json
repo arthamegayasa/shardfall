@@ -157,6 +157,7 @@
   "ui.keeping.tab_mementos": "Mementos",
   "ui.keeping.found": "{n}/{total} found",
   "ui.keeping.unknown": "Not yet found",
+  "ui.keeping.unknown_name": "???",
   "ui.keeping.unlock": "Unlock",
   "ui.keeping.owned": "Owned",
   "ui.keeping.kind_class": "Kept",

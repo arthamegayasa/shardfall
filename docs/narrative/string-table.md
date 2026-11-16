@@ -144,28 +144,25 @@ Memento tanpa angka di teks (`torch_glove`, `smolder_boots`) sengaja dibiarkan t
 
 ### 4.1 Angka yang masih ditulis langsung di teks (belum ada parameter di `text-params.ts`)
 
-Bila GD mengubah angka ini di data, WR wajib memperbarui teks. Usulan untuk LP: tambah parameter bila sempat.
+Bila GD mengubah angka ini di data, WR wajib memperbarui teks EN dan ID. Usulan untuk LP: tambah parameter bila sempat. Dicek ulang WR 2026-11-17 (M3) terhadap `content/data/*.csv`: semua angka di teks EN dan ID sama dengan data, tidak ada teks yang diubah.
 
-| Kunci | Angka tertulis | Sumber data |
-|---|---|---|
-| `class.bell.passive` | Mark 2s | `class_bell_1 value` |
-| `class.blade.passive` | 1 HP, 3 HP per detik | `class_blade_1 amount`, `max_per_sec` (jarak 2.5 u ditulis "Close") |
-| `rite.great_toll.desc` | (tanpa angka selain `{dmg}`) | |
-| `rite.glass_step.desc` | 3 hit | `glass_step crit_hits` |
-| `weapon.echo_bell.desc` | sekali, separuh kekuatan | `echo_count`, `echo_frac` |
-| `memento.rite_chime.desc` | 1 Barrier, +25% | `charges`, `attack_speed_pct` |
-| `memento.glass_aegis.desc` | +1 Barrier | `charges` |
-| `memento.collector_pin.desc` | 1 HP, 4 HP per detik | `amount`, `max_per_sec` |
-| `memento.lucky_button.desc` | 1 Glint | `amount` |
-| `memento.haggler_seal.desc` | 10%, 1 Glint | `price_mult`, `reroll_delta` |
-| `memento.pyre_bell.desc` | 10% | `spread_chance` |
-| `memento.wick_charm.desc` | 3s | `icd` |
-| `memento.patched_cloak.desc` | 4s | `time_since_hurt` |
-| `memento.ledger_page.desc` | 10 Glint, plus 3 | `base`, `per_t` (t dibaca pemain sebagai nomor Pulse) |
-| `syn.echo.2`, `syn.echo.4` | 0.5s, 35%; 1s, separuh | `delay`, `power` |
-| `syn.ward.6` | +2% per Armor | `convert ratio` |
-| `syn.trade.2`, `.4`, `.6` | 1 per 8, maks 12; 1 tawaran; 1% per 10, maks 50% | `div`, `cap`, `slots`, `ratio`, `cap` |
-| `affix.*` | 6s, 3, 7s, 5s | `affixes.csv` |
+| Kunci | Angka tertulis (EN / ID) | Sumber data | Nilai data saat ini |
+|---|---|---|---|
+| `rite.glass_step.desc` | 3 hit | `rites.csv` `glass_step` `crit_hits` | 3 |
+| `weapon.echo_bell.desc` | once, half power / sekali, separuh kuat | `weapons.csv` `echo_bell` `echo_count`, `echo_frac` | 1, 0.5 (tier 4 `echo_count_add=1` tidak disebut di teks dasar) |
+| `syn.echo.2` | 0.5s, 35% | `effects.csv` `syn_echo_2` `delay`, `power` | 0.5, 0.35 |
+| `syn.echo.4` | 1s, half power / 1 detik, separuh | `syn_echo_4` `delay`, `power` | 1, 0.5 |
+| `syn.ward.6` | +2% per Armor | `syn_ward_6a` `ratio` | 2 |
+| `syn.trade.2` | 1 per 8, up to 12 | `syn_trade_2` `div`, `cap` | 8, 12 |
+| `syn.trade.4` | first reroll free, 1 more offer | `syn_trade_4a` `free_rerolls`, `syn_trade_4b` `slots` | 1, 1 |
+| `syn.trade.6` | 1% per 10, max 50% | `syn_trade_6a` `ratio`, `cap` | 0.1, 50 |
+| `affix.blinking` | 6s | `affixes.csv` `blinking` `interval` | 6 |
+| `affix.brood` | 3 Midges, 7s | `brood` `count`, `interval` | 3, 7 |
+| `affix.pulsing` | 5s | `pulsing` `interval` | 5 |
+
+Teks `affix.hasted`, `affix.volley`, `affix.veiled`, `affix.tar_trail`, `affix.bulwark` tidak memuat angka.
+
+Sudah memakai parameter dari data sejak M2-09 (keluar dari daftar ini): `class.bell.passive` (`{mark}`), `class.blade.passive`, `memento.rite_chime.desc`, `memento.glass_aegis.desc`, `memento.collector_pin.desc`, `memento.lucky_button.desc`, `memento.haggler_seal.desc`, `memento.pyre_bell.desc`, `memento.wick_charm.desc`, `memento.patched_cloak.desc`, `memento.ledger_page.desc`. `rite.great_toll.desc` hanya memakai `{dmg}`.
 
 ## 5. Batas dan cek
 

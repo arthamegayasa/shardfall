@@ -1,6 +1,6 @@
 # Shardfall: Style Guide
 
-Pemilik: Creative Director (CD). Status: dikunci (versi 1.2, 2026-11-17). Daftar perubahan versi 1.1 (review M0) dan 1.2 (review rasa M1) ada di bagian 6 dan 7.
+Pemilik: Creative Director (CD). Status: dikunci (versi 1.3, 2026-11-17). Daftar perubahan versi 1.1 (review M0), 1.2 (review rasa M1), dan 1.3 (review M3) ada di bagian 6, 7, dan 8.
 Berlaku untuk: Art Director, UI Programmer, Audio Director, Writer, Level Designer, Gameplay Programmer.
 Dasar: `docs/vision.md` dan `docs/pillars.md`. Bila bertentangan, pilar yang menang.
 
@@ -107,7 +107,7 @@ Aturan bentuk:
 - Siluet harus terbaca di ukuran asli. Uji: isi sprite dengan satu warna gelap; jenis aktor masih bisa ditebak.
 - Tiap kelas pemain punya siluet kepala atau bahu yang berbeda (misalnya tudung, topi lebar, pelindung bahu) dan aksen warna dominan berbeda di dalam palet pemain (satu condong biru, satu cyan, satu emas).
 - Unlit "sedikit salah": tambahkan satu kejanggalan per jenis (sendi berlebih, mata di tempat aneh, bayangan yang tidak cocok bentuknya). Mata atau inti selalu berwarna bahaya.
-- Animasi minimal [Saran]: idle 2 sampai 4 bingkai, jalan 4 bingkai, serang 2 sampai 3 bingkai, kena hit = kilat putih 2 bingkai. Tidak ada skala non-integer dan rotasi bebas pada sprite. Rasa tumbukan dibawa oleh kilat, getar offset, knockback, dan partikel.
+- Animasi minimal [Saran]: idle 2 sampai 4 bingkai, jalan 4 bingkai, serang 2 sampai 3 bingkai, kena hit = kilat putih 2 bingkai. Kilat Unlit berupa tint `bone` (maksimal 50%, Warden dan boss maksimal 35%), bukan pengganti seluruh sprite, dan tidak dipicu tick damage berkala (Burn, zona): massa Unlit tidak boleh menjadi benda paling terang di layar. Tidak ada skala non-integer dan rotasi bebas pada sprite. Rasa tumbukan dibawa oleh kilat, getar offset, knockback, dan partikel.
 
 ### 1.5 Outline [Wajib]
 - Semua aktor (pemain, Unlit, Warden, boss, Glint, proyektil musuh) punya outline luar 1 px warna `ink`.
@@ -139,7 +139,7 @@ Aturan bentuk:
 - Telegraf terjang: mata dan outline musuh berkedip `danger-red` saat ancang-ancang, plus garis arah tipis bila serangannya lurus.
 - Peledak: berkedip makin cepat sebelum meledak.
 - Efek pemain dibatasi opasitas dan ukurannya agar tidak menutupi bahaya. Efek pemain digambar di bawah lapis bahaya.
-- Zona milik pemain: isian emas maksimal 25% efektif; jejak berulang (misalnya Smolder Boots) maksimal 15% tanpa tepi. Tepi zona boleh 1 px `kept-cyan` solid, **tidak putus-putus**: garis putus-putus milik bahasa telegraf bahaya.
+- Zona milik pemain: isian emas maksimal 25% efektif, termasuk cahaya, bloom, dan kedip (target nominal 20%). Zona pemain yang bertumpuk tampil seperti satu isian, tidak makin pekat (aturan yang sama dengan telegraf); jejak berulang (misalnya Smolder Boots) maksimal 15% tanpa tepi. Tepi zona boleh 1 px `kept-cyan` solid, **tidak putus-putus**: garis putus-putus milik bahasa telegraf bahaya.
 - Angka damage: dari pemain = `bone` kecil, kritikal = `kept-cyan` dengan outline `ink` (bukan emas, agar tidak berbaur dengan Glint), boleh dengan set digit 1 px lebih besar atau satu piksel kilau sebagai pembeda bentuk, tanpa skala non-integer. Jumlah angka di layar dibatasi (angka biasa terlama dibuang lebih dulu) dan tidak digambar di dalam kotak sprite pemain. Damage yang diterima pemain = kilat merah tipis di tepi layar plus suara, bukan angka besar di atas pemain. Angka damage bisa dimatikan.
 - Kematian Unlit: pecah menjadi motes gelap yang memudar cepat (kurang dari 0.3 detik), tidak menumpuk di lantai.
 - Kematian pemain: Kept pecah menjadi serpihan kaca biru dan cyan, layar melambat sebentar.
@@ -356,3 +356,12 @@ Sumber dan alasan: `docs/reviews/M1-cd.md`.
 | 1.3 | Isian zona api pemain diukur efektif di render (maks 25%); daftar tertutup arti emas di area main; angka damage tidak emas |
 | 1.4 | Kamera, skala (2x di 720p dan 768p, 3x di 1080p), dan rasio gerak vertikal 0,80 dikunci setelah kalibrasi M1 |
 | 1.8 | Telegraf bertumpuk tidak makin pekat; siluet tembus pemain di atas lapis bahaya; zona pemain tanpa tepi putus-putus, jejak maks 15%; angka kritikal `kept-cyan`, batas jumlah angka |
+
+## 8. Perubahan versi 1.3 (review M3, 2026-11-17)
+
+Sumber dan alasan: `docs/reviews/M3-cd.md`.
+
+| Bagian | Perubahan |
+|---|---|
+| 1.4 | Kilat kena hit Unlit menjadi tint `bone` maksimal 50% (Warden dan boss 35%), tanpa kilat dari tick berkala |
+| 1.8 | Zona pemain: 25% efektif termasuk cahaya dan kedip, nominal 20%, isian bertumpuk tidak makin pekat |

@@ -59,6 +59,27 @@ describe('audio system', () => {
     expect(ctx.gains.length).toBe(0);
   });
 
+  it('calls resume() again when unlock() is retried while the first resume hangs (LP M2 MINOR 2)', async () => {
+    const ctx = new FakeAudioContext('suspended');
+    // Strict activation: the first resume() never settles; a later gesture's resume() does.
+    ctx.resumeGate = new Promise<void>(() => undefined);
+    const audio = createAudioSystem(fixtureGameData(), files, { createContext: () => ctx.asContext() });
+    const first = audio.unlock();
+    await Promise.resolve();
+    expect(ctx.resumeCalls).toBe(1);
+    ctx.resumeGate = null;
+    const second = audio.unlock();
+    expect(second).toBe(first);
+    expect(ctx.resumeCalls).toBe(2);
+    await second;
+    expect(ctx.state).toBe('running');
+    expect(ctx.gains.length).toBeGreaterThan(0);
+    // Once booted, further unlocks do not touch the context again.
+    await audio.unlock();
+    expect(ctx.resumeCalls).toBe(2);
+    audio.dispose();
+  });
+
   it('stops the low-HP creak under the pause menu and resumes one period after (LP M1 review)', async () => {
     const ctx = new FakeAudioContext();
     const audio = createAudioSystem(fixtureGameData(), files, { createContext: () => ctx.asContext() });

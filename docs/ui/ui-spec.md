@@ -649,11 +649,12 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.hud.hp` | {hp}/{max} | Ada |
 | `ui.hud.level` | Lv {n} | Ada |
 | `ui.hud.pulse` | Pulse {n} | Ada |
-| `ui.keeping.found` | {n}/{total} found | Ada (belum dipakai M1) |
-| `ui.keeping.tab_kept` | Kept | Ada (belum dipakai M1) |
-| `ui.keeping.tab_mementos` | Mementos | Ada (belum dipakai M1) |
+| `ui.keeping.found` | {n}/{total} found | Ada (tab Mementos M3) |
+| `ui.keeping.tab_kept` | Kept | Ada (tab M3) |
+| `ui.keeping.tab_mementos` | Mementos | Ada (tab M3) |
 | `ui.keeping.title` | The Keeping | Ada |
 | `ui.keeping.unknown` | Not yet found | Ada |
+| `ui.keeping.unknown_name` | ??? | Baru M3 (nama Memento yang belum ditemukan, ID sama) |
 | `ui.keeping.unlock` | Unlock | Ada (belum dipakai M1) |
 | `ui.keeping.owned` | Owned | Ada (LP M2-09, The Keeping minimal) |
 | `ui.keeping.kind_class` | Kept | Ada (LP M2-09) |

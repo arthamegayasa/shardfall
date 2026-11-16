@@ -1,0 +1,37 @@
+{
+  "id": "icon-rite-glass-step",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Glass Step: a cyan glass shard dashing right with speed streaks behind, three gold pips for the sure crits. Key: right-pointing wedge, streaks left, three dots above.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "........g.g.g.",
+          "..............",
+          "........w.....",
+          "........wc....",
+          "ccccc...wcc...",
+          "........wBcc..",
+          ".ccccc..wBBcc.",
+          "........wBBBcc",
+          ".ccccc..wBBcb.",
+          "........wBcb..",
+          "ccccc...wcb...",
+          "........wb....",
+          "........b....."
+        ]
+      ]
+    }
+  }
+}

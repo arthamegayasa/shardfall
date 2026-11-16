@@ -1,0 +1,83 @@
+{
+ "normal": {
+  "frames": 480,
+  "largest_area_changed_one_frame": 0.048,
+  "general": {
+   "transitions_over_25pct": 0,
+   "flashes": 0,
+   "max_flashes_per_second": 0
+  },
+  "red": {
+   "transitions_over_25pct": 0,
+   "flashes": 0,
+   "max_flashes_per_second": 0
+  }
+ },
+ "reduce": {
+  "frames": 480,
+  "largest_area_changed_one_frame": 0.067,
+  "general": {
+   "transitions_over_25pct": 0,
+   "flashes": 0,
+   "max_flashes_per_second": 0
+  },
+  "red": {
+   "transitions_over_25pct": 0,
+   "flashes": 0,
+   "max_flashes_per_second": 0
+  }
+ },
+ "damage_numbers": {
+  "frames": 20,
+  "player_box": [
+   462,
+   254,
+   498,
+   293
+  ],
+  "diff_px_whole_frame_per_frame": [
+   18381,
+   17518,
+   17366,
+   21055,
+   20270,
+   15650,
+   13819,
+   16781,
+   17414,
+   16416,
+   14021,
+   11891,
+   14496,
+   18147,
+   18497,
+   15531,
+   14574,
+   18477,
+   20344,
+   20706
+  ],
+  "diff_px_inside_player_box_per_frame": [
+   5,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   8,
+   51,
+   109
+  ]
+ }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-lucky-button",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Lucky Button: a round gold four-hole button sewn on with a cyan thread cross. Key: disc, four holes, X of thread.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....yggg....",
+          "..yyggggdd..",
+          ".yggggggggd.",
+          ".ygnggggndd.",
+          "ygggcggcggdd",
+          "yggggccggggd",
+          "yggggccgggdd",
+          "ygggcggcggdd",
+          ".ggnggggndd.",
+          ".gggggggddd.",
+          "..dgggggdd..",
+          "....dddd...."
+        ]
+      ]
+    }
+  }
+}

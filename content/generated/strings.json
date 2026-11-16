@@ -306,6 +306,7 @@
  "ui.keeping.tab_mementos": "Mementos",
  "ui.keeping.title": "The Keeping",
  "ui.keeping.unknown": "Not yet found",
+ "ui.keeping.unknown_name": "???",
  "ui.keeping.unlock": "Unlock",
  "ui.keeping.unlocked": "{name} unlocked.",
  "ui.levelup.level": "Lv {n}",

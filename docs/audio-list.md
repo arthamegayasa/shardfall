@@ -299,7 +299,7 @@ Semua di ui bus, `send.room` 0.1 sampai 0.2, pan tengah, dipicu lewat `AudioSyst
 | `ui.toggle` | A | Saklar opsi | U | 60 ms | 1 / 60 | -24 | Klik triangle 900 Hz |
 | `ui.class.select` | B | Memilih kelas | U | 300 ms | 1 / - | -16 | Akor `glass_bell` khas kelas: `lantern` D dan A, `bell` G dan D, `blade` A dan E |
 | `ui.end.tally` | B | Hitungan Silt di layar akhir | U | 50 ms | 2 / 40 | -22 | Tick bertangga memakai tangga Glint |
-| `ui.unlock` | B | Kelas atau Memento terbuka dengan Silt | U | 800 ms | 1 / - | -14 | Varian `sfx.memento.gain` lebih terang |
+| `ui.unlock` | B | Pembelian unlock berhasil di The Keeping (`Cue.Unlock` di `src/ui/cues.ts`, diputar UI karena unlock meta tidak punya event sim) | U | 520 ms | 1 / 300 | -16 | Pendek, hangat, kaca: dasar triangle D4 lembut di bawah tiga denting FM kaca F#5, A5, D6 bertangga 70 ms, plus butiran kaca tinggi. Menggantikan `ui.confirm` pada tekanan kedua |
 
 ---
 
@@ -365,4 +365,9 @@ Pemetaan Tingkat A (gdd 2.3) ke cue:
 - Cue baru: `sfx.weapon.hit_heavy`, `sfx.boss.ember_storm.windup`, `sfx.boss.ember_storm.impact`, `sfx.boss.snuff_ring.wave_double`, `sfx.boss.moth_call.windup`, `sfx.warden.shell_break`, `sfx.warden.shell_up`, `sfx.warden.blink` (B), `sfx.telegraph.blink` (B), `sfx.enemy.summon` (B), `sfx.enemy.exploder.blast` (B). Total 98 resep, 93 aktif.
 - Deprecated (diputar sebagai lagu): `mus.stinger.pulse_start`, `pulse_end`, `warden`, `victory`, `defeat` di `cues.json`.
 - Cue Warden dan affix Tingkat B baru (`sfx.warden.shell_*`, `sfx.warden.blink`): pemicu `AffixTriggered` (GP M2-05), di luar tabel 6.1 lama.
-- Masih belum: `sfx.player.hit_heavy`, `sfx.rite.zone.lantern`, `sfx.rite.cast.bell`, `sfx.rite.cast.blade`, `sfx.proc.echo_repeat`, `sfx.proc.barrier_up`, `sfx.proc.interest`, `sfx.enemy.tank.step`, `sfx.enemy.exploder.fuse`, `sfx.warden.fan.windup`, `sfx.pulse.tick` (opsional), `ui.class.select`, `ui.end.tally`, `ui.unlock`, ambience `amb.*`.
+- Masih belum: `sfx.player.hit_heavy`, `sfx.rite.zone.lantern`, `sfx.rite.cast.bell`, `sfx.rite.cast.blade`, `sfx.proc.echo_repeat`, `sfx.proc.barrier_up`, `sfx.proc.interest`, `sfx.enemy.tank.step`, `sfx.enemy.exploder.fuse`, `sfx.warden.fan.windup`, `sfx.pulse.tick` (opsional), `ui.class.select`, `ui.end.tally`, ambience `amb.*`. (`ui.unlock` ditambahkan di M3, lihat tabel 9.)
+
+## 14. Status M3 (pelengkap)
+
+- Cue baru `ui.unlock` (B): 99 resep. Dipetakan dari tekanan kedua pembelian di The Keeping.
+- `AudioSystem.unlock()`: bila `resume()` pertama masih tertunda (aktivasi ketat ala Safari), panggilan `unlock()` berikutnya dari gesture baru memanggil `resume()` lagi; panggilan mana pun yang selesai lebih dulu menuntaskan boot. Tes regresi di `tests/unit/audio/audio-system.test.ts`.

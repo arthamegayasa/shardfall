@@ -1,0 +1,38 @@
+{
+  "id": "icon-memento-grinding-wheel",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Grinding Wheel: a round stone grindstone with a gold axle on a small stand, white-gold sparks off its right edge. Key: big disc, sparks to the right.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "...edddt......",
+          "..edttttth....",
+          ".edttttttth..y",
+          ".dttttttthh.yw",
+          "edttthhttthh.y",
+          "dtttgyyhttth..",
+          "dtttgyyhttthy.",
+          "dttttgghttth.w",
+          ".dtttttttthh..",
+          ".htttttttthh..",
+          "..hhtttthhh...",
+          "...hhhhhhh....",
+          "......d.......",
+          "....eddddh...."
+        ]
+      ]
+    }
+  }
+}

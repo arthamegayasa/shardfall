@@ -142,10 +142,20 @@ export function checkInvariants(
 
 export function runQaBot(
   sim: Sim,
-  start: { seed: number; classId: string; profile: string },
+  start: {
+    seed: number;
+    classId: string;
+    profile: string;
+    /** Meta unlock ids passed to run.start (M3-QA, additive). */
+    unlocked?: readonly string[];
+    /** Crack level (M3-QA, additive; tiers A and B ship level 0 only). */
+    difficulty?: number;
+  },
   kind: QaBotKind,
   maxTicks: number,
   boundsFor: (arenaIndex: number) => { minX: number; maxX: number; minY: number; maxY: number },
+  /** Called after every sim step with the sim (events of that step are readable). M3-QA, additive. */
+  observe?: (sim: Sim) => void,
 ): QaBotResult {
   const input: InputFrame = createInputFrame();
   const cmds: Command[] = [];
@@ -158,9 +168,11 @@ export function runQaBot(
     seed: start.seed,
     classId: start.classId,
     profile: start.profile,
-    difficulty: 0,
+    difficulty: start.difficulty ?? 0,
+    ...(start.unlocked === undefined ? {} : { unlocked: start.unlocked }),
   });
   sim.step(input);
+  observe?.(sim);
   for (let t = 0; t < maxTicks; t++) {
     const v = sim.view;
     if (t % 60 === 0 && violations.length < 20) {
@@ -190,6 +202,7 @@ export function runQaBot(
       for (const c of cmds) sim.enqueue(c);
     }
     sim.step(input);
+    observe?.(sim);
   }
   return {
     outcome: 'timeout',

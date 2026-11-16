@@ -1,0 +1,35 @@
+{
+  "id": "icon-memento-magpie-tin",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Magpie Tin: an open grey tin with a gold band, bright scraps (Glint, a cyan shard, a white bead) heaped over the rim. Key: box with lid raised behind, sparkle on top.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..eddddddddt..",
+          "..dhhhhhhhht..",
+          "...yg.cw.y....",
+          "..ygycwcgyw...",
+          ".etttttttttth.",
+          ".tddddddddddh.",
+          ".tdgggggggddh.",
+          ".tdgygBBggddh.",
+          ".tdgggggggddh.",
+          ".tddddddddddh.",
+          ".thhhhhhhhhhh."
+        ]
+      ]
+    }
+  }
+}

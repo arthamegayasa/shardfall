@@ -1872,6 +1872,70 @@
   box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
 }
 
+/* The Keeping, Mementos tab (ui-spec S09, wireframe 09): grid left, detail right. */
+.sf-ui .keeping-archive {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--u) * 250);
+  column-gap: calc(var(--u) * 6);
+  min-height: 0;
+}
+
+.sf-ui .keeping-grid-panel {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+  padding: calc(var(--u) * 4);
+  overflow-y: auto;
+}
+
+.sf-ui .keeping-found {
+  color: var(--kept-gold);
+  text-align: right;
+}
+
+.sf-ui .keeping-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(var(--u) * 38));
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .keeping-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--u) * 38);
+  height: calc(var(--u) * 38);
+  padding: 0;
+}
+
+/* Not yet found: the icon's silhouette in the shadow tone, never its colours. */
+.sf-ui .icon.is-unknown .px-art {
+  filter: brightness(0) invert(24%);
+}
+
+.sf-ui .keeping-detail {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+  padding: calc(var(--u) * 6);
+  overflow: hidden;
+}
+
+.sf-ui .keeping-detail-head {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 6);
+}
+
+.sf-ui .keeping-detail-head .keeping-text {
+  align-items: flex-start;
+}
+
+.sf-ui .keeping-flavor {
+  white-space: normal;
+}
+
 .sf-ui .end-new-unlock {
   color: var(--kept-gold);
 }

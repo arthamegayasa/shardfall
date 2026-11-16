@@ -3310,6 +3310,83 @@
       ]
     },
     {
+      "id": "ui.unlock",
+      "tier": "B",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 520,
+      "gainDb": -16,
+      "maxVoices": 1,
+      "minIntervalMs": 300,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": "D4",
+          "durMs": 380,
+          "attackMs": 15,
+          "decayMs": 380,
+          "gainDb": -8
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "F#5",
+          "attackMs": 2,
+          "decayMs": 360,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 70,
+          "attackMs": 2,
+          "decayMs": 360,
+          "gainDb": -2,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 140,
+          "attackMs": 2,
+          "decayMs": 360,
+          "gainDb": -3,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 200
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 5,
+          "freqMin": 4000,
+          "freqMax": 7000,
+          "spreadMs": 250,
+          "grainMs": 80,
+          "grainMsMax": 180,
+          "gainDb": -12
+        }
+      ]
+    },
+    {
       "id": "ui.shop.reroll",
       "tier": "A",
       "bus": "ui",

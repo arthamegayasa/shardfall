@@ -116,6 +116,8 @@ export function createAudioSystem(data: GameData, files: AudioData, env: AudioEn
 
   let live: Live | null = null;
   let unlocking: Promise<void> | null = null;
+  /** Context whose first resume() is still pending, and the resolver that lets a retry finish boot. */
+  let resuming: { readonly ctx: AudioContext; readonly done: () => void } | null = null;
   let settings: Settings['audio'] | null = null;
   let bounds: PanBounds = DEFAULT_PAN_BOUNDS;
   let paused = false;
@@ -179,7 +181,18 @@ export function createAudioSystem(data: GameData, files: AudioData, env: AudioEn
 
   async function boot(): Promise<void> {
     const ctx = env.createContext?.() ?? new window.AudioContext({ latencyHint: 'interactive' });
-    if (ctx.state !== 'running') await ctx.resume();
+    if (ctx.state !== 'running') {
+      // A strict activation policy (Safari) can leave this resume() pending forever: unlock() calls
+      // resume() again from the next gesture, and whichever call settles first finishes the boot.
+      try {
+        await new Promise<void>((resolve, reject) => {
+          resuming = { ctx, done: resolve };
+          ctx.resume().then(resolve, reject);
+        });
+      } finally {
+        resuming = null;
+      }
+    }
     if (disposed) {
       // dispose() ran while the context was resuming: never leave a context open (LP M1 review).
       await ctx.close().catch(ignore);
@@ -379,6 +392,10 @@ export function createAudioSystem(data: GameData, files: AudioData, env: AudioEn
   return {
     unlock() {
       if (disposed) return Promise.resolve();
+      if (unlocking !== null && resuming !== null) {
+        const r = resuming;
+        r.ctx.resume().then(r.done, ignore);
+      }
       unlocking ??= boot().catch((err: unknown) => {
         unlocking = null;
         throw err;

@@ -1,0 +1,142 @@
+{
+  "A-12": [
+    "Temper: screen level-up -> level-up, tick 146 -> 3746",
+    "Glazier: screen glazier -> glazier, tick 4521 -> 8121",
+    "Pause: screen pause -> pause, tick 8122 -> 8122",
+    "Settings: screen settings -> settings, tick 8122 -> 8122"
+  ],
+  "A-01": [
+    "rite after rebind: [\"KeyK\",null]",
+    "old Space casts: false, K casts: true",
+    "K casts after reload: true",
+    "conflict note \"Swapped with Rite.\", moveLeft [\"KeyK\",\"ArrowLeft\"], rite [\"KeyA\",null]",
+    "after reset: rite [\"Space\",null]",
+    "code KeyW key \"z\": world y 0.00 -> -2.88"
+  ],
+  "A-06": [
+    "Pulse (Escape): tick 12 -> 12, x 0.00 -> 0.00",
+    "Pulse (KeyP): tick 12 -> 12, x 0.00 -> 0.00",
+    "Temper (Escape): tick 133 -> 133, x 0.00 -> 0.00",
+    "Glazier (KeyP): tick 902 -> 902, x 0.00 -> 0.00",
+    "Warden Pulse (Escape): tick 1489 -> 1489, x 0.00 -> 0.00",
+    "hidden tab: visibility visible, screen pulse, tick 1489 -> 1528 -> 1619",
+    "visibilityState did not change in this browser mode: step 3 not testable here"
+  ],
+  "A-07": [
+    {
+      "screen": "title",
+      "visible": 4,
+      "reached": 4,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "title -> title"
+    },
+    {
+      "screen": "class-select",
+      "visible": 5,
+      "reached": 5,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "class-select -> title"
+    },
+    {
+      "screen": "settings",
+      "visible": 8,
+      "reached": 8,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "settings -> title"
+    },
+    {
+      "screen": "archive",
+      "visible": 8,
+      "reached": 7,
+      "missing": [
+        "keeping-tab-kept"
+      ],
+      "focusVisible": true,
+      "esc": "archive -> title"
+    },
+    {
+      "screen": "credits",
+      "visible": 1,
+      "reached": 1,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "credits -> title"
+    },
+    {
+      "screen": "pause",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "pause -> pulse"
+    },
+    {
+      "screen": "level-up",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "level-up -> pause"
+    },
+    {
+      "screen": "glazier",
+      "visible": 19,
+      "reached": 13,
+      "missing": [
+        "shop-lock-2",
+        "shop-lock-3",
+        "shop-lock-4",
+        "shop-slot-4",
+        "shop-slot-5",
+        "shop-slot-6"
+      ],
+      "focusVisible": true,
+      "esc": "glazier -> pause"
+    },
+    {
+      "screen": "warden-reward",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "warden-reward -> pause"
+    },
+    {
+      "screen": "run-lost",
+      "visible": 4,
+      "reached": 4,
+      "missing": [],
+      "focusVisible": true,
+      "esc": "run-end -> run-end"
+    }
+  ],
+  "A-10/E-14": [
+    "live UI after change: {\"cv\":\"protan\",\"reduce\":true,\"solid\":true}",
+    "saved: graphics {\"quality\":\"high\",\"screenShake\":100,\"fullscreen\":false} audio.master 90 access {\"textScale\":1,\"reduceEffects\":true,\"damageNumbers\":false,\"colorVision\":\"protan\",\"pauseWhenUnfocused\":true,\"showFlavor\":false,\"solidPanels\":true,\"shopTimer\":\"on\"}",
+    "sim hash in pause before and after settings: 5d108b0f 5d108b0f",
+    "settings identical after reload: true"
+  ],
+  "E-17": [
+    "1920x1080: {\"canvas\":[1920,1080],\"css\":[1920,1080],\"hudVisible\":true} layout issues 0",
+    "1280x720: {\"canvas\":[1280,720],\"css\":[1280,720],\"hudVisible\":true} layout issues 0",
+    "1366x768: {\"canvas\":[1366,768],\"css\":[1366,768],\"hudVisible\":true} layout issues 0"
+  ],
+  "E-16": [
+    "minimized: visibility visible, screen pulse, tick 66 -> 156; restored: screen pulse, tick 205",
+    "simulated hidden: screen pulse, tick 206 -> 206; visible again: screen pulse, tick 230 -> 380"
+  ],
+  "A-11": [
+    "reduce: reduce-effects true",
+    "no-preference: reduce-effects false"
+  ],
+  "A-05 scale 0": {
+    "capHeightPx@1280x720": 14
+  },
+  "A-05 scale 1": {},
+  "A-05 scale 2": {},
+  "A-02 frames normal": 480,
+  "A-02 frames reduce": 480
+}

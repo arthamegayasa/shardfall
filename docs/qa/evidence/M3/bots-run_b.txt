@@ -1,0 +1,162 @@
+## naive bot, run_b, class lantern, contentHash 2008c1b6: 20 runs
+win 5/20 (25%), timeouts 0
+death Pulse: P3 x4, P4 x7, P5 x2, P6 x1, P10 x1
+Silt per run: median 3.0, losses 3.0, wins 41.0
+median Pulse reached 4; median est. run minutes (wins) 20.1, sim minutes (wins) 14.2
+Warden kill s: median 62.6 (n 9, min 43.4, max 84.0); boss kill s: median 334.3 (n 5, min 120.5, max 534.3)
+purchases median 4 (wins 34), rerolls median 0, final level median 4, max alive 79, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 21 | 21 | 12.0 | 38 | 0 |
+| 2 | 20 | 26.5 | 25.5 | 15.8 | 43 | 0 |
+| 3 | 20 | 34.5 | 33.5 | 27.2 | 58 | 12 |
+| 4 | 16 | 24 | 22.5 | 6.0 | 74 | 28 |
+| 5 | 9 | 46 | 42 | 29.2 | 58 | 11 |
+| 6 | 7 | 43 | 41 | 31.2 | 58 | 26 |
+| 7 | 6 | 44 | 44 | 30.9 | 56 | 11 |
+| 8 | 6 | 55.5 | 49.5 | 38.8 | 56 | 14 |
+| 9 | 6 | 55.5 | 40.5 | 30.6 | 58 | 8 |
+| 10 | 6 | 41 | 35.5 | 9.4 | 70 | 50 |
+| 11 | 5 | 59 | 48 | 32.6 | 50 | 11 |
+| 12 | 5 | 59 | 59 | 33.6 | 55 | 5 |
+| 13 | 5 | 62 | 49 | 28.3 | 54 | 0 |
+| 14 | 5 | 55 | 54 | 29.7 | 44 | 0 |
+| 15 | 5 | 10 | 0 | - | 55 | 26 |
+
+(6.0 s wall)
+## good bot, run_b, class lantern, contentHash 2008c1b6: 20 runs
+win 16/20 (80%), timeouts 0
+death Pulse: P4 x3, P10 x1
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 14.6, sim minutes (wins) 8.7
+Warden kill s: median 27.1 (n 17, min 13.2, max 38.4); boss kill s: median 52.8 (n 16, min 31.9, max 103.8)
+purchases median 27 (wins 27), rerolls median 14.5, final level median 16, max alive 75, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 16 | 15.5 | 9.0 | 87 | 0 |
+| 2 | 20 | 22 | 22 | 14.8 | 88 | 0 |
+| 3 | 20 | 31.5 | 31.5 | 23.0 | 75 | 5 |
+| 4 | 20 | 25 | 20.5 | 11.2 | 87 | 16 |
+| 5 | 17 | 37 | 34 | 25.7 | 85 | 4 |
+| 6 | 17 | 44 | 37 | 26.8 | 79 | 0 |
+| 7 | 17 | 41 | 37 | 26.3 | 83 | 0 |
+| 8 | 17 | 50 | 49 | 30.5 | 72 | 0 |
+| 9 | 17 | 50 | 42 | 29.6 | 75 | 0 |
+| 10 | 17 | 36 | 31 | 17.4 | 71 | 18 |
+| 11 | 16 | 54.5 | 45 | 33.2 | 74 | 0 |
+| 12 | 16 | 61 | 45.5 | 30.8 | 79 | 0 |
+| 13 | 16 | 58.5 | 46.5 | 27.3 | 76 | 0 |
+| 14 | 16 | 59.5 | 54.5 | 36.8 | 70 | 0 |
+| 15 | 16 | 8 | 0 | - | 38 | 0 |
+
+(11.3 s wall)
+## naive bot, run_b, class bell, contentHash 2008c1b6: 20 runs
+win 2/20 (10%), timeouts 0
+death Pulse: P3 x4, P4 x13, P6 x1
+Silt per run: median 3.0, losses 3.0, wins 41.0
+median Pulse reached 4; median est. run minutes (wins) 28.5, sim minutes (wins) 22.7
+Warden kill s: median 104.5 (n 3, min 68.2, max 168.4); boss kill s: median 578.0 (n 2, min 572.5, max 583.6)
+purchases median 4 (wins 33.5), rerolls median 0, final level median 3, max alive 77, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 25 | 25 | 14.1 | 48 | 9 |
+| 2 | 20 | 33.5 | 32.5 | 22.3 | 71 | 17 |
+| 3 | 20 | 41 | 41 | 30.9 | 64 | 20 |
+| 4 | 16 | 28.5 | 28.5 | 18.1 | 75 | 35 |
+| 5 | 3 | 39 | 39 | 31.0 | 35 | 7 |
+| 6 | 3 | 47 | 38 | 25.8 | 49 | 21 |
+| 7 | 2 | 38 | 32.5 | 25.7 | 54 | 29 |
+| 8 | 2 | 56.5 | 56.5 | 40.6 | 59 | 14 |
+| 9 | 2 | 64.5 | 55 | 38.1 | 54 | 12 |
+| 10 | 2 | 38.5 | 32 | 4.1 | 76 | 18 |
+| 11 | 2 | 62.5 | 51 | 34.7 | 51 | 2 |
+| 12 | 2 | 55.5 | 55.5 | 38.8 | 44 | 3 |
+| 13 | 2 | 54.5 | 53.5 | 34.1 | 30 | 4 |
+| 14 | 2 | 59.5 | 53.5 | 32.1 | 48 | 0 |
+| 15 | 2 | 10 | 0 | - | 76 | 69 |
+
+(4.2 s wall)
+## good bot, run_b, class bell, contentHash 2008c1b6: 20 runs
+win 11/20 (55%), timeouts 0
+death Pulse: P4 x8, P10 x1
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 15.9, sim minutes (wins) 10.1
+Warden kill s: median 48.7 (n 12, min 31.1, max 85.7); boss kill s: median 99.0 (n 11, min 55.4, max 156.9)
+purchases median 23 (wins 25), rerolls median 10.5, final level median 15.5, max alive 82, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 23 | 23 | 15.8 | 70 | 0 |
+| 2 | 20 | 32 | 32 | 22.2 | 74 | 4 |
+| 3 | 20 | 38.5 | 38.5 | 30.4 | 66 | 5 |
+| 4 | 20 | 25 | 22 | 6.6 | 99 | 29 |
+| 5 | 12 | 50 | 48.5 | 35.1 | 74 | 1 |
+| 6 | 12 | 51 | 49 | 33.1 | 72 | 5 |
+| 7 | 12 | 44 | 37.5 | 28.6 | 76 | 0 |
+| 8 | 12 | 51 | 49.5 | 40.3 | 72 | 0 |
+| 9 | 12 | 54.5 | 49 | 35.7 | 74 | 0 |
+| 10 | 12 | 38.5 | 34.5 | 10.5 | 82 | 20 |
+| 11 | 11 | 60 | 54 | 40.4 | 76 | 0 |
+| 12 | 11 | 69 | 57 | 36.2 | 72 | 0 |
+| 13 | 11 | 59 | 59 | 38.3 | 72 | 0 |
+| 14 | 11 | 61 | 60 | 41.6 | 70 | 0 |
+| 15 | 11 | 10 | 0 | - | 58 | 0 |
+
+(8.4 s wall)
+## naive bot, run_b, class blade, contentHash 2008c1b6: 20 runs
+win 14/20 (70%), timeouts 0
+death Pulse: P4 x3, P5 x1, P6 x1, P10 x1
+Silt per run: median 41.0, losses 5.5, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 21.2, sim minutes (wins) 15.3
+Warden kill s: median 99.6 (n 17, min 43.1, max 301.1); boss kill s: median 340.8 (n 14, min 76.7, max 806.3)
+purchases median 34 (wins 35), rerolls median 0, final level median 18, max alive 107, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 24 | 24 | 17.1 | 72 | 5 |
+| 2 | 20 | 32 | 31.5 | 21.1 | 74 | 10 |
+| 3 | 20 | 39.5 | 39.5 | 32.8 | 77 | 17 |
+| 4 | 20 | 29 | 26 | 5.4 | 95 | 42 |
+| 5 | 17 | 48 | 48 | 36.5 | 80 | 26 |
+| 6 | 16 | 57.5 | 53.5 | 41.6 | 79 | 28 |
+| 7 | 15 | 54 | 49 | 32.5 | 71 | 14 |
+| 8 | 15 | 55 | 54 | 40.9 | 68 | 17 |
+| 9 | 15 | 57 | 49 | 38.6 | 74 | 11 |
+| 10 | 15 | 43 | 36 | 3.5 | 100 | 29 |
+| 11 | 14 | 65 | 47 | 38.3 | 68 | 6 |
+| 12 | 14 | 67.5 | 63.5 | 46.4 | 62 | 0 |
+| 13 | 14 | 66 | 56 | 38.7 | 64 | 2 |
+| 14 | 14 | 69.5 | 63 | 39.5 | 59 | 0 |
+| 15 | 14 | 10 | 0 | - | 79 | 9 |
+
+(14.8 s wall)
+## good bot, run_b, class blade, contentHash 2008c1b6: 20 runs
+win 19/20 (95%), timeouts 0
+death Pulse: P4 x1
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 14.5, sim minutes (wins) 8.7
+Warden kill s: median 18.9 (n 19, min 12.5, max 47.3); boss kill s: median 43.5 (n 19, min 26.1, max 95.0)
+purchases median 26 (wins 26), rerolls median 14, final level median 16, max alive 91, poolOverflow max 0
+
+| Pulse | runs | peak alive (median) | peak last 6 s (median) | mean last 6 s (median) | Glint picked % (median) | damage taken (median) |
+|---|---|---|---|---|---|---|
+| 1 | 20 | 23.5 | 23.5 | 16.3 | 93 | 4 |
+| 2 | 20 | 30 | 30 | 21.7 | 88 | 7 |
+| 3 | 20 | 38.5 | 37.5 | 30.3 | 82 | 13 |
+| 4 | 20 | 26 | 26 | 9.8 | 90 | 26 |
+| 5 | 19 | 46 | 41 | 30.4 | 85 | 6 |
+| 6 | 19 | 49 | 47 | 34.5 | 84 | 12 |
+| 7 | 19 | 44 | 38 | 29.8 | 87 | 7 |
+| 8 | 19 | 55 | 52 | 38.5 | 80 | 7 |
+| 9 | 19 | 54 | 51 | 36.8 | 84 | 0 |
+| 10 | 19 | 38 | 34 | 22.0 | 87 | 17 |
+| 11 | 19 | 54 | 51 | 34.6 | 81 | 0 |
+| 12 | 19 | 59 | 50 | 36.9 | 81 | 0 |
+| 13 | 19 | 55 | 47 | 34.3 | 80 | 0 |
+| 14 | 19 | 64 | 56 | 44.7 | 80 | 0 |
+| 15 | 19 | 8 | 0 | - | 33 | 14 |
+
+(11.2 s wall)

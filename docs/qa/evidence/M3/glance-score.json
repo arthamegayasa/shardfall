@@ -1,0 +1,98 @@
+{
+ "radius_px_480": 30.0,
+ "answers": {
+  "a": [
+   [
+    240,
+    145
+   ],
+   [
+    238,
+    118
+   ]
+  ],
+  "b": [
+   [
+    238,
+    182
+   ],
+   [
+    238,
+    140
+   ]
+  ],
+  "c": [
+   [
+    238,
+    143
+   ],
+   [
+    258,
+    178
+   ]
+  ],
+  "d": [
+   [
+    240,
+    145
+   ],
+   [
+    240,
+    145
+   ]
+  ],
+  "e": [
+   [
+    238,
+    143
+   ],
+   [
+    250,
+    147
+   ]
+  ]
+ },
+ "scores": {
+  "a": {
+   "scene": "glance-1-peak",
+   "player_err": 2.5,
+   "player_ok": true,
+   "danger_err": 12.4,
+   "danger_ok": true,
+   "nearest": "enemy"
+  },
+  "b": {
+   "scene": "glance-3-boss",
+   "player_err": 2.8,
+   "player_ok": true,
+   "danger_err": 47.5,
+   "danger_ok": false,
+   "nearest": "telegraph"
+  },
+  "c": {
+   "scene": "glance-2-warden",
+   "player_err": 2.1,
+   "player_ok": true,
+   "danger_err": 5.3,
+   "danger_ok": true,
+   "nearest": "enemy"
+  },
+  "d": {
+   "scene": "glance-4-stack",
+   "player_err": 2.5,
+   "player_ok": true,
+   "danger_err": 11.0,
+   "danger_ok": true,
+   "nearest": "enemy"
+  },
+  "e": {
+   "scene": "glance-5-late",
+   "player_err": 2.1,
+   "player_ok": true,
+   "danger_err": 9.9,
+   "danger_ok": true,
+   "nearest": "enemy"
+  }
+ },
+ "both_correct": 4
+}

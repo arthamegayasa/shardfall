@@ -1,11 +1,17 @@
 // QA e2e helpers (M1-09b): problem watcher, raw-key scan, layout scan, pointer blocker, snapshot and
 // step shortcuts. Hooks: window.__shardfall (architecture 6.12), build:e2e only.
 
+import { mkdirSync } from 'node:fs';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import type { E2eSnapshot } from '../../../src/core/dom.ts';
 
-export const EVIDENCE = 'docs/qa/evidence/M1';
+/**
+ * Raw evidence output. Default is the gitignored tests/out/qa so routine suite runs do not rewrite
+ * committed milestone evidence; QA copies the files a report cites into docs/qa/evidence/<milestone>/.
+ */
+export const EVIDENCE = process.env['QA_EVIDENCE'] ?? 'tests/out/qa';
+mkdirSync(EVIDENCE, { recursive: true });
 
 /** console.error, pageerror, and failed requests (test-plan 7.1). */
 export function watchProblems(page: Page): string[] {

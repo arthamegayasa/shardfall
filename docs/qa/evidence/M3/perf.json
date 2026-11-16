@@ -1,0 +1,224 @@
+{
+ "perf-high-pdev.json": {
+  "quality": "high",
+  "profile": "P-DEV",
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x00002560) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 131.5,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 93,
+   "avg": 112,
+   "max": 134
+  },
+  "countsEnd": {
+   "enemies": 111,
+   "enemyShots": 3,
+   "playerShots": 11,
+   "pickups": 150,
+   "dangerAreas": 1,
+   "playerZones": 0
+  },
+  "frames": 3958,
+  "frameMs": {
+   "avg": 7.59,
+   "p95": 8.1,
+   "p99": 8.4,
+   "max": 8.8
+  },
+  "fpsAvg": 131.7,
+  "simTickMs": {
+   "avg": 0.13483333180348078,
+   "p95": 0.20000004768371582
+  },
+  "drawCalls": 21,
+  "triangles": 8433,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ },
+ "perf-high-pref.json": {
+  "quality": "high",
+  "profile": "P-REF attempt (low-power GPU flag, CPU 2x)",
+  "gpu": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001638) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 128.4,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 86,
+   "avg": 114.1,
+   "max": 132
+  },
+  "countsEnd": {
+   "enemies": 97,
+   "enemyShots": 5,
+   "playerShots": 10,
+   "pickups": 150,
+   "dangerAreas": 2,
+   "playerZones": 0
+  },
+  "frames": 3910,
+  "frameMs": {
+   "avg": 7.66,
+   "p95": 8.2,
+   "p99": 8.5,
+   "max": 15.1
+  },
+  "fpsAvg": 130.5,
+  "simTickMs": {
+   "avg": 0.4508333330353101,
+   "p95": 0.699999988079071
+  },
+  "drawCalls": 21,
+  "triangles": 8629,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ },
+ "perf-low-pdev.json": {
+  "quality": "low",
+  "profile": "P-DEV",
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x00002560) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 131.9,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 85,
+   "avg": 112.5,
+   "max": 124
+  },
+  "countsEnd": {
+   "enemies": 97,
+   "enemyShots": 4,
+   "playerShots": 22,
+   "pickups": 150,
+   "dangerAreas": 3,
+   "playerZones": 0
+  },
+  "frames": 3948,
+  "frameMs": {
+   "avg": 7.59,
+   "p95": 8.1,
+   "p99": 8.4,
+   "max": 9
+  },
+  "fpsAvg": 131.7,
+  "simTickMs": {
+   "avg": 0.12966666609048844,
+   "p95": 0.20000004768371582
+  },
+  "drawCalls": 13,
+  "triangles": 8655,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ },
+ "perf-low-pref.json": {
+  "quality": "low",
+  "profile": "P-REF attempt (low-power GPU flag, CPU 2x)",
+  "gpu": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001638) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 127.8,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 84,
+   "avg": 115,
+   "max": 130
+  },
+  "countsEnd": {
+   "enemies": 113,
+   "enemyShots": 4,
+   "playerShots": 12,
+   "pickups": 150,
+   "dangerAreas": 4,
+   "playerZones": 0
+  },
+  "frames": 3948,
+  "frameMs": {
+   "avg": 7.64,
+   "p95": 8.2,
+   "p99": 8.5,
+   "max": 8.9
+  },
+  "fpsAvg": 130.9,
+  "simTickMs": {
+   "avg": 0.2906666677196821,
+   "p95": 0.5
+  },
+  "drawCalls": 13,
+  "triangles": 8571,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ },
+ "perf-medium-pdev.json": {
+  "quality": "medium",
+  "profile": "P-DEV",
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x00002560) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 130.9,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 83,
+   "avg": 111.8,
+   "max": 126
+  },
+  "countsEnd": {
+   "enemies": 78,
+   "enemyShots": 2,
+   "playerShots": 21,
+   "pickups": 150,
+   "dangerAreas": 1,
+   "playerZones": 0
+  },
+  "frames": 3971,
+  "frameMs": {
+   "avg": 7.59,
+   "p95": 8.1,
+   "p99": 8.4,
+   "max": 9.1
+  },
+  "fpsAvg": 131.7,
+  "simTickMs": {
+   "avg": 0.13750000129143397,
+   "p95": 0.20000004768371582
+  },
+  "drawCalls": 18,
+  "triangles": 9082,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ },
+ "perf-medium-pref.json": {
+  "quality": "medium",
+  "profile": "P-REF attempt (low-power GPU flag, CPU 2x)",
+  "gpu": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001638) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "displayHz": 130.9,
+  "phase": "pulse",
+  "pulse": 11,
+  "enemies": {
+   "min": 72,
+   "avg": 115.5,
+   "max": 132
+  },
+  "countsEnd": {
+   "enemies": 95,
+   "enemyShots": 2,
+   "playerShots": 11,
+   "pickups": 150,
+   "dangerAreas": 2,
+   "playerZones": 0
+  },
+  "frames": 3896,
+  "frameMs": {
+   "avg": 7.68,
+   "p95": 8.2,
+   "p99": 8.5,
+   "max": 15.8
+  },
+  "fpsAvg": 130.2,
+  "simTickMs": {
+   "avg": 0.4859999997417132,
+   "p95": 0.800000011920929
+  },
+  "drawCalls": 18,
+  "triangles": 8792,
+  "eventOverflow": 0,
+  "poolOverflow": 0
+ }
+}

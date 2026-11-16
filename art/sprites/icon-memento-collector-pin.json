@@ -1,0 +1,37 @@
+{
+  "id": "icon-memento-collector-pin",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Collector Pin: a gold-framed blue gem pin head on a long bone needle, a Glint mote beside it. Key: round head top-right, diagonal needle.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".........ggd..",
+          "........gyBBd.",
+          "........gBwBd.",
+          "........gBBbd.",
+          ".........gdd..",
+          "........e.....",
+          ".......e......",
+          "......e.......",
+          ".....e....y...",
+          "....e....ywy..",
+          "...e......y...",
+          "..e...........",
+          ".t............"
+        ]
+      ]
+    }
+  }
+}

@@ -44,6 +44,13 @@ export async function runSmoke(
   await expect.poll(() => screen(page)).toBe('class-select');
   await page.keyboard.press('Enter');
   await expect.poll(() => screen(page)).toBe('pulse');
+  // The Pulse HUD can show before the first arena frame ends (cold shader cache in a fresh browser
+  // profile holds rAF for about 0.4 s, BUG-006); keys pressed then are lost. Wait until the sim runs.
+  const tStart = Date.now();
+  await expect.poll(async () => (await snap(page)).phase).toBe('pulse');
+  const tick0 = (await snap(page)).tick;
+  await expect.poll(async () => (await snap(page)).tick).toBeGreaterThan(tick0 + 2);
+  log.push(`3 sim running ${Date.now() - tStart} ms after the Pulse screen`);
   // 3. Movement and Rite with real keys.
   const p0 = (await snap(page)).player;
   await page.keyboard.down('KeyD');
@@ -88,6 +95,9 @@ export async function runSmoke(
   for (let i = 0; i < 400; i++) {
     const s = await snap(page);
     if (s.phase === 'shop' || s.phase === 'defeat') break;
+    // The smoke checks the flow, not balance: the player stands still at 4x, which can lose Pulse 1
+    // of run_b on some seeds (M3), so HP is kept full while fast-forwarding.
+    if (s.phase === 'pulse') await send(page, { type: 'debug.setHp', hp: s.maxHp });
     if (s.phase === 'levelUp') {
       await page.waitForTimeout(350);
       await page.keyboard.press('Digit1');

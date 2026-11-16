@@ -8,9 +8,9 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 |---|---|---|
 | M0 Konsep dan pilar | SELESAI | Semua dokumen SETUJU / SETUJU DENGAN CATATAN, pilar dan style guide v1.1 dikunci CD |
 | M1 Prototipe main loop | SELESAI | Run 10 Pulse playable, determinisme terbukti, 17 e2e lulus, review LP LOLOS |
-| M2 Vertical slice HD-2D | BERJALAN | Brief: docs/m2-creative-brief.md |
-| M3 Konten penuh | BELUM | |
-| M4 Polish dan QA | BELUM | |
+| M2 Vertical slice HD-2D | SELESAI | CD: SETUJU rasa HD-2D (docs/reviews/M3-cd.md), performa p95 8.2 ms di GPU terintegrasi |
+| M3 Konten penuh | SELESAI (Tingkat B) | Build default Tingkat B: 3 kelas, 15 Pulse, 8 senjata, 22 Memento, 6 tag, Silt dan unlock. Tingkat C (3 bioma) ditunda setelah 1.0 |
+| M4 Polish dan QA | BERJALAN | Bug MAYOR BUG-007, BUG-010 dan polish CD M3 |
 | M5 Rilis | BELUM | |
 
 ## Mode kerja
@@ -54,15 +54,15 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 
 | ID | Tugas | Pemilik | Reviewer | Status |
 |---|---|---|---|---|
-| M2-01 | Data slice: kepadatan, Glint, Warden, boss, tuning bot | GD | CD, LP | BERJALAN |
-| M2-02 | Pipeline render HD-2D dan lingkungan diorama | LP | CD, QA | BERJALAN |
-| M2-03 | Aset final slice, VFX, ikon, potret Glazier | AD | CD, LP | BERJALAN |
-| M2-04 | Musik bioma 1 (Pulse, toko, boss), overlay Warden, SFX final | AU | CD, LP | BERJALAN |
-| M2-05 | Event dampak, knockback, Warden affix, pola boss, BUG-001, MAYOR M1 | GP | LP, QA | BERJALAN |
-| M2-06 | UI final slice, ikon, pengaturan, remap | UI | CD, LP | BERJALAN |
-| M2-07 | arena_market final | LD | CD | BERJALAN |
-| M2-08 | Teks slice, baris Glazier, perbaikan string | WR | CD | BERJALAN |
-| M2-09 | Integrasi dan review LP, uji performa dan keterbacaan QA, putusan HD-2D CD | LP, QA, CD | Producer | BELUM |
+| M2-01 | Data slice: kepadatan, Glint, Warden, boss, tuning bot | GD | CD, LP | SELESAI |
+| M2-02 | Pipeline render HD-2D dan lingkungan diorama | LP | CD, QA | SELESAI |
+| M2-03 | Aset final slice, VFX, ikon, potret Glazier | AD | CD, LP | SELESAI |
+| M2-04 | Musik bioma 1 (Pulse, toko, boss), overlay Warden, SFX final | AU | CD, LP | SELESAI |
+| M2-05 | Event dampak, knockback, Warden affix, pola boss, BUG-001, MAYOR M1 | GP | LP, QA | SELESAI |
+| M2-06 | UI final slice, ikon, pengaturan, remap | UI | CD, LP | SELESAI |
+| M2-07 | arena_market final | LD | CD | SELESAI |
+| M2-08 | Teks slice, baris Glazier, perbaikan string | WR | CD | SELESAI |
+| M2-09 | Integrasi dan review LP, uji performa dan keterbacaan QA, putusan HD-2D CD | LP, QA, CD | Producer | SELESAI (LP LOLOS, CD SETUJU rasa HD-2D, QA tanpa BLOCKER) |
 
 ## Keputusan
 
@@ -88,3 +88,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | 2026-11-17 | Profil default build: `run_a` (10 Pulse, Warden P5, boss P10) | Producer | run_a_m1 tidak punya Warden dan boss |
 | 2026-11-17 | Unduh WebKit Playwright terbaru diizinkan | Producer | Alat tes gratis |
 | 2026-11-17 | Opsi bahasa di Settings: tidak di 1.0 (EN saja di UI, `?lang=id` tetap tersedia) | Producer | Hemat scope |
+| 2026-11-17 | M2-09 dan M3 digabung: integrasi slice sekaligus aktivasi Tingkat B sebagai build default | Producer | Data dan efek B sudah siap; hemat satu putaran |
+| 2026-11-17 | Scope 1.0 dikunci di Tingkat B. Tingkat C (bioma Vesper Steps dan Stillfire Vineyard, 20 Pulse, Crack bertingkat) ditunda ke pasca 1.0; draf arena dan data C tetap di repo | Producer | Waktu produksi; prioritas polish dan stabilitas |
+| 2026-11-17 | Biaya unlock Vintner tier B = 6 Silt (asumsi LP) diterima | Producer | Pemain baru bisa membuka kelas kedua dalam 1 sampai 2 run |
+| 2026-11-17 | Judul rilis: Shardfall (cadangan: Under the Pane). Cek web dan merek dagang oleh Dok sebelum rilis komersial | CD | docs/narrative/title-candidates.md |
+| 2026-11-17 | Butir QA yang butuh manusia (uji 1 detik manusia, uji telinga audio, rasa input, cek web nama) dicatat sebagai sisa untuk Dok | Producer | Tidak bisa dilakukan agen |

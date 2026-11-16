@@ -1,0 +1,26 @@
+{
+  "title": [],
+  "class-select": [],
+  "settings": [],
+  "archive": [],
+  "pause": [],
+  "glazier": [],
+  "level-up": [],
+  "warden-reward": [],
+  "run-lost": [],
+  "pulse-full-hp": [],
+  "pulse-low-hp": [
+    "red border: .bar.bar-hp \"3/30\"",
+    "red background: .hp-crack \"\""
+  ],
+  "pulse-boss": [
+    "red border: .bar.bar-hp \"9/30\"",
+    "red background: .hp-crack \"\""
+  ],
+  "glazier-poor-prices": [
+    "shop-offer-1 class \"btn card rarity-0 has-flavor is-unaffordable\" price \"\" color - opacity - classes \"\"",
+    "shop-offer-2 class \"btn card rarity-0 is-unaffordable\" price \"\" color - opacity - classes \"\"",
+    "shop-offer-3 class \"btn card rarity-2 has-flavor is-unaffordable\" price \"\" color - opacity - classes \"\"",
+    "shop-offer-4 class \"btn card rarity-0 has-flavor is-unaffordable\" price \"\" color - opacity - classes \"\""
+  ]
+}

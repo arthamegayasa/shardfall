@@ -149,7 +149,10 @@ export class FakeAudioContext {
   createBufferSource(): FakeSource {
     return new FakeSource(this);
   }
+  /** Number of resume() calls (unlock retry test). */
+  resumeCalls = 0;
   async resume(): Promise<void> {
+    this.resumeCalls++;
     if (this.resumeGate !== null) await this.resumeGate;
     this.state = 'running';
   }

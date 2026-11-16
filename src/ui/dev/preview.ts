@@ -1,7 +1,7 @@
 // UI preview harness (dev server only, never bundled: vite builds index.html alone).
 // Open http://localhost:5173/src/ui/dev/preview.html (optional ?screen=title|class|pulse|held|boss|
-// pending|warden|reward|levelup|queue|glazier|pause|settings|lost|won, &text=0|1|2, &cv=protan|
-// deutan|tritan, &reduce=1, &savelost=1). Runs every screen on a fake world driven by a tiny fake
+// pending|warden|reward|levelup|queue|glazier|pause|settings|lost|won|archive, &text=0|1|2,
+// &cv=protan|deutan|tritan, &reduce=1, &savelost=1). Runs every screen on a fake world driven by a tiny fake
 // sim, with real data, strings, and art when they build, else the test fixtures (ui-spec 12.3).
 
 import type { AppActions, MetaView, RenderAssets } from '../../core/dom.ts';
@@ -502,10 +502,12 @@ const app: AppActions = {
     ui?.setScreen('title');
   },
 };
+/** Meta shown by the preview; ?screen=archive fills it so The Keeping shows found and unknown. */
+const previewMeta = { silt: 0, mementosFound: [] as string[] };
 const meta = (): MetaView => ({
-  silt: 0,
+  silt: previewMeta.silt,
   unlocked: [],
-  mementosFound: [],
+  mementosFound: previewMeta.mementosFound,
   highestDifficultyWon: -1,
   lastClassId: data.classes[0]?.id ?? '',
   hasRunSave: !saveGone,
@@ -575,6 +577,11 @@ function holdWarden(): void {
   };
 }
 const moreInitial: Record<string, () => void> = {
+  archive: () => {
+    previewMeta.silt = 42;
+    previewMeta.mementosFound = data.mementos.filter((_, i) => i % 3 !== 2).map((m) => m.id);
+    ui.setScreen('archive');
+  },
   pending: () => {
     app.startRun('', 0);
     PU.index = 9;

@@ -1,0 +1,37 @@
+{
+  "id": "icon-memento-glass-aegis",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Chapel Pane: an arched gold-leaded window of blue and cyan glass, a white crack across it. Key: arched top, cross of leading.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....gggg.....",
+          "...ggcwwcgg...",
+          "..gcwcBBcBcg..",
+          "..gwcBBgBBcg..",
+          ".gcBBBBgBBBcg.",
+          ".gBBcBBgBcBBg.",
+          ".gggggggggggg.",
+          ".gcBBBBgBBBcg.",
+          ".gBBwBBgBBcBg.",
+          ".gBcBBBgBwBBg.",
+          ".gBBBcBgBBBbg.",
+          ".gbbbbbgbbbbg.",
+          ".gggggggggggg."
+        ]
+      ]
+    }
+  }
+}

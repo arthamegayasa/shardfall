@@ -1,6 +1,6 @@
 # Shardfall: Visi
 
-Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Perubahan versi 1.1 dari review M0 (`docs/reviews/M0-cd.md`): Keepsake diganti Memento, istilah UI dan nama bioma serta kelas dikunci (bagian 5). Perubahan versi 1.2 dari review rasa M1 (`docs/reviews/M1-cd.md`, 2026-11-17): nama konten Tingkat A disetujui (bagian 5).
+Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Perubahan versi 1.1 dari review M0 (`docs/reviews/M0-cd.md`): Keepsake diganti Memento, istilah UI dan nama bioma serta kelas dikunci (bagian 5). Perubahan versi 1.2 dari review rasa M1 (`docs/reviews/M1-cd.md`, 2026-11-17): nama konten Tingkat A disetujui (bagian 5). Perubahan versi 1.3 dari review M3 (`docs/reviews/M3-cd.md`, 2026-11-17): nama konten Tingkat B dan C disetujui, judul rilis Shardfall bersyarat (bagian 5).
 Dokumen terkait: `docs/pillars.md` (pilar dan uji), `docs/style-guide.md` (aturan gaya dan checklist).
 
 Bila dokumen lain bertentangan dengan pilar, pilar yang menang. Bila bertentangan dengan visi atau style guide soal rasa, nama, atau gaya, CD yang memutuskan.
@@ -95,7 +95,8 @@ Istilah tambahan yang diputuskan:
 - **Warden, Glint, Silt** dipertahankan. Warden adalah kata umum lintas banyak game tanpa satu pemilik; ikon tag Ward wajib berbeda bentuk dari penanda Warden, dan tidak ada Warden tunggal yang bernama "the Warden".
 - **Nama konten Tingkat A** (usulan Writer, disetujui CD di review M1, status Kerja sampai cek web M3): Rite Festival Flare; senjata Lantern Bolt, Sky Splinter, Harvest Sickle, Glass Halo, Leaping Wick, Homeward Blade, Tithe Shard (Tingkat B); Memento Candle Crown, Pocket of Sky, Pruning Hook dan nama kerja GD lain yang dipertahankan; Unlit Lampmoth, Market Cur, Hawker, Porter; Warden Brass Collar, the Thrice-Leaping; boss Paper Sun, the Light-Eater; proc Glass Lance; label Held; opsi Glazier Timer. Daftar lengkap: `docs/narrative/glossary.md` bagian 6 dan 7.
 - **Boss** di dokumen tetap "boss". Di game, boss tampil dengan namanya sendiri tanpa kata "Boss".
-- Kata "Shardfall" adalah nama kerja. [Asumsi] Nama ini mungkin sudah dipakai produk lain. Writer mengecek dan menyiapkan kandidat judul di M3, CD memilih di M5.
+- **Nama konten Tingkat B dan C** (usulan Writer, disetujui CD di review M3, status Kerja sampai cek web): senjata Hand Bell; Memento Prayer Chime, Chapel Pane, Haggler's Seal dan nama kerja GD yang dipertahankan; Unlit Squib (pengganti usulan Cracker), Crier, Midge, Pitcher; Warden Velvet Cowl, the Hymn-Thief dan Iron Yoke, the Unbowed; boss Vesper Bell, the Ever-Ringing dan Rootmother, the Unpruned; affix dengan Quaking (pengganti Pulsing); banner "A Warden Wakes", "The Deepest Crack Opens", "Pulse {n} Steady". Detail: `docs/reviews/M3-cd.md` bagian 4.
+- **Judul rilis: Shardfall** (keputusan CD M3, bersyarat cek web dan merek dagang oleh Producer atau Dok sebelum rilis publik di luar GitHub Pages). Cadangan: Under the Pane, lalu Lanterns Under Glass. Kandidat dan alasan: `docs/narrative/title-candidates.md`. Tanda tangan kreatif tetap di M5.
 
 ## 6. Nada
 

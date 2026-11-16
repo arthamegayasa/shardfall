@@ -12,5 +12,6 @@ export const Cue = {
   PauseClose: 'ui.pause.close',
   SliderTick: 'ui.slider.tick',
   Toggle: 'ui.toggle',
+  Unlock: 'ui.unlock',
 } as const;
 export type Cue = (typeof Cue)[keyof typeof Cue];

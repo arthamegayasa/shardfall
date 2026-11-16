@@ -110,9 +110,9 @@ function requiredIcons(): Map<string, number> {
   const m = new Map<string, number>();
   for (const id of column(readCsv('weapons.csv'), 'id', ['A', 'B']))
     m.set(`icon-weapon-${kebab(id)}`, 16);
-  for (const id of column(readCsv('mementos.csv'), 'id', ['A']))
+  for (const id of column(readCsv('mementos.csv'), 'id', ['A', 'B']))
     m.set(`icon-memento-${kebab(id)}`, 16);
-  for (const id of column(readCsv('rites.csv'), 'id', ['A'])) m.set(`icon-rite-${kebab(id)}`, 16);
+  for (const id of column(readCsv('rites.csv'), 'id', ['A', 'B'])) m.set(`icon-rite-${kebab(id)}`, 16);
   for (const id of column(readCsv('levelup.csv'), 'stat', ['A']))
     m.set(`icon-stat-${kebab(id)}`, 16);
   for (const id of column(readCsv('synergies.csv'), 'tag', ['A', 'B', 'C']))

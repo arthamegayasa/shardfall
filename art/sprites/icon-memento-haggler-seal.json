@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-haggler-seal",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Haggler's Seal: a dust-wood seal stamp above a gold wax seal pressed with a white balance mark. Key: handle over a round blob.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....eddt.....",
+          ".....dddh.....",
+          "......dh......",
+          "......dh......",
+          "....eddddh....",
+          "...tttttttt...",
+          "..ygggggggd...",
+          ".yggwggwgggd..",
+          ".ggwwwwwwggd..",
+          ".gggwggwgggd..",
+          "..gggwwgggd...",
+          "...gggggdd...."
+        ]
+      ]
+    }
+  }
+}

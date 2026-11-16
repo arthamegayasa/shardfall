@@ -1,0 +1,35 @@
+{
+  "id": "icon-memento-dust-hourglass",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Dust Hourglass: a gold-capped hourglass running cyan sky dust instead of sand. Key: two bulbs pinched at the middle between posts.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "yggggggggggd",
+          ".tnnnnnnnnnt",
+          ".t.ncccccn.t",
+          ".t..nccwn..t",
+          ".t...ncn...t",
+          ".t....c....t",
+          ".t...ncn...t",
+          ".t..nnwnn..t",
+          ".t.nnccccn.t",
+          ".tncccccccnt",
+          "yggggggggggd"
+        ]
+      ]
+    }
+  }
+}

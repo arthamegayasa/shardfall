@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-iron-thimble",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Iron Thimble: a grey dimpled thimble with a bone highlight on the left. Key: rounded cup, dotted dimples.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....eddddt....",
+          "...edhdhdtt...",
+          "...ddddddth...",
+          "..edhdhdhdth..",
+          "..ddddddddth..",
+          "..edhdhdhdth..",
+          "..ddddddddth..",
+          ".edhdhdhdhdth.",
+          ".dddddddddtth.",
+          ".ettttttttthh.",
+          ".tttttttttthh.",
+          "..hhhhhhhhhh.."
+        ]
+      ]
+    }
+  }
+}
