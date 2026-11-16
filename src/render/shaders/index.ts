@@ -1,4 +1,13 @@
 // Shaders (AD, LP review; coding-standards 8: one shader per file, .glsl via ?raw or a .ts template).
-// M1: instanced billboard sprites and ground areas. TODO(AD, M2): sprite lighting (min 70% for Kept), floor, post.
-export { SPRITE_FRAGMENT, SPRITE_INSTANCE_ATTRIBUTES, SPRITE_VERTEX } from './sprite.ts';
+// Sprite: instanced billboards with per-instance light (LP's lighting.ts), emissive, hit flash, dissolve.
+// Area: ground telegraphs, zones, decals. lighting.ts: LP's shared scene lighting chunk.
+export {
+  EMISSIVE_ALPHA_BYTE,
+  KEPT_MIN_LIGHT,
+  SPRITE_FRAGMENT,
+  SPRITE_INSTANCE_ATTRIBUTES,
+  SPRITE_VERTEX,
+  SpriteLight,
+  spriteVertex,
+} from './sprite.ts';
 export { AREA_FRAGMENT, AREA_INSTANCE_ATTRIBUTES, AREA_VERTEX } from './area.ts';

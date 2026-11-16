@@ -17,6 +17,8 @@ export interface UiScale {
   readonly fontScale: number;
   /** CSS px per font pixel. */
   readonly fontCss: number;
+  /** CSS px per font pixel for small labels: max(2, fontScale - 1) physical px (ui-spec 7.2). */
+  readonly smallFontCss: number;
   /** True when the viewport is smaller than the safe area at the minimum scale. */
   readonly tooSmall: boolean;
 }
@@ -42,6 +44,7 @@ export function computeUiScale(
     unitCss: uiScale / ratio,
     fontScale,
     fontCss: fontScale / ratio,
+    smallFontCss: Math.max(UI_MIN_SCALE, fontScale - 1) / ratio,
     tooSmall: fit < UI_MIN_SCALE,
   };
 }

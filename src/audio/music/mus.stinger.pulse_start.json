@@ -1,0 +1,81 @@
+{
+  "id": "mus.stinger.pulse_start",
+  "oneShot": true,
+  "tailSec": 1.5,
+  "bpm": 116,
+  "meter": [
+    4,
+    4
+  ],
+  "stepsPerBeat": 4,
+  "key": {
+    "root": "D",
+    "mode": "dorian"
+  },
+  "form": [
+    "A"
+  ],
+  "sections": {
+    "A": {
+      "chords": [
+        "Dm"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bell_low",
+      "instrument": "glass_bell",
+      "gainDb": -10,
+      "send": {
+        "hall": 0.6
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "D3:16"
+        ]
+      }
+    },
+    {
+      "id": "bell_mid",
+      "instrument": "glass_bell",
+      "gainDb": -13,
+      "send": {
+        "hall": 0.6
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "D4:16"
+        ]
+      }
+    },
+    {
+      "id": "bell_fifth",
+      "instrument": "glass_bell",
+      "gainDb": -18,
+      "send": {
+        "hall": 0.6
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:2 A3:14"
+        ]
+      }
+    },
+    {
+      "id": "timp",
+      "instrument": "kit",
+      "gainDb": -18,
+      "send": {
+        "hall": 0.3
+      },
+      "type": "drum",
+      "lanes": {
+        "timp": "x---------------"
+      }
+    }
+  ]
+}

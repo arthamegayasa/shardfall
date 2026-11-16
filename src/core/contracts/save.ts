@@ -50,6 +50,10 @@ export interface RunSaveV1 {
     readonly pulsesCleared: number;
     readonly runTicks: number;
   };
+  /** Enemy id of the Warden or boss whose chest is shown (RewardView.sourceTypeIndex). M2-05, additive. */
+  readonly rewardSourceId?: string;
+  /** Levels gained in the cleared Pulse (LevelUpView.total, "1 of 2"). M2-05, additive. */
+  readonly levelsThisPulse?: number;
 }
 
 export type RunSave = RunSaveV1;

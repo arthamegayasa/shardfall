@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { ownerTextParams } from '../../../src/content/index.ts';
 import { OfferKind } from '../../../src/core/index.ts';
 import type { ShopOfferView } from '../../../src/core/index.ts';
-import { buildShopModel, initialOfferFocus, tagPreview } from '../../../src/ui/presenters/shop.ts';
+import {
+  buildShopModel,
+  focusedSlotIndex,
+  initialOfferFocus,
+  tagPreview,
+} from '../../../src/ui/presenters/shop.ts';
 import { createFakeWorld } from '../../fixtures/fake-world.ts';
 import { fixtureGameData } from '../../support/fixture-data.ts';
 import { pl } from './writable.ts';
@@ -147,5 +152,15 @@ describe('Glazier model', () => {
     expect(buildShopModel(w, data).canReroll).toBe(true);
     w.shop = { ...w.shop, freeRerolls: 0 };
     expect(buildShopModel(w, data).canReroll).toBe(false);
+  });
+});
+
+describe('Glazier Sell and Fuse hotkeys target (review M1 LP)', () => {
+  it('acts only on a focused inventory slot', () => {
+    expect(focusedSlotIndex('shop-slot-1')).toBe(0);
+    expect(focusedSlotIndex('shop-slot-6')).toBe(5);
+    expect(focusedSlotIndex('shop-offer-2')).toBe(-1);
+    expect(focusedSlotIndex('shop-sell')).toBe(-1);
+    expect(focusedSlotIndex('')).toBe(-1);
   });
 });

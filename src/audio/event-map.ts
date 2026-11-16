@@ -3,11 +3,14 @@
 // against GameData, so the per-frame path only reads typed arrays.
 
 import {
+  AffixAction,
   DAMAGE_HIT_KIND_SHIFT,
+  DAMAGE_IMPACT_SHIFT,
   DAMAGE_RANK_SHIFT,
   DamageFlag,
   EnemyRank,
   HitKind,
+  ImpactTier,
   RejectReason,
   RunOutcome,
   RunPhaseCode,
@@ -27,6 +30,8 @@ type CueRef = string | null;
 interface StartResolve {
   readonly start: CueRef;
   readonly resolve: CueRef;
+  /** Pitch offset of both cues (pattern variants that share a recipe). */
+  readonly semis?: number;
 }
 
 /** Shape of routes.json (docs/audio-list.md section 1.3). */
@@ -39,6 +44,8 @@ export interface Routes {
     readonly impactByArchetype: Readonly<Record<string, CueRef>>;
     readonly hit: string;
     readonly hitCrit: string;
+    /** EnemyDamaged with impact tier heavy or crushing (bits 7-8, M2-05). */
+    readonly hitHeavy: string;
   };
   readonly enemies: {
     readonly deathBySize: Readonly<Record<string, CueRef>>;
@@ -48,7 +55,7 @@ export interface Routes {
   };
   readonly rites: {
     readonly byArchetype: Readonly<
-      Record<string, { readonly cast: CueRef; readonly impact: CueRef; readonly impactDelayMs?: number }>
+      Record<string, { readonly cast: CueRef; readonly impact: CueRef }>
     >;
     readonly ready: string;
     readonly readySuppressAfterPulseStartMs: number;
@@ -61,10 +68,14 @@ export interface Routes {
     readonly byKind: Readonly<Record<string, StartResolve>>;
     readonly wardenCharge: StartResolve;
     readonly bossPatternByArchetype: Readonly<Record<string, StartResolve>>;
+    /** Per pattern id (Paper Sun has 6 patterns on 4 archetypes); wins over the archetype. */
+    readonly bossPatternById: Readonly<Record<string, StartResolve>>;
     readonly affixById: Readonly<Record<string, StartResolve>>;
     readonly wardenChargeStepSemis: number;
   };
   readonly affixApplied: Readonly<Record<string, CueRef>>;
+  /** AffixTriggered by AffixAction name (shell, blink, ...; M2-05). */
+  readonly affixTriggered: Readonly<Record<string, CueRef>>;
   readonly enemyShots: { readonly default: CueRef; readonly fromAffix: CueRef };
   readonly glint: string;
   readonly synergy: { readonly cue: string; readonly semisByThreshold: Readonly<Record<string, number>> };
@@ -72,7 +83,14 @@ export interface Routes {
   readonly lock: { readonly cue: string; readonly unlockSemis: number };
   readonly rejected: { readonly cue: string; readonly silentReasons: readonly string[] };
   readonly phaseEnter: Readonly<Record<string, CueRef>>;
-  readonly runEnded: Readonly<Record<string, CueRef>>;
+  /**
+   * Stingers are one-shot songs (src/audio/music/mus.stinger.*.json) played by the sequencer, so
+   * they share the instruments of the loops and cost no extra buffer memory.
+   */
+  readonly stingers: {
+    readonly byEvent: Readonly<Record<string, string>>;
+    readonly runEnded: Readonly<Record<string, string | null>>;
+  };
 }
 
 /** Events handled in code below; every other SimEventType must be in routes.simple or routes.silent. */
@@ -83,6 +101,7 @@ export const CODED_EVENTS: readonly string[] = [
   'MusicPressureChanged',
   'WeaponFired',
   'RiteCast',
+  'RiteLanded',
   'RiteReady',
   'SynergyActivated',
   'EnemyDamaged',
@@ -91,12 +110,16 @@ export const CODED_EVENTS: readonly string[] = [
   'TelegraphStarted',
   'TelegraphResolved',
   'AffixApplied',
+  'AffixTriggered',
   'GlintCollected',
   'ProcTriggered',
   'ItemMerged',
   'ItemLocked',
   'CommandRejected',
 ];
+
+/** Most stingers one frame can ask for. */
+export const MAX_STINGERS = 4;
 
 /** Side information for the engine and music director, rewritten every map() call. */
 export interface MapSignals {
@@ -107,6 +130,11 @@ export interface MapSignals {
   playerDied: boolean;
   /** Longest telegraph started this frame, seconds (telegraph duck hold). */
   telegraphSec: number;
+  /** Stinger songs to play, as indices into the stinger id list given to createEventMap. */
+  readonly stingers: Int32Array;
+  stingerCount: number;
+  /** New boss phase from BossPhaseChanged when it rose this frame, else -1. */
+  bossPhase: number;
 }
 
 export interface EventMap {
@@ -135,8 +163,11 @@ function resolveCue(cues: CueTable, id: CueRef, where: string): number {
   return i;
 }
 
-/** Throws when routes reference unknown cues or leave an event type unrouted. */
-export function validateRoutes(routes: Routes, cues: CueTable): string[] {
+/**
+ * Every problem of routes.json: unknown cues, unrouted event types, and (when songIds is given)
+ * stingers that name no song file.
+ */
+export function validateRoutes(routes: Routes, cues: CueTable, songIds?: ReadonlySet<string>): string[] {
   const errors: string[] = [];
   const check = (id: CueRef, where: string): void => {
     if (id !== null && !cues.indexOf.has(id)) errors.push(`routes.json ${where}: unknown cue "${id}"`);
@@ -149,10 +180,28 @@ export function validateRoutes(routes: Routes, cues: CueTable): string[] {
       });
     }
     else if (typeof v === 'object' && v !== null) {
-      for (const [k, x] of Object.entries(v)) walk(x, `${where}.${k}`);
+      for (const [k, x] of Object.entries(v)) {
+        // Stingers name songs, not cues.
+        if (where === 'routes' && k === 'stingers') continue;
+        walk(x, `${where}.${k}`);
+      }
     }
   };
   walk(routes, 'routes');
+  const st = routes.stingers as Routes['stingers'] | undefined;
+  if (st === undefined) errors.push('routes.json: missing stingers');
+  else {
+    for (const [ev, id] of Object.entries(st.byEvent)) {
+      if (!(ev in SimEventType)) errors.push(`routes.json stingers: unknown event ${ev}`);
+      if (songIds !== undefined && !songIds.has(id)) errors.push(`routes.json stingers.${ev}: unknown song "${id}"`);
+    }
+    for (const [k, id] of Object.entries(st.runEnded)) {
+      if (!(k in RunOutcome)) errors.push(`routes.json stingers.runEnded: unknown outcome ${k}`);
+      if (id !== null && songIds !== undefined && !songIds.has(id)) {
+        errors.push(`routes.json stingers.runEnded.${k}: unknown song "${id}"`);
+      }
+    }
+  }
   const routed = new Set([...Object.keys(routes.simple), ...routes.silent, ...CODED_EVENTS]);
   for (const name of Object.keys(SimEventType)) {
     if (!routed.has(name)) errors.push(`routes.json: event ${name} is neither routed nor declared silent`);
@@ -211,7 +260,8 @@ export function liveWarmupPairs(data: GameData, routes: Routes): { cue: string; 
     else add(t.byKind[ROLE_KIND[e.role] ?? '']?.start, e.telegraphTicks);
   }
   for (const p of data.bossPatterns) {
-    add((t.bossPatternByArchetype[p.archetype] ?? t.byKind['BossArea'])?.start, p.telegraphTicks);
+    const r = t.bossPatternById[p.id] ?? t.bossPatternByArchetype[p.archetype] ?? t.byKind['BossArea'];
+    add(r?.start, p.telegraphTicks);
   }
   for (const a of data.affixes) add(t.affixById[a.id]?.start, a.telegraphTicks);
   return out;
@@ -229,13 +279,12 @@ export function describeCoverage(data: GameData, routes: Routes): CoverageRow[] 
   }
   for (const e of data.effects) rows.push({ table: 'effects', id: e.id, ...procCue(routes, e) });
   for (const p of data.bossPatterns) {
-    const sr = routes.telegraphs.bossPatternByArchetype[p.archetype];
-    rows.push({
-      table: 'boss_patterns',
-      id: p.id,
-      cue: sr?.start ?? null,
-      via: sr === undefined ? 'fallback' : sr.start === null ? 'declared-silent' : 'id',
-    });
+    const byId = routes.telegraphs.bossPatternById[p.id];
+    const sr = byId ?? routes.telegraphs.bossPatternByArchetype[p.archetype];
+    let via: CoverageRow['via'] = 'fallback';
+    if (sr !== undefined && sr.start === null) via = 'declared-silent';
+    else if (byId !== undefined) via = 'id';
+    rows.push({ table: 'boss_patterns', id: p.id, cue: sr?.start ?? null, via });
   }
   return rows;
 }
@@ -244,8 +293,18 @@ function pick(v: { cue: CueRef; via: CoverageRow['via'] }): { cue: CueRef; via: 
   return { cue: v.cue, via: v.via };
 }
 
-export function createEventMap(data: GameData, cues: CueTable, routes: Routes): EventMap {
-  const errors = validateRoutes(routes, cues);
+/**
+ * stingerSongs lists the stinger song ids the music player knows; stinger signals are indices
+ * into it. Ids missing from the list throw (fail fast at boot).
+ */
+export function createEventMap(
+  data: GameData,
+  cues: CueTable,
+  routes: Routes,
+  stingerSongs: readonly string[] = [],
+): EventMap {
+  // Without a stinger list (unit tests of SFX routing) stingers are simply never signalled.
+  const errors = validateRoutes(routes, cues, stingerSongs.length > 0 ? new Set(stingerSongs) : undefined);
   if (errors.length > 0) throw new Error(errors.join('\n'));
   const cue = (id: CueRef, where: string): number => resolveCue(cues, id, where);
 
@@ -267,13 +326,15 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
   });
   const rCast = new Int32Array(data.rites.length);
   const rImpact = new Int32Array(data.rites.length);
-  const rDelay = new Float64Array(data.rites.length);
   data.rites.forEach((r, i) => {
     const route = routes.rites.byArchetype[r.archetype];
     rCast[i] = cue(route?.cast ?? null, `rite ${r.id}`);
     rImpact[i] = cue(route?.impact ?? null, `rite ${r.id} impact`);
-    rDelay[i] = (route?.impactDelayMs ?? 0) / 1000;
   });
+  const affixAction = new Int32Array(16).fill(NONE);
+  for (const [name, code] of Object.entries(AffixAction)) {
+    affixAction[code] = cue(routes.affixTriggered[name] ?? null, `affixTriggered ${name}`);
+  }
   const pCue = new Int32Array(data.effects.length);
   data.effects.forEach((e, i) => {
     pCue[i] = cue(procCue(routes, e).cue, `effect ${e.id}`);
@@ -292,11 +353,13 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
   const [wardenChargeStart, wardenChargeResolve] = sr(routes.telegraphs.wardenCharge, 'wardenCharge');
   const bpStart = new Int32Array(data.bossPatterns.length).fill(NONE);
   const bpResolve = new Int32Array(data.bossPatterns.length).fill(NONE);
+  const bpSemis = new Float64Array(data.bossPatterns.length);
   const bpHasRoute = new Uint8Array(data.bossPatterns.length);
   data.bossPatterns.forEach((p, i) => {
-    const r = routes.telegraphs.bossPatternByArchetype[p.archetype];
+    const r = routes.telegraphs.bossPatternById[p.id] ?? routes.telegraphs.bossPatternByArchetype[p.archetype];
     if (r === undefined) return;
     bpHasRoute[i] = 1;
+    bpSemis[i] = r.semis ?? 0;
     [bpStart[i], bpResolve[i]] = sr(r, `boss pattern ${p.id}`);
   });
   const afStart = new Int32Array(data.affixes.length).fill(NONE);
@@ -320,6 +383,7 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
 
   const cHit = cue(routes.weapons.hit, 'hit');
   const cCrit = cue(routes.weapons.hitCrit, 'hitCrit');
+  const cHeavy = cue(routes.weapons.hitHeavy, 'hitHeavy');
   const cHurtWarden = cue(routes.enemies.hurtWarden, 'hurtWarden');
   const cHurtBoss = cue(routes.enemies.hurtBoss, 'hurtBoss');
   const cReady = cue(routes.rites.ready, 'ready');
@@ -337,8 +401,17 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
   }
   const phaseCue = new Int32Array(8).fill(NONE);
   for (const [phase, code] of Object.entries(RunPhaseCode)) phaseCue[code] = cue(routes.phaseEnter[phase] ?? null, `phase ${phase}`);
-  const runCue = new Int32Array(4).fill(NONE);
-  for (const [name, code] of Object.entries(RunOutcome)) runCue[code] = cue(routes.runEnded[name] ?? null, `runEnded ${name}`);
+  const stingerIndex = (id: string | null | undefined): number =>
+    id === null || id === undefined ? NONE : stingerSongs.indexOf(id);
+  const stingerByType = new Int32Array(128).fill(NONE);
+  for (const [name, id] of Object.entries(routes.stingers.byEvent)) {
+    const code = SimEventType[name as keyof typeof SimEventType];
+    stingerByType[code] = stingerIndex(id);
+  }
+  const runStinger = new Int32Array(4).fill(NONE);
+  for (const [name, code] of Object.entries(RunOutcome)) {
+    runStinger[code] = stingerIndex(routes.stingers.runEnded[name]);
+  }
   const glintCue = cues.cues[cGlint];
   const glintResetSec = (glintCue?.ladder?.resetMs ?? 500) / 1000;
   const glintBase = glintCue?.ladder?.baseMidi ?? 86;
@@ -351,7 +424,23 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
   let lastGlint = -Infinity;
   let wardenSeq = 0;
   let lastWardenCharge = -Infinity;
-  const signals: MapSignals = { lowHp: -1, pressure: -1, playerDied: false, telegraphSec: 0 };
+  /** The boss fell this Pulse: its stinger replaces the Pulse-end stinger. */
+  let bossFell = false;
+  const signals: MapSignals = {
+    lowHp: -1,
+    pressure: -1,
+    playerDied: false,
+    telegraphSec: 0,
+    stingers: new Int32Array(MAX_STINGERS),
+    stingerCount: 0,
+    bossPhase: -1,
+  };
+
+  function stinger(song: number): void {
+    if (song < 0 || signals.stingerCount >= MAX_STINGERS) return;
+    for (let i = 0; i < signals.stingerCount; i++) if (signals.stingers[i] === song) return;
+    signals.stingers[signals.stingerCount++] = song;
+  }
 
   function ladderSemis(step: number, ladder: readonly number[]): number {
     if (ladder.length === 0) return 0;
@@ -366,6 +455,7 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
     let semis = 0;
     if (kind === SourceKind.BossPattern && bpHasRoute[idx] === 1) {
       id = (start ? bpStart : bpResolve)[idx] ?? NONE;
+      semis = bpSemis[idx] ?? 0;
     } else if (kind === SourceKind.Affix && afHasRoute[idx] === 1) {
       id = (start ? afStart : afResolve)[idx] ?? NONE;
     } else if (kind === SourceKind.EnemyAttack && a === TelegraphKind.Charge && eIsWarden[idx] === 1) {
@@ -397,7 +487,8 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
       // Explosions and orbit contact have their own impact; the bolt itself still thuds.
       if (imp !== NONE && hitKind !== HitKind.Projectile) return imp;
     }
-    return cHit;
+    // Big hits sound heavier (impact tier, bits 7-8): the Unlit hit carries the weight (CD M1).
+    return ((b >> DAMAGE_IMPACT_SHIFT) & 3) >= ImpactTier.Heavy ? cHeavy : cHit;
   }
 
   return {
@@ -407,6 +498,8 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
       signals.pressure = -1;
       signals.playerDied = false;
       signals.telegraphSec = 0;
+      signals.stingerCount = 0;
+      signals.bossPhase = -1;
       for (let i = 0; i < ev.count; i++) {
         const type = ev.type[i] ?? 0;
         const x = ev.x[i] ?? 0;
@@ -417,9 +510,22 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
         if (list !== undefined) {
           for (let k = 0; k < list.length; k++) out.add(list[k] ?? NONE, x, 0, 0, 0);
         }
+        const st = stingerByType[type] ?? NONE;
+        const phaseStinger = type === SimEventType.BossPhaseChanged;
+        if (st !== NONE && !phaseStinger && !(type === SimEventType.PulseEnded && bossFell)) stinger(st);
         switch (type) {
           case SimEventType.PulseStarted:
             lastPulseStart = now;
+            bossFell = false;
+            break;
+          case SimEventType.BossKilled:
+            bossFell = true;
+            break;
+          case SimEventType.BossPhaseChanged:
+            if (a > b) {
+              signals.bossPhase = a;
+              stinger(st);
+            }
             break;
           case SimEventType.PlayerDied:
             signals.playerDied = true;
@@ -428,7 +534,7 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
             out.add(phaseCue[a] ?? NONE, Number.NaN, 0, 0, 0);
             break;
           case SimEventType.RunEnded:
-            out.add(runCue[a] ?? NONE, Number.NaN, 0, 0, 0);
+            stinger(runStinger[a] ?? NONE);
             break;
           case SimEventType.PlayerHpLowChanged:
             signals.lowHp = a === 1 ? 1 : 0;
@@ -441,7 +547,10 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
             break;
           case SimEventType.RiteCast:
             out.add(rCast[a] ?? NONE, Number.NaN, 0, 0, 0);
-            out.add(rImpact[a] ?? NONE, x, 0, 0, rDelay[a] ?? 0);
+            break;
+          case SimEventType.RiteLanded:
+            // The blast sounds where and when the Rite lands (M2-05), no guessed delay.
+            out.add(rImpact[a] ?? NONE, x, 0, 0, 0);
             break;
           case SimEventType.RiteReady:
             // The Rite is always ready at Pulse start, no need to announce it (audio-list 3).
@@ -467,6 +576,9 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
             break;
           case SimEventType.AffixApplied:
             out.add(afApplied[a] ?? NONE, x, 0, 0, 0);
+            break;
+          case SimEventType.AffixTriggered:
+            out.add(affixAction[b] ?? NONE, x, 0, 0, 0);
             break;
           case SimEventType.GlintCollected: {
             if (b > 0) glintStep = b - 1;

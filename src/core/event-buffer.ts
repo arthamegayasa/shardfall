@@ -19,6 +19,10 @@ for (const t of [
   SimEventType.GlintCollected,
   SimEventType.GlintDropped,
   SimEventType.EnemySpawned,
+  // M2-05 (additive): per-entity feel events, dropped before gameplay events when full.
+  SimEventType.EnemyKnockedBack,
+  SimEventType.EnemyDissolved,
+  SimEventType.GlintPulled,
 ]) {
   LOW_PRIORITY[t] = 1;
 }

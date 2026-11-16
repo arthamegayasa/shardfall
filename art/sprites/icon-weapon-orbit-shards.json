@@ -1,0 +1,37 @@
+{
+  "id": "icon-weapon-orbit-shards",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Glass Halo: four glass shards riding a blue orbit ring around a glowing centre. Key: ring with four bumps and a dot.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....wccb.....",
+          "...BBwccbBB...",
+          "..B..ccbb..B..",
+          ".B..........B.",
+          ".B..........B.",
+          ".w....wy....w.",
+          "wcc...yg...wcc",
+          "ccb........ccb",
+          ".b..........b.",
+          ".B..........B.",
+          "..B..wccb..B..",
+          "...BBwccbBB...",
+          ".....ccbb....."
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "id": "icon-portrait-glazier",
+  "class": "portrait",
+  "faction": "neutral",
+  "frameW": 48,
+  "frameH": 48,
+  "anchor": {
+    "x": 24,
+    "y": 47
+  },
+  "outline": "ink",
+  "legend": {
+    "I": "b1.cloth-indigo",
+    "O": "b1.cloth-ochre",
+    "P": "b1.paper",
+    "G": "b1.glass",
+    "W": "b1.wood",
+    "D": "b1.wood-dark",
+    "Q": "b1.rope",
+    "F": "b1.flame"
+  },
+  "status": "final",
+  "note": "The Glazier, masked glass merchant. Silhouette: wide-brimmed hat over a pale oval mask, high collar, paper lantern at the right shoulder.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "................IIIIIIIIIIIIIn................",
+          "..............ffIIIIIIIIIIIIInnn..............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          ".............fffIIIIIIIIIIIIInnnn.............",
+          "............fOOOOOOOOOOOOOOOOWWWWI............",
+          "......fffffffOOOOOOOOOOOOOOOOWWWWIIIIIII......",
+          "..ffffffffffffffIIIIIIIIIIIIInnnnIIIIIIIIIII..",
+          ".IIIIIIIIIIIIfffIIIIIIIIIIIIInnnnIIIIIIIIIIII.",
+          "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII",
+          ".nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.",
+          "..nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn..",
+          "......nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnQ......",
+          "............nnnnnnnnnnnnnnnnnnnnnn.....Q......",
+          "..............ddddddddddddhhdt.........Q......",
+          "..............eeGeeeeeeeeeehdt.........Q......",
+          "..............eGeeeeeeeeeeehdt.........Q......",
+          "..............eGeeeeeeeeeeeddt.........Q......",
+          ".............eeGekkkeeeeekkkdtt........Q......",
+          "..............eekeeekeeekeedkt.........Q......",
+          "..............eeeeeeeeeeeeeddt.......DPPPD....",
+          "..............eeeeeeeeeeeehddt......PPPPPPO...",
+          "..............eeeeeeeeeeeehhdt.....POPPPPPOO..",
+          "...............eeeeeeeeeeeehd......POPPPPPOO..",
+          "..............OeeeeeedddeeeddWWW..PPOPFFFPOOO.",
+          "..............fIeeeeeeeeeeednnnn..PPOPFFFPOOO.",
+          ".............fIIeeeeeeddddddnnnnn.PPOPFFFPOOO.",
+          ".............fIIIneeeeddddnnnnnnn.PPOPFFFPOOO.",
+          ".............fIIInnttttttnnnnnnnn..POPPPPPOO..",
+          ".............fIIInnnnnnnnnnnnnnnnn.POPPPPPOO..",
+          "............fIIIInnnnnnnnnnnnnnnnn..OPPPPPO...",
+          "............fIIII.OOOFPWWWW..nnnnn....PPP.....",
+          "............fIIIIIIOOPPWWWIIInnnnn...DDDDD....",
+          "...........fIIIIIIIOOOOWWWIIInnnnnn....Q......",
+          "..........IfIIIIIIIIOOOWWIIIInnnnnnn...Q......",
+          "........ffIIIIIIIIIIOOOWWIIIIIInnnnnnn........",
+          "......ffffIIIIIIIIIIIOOWIIIIIIInnnnnnnnn......",
+          ".....fffffIIIIIIIIIIIOOWIIIIIIInnnnnnnnnn.....",
+          "....ffffffIIIIIIIIIIIIIIIIIIIIInnnnnnnnnnn....",
+          "...IIIIIIIIIIIIIIIIIIIIIIIIIIIInnnnnnnnnnnn...",
+          "..IIIIIIIIIIIIIIIIIIIIIIIIIIIIInnnnnnnnnnnnn..",
+          ".IIIIIIIIIIIIIIIIIIIIIIIIIIIIIInnnnnnnnnnnnnn.",
+          ".IIIIIIIIIIIIIIIIIIIIIIIIIIIIIInnnnnnnnnnnnnn."
+        ]
+      ]
+    }
+  }
+}

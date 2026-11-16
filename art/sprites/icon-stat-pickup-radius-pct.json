@@ -1,0 +1,37 @@
+{
+  "id": "icon-stat-pickup-radius-pct",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Pickup Radius: a blue horseshoe magnet with white poles pulling a gold glint. Key: U magnet, diamond above.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "......y......",
+          ".....ywg.....",
+          "......g......",
+          ".............",
+          "eew.......eed",
+          "eee.......eed",
+          "cBB.......BBb",
+          "cBB.......BBb",
+          "cBB.......BBb",
+          "cBBc.....BBbb",
+          ".cBBBBBBBBbb.",
+          "..cBBBBBBbb..",
+          "...bbbbbbb..."
+        ]
+      ]
+    }
+  }
+}

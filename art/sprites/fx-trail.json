@@ -1,0 +1,32 @@
+{
+  "id": "fx-trail",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-cyan"
+  ],
+  "status": "final",
+  "note": "Player shot tail dot: frame 0 near the shot, frame 1 further back (art-direction 8.2).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "cc",
+          "cc"
+        ],
+        [
+          "c"
+        ]
+      ]
+    }
+  }
+}

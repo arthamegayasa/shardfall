@@ -5,7 +5,7 @@ import type { ScreenId } from '../../core/dom.ts';
 import { button, h, put } from '../dom.ts';
 import { formatClock, floorSeconds, formatStatValue } from '../format.ts';
 import { buildSummary } from '../presenters/run-end.ts';
-import { panel, rarityPips, titleBlock } from './components.ts';
+import { buildRow, panel, titleBlock } from './components.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
 
@@ -21,7 +21,7 @@ export function createPauseScreen(ctx: UiContext): Screen {
   };
 
   const summary = (): HTMLElement => {
-    const col = panel(ctx, 'pause-build');
+    const col = panel(ctx, 'pause-build', true);
     const view = ctx.view();
     if (view === null) return col;
     const b = buildSummary(view, deps.data);
@@ -34,26 +34,35 @@ export function createPauseScreen(ctx: UiContext): Screen {
       ),
     );
     col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
+    const list = h(doc, 'div', 'build-list');
     for (const w of b.weapons) {
-      put(
-        col,
-        put(
-          h(doc, 'div', `build-row rarity-${String(w.rarityOrder)}`),
-          h(doc, 'span', '', t(w.item.nameKey)),
-          h(doc, 'span', 'card-tier', ctx.tier(w.level)),
+      list.appendChild(
+        buildRow(
+          ctx,
+          { kind: 'weapon', id: w.item.id },
+          w.item.nameKey,
+          w.item.tags,
+          w.rarityOrder,
+          ctx.tier(w.level),
         ),
       );
     }
+    col.appendChild(list);
     col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.mementos')));
+    const mlist = h(doc, 'div', 'build-list');
     for (const m of b.mementos) {
-      const row = put(
-        h(doc, 'div', `build-row rarity-${String(m.rarityOrder)}`),
-        rarityPips(ctx, m.rarityOrder),
-        h(doc, 'span', '', t(m.item.nameKey)),
+      mlist.appendChild(
+        buildRow(
+          ctx,
+          { kind: 'memento', id: m.item.id },
+          m.item.nameKey,
+          m.item.tags,
+          m.rarityOrder,
+          m.level > 1 ? `x${String(m.level)}` : '',
+        ),
       );
-      if (m.level > 1) row.appendChild(h(doc, 'span', 'num', `x${String(m.level)}`));
-      col.appendChild(row);
     }
+    col.appendChild(mlist);
     col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.stats')));
     const stats = h(doc, 'div', 'stat-list');
     deps.data.stats.forEach((s, i) => {
@@ -75,7 +84,7 @@ export function createPauseScreen(ctx: UiContext): Screen {
     el.textContent = '';
     focus.reset();
     const safe = h(doc, 'div', 'safe pause-safe');
-    const menu = h(doc, 'nav', 'menu panel');
+    const menu = h(doc, 'nav', 'menu panel glass');
     const resumeBtn = button(doc, 'pause-resume', t('ui.pause.resume'));
     const settingsBtn = button(doc, 'pause-settings', t('ui.pause.settings'));
     const abandonBtn = button(doc, 'pause-abandon', t('ui.pause.abandon'));

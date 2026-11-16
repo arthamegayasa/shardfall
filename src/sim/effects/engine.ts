@@ -11,6 +11,7 @@ import {
   cosTurns,
   sinTurns,
 } from '../../core/index.ts';
+import { ENEMY_CAPACITY } from '../capacity.ts';
 import {
   Action,
   HIT_KIND_CODES,
@@ -141,6 +142,37 @@ function toughest(ctx: SimCtx): number {
   return best;
 }
 
+/** Targets picked by a seeking split (module scratch: spawnProjectiles never nests). */
+const seekBuf = new Int32Array(ENEMY_CAPACITY);
+
+/** Nearest damageable Unlit within range, excluding one slot and the first n entries of seekBuf. */
+function nearestNotIn(
+  ctx: SimCtx,
+  x: number,
+  y: number,
+  range: number,
+  exclude: number,
+  n: number,
+): number {
+  const e = ctx.world.enemies;
+  let best = -1;
+  let bestD = range * range;
+  for (let s = 0; s < e.highWater; s++) {
+    if (s === exclude || !canDamage(ctx, s)) continue;
+    let used = false;
+    for (let k = 0; k < n; k++) if (seekBuf[k] === s) used = true;
+    if (used) continue;
+    const dx = e.x[s]! - x;
+    const dy = e.y[s]! - y;
+    const d = dx * dx + dy * dy;
+    if (d < bestD || (d === bestD && best < 0)) {
+      bestD = d;
+      best = s;
+    }
+  }
+  return best;
+}
+
 function spawnProjectiles(ctx: SimCtx, eff: EffectSim, depth: number, power: number): number {
   const h = hitNow(ctx);
   const pattern = pstr(eff.p, 'pattern', 'aimed');
@@ -169,10 +201,24 @@ function spawnProjectiles(ctx: SimCtx, eff: EffectSim, depth: number, power: num
   } else if (pattern === 'fan' && h !== undefined) {
     base = atan2Turns(h.y - ctx.world.player.y, h.x - ctx.world.player.x);
   }
+  // split with seek_range (Shard 2): the k nearest other Unlit within seek_range, the rest random
+  // directions (combat stream, effect-primitives 6.7).
+  let seeking = 0;
+  if (pattern === 'split' && eff.p['seek_range'] !== undefined) {
+    for (let k = 0; k < count && k < seekBuf.length; k++) {
+      const t = nearestNotIn(ctx, at.x, at.y, seekRange, exclude, seeking);
+      if (t < 0) break;
+      seekBuf[seeking++] = t;
+    }
+  }
   const s = ctx.shot;
   for (let k = 0; k < count; k++) {
     let a = base;
-    if (pattern === 'ring' || pattern === 'split') a = base + k / count;
+    if (k < seeking) {
+      const t = seekBuf[k]!;
+      a = atan2Turns(e.y[t]! - at.y, e.x[t]! - at.x);
+    } else if (seeking > 0) a = ctx.rng.combat.next();
+    else if (pattern === 'ring' || pattern === 'split') a = base + k / count;
     else if (pattern === 'fan')
       a = base + (k - (count - 1) * 0.5) * ctx.cfg.extraProjectileSpreadTurns;
     resetShotSpec(s);
@@ -362,7 +408,7 @@ function act(ctx: SimCtx, eff: EffectSim, entry: number, target: number, depth: 
         origin(ctx, eff, at, false);
         dropGlint(ctx, at.x, at.y, amount);
       } else if (mode === 'same') {
-        gainGlint(ctx, ctxAmount, true, false);
+        gainGlint(ctx, h?.amount ?? 0, true, false);
       } else if (mode === 'interest') {
         const div = pnum(eff.p, 'div', 0);
         if (div <= 0) return;
@@ -385,26 +431,25 @@ function act(ctx: SimCtx, eff: EffectSim, entry: number, target: number, depth: 
       break;
     }
     case Action.Repeat: {
+      if (h === undefined) return;
       const what = pstr(eff.p, 'what', 'area');
       const delay = sec(pnum(eff.p, 'delay', 0));
       const power = pnum(eff.p, 'power', 1);
       if (what === 'area') {
-        queuePending(
-          ctx,
-          Pending.Area,
-          eff,
-          delay,
-          areaCtx.dmg * power,
-          power,
-          areaCtx.radius,
-          areaCtx.x,
-          areaCtx.y,
-          -1,
-        );
+        // The area that raised on_area is the current hit level (no module state: nested
+        // dispatches cannot overwrite it, LP review M1).
+        queuePending(ctx, Pending.Area, eff, delay, h.final * power, power, h.radius, h.x, h.y, -1);
       } else if (what === 'rite') {
-        queuePending(ctx, Pending.Rite, eff, delay, 0, power, 0, areaCtx.x, areaCtx.y, -1);
-      } else if (h !== undefined) {
-        const other = nearestEnemy(ctx, h.x, h.y, pnum(eff.p, 'range', 0), target);
+        queuePending(ctx, Pending.Rite, eff, delay, 0, power, 0, h.x, h.y, -1);
+      } else {
+        // what=hit: target=same repeats on the hit target; nearest_other (default) on the nearest
+        // other Unlit within range.
+        const same = pstr(eff.p, 'target', 'nearest_other') === 'same';
+        const other = same
+          ? target >= 0 && canDamage(ctx, target)
+            ? target
+            : -1
+          : nearestEnemy(ctx, h.x, h.y, pnum(eff.p, 'range', 0), target);
         if (other < 0) return;
         queuePending(ctx, Pending.Hit, eff, delay, h.final * power, power, 0, h.x, h.y, other);
       }
@@ -444,10 +489,6 @@ function act(ctx: SimCtx, eff: EffectSim, entry: number, target: number, depth: 
   if (eff.emitsProc)
     ctx.events.push(SimEventType.ProcTriggered, p.x, p.y, eff.index, instances, eff.sourceRef);
 }
-
-// Event payloads for the trigger being dispatched (set right before dispatch; not state).
-let ctxAmount = 0;
-const areaCtx = { x: 0, y: 0, radius: 0, dmg: 0 };
 
 /** Dispatch a trigger to every active entry of that trigger, in effect order. */
 function dispatch(
@@ -523,7 +564,7 @@ export function createEffectHooks(): EffectHooks {
       h.sourceRef = sourceRef;
       h.x = ctx.world.player.x;
       h.y = ctx.world.player.y;
-      ctxAmount = amount;
+      h.amount = amount;
       dispatch(ctx, trigger, -1, 0, false, false);
       endHit(ctx);
     },
@@ -536,10 +577,7 @@ export function createEffectHooks(): EffectHooks {
       h.hitKind = HitKind.Area;
       h.procDepth = procDepth;
       h.final = dmg;
-      areaCtx.x = x;
-      areaCtx.y = y;
-      areaCtx.radius = radius;
-      areaCtx.dmg = dmg;
+      h.radius = radius;
       dispatch(ctx, Trigger.OnArea, -1, procDepth, false, false);
       endHit(ctx);
     },
@@ -564,8 +602,6 @@ export function createEffectHooks(): EffectHooks {
       h.x = x;
       h.y = y;
       h.isRite = true;
-      areaCtx.x = x;
-      areaCtx.y = y;
       dispatch(ctx, Trigger.OnRite, -1, 0, false, false);
       endHit(ctx);
     },
@@ -597,7 +633,8 @@ export function updateTimedEffects(ctx: SimCtx, moved: number): void {
       }
     }
   }
-  for (const trigger of TIMED) {
+  for (let ti = 0; ti < TIMED.length; ti++) {
+    const trigger = TIMED[ti]!;
     const s = a.start[trigger]!;
     const e = a.start[trigger + 1]!;
     for (let k = s; k < e; k++) {

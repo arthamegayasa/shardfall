@@ -13,13 +13,26 @@ import {
 } from 'three';
 import type { Texture } from 'three';
 import type { AtlasFrameRect } from '../../core/index.ts';
-import { SPRITE_FRAGMENT, SPRITE_INSTANCE_ATTRIBUTES, SPRITE_VERTEX } from '../shaders/index.ts';
+import { SPRITE_FRAGMENT, SPRITE_INSTANCE_ATTRIBUTES, spriteVertex } from '../shaders/index.ts';
 
 export interface SpriteBatchOptions {
   readonly capacity: number;
   /** L2 actors: depth test and write (order by feet). Other layers draw in submission order. */
   readonly depth: boolean;
   readonly renderOrder: number;
+  /**
+   * Scene lighting from LP (src/render/shaders/lighting.ts): the GLSL chunk and the live uniform
+   * objects (shared, updated by the renderer each frame). Omitted: sprites render at palette colour.
+   */
+  readonly lighting?: SpriteLightingSource;
+  /** Shared emissive gain uniform ({ value }), so one setter drives every batch. Default 1. */
+  readonly emissiveGain?: { value: number };
+}
+
+/** What a sprite batch needs from LP's SceneLighting (uniforms are shared objects, not copies). */
+export interface SpriteLightingSource {
+  readonly glsl: string;
+  readonly uniforms: Readonly<Record<string, { value: unknown }>>;
 }
 
 export interface SpriteBatch {
@@ -30,7 +43,8 @@ export interface SpriteBatch {
   begin(): void;
   /**
    * Add one sprite. (x, y) world floor u, h height u. anchorX/Y from the atlas entry.
-   * dx, dy extra px offset (y up). flash rgb is linear. Returns false when full.
+   * dx, dy extra px offset (y up). flash rgb is linear. dissolve 0..1 breaks the sprite up in whole
+   * texels; light = SpriteLight mode (0 none, 1 Unlit, 2 Kept). Returns false when full.
    */
   push(
     x: number,
@@ -47,6 +61,8 @@ export interface SpriteBatch {
     flashB: number,
     flashAmount: number,
     alpha: number,
+    dissolve?: number,
+    light?: number,
   ): boolean;
   end(): void;
   setResolution(width: number, height: number): void;
@@ -92,9 +108,11 @@ export function createSpriteBatch(
   const attrs: readonly InstancedBufferAttribute[] = [aPos, aRect, aOff, aParams, aFlash];
 
   const material = new ShaderMaterial({
-    vertexShader: SPRITE_VERTEX,
+    vertexShader: spriteVertex(opts.lighting?.glsl ?? null),
     fragmentShader: SPRITE_FRAGMENT,
     uniforms: {
+      ...(opts.lighting?.uniforms ?? {}),
+      uEmissiveGain: opts.emissiveGain ?? { value: 1 },
       uAtlas: { value: atlas },
       uAtlasSize: { value: new Vector2(atlasW, atlasH) },
       uRes: { value: new Vector2(1, 1) },
@@ -124,7 +142,24 @@ export function createSpriteBatch(
       n = 0;
       overflow = 0;
     },
-    push(x, y, h, rect, anchorX, anchorY, flip, dx, dy, fr, fg, fb, fa, alpha) {
+    push(
+      x,
+      y,
+      h,
+      rect,
+      anchorX,
+      anchorY,
+      flip,
+      dx,
+      dy,
+      fr,
+      fg,
+      fb,
+      fa,
+      alpha,
+      dissolve = 0,
+      light = 0,
+    ) {
       if (n >= cap) {
         overflow++;
         return false;
@@ -145,6 +180,8 @@ export function createSpriteBatch(
       off[p4 + 3] = dy;
       params[p4] = flip < 0 ? -1 : 1;
       params[p4 + 1] = alpha;
+      params[p4 + 2] = dissolve;
+      params[p4 + 3] = light;
       flash[p4] = fr;
       flash[p4 + 1] = fg;
       flash[p4 + 2] = fb;

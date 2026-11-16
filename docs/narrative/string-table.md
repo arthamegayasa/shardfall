@@ -1,14 +1,20 @@
 # Shardfall: Catatan String Table
 
-Pemilik: Writer (WR). Reviewer: CD (teks dan nama), UI dan LP (kunci dan parameter). Status: versi 1 (2026-11-17, tugas M1-08).
-File: `content/strings/en.json` (teks game, dibaca build data) dan `content/strings/id.json` (Indonesia, kunci sama, belum dibaca build). Format sesuai architecture.md 9.7: objek JSON datar, kunci bertitik `snake_case`, parameter `{nama}`, baris efek dipisah `\n`.
+Pemilik: Writer (WR). Reviewer: CD (teks dan nama), UI dan LP (kunci dan parameter). Status: versi 2 (2026-11-17, tugas M2-08). Versi 1: M1-08.
+File: `content/strings/en.json` (teks game, dibaca build data) dan `content/strings/id.json` (Indonesia, kunci sama, dimuat lazy lewat `?lang=id`). Format sesuai architecture.md 9.7: objek JSON datar, kunci bertitik `snake_case`, parameter `{nama}`, baris efek dipisah `\n`.
 
-## 1. Cakupan versi 1
+## 1. Cakupan versi 2
 
-- Semua kunci UI Lampiran A ui-spec, dengan istilah keputusan CD (bagian 3), plus beberapa kunci tambahan yang dibutuhkan layar yang sama.
-- Konten Tingkat A: kelas `lantern` dan Rite `flare_lantern`, 6 senjata, 12 Memento, tag (6 nama, efek ambang untuk Flame, Shard, Edge), 4 Unlit, `warden_hound`, `boss_lantern`, affix `hasted` dan `volley`, 21 stat, 14 kartu Temper, rarity, status, 3 bioma dengan kalimat pembuka, 8 baris the Glazier, teks akhir run (Kept Lost, Vitrine Steady, Light Kept).
-- Tambahan di luar Tingkat A: `weapon.tithe_coin` (nama pengganti wajib dari CD).
-- Semua `*_key` di CSV GD untuk baris Tingkat A sudah ada di `en.json` (dicek 2026-11-17). 89 kunci Tingkat B dan C belum ditulis (bagian 6).
+- Semua kunci UI Lampiran A ui-spec, dengan istilah keputusan CD (bagian 3), plus kunci tambahan untuk layar yang sama.
+- Konten Tingkat A: kelas `lantern` dan Rite `flare_lantern`, 6 senjata, 12 Memento, tag (6 nama, efek ambang Flame, Shard, Edge), 4 Unlit, `warden_hound`, `boss_lantern`, affix `hasted` dan `volley`, 21 stat, 14 kartu Temper, rarity, status, 3 bioma dengan kalimat pembuka, teks akhir run.
+- **Baru di versi 2 (M2-08):**
+  - Perbaikan "a 8% chance": `memento.coal_locket.desc` kini "Burns foes on {chance}% of hits." (benar untuk angka berapa pun).
+  - 22 baris the Glazier untuk 11 pemicu (bagian 2.1).
+  - Banner Warden, boss, akhir Pulse, dan nama dengan julukan (`ui.banner.*`), petunjuk kontrol Pulse 1 (`ui.hud.hint_*`).
+  - Nama tampil affix `affix.<id>.name` (opsional untuk UI, misalnya di banner Warden atau panel jeda).
+  - **Semua teks Tingkat B dan C** (91 kunci yang dirujuk data, ditambah deskripsi Unlit dan julukan): kelas `bell` (Chorister) dan `blade` (Vintner) beserta peran, pasif, Rite `great_toll` dan `glass_step`, senjata `echo_bell`, 18 Memento B dan C, efek ambang Echo, Ward, Trade, Unlit `exploder`, `summoner`, `mote`, `lobber`, Warden `warden_choir` dan `warden_bulwark`, boss `boss_bell` dan `boss_vine`, affix `veiled`, `blinking`, `brood`, `tar_trail`, `pulsing`, `bulwark`.
+  - Review 14 kunci yang ditambahkan LP di M1-09a (bagian 3.1).
+- Cek: build tingkat A, B, dan C lolos `check-strings.ts` dengan 0 error dan 0 peringatan (bagian 5).
 
 ## 2. Pola kunci
 
@@ -21,17 +27,44 @@ Mengikuti kolom `*_key` di data GD (data-schema v2) dan fixture LP. Bila berbeda
 | Senjata | `weapon.<id>.name`, `.desc` | |
 | Memento | `memento.<id>.name`, `.desc`, `.flavor` | |
 | Unlit, Warden, boss | `unlit.<id>` (nama), `unlit.<id>.desc`, `unlit.<id>.epithet` (Warden dan boss) | Nama tanpa akhiran, sesuai `name_key` di `enemies.csv` |
-| Affix | `affix.<id>` | |
+| Affix | `affix.<id>` (efek, dirujuk `affixes.csv`), `affix.<id>.name` (nama tampil, opsional) | |
 | Tag | `tag.<id>.name`, `tag.<id>.abbr` (singkatan 2 huruf kartu) | |
 | Efek ambang tag | `syn.<tag>.<ambang>` | Untuk "Unlocks: {effect}" di panel Tag |
 | Stat | `stat.<id>` | `display_key` di `stats.csv` |
 | Kartu Temper | `card.<nama>` | `desc_key` di `levelup.csv` |
 | Status, rarity | `status.<id>`, `rarity.<id>` | |
 | Bioma | `biome.<id>.name`, `biome.<id>.intro` | Intro tampil sekali saat Vitrine dimulai |
-| the Glazier | `glazier.<pemicu>` | Pemicu: `open`, `first`, `no_glint`, `reroll`, `fuse`, `after_temper`, `warden_fell`, `begin` |
+| the Glazier | `glazier.<pemicu>` dan varian `glazier.<pemicu>.<n>` | Bagian 2.1 |
+| Banner | `ui.banner.*` | Bagian 3.2 |
 | Akhir run penuh | `ending.light_kept.1` sampai `.4` | Satu baris per ketukan (lore-premise 8) |
 
-## 3. Perubahan kunci dari Lampiran A ui-spec (untuk UI)
+### 2.1 Baris the Glazier (potret toko, 1 baris, maks 45 karakter)
+
+Kunci dasar (`glazier.<pemicu>`) adalah varian 1. Varian tambahan memakai akhiran `.2`, `.3`. Semua kunci dasar versi 1 tetap ada (tidak ada kunci yang diganti nama).
+
+| Pemicu | Kunci | Kapan | Baris EN |
+|---|---|---|---|
+| `first` | `glazier.first` | Toko pertama di run | I knew the last Kept here. Same eyes. |
+| `boss_next` | `glazier.boss_next`, `.2` | Toko sebelum Pulse boss | The next crack is the deepest. Mind it. / Something large is drinking the light. |
+| `warden_fell` | `glazier.warden_fell`, `.2` | Toko setelah Warden kalah | A Warden fell. I heard it three cracks away. / That Warden swallowed much. You spilled it. |
+| `low_hp` | `glazier.low_hp`, `.2` | Toko dibuka dengan HP di bawah ambang HP rendah UI (30%) | You are cracking, Kept. I can hear it. / Careful. You are more crack than glass. |
+| `after_temper` | `glazier.after_temper` | Toko setelah Temper | You came back brighter. Good. |
+| `open` | `glazier.open`, `.2`, `.3` | Toko dibuka (cadangan) | Mind the edges. Everything I sell has one. / Still lit, Kept? Then let us deal. / Pieces from other Vitrines. Look closely. |
+| `bought` | `glazier.bought`, `.2`, `.3` | Setelah membeli | It suits you. Most things do, briefly. / Carry it well. Its owner could not. / Done. Glass remembers who paid. |
+| `reroll` | `glazier.reroll`, `.2`, `.3` | Setelah reroll | Another tray. There are always more cracks. / Not that tray? I have others. / Fine. I will reach into another crack. |
+| `no_glint` | `glazier.no_glint`, `.2` | Beli atau reroll ditolak karena Glint kurang | Not enough Glint. The dark has plenty. / Come back heavier. The dark is generous. |
+| `fuse` | `glazier.fuse` | Setelah Fuse | Two alike melt into one. Glass remembers. |
+| `begin` | `glazier.begin`, `.2` | Tombol Begin Pulse ditekan (tampil singkat saat keluar) | Go. The light is drawing breath. / Go. Keep the light a little longer. |
+
+Aturan pilih [Saran untuk UI]:
+- Saat toko dibuka, ambil pemicu pertama yang berlaku menurut urutan tabel: `first`, `boss_next`, `warden_fell`, `low_hp`, `after_temper`, `open`.
+- Saat aksi (`bought`, `reroll`, `no_glint`, `fuse`, `begin`), baris berganti ke pemicu aksi itu.
+- Varian dipilih deterministik di presentasi (misalnya penghitung per pemicu yang berputar), **bukan** RNG sim, dan tidak pernah baris yang sama dua kali berturut-turut (lore-premise 7).
+- Pemilihan varian membaca daftar kunci yang ada (`glazier.<pemicu>`, `.2`, `.3`, berhenti di kunci pertama yang tidak ada), jadi WR boleh menambah varian tanpa perubahan kode.
+
+## 3. Kunci UI
+
+### 3.1 Perubahan kunci dari Lampiran A ui-spec (untuk UI, dari versi 1)
 
 | Lampiran A | Kunci versi 1 | Teks |
 |---|---|---|
@@ -49,16 +82,30 @@ Mengikuti kolom `*_key` di data GD (data-schema v2) dan fixture LP. Bila berbeda
 | `ui.hud.hint_move` | sama | "{keys} Move" (binding aktif, ui-spec 6.2) |
 | `ui.settings.shop_timer` | sama | Glazier Timer (kata Shop terlarang) |
 
-Kunci baru: `ui.title.version`, `ui.credits.title`, `ui.error.webgl2` (dipakai `src/app/boot.ts`), `ui.common.glint`, `ui.class.passive`, `ui.hud.hp`, `ui.hud.held` (bar HP Warden saat Pulse ditahan, CD K3), `ui.levelup.level`, `ui.levelup.stat_change`, `ui.reward.subtitle`, `ui.confirm.reset_controls`, `ui.confirm.reset_yes`, `ui.settings.quality_low|medium|high`, `ui.settings.remap_gameplay|remap_menu`, `ui.end.won_sub`, `ui.end.steady`, `ui.end.steady_sub`, `ui.end.next_vitrine`.
+Review 14 kunci tambahan LP (M1-09a), semuanya dipertahankan: `ui.action.fuse` (Fuse), `ui.action.sell` (Sell), `ui.common.denied` (Not possible now), `ui.credits.body` (placeholder kredit, diganti saat kredit final M5), `ui.settings.mono` (Mono Audio), `ui.settings.reduce_repeats` (Reduce Repeats), `ui.settings.ui_volume` (Interface), `ui.shop.reroll_free` (Free), `ui.shop.sell_for` (Sell for {n} Glint), `ui.tier.1` sampai `.4` (I sampai IV), `ui.title.name` (Shardfall, judul kerja). Semua lolos batas dan tanpa kata terlarang. Satu perbaikan ID: `ui.shop.sell_for` kini "Jual seharga {n} Kerlip" (glosarium: Glint = Kerlip).
+
+### 3.2 Kunci UI baru versi 2 (usulan untuk Lampiran A ui-spec)
+
+| Kunci | Teks EN | Pakai |
+|---|---|---|
+| `ui.hud.hint_pause` | {key} Pause | Petunjuk kontrol Pulse 1 |
+| `ui.hud.hint_auto` | Arms fire on their own | Petunjuk Pulse 1: serangan otomatis |
+| `ui.hud.hint_glint` | Pass near Glint to gather it | Petunjuk Pulse 1: memungut |
+| `ui.banner.pulse_steady` | Pulse {n} Steady | Banner akhir Pulse (fase `pulseClear`), selaras "Vitrine Steady" |
+| `ui.banner.warden` | A Warden Wakes | Baris kecil di atas nama Warden |
+| `ui.banner.boss` | The Deepest Crack Opens | Baris kecil di atas nama boss (kata "boss" tidak tampil) |
+| `ui.banner.name_epithet` | {name}, {epithet} | Nama plus julukan di banner kedatangan, contoh "Brass Collar, the Thrice-Leaping" |
+
+Kunci yang sudah ada dan dipakai banner: `ui.banner.pulse_held` (Pulse {n} Held), `ui.hud.held` (Held), `unlit.<id>` dan `unlit.<id>.epithet`. Petunjuk Pulse 1 yang sudah ada: `ui.hud.hint_move`, `ui.hud.hint_rite`.
 
 ## 4. Parameter teks efek (diisi dari data, bukan ditulis di teks)
 
-Nilai persen ditulis sebagai angka bulat tanpa tanda persen (tanda ada di teks). Pecahan data (0.08) dikali 100.
+Nilai persen ditulis sebagai angka bulat tanpa tanda persen (tanda ada di teks). Pecahan data (0.08) dikali 100. Sumber: `src/content/rules/text-params.ts`.
 
 | Kunci | Parameter | Sumber data |
 |---|---|---|
 | `class.lantern.passive` | `{burn_pct}` | `effects.csv` `class_lantern_1` value 1.3, tampil (value - 1) x 100 = 30 |
-| `rite.flare_lantern.desc` | `{dmg}` | `rites.csv` `dmg` (x proc_scale bila UI menampilkan nilai berskala) |
+| `rite.*.desc` | `{dmg}` | `rites.csv` `dmg` |
 | `weapon.*.desc` | `{dmg}`, `{dmg2}`, `{count}` | Kolom `weapons.csv` dengan nama sama, sesudah tier dan stat |
 | `weapon.chain_spark.desc` | `{jumps}` | `params.jumps` (ditambah bonus tier) |
 | `memento.coal_locket.desc` | `{chance}` | `effects.csv` `chance` x 100 |
@@ -71,22 +118,63 @@ Nilai persen ditulis sebagai angka bulat tanpa tanda persen (tanda ada di teks).
 | `memento.whetstone.desc` | `{crit}` | `stat_mod value` x tumpukan |
 | `memento.duelist_ribbon.desc` | `{pct}` | `hit_mod value` x 100 |
 | `memento.headsman_hook.desc` | `{pct}` | `target_hp_below` x 100 |
+| `memento.tuning_fork.desc` | `{duration}` | `apply_status duration` |
+| `memento.rite_chime.desc` | `{duration}` | `buff duration` |
+| `memento.iron_thimble.desc` | `{armor}` | `stat_mod value` |
+| `memento.glass_aegis.desc` | `{dmg}` | `spawn_area dmg` |
+| `memento.dust_hourglass.desc` | `{chance}`, `{dmg}` | `chance` x 100, `spawn_projectile dmg` |
+| `memento.magpie_tin.desc`, `memento.music_box.desc` | `{chance}` | `chance` x 100 |
+| `memento.grinding_wheel.desc` | `{nth}` | `every_nth` |
+| `memento.wick_charm.desc` | `{dmg}` | `spawn_area dmg` |
+| `memento.cracked_mirror.desc` | `{count}`, `{dmg}` | `spawn_projectile count`, `dmg` |
+| `memento.folded_letter.desc` | `{rite_haste}` | `stat_mod value` |
+| `memento.echo_shell.desc` | `{rite_charges}` | `stat_mod value` |
+| `memento.patched_cloak.desc` | `{hp_regen}` | `stat_mod value` |
 | `syn.flame.2` | `{chance}` | `chance` x 100 |
-| `syn.flame.6` | `{interval}` | `syn_flame_6b interval` |
+| `syn.flame.6`, `syn.shard.6`, `syn.echo.6` | `{interval}` | `interval` |
 | `syn.shard.2`, `syn.shard.4` | `{count}` | `count` |
-| `syn.shard.6` | `{interval}` | `interval` |
 | `syn.edge.2` | `{pct}` | `syn_edge_2a value` x 100 |
 | `syn.edge.6` | `{stacks}` | `max_stacks` |
+| `syn.ward.2`, `syn.ward.4` | `{barrier_max}`, `{barrier_recharge}` | `stat_mod value` |
+| `syn.ward.6` | `{attack_speed_pct}` | `syn_ward_6b value` |
+| `syn.trade.6` | `{pickup_radius_pct}` | `syn_trade_6b value` |
 | `card.*` | `{value}` | Kolom rarity `levelup.csv` |
 
 Memento tanpa angka di teks (`torch_glove`, `smolder_boots`) sengaja dibiarkan tanpa parameter: angkanya tidak membantu keputusan di kartu.
 
+### 4.1 Angka yang masih ditulis langsung di teks (belum ada parameter di `text-params.ts`)
+
+Bila GD mengubah angka ini di data, WR wajib memperbarui teks. Usulan untuk LP: tambah parameter bila sempat.
+
+| Kunci | Angka tertulis | Sumber data |
+|---|---|---|
+| `class.bell.passive` | Mark 2s | `class_bell_1 value` |
+| `class.blade.passive` | 1 HP, 3 HP per detik | `class_blade_1 amount`, `max_per_sec` (jarak 2.5 u ditulis "Close") |
+| `rite.great_toll.desc` | (tanpa angka selain `{dmg}`) | |
+| `rite.glass_step.desc` | 3 hit | `glass_step crit_hits` |
+| `weapon.echo_bell.desc` | sekali, separuh kekuatan | `echo_count`, `echo_frac` |
+| `memento.rite_chime.desc` | 1 Barrier, +25% | `charges`, `attack_speed_pct` |
+| `memento.glass_aegis.desc` | +1 Barrier | `charges` |
+| `memento.collector_pin.desc` | 1 HP, 4 HP per detik | `amount`, `max_per_sec` |
+| `memento.lucky_button.desc` | 1 Glint | `amount` |
+| `memento.haggler_seal.desc` | 10%, 1 Glint | `price_mult`, `reroll_delta` |
+| `memento.pyre_bell.desc` | 10% | `spread_chance` |
+| `memento.wick_charm.desc` | 3s | `icd` |
+| `memento.patched_cloak.desc` | 4s | `time_since_hurt` |
+| `memento.ledger_page.desc` | 10 Glint, plus 3 | `base`, `per_t` (t dibaca pemain sebagai nomor Pulse) |
+| `syn.echo.2`, `syn.echo.4` | 0.5s, 35%; 1s, separuh | `delay`, `power` |
+| `syn.ward.6` | +2% per Armor | `convert ratio` |
+| `syn.trade.2`, `.4`, `.6` | 1 per 8, maks 12; 1 tawaran; 1% per 10, maks 50% | `div`, `cap`, `slots`, `ratio`, `cap` |
+| `affix.*` | 6s, 3, 7s, 5s | `affixes.csv` |
+
 ## 5. Batas dan cek
 
 - Batas (style guide 4.2, ui-spec 11): nama senjata, Memento, Rite maks 3 kata dan 18 karakter; Unlit maks 2 kata; Warden dan boss maks 3 kata plus julukan; kelas 1 kata; efek maks 2 baris x 40 karakter setelah parameter diisi; flavor 1 baris maks 70 karakter; baris the Glazier maks 45 karakter.
-- Cek Writer 2026-11-17: semua kunci `en.json` lolos dengan setiap parameter diisi 4 digit (lebih berat dari nilai data terpanjang), tanpa em dash atau en dash, tanpa kata terlarang style guide 4.3. Skrip cek sementara di luar repo; cek resmi adalah `check-strings.ts` milik LP (belum ada di repo saat ini).
-- `id.json` tidak diwajibkan lolos batas EN. Saat ini satu-satunya selisih adalah nama kelas "Penyulut Lentera" (2 kata).
+- Cek resmi: `tools/data/lib/check-strings.ts` (LP), jalan di `npm run data:build` dan `npm run data:check` untuk tingkat build (A). Hasil 2026-11-17: 0 error, 0 peringatan.
+- Tingkat B dan C dicek WR dengan memanggil `checkStrings` yang sama pada data hasil `buildRaw` tingkat B dan C (skrip sementara di luar repo): 0 error, 0 peringatan untuk keduanya.
+- `id.json` tidak diwajibkan lolos batas EN. Selisih yang diketahui: nama kelas "Penyulut Lentera" dan "Penyanyi Kor", "Pekebun Anggur" (2 kata), dan beberapa baris efek ID lebih dari 40 karakter. Kunci dan parameter ID sama dengan EN (dicek build, 0 peringatan).
 
-## 6. Belum ditulis (Tingkat B dan C, rencana M2 dan M3)
+## 6. Belum ditulis
 
-Dirujuk `content/data/*.csv` tetapi baris datanya di atas Tingkat A, jadi tidak memengaruhi build A: kelas `bell` dan `blade`, Rite `great_toll` dan `glass_step`, senjata `echo_bell`, 18 Memento Tingkat B dan C, efek ambang Echo, Ward, Trade, Unlit `exploder`, `summoner`, `mote`, `lobber`, Warden `warden_choir` dan `warden_bulwark`, boss `boss_bell` dan `boss_vine`, affix `veiled`, `blinking`, `brood`, `tar_trail`, `pulsing`, `bulwark`. Build tingkat B atau C akan gagal cek kunci sampai ini ditulis.
+- Teks M3: kandidat judul rilis (`docs/narrative/title-candidates.md`), meta-progression (`ui.keeping.*` detail unlock, nama paket Memento `pack_memento_*` bila UI menampilkannya), transisi bioma.
+- Nama landmark arena tidak tampil di game; tidak butuh kunci.

@@ -106,8 +106,15 @@ export const NO_EVENTS: SimEventReader = {
 
 export interface PreviewScene {
   readonly world: FakeWorld;
-  /** Damage events for two frames: older hits first, fresh hits second. */
+  /** Damage events for two frames: older hits first, fresh hits second (one crit). */
   readonly events: readonly [SimEventReader, SimEventReader];
+}
+
+/** One frame of arbitrary events (type, x, y, a, b). */
+export function eventsOf(
+  list: readonly (readonly [number, number, number, number, number])[],
+): SimEventReader {
+  return events(list);
 }
 
 function events(
@@ -151,6 +158,8 @@ export function createPreviewScene(): PreviewScene {
       typeIndex: type,
       rank,
       facing: x < 0 ? 1 : -1,
+      // Long alive, so the emerge dissolve (first 18 ticks) is over.
+      ageTicks: 600,
       ...columns,
     });
   };
@@ -166,7 +175,8 @@ export function createPreviewScene(): PreviewScene {
   pack.forEach(([x, y], i) => {
     enemy(E.swarmer, EnemyRank.Normal, x, y, { dx: 0.04, hitFlashTicks: i === 2 ? 2 : 0 });
   });
-  enemy(E.charger, EnemyRank.Normal, 6, -5, { dx: 0 });
+  // Charger winding up its charge (AiState Windup = 2) at the start of the charge telegraph line.
+  enemy(E.charger, EnemyRank.Normal, 6, -5, { dx: 0, aiState: 2 });
   enemy(E.charger, EnemyRank.Normal, 9.5, -2, { dx: -0.03, statusMask: StatusBit.Burn });
   enemy(E.shooter, EnemyRank.Normal, -11, 5);
   enemy(E.shooter, EnemyRank.Normal, 11.5, 6);
@@ -195,6 +205,9 @@ export function createPreviewScene(): PreviewScene {
   glints.forEach(([x, y], i) => {
     put(pk, i, { ...at(x, y), kind: 0, amount: 1 });
   });
+  // Two Glint already pulled toward the player (magnetized, moving fast): they draw a gold tail.
+  put(pk, glints.length, { ...at(-1.2, 1.6, 0.12, -0.06), kind: 0, amount: 1, magnetized: 1 });
+  put(pk, glints.length + 1, { ...at(1.4, 2.2, -0.1, -0.1), kind: 0, amount: 1, magnetized: 1 });
 
   // Player shots: one or more per Tier A weapon.
   const ps = world.playerShots;
@@ -273,14 +286,23 @@ export function createPreviewScene(): PreviewScene {
   });
   world.dangerAreas = da;
 
-  // Player zone (L3): Lantern Bolt blast.
+  // Player zones (L3): a Smolder-style trail patch (no edge) and the Festival Flare Rite zone.
   const pz = areas(4);
   put(pz, 0, {
     ...at(3.4, 1.8),
     shape: AreaShape.Circle,
     radius: 1.3,
+    sourceRef: encodeSource(SourceKind.Effect, 0),
     ticksLeft: 30,
     ticksTotal: 60,
+  });
+  put(pz, 1, {
+    ...at(-3, -3.4),
+    shape: AreaShape.Circle,
+    radius: 3,
+    sourceRef: encodeSource(SourceKind.Rite, 0),
+    ticksLeft: 200,
+    ticksTotal: 240,
   });
   world.playerZones = pz;
 

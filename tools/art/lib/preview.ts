@@ -79,12 +79,16 @@ function toGray(img: Image8): Image8 {
 
 type Row = 'color' | 'silhouette' | 'gray';
 
-/** One cell per frame of every animation, three rows, bottom-centre in each frame box, upscaled x scale. */
+/**
+ * One cell per frame of every animation, three rows (colour, silhouette, grayscale), bottom-centre in
+ * each frame box, upscaled x scale. perLine wraps long sets into several bands of three rows.
+ */
 export function renderSheet(
   compiled: readonly CompiledSprite[],
   palette: PaletteDef,
   scale = 4,
   gap = 4,
+  perLine = Number.POSITIVE_INFINITY,
 ): Image8 {
   const rows: readonly Row[] = ['color', 'silhouette', 'gray'];
   const bg: Record<Row, Rgb> = {
@@ -96,26 +100,34 @@ export function renderSheet(
   const cells = compiled.flatMap((c) =>
     Object.values(c.anims).flatMap((a) => a.frames.map((f) => ({ c, f }))),
   );
-  const rowH = Math.max(...cells.map((x) => x.c.src.frameH));
-  const width = gap + cells.reduce((s, x) => s + x.c.src.frameW + gap, 0);
-  const height = gap + rows.length * (rowH + gap);
+  const lines: (typeof cells)[] = [];
+  for (let i = 0; i < cells.length; i += Math.min(cells.length, perLine))
+    lines.push(cells.slice(i, i + Math.min(cells.length, perLine)));
+  const rowH = Math.max(1, ...cells.map((x) => x.c.src.frameH));
+  const lineW = (line: typeof cells): number =>
+    gap + line.reduce((s, x) => s + x.c.src.frameW + gap, 0);
+  const width = Math.max(gap * 2, ...lines.map(lineW));
+  const bandH = rows.length * (rowH + gap);
+  const height = gap + Math.max(1, lines.length) * (bandH + gap);
   const sheet = createImage(width, height, tokenRgb(palette, 'night'));
-  rows.forEach((kind, ri) => {
-    const y0 = gap + ri * (rowH + gap);
-    let x = gap;
-    for (const { c, f } of cells) {
-      const fw = c.src.frameW;
-      const fh = c.src.frameH;
-      fillRect(sheet, x, y0 + rowH - fh, fw, fh, bg[kind]);
-      let img: Image8 = {
-        w: f.w,
-        h: f.h,
-        data: frameToRgba(f, palette, kind === 'silhouette' ? ink : undefined),
-      };
-      if (kind === 'gray') img = toGray(img);
-      blit(sheet, img, x + Math.floor((fw - f.w) / 2), y0 + rowH - f.h);
-      x += fw + gap;
-    }
+  lines.forEach((line, li) => {
+    rows.forEach((kind, ri) => {
+      const y0 = gap + li * (bandH + gap) + ri * (rowH + gap);
+      let x = gap;
+      for (const { c, f } of line) {
+        const fw = c.src.frameW;
+        const fh = c.src.frameH;
+        fillRect(sheet, x, y0 + rowH - fh, fw, fh, bg[kind]);
+        let img: Image8 = {
+          w: f.w,
+          h: f.h,
+          data: frameToRgba(f, palette, kind === 'silhouette' ? ink : undefined),
+        };
+        if (kind === 'gray') img = toGray(img);
+        blit(sheet, img, x + Math.floor((fw - f.w) / 2), y0 + rowH - f.h);
+        x += fw + gap;
+      }
+    });
   });
   return upscale(sheet, scale);
 }

@@ -1,6 +1,6 @@
 # Shardfall: Arsitektur Teknis
 
-Pemilik: Lead Programmer (LP). Status: **versi 2.2, 2026-11-17: kontrak dibekukan di kode oleh M1-01, tambahan aditif M1-09a (lihat bagian 6 dan 19)**. Sumber kebenaran tunggal untuk M1.
+Pemilik: Lead Programmer (LP). Status: **versi 2.3, 2026-11-17: kontrak dibekukan di kode oleh M1-01, tambahan aditif M1-09a dan M2-02 (lihat bagian 6, 7.8, dan 19)**. Sumber kebenaran tunggal untuk M1.
 Dokumen terkait: `docs/tech/coding-standards.md` (aturan kode), `docs/reviews/M0-lp.md` (putusan review dan arahan perbaikan per pemilik), `docs/pillars.md`, `docs/style-guide.md`, `docs/gdd.md` dan `docs/systems/*.md` (GD: isi dan arti data), `docs/levels/arena-design.md` (LD), `docs/art-pipeline.md` (AD), `docs/audio-direction.md` dan `docs/audio-list.md` (AU), `docs/ui/ui-spec.md` (UI), `docs/qa/test-plan.md` (QA).
 
 Penanda: **[Beku M1]** bagian yang dibekukan untuk M1: perubahan hanya lewat LP, dikumpulkan dan diputuskan sekali per putaran, lalu dicatat di bagian 19. **[Wajib]** tidak boleh dilanggar tanpa persetujuan LP. **[Saran]** boleh disesuaikan pemilik wilayah dengan alasan tertulis. **[Asumsi]** dikalibrasi di M1 atau M2.
@@ -1190,11 +1190,34 @@ Keputusan sampling [Wajib, permintaan AD art-direction 8 dan dukungan CD diterim
 | Kilau kaca tepi | mati | hidup | hidup |
 | Vignette dan grading | hidup | hidup | hidup |
 | Titik cahaya dinamis | 4 (4 pertama di JSON arena) | 8 | 8 |
-| Shadow map dekorasi | mati | mati | hidup |
+| Shadow map dekorasi (statis, dirender sekali per arena) | mati | 1024, 1 tap | 2048, PCF 4 tap |
 | Batas partikel suasana dan VFX | 300 | 600 | 1000 |
 
 - Default **Sedang** (target P-REF). Rendah tidak mengubah kode warna, lapisan, atau keterbacaan (P3-f).
-- "Kurangi efek" terpisah dari kualitas. `screenShake` 0 sampai 100 mengalikan amplitudo getar.
+- "Kurangi efek" terpisah dari kualitas: mematikan DoF, bloom, kilau kaca, dan getar layar, melunakkan kilat Pulse (40%), partikel suasana 30%. `screenShake` 0 sampai 100 mengalikan amplitudo getar.
+- M2-02: shadow map dekorasi hidup di Sedang karena statis (dirender sekali per `setArena` atau ganti kualitas), jadi biayanya hanya satu sampel per piksel lingkungan. Logika di `src/render/pipeline/quality.ts` (dites).
+
+### 7.8 Implementasi M2-02 (pipeline HD-2D)
+
+Modul (pemilik LP kecuali disebut):
+
+| Modul | Isi |
+|---|---|
+| `src/render/pipeline/renderer.ts` | Urutan frame: cahaya dan lingkungan, shadow map statis bila kotor, scene L0 sampai L3 ke `sceneRT` (HalfFloat plus `DepthTexture`), L4 ke `dangerRT`, mask pemain, post, komposit |
+| `src/render/pipeline/scene-lighting.ts`, `lights.ts` | Uniform cahaya bersama: kunci, isi, ambient (warna dinormalkan ke luminans 1, hanya 20% hue ke permukaan), titik lentera dari data arena (posisi `[x, h, y]`, `intensityMul`, `flicker`) dengan warna dan jangkauan dari palet, `uCenterLevel` untuk menormalkan cahaya sprite |
+| `src/render/shaders/lighting.ts` | Chunk GLSL `SCENE_LIGHTING_GLSL`: `sfLight(p, n)`, `sfShadow(p)`, `sfSpriteLight(feet, minLevel)` |
+| `src/render/env/*` | Diorama dari `ArenaDef` saat runtime: lantai satu quad (tile AD, texel 1/16 x 1/10 u, varian, cermin, nada per batu), bibir, tanah luar, kabut tepi, rim kaca, dekorasi per `kind` LD (primitif low-poly digabung jadi satu draw call), rintangan (tanpa tulis depth, LD R8), latar langit dan kubah kaca pecah, partikel suasana dari `ambient.particles`, tekstur pixel prosedural dari token bioma |
+| `src/render/post/*`, `src/render/shaders/post-*.ts` | Bloom (1/2, dan 1/4 di Tinggi), tilt-shift 2 pass (radius dari baris referensi, `band.ts` dites), komposit fisik |
+| `src/render/pipeline/danger-rules.ts` | K3: isian bertumpuk dibatasi 35% di komposit (piksel `dangerRT` premultiplied dengan alpha di bawah 1 dianggap isian), deteksi bahaya menutupi pemain |
+| `src/render/pipeline/shake.ts`, `pulse-light.ts`, `damage-cap.ts` | Getar layar (trauma, offset piksel virtual bulat), cahaya buka dan tutup Pulse, batas angka damage (dipakai `vfx/damage-numbers.ts` AD) |
+
+Antarmuka cahaya sprite (dipakai AD): `createEntityLayers(..., { lighting: { glsl: SCENE_LIGHTING_GLSL, uniforms: lighting.uniforms } })`; shader sprite memanggil `sfSpriteLight(iPos, 0.7)` untuk Kept dan `0.0` untuk Unlit, per instance di vertex shader (warna konstan per quad, piksel tetap tajam). Texel emisif sprite dikali `entities.emissiveGain` (renderer: 1,6 saat bloom hidup, 1 saat mati) agar melewati ambang bloom 1,0.
+
+Siluet tembus pemain: pemain digambar ulang sendiri ke `maskRT` (r = cakupan, g = tertutup scene yang lebih dekat, dari `DepthTexture`). Komposit menggambar outline `kept-white` 1 px plus cincin kaki `kept-cyan` di atas L4 bila `playerCoveredByDanger`, dan outline `kept-cyan` 50% di sekitar bagian yang tertutup aktor besar. Butuh hook `EntityLayers.playerSprite` dari AD (opsional; tanpa hook hanya cincin kaki).
+
+Render perangkat lunak (SwiftShader di e2e headless dan CI, llvmpipe): dideteksi dari `WEBGL_debug_renderer_info`, kualitas dibatasi Rendah dan kanvas dirender di resolusi virtual lalu diperbesar CSS `image-rendering: pixelated` (title 87 ms menjadi 31 ms per frame di SwiftShader). Render yang dipanggil beruntun dalam kurang dari 4 ms (loop `step` e2e) digabung menjadi satu render di animation frame berikutnya agar antrean GPU tidak menumpuk. Build memakai plugin `tools/build/glsl-minify.ts` (komentar dan indentasi template `/* glsl */` dibuang) demi anggaran bundle.
+
+Ekstensi tes: objek renderer punya `debug.overrideQuality(partial | null)` (bukan bagian kontrak `Renderer` beku) untuk uji S-6 / LD-T03 (DoF mati, bloom tetap). Bukti: `tests/render/hd2d/capture.ts` plus `measure.py --dof` memberi 0 piksel berbeda di x 64 sampai 576, y 54 sampai 324.
 
 ---
 
@@ -1515,3 +1538,4 @@ Selama skrip atau tool milik peran lain belum ada di M1, `check` melewatinya den
 | 2026-11-16 | 2 | Review M0 (M0-11b): Memento, konvensi id bioma dan arena, kompensasi gerak vertikal, pass akhir bilinear untuk bloom dan blur, satuan 16 px per u, pitch asin(0,625), skala dari kotak wajib LD, fase `reward`, kolom event `c`, event baru, K1 sampai K11, Settings final, hook e2e final, format arena dan CSV final, skrip final. Detail per peran di `docs/reviews/M0-lp.md` | Menyelaraskan semua dokumen M0 sebelum M1 |
 | 2026-11-17 | 2.1 | M1-01, kontrak dibekukan di kode (daftar file di awal bagian 6). Penyesuaian: (1) `CreateRenderer` dan `CreateAudio` menerima `GameData` agar index padat di `WorldView` dan event bisa dipetakan ke id sprite, VFX, dan cue; (2) `core/contracts` boleh `import type` `GameData` dari `src/content` (pengecualian arah import, tipe saja); (3) kontrak ber-DOM dipisah ke `src/core/dom.ts`; (4) factory ditulis sebagai tipe; (5) `PaletteDef.point` menerima `rangeU` atau `radiusPx` sampai AD memigrasi palet; (6) tiga konstanta tambahan: `MAX_FRAME_DELTA_MS`, `REF_ORIGIN_X/Y`, `ARENA_MAX_HALF_W_U/D_U`; (7) kunci GameData diturunkan otomatis dari nama kolom CSV: camelCase plus akhiran satuan (`cooldown` jadi `cooldownTicks`, `speed` jadi `speedUPerTick`, `range` jadi `rangeU`), `final` jadi `isFinal` | Integrasi blok pembuka M1 |
 | 2026-11-17 | 2.2 | M1-09a, integrasi dan review M1. Tambahan aditif: (1) event `MusicPressureChanged: 70` (Q21) dan emisi `PlayerHpLowChanged` di sim (`src/sim/systems/signals.ts`), ambang HP rendah konstanta presentasi `LOW_HP_FRAC = 0.3` di `src/core/constants.ts` (ui-spec S03, GD boleh memindah ke `config.csv`); (2) `Sim.poolOverflow`; (3) `Ui.setResumeCountdown(n)` untuk hitung mundur 900 ms (state app); (4) `DebugCommand` `debug.xp`, dan `debug.endPulse` membunuh Warden hidup lebih dulu; (5) tick sim dimulai ulang di `run.start` (jam relatif run: replay browser cocok dengan Node, state run yang menyimpan tick absolut tidak bergantung lama layar judul); (6) hash state memakai kecocokan serial (bukan nilai serial) untuk memori pierce; (7) `Sim.load` memvalidasi bentuk save (`corrupt`, bukan throw) dan memancarkan `PhaseChanged` di step berikutnya; (8) registri `params` diisi (GP spec 3, data-schema 5, effect-primitives 5); (9) validasi data: peran `warden_id`/`boss_id` dan kesamaan `content_tier` `wave_spawns` dengan `waves`; (10) cek string resmi (`tools/data/lib/check-strings.ts`) di pipeline data; (11) parameter teks efek dari data (`src/content/rules/text-params.ts`), satu sumber untuk UI dan cek; (12) profil default app `run_a` (bukan `run_a_m1`, yang tanpa Warden dan boss); (13) `?lang=id` memuat `content/strings/id.json` secara lazy dengan cadangan EN; (14) `content_tier` opsional di `effects`, `waves`, `wave_spawns` disetujui. Detail di `docs/reviews/M1-lp.md` | Game bisa dimainkan end-to-end, pertanyaan teknis peran M1 ditutup |
+| 2026-11-17 | 2.3 | M2-02, pipeline HD-2D (bagian 7.8). Aditif: (1) tabel kualitas 7.7: shadow map dekorasi statis di Sedang (1024) dan Tinggi (2048 PCF); (2) antarmuka cahaya sprite `SCENE_LIGHTING_GLSL` plus `SceneLighting.uniforms`, `emissiveGain`; (3) `renderer.debug.overrideQuality` untuk tes; (4) hook opsional `EntityLayers.playerSprite` (AD) untuk siluet tembus; (5) aturan K3 di komposit | Vertical slice HD-2D |

@@ -1,0 +1,29 @@
+{
+  "id": "icon-tag-ward",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Ward tag: a blue shield. Key: flat top, pointed bottom.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "wccccb",
+          "cBBBBb",
+          "cBwBBb",
+          ".cBBb.",
+          "..cb.."
+        ]
+      ]
+    }
+  }
+}

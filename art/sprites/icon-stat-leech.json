@@ -1,0 +1,38 @@
+{
+  "id": "icon-stat-leech",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Leech: a blue droplet flowing down into a blue heart. Key: teardrop top-left feeding a heart.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..w...........",
+          ".wc...........",
+          ".cBb..........",
+          "wcBBb.........",
+          "cBBBb.........",
+          "cBBBb.........",
+          ".bbb.c........",
+          ".....cc..cc...",
+          "....cwcBcwcB..",
+          "....cwBBBBBb..",
+          "....cBBBBBBb..",
+          ".....BBBBBb...",
+          "......BBBb....",
+          ".......Bb....."
+        ]
+      ]
+    }
+  }
+}

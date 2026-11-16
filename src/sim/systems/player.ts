@@ -20,14 +20,29 @@ import { ShotMode, Status } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { statOf } from '../ctx.ts';
 import { pnum, pstr } from '../sim-data.ts';
-import { applyHit, applySlow, areaDamage, beginHit, canDamage, endHit } from './combat.ts';
+import {
+  applyHit,
+  applySlow,
+  areaDamage,
+  beginHit,
+  canDamage,
+  endHit,
+  riteLanded,
+} from './combat.ts';
 import { areaScale, resetShotSpec, spawnPlayerShot } from './projectiles.ts';
 
 const tmp: Point = { x: 0, y: 0 };
 
 /** Movement speed in u/tick: config base x (1 + move_speed / 100). */
 export function moveSpeed(ctx: SimCtx): number {
-  return ctx.cfg.playerBaseSpeedUPerTick * (1 + statOf(ctx, ctx.sd.stat.move_speed, 0) / 100);
+  const run = ctx.run;
+  // Slow from enemy zones (affix tar_trail), strongest wins (GDD 5.4).
+  const slow = run.playerSlowTicks > 0 ? run.playerSlowPct : 0;
+  return (
+    ctx.cfg.playerBaseSpeedUPerTick *
+    (1 + statOf(ctx, ctx.sd.stat.move_speed, 0) / 100) *
+    Math.max(0, 1 - slow)
+  );
 }
 
 /**
@@ -80,6 +95,7 @@ export function updatePlayerTimers(ctx: SimCtx): void {
   const p = world.player;
   if (p.invulnTicks > 0) p.invulnTicks--;
   if (p.hitFlashTicks > 0) p.hitFlashTicks--;
+  if (run.playerSlowTicks > 0) run.playerSlowTicks--;
   const regen = statOf(ctx, sd.stat.hp_regen, 0);
   if (regen > 0 && p.hp > 0 && p.hp < p.maxHp) p.hp = Math.min(p.maxHp, p.hp + regen / TICK_RATE);
   // Barrier recharge: barrier_recharge seconds per charge while below max (0 = never).
@@ -202,7 +218,7 @@ export function castRite(
     }
     case 'ring': {
       const r = rite.radiusU * areaScale(ctx);
-      areaDamage(
+      const hits = areaDamage(
         ctx,
         p.x,
         p.y,
@@ -230,10 +246,12 @@ export function castRite(
           if (dx * dx + dy * dy <= rr * rr) applySlow(ctx, s, slow, slowTicks);
         }
       }
+      riteLanded(ctx, p.x, p.y, r, hits);
       break;
     }
     case 'dash': {
-      dash(ctx, ax, ay, dmg, src, tagMask, depth, rite.radiusU);
+      const hits = dash(ctx, ax, ay, dmg, src, tagMask, depth, rite.radiusU);
+      riteLanded(ctx, p.x, p.y, rite.radiusU, hits);
       break;
     }
     default:
@@ -253,11 +271,12 @@ function dash(
   tagMask: number,
   depth: number,
   halfWidth: number,
-): void {
+): number {
   const { world, run } = ctx;
   const p = world.player;
   const rite = ctx.data.rites[p.riteIndex];
-  if (rite === undefined) return;
+  if (rite === undefined) return 0;
+  let hits = 0;
   const prm = rite.params;
   let dx = aimX - p.x;
   let dy = aimY - p.y;
@@ -304,6 +323,7 @@ function dash(
     if (qx * qx + qy * qy > rr * rr) continue;
     const h = beginHit(ctx);
     if (h === null) break;
+    hits++;
     h.target = s;
     h.base = dmg;
     h.sourceRef = src;
@@ -314,4 +334,5 @@ function dash(
     applyHit(ctx);
     endHit(ctx);
   }
+  return hits;
 }

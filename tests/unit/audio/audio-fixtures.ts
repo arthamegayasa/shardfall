@@ -1,6 +1,6 @@
 // Shared helpers for audio unit tests: real audio data files and a tiny event reader builder.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type { SimEventReader } from '../../../src/core/index.ts';
 import { parseCueTable, parseInstruments } from '../../../src/audio/cue-data.ts';
@@ -18,6 +18,19 @@ export const routes = readJson('cues', 'routes.json') as Routes;
 export const instrumentsJson = readJson('music', 'instruments.json');
 export const pulseSongJson = readJson('music', 'mus.biome1.pulse.json');
 export const shopSongJson = readJson('music', 'mus.shop.json');
+export const bossSongJson = readJson('music', 'mus.biome1.boss.json');
+export const overlaySongJson = readJson('music', 'mus.overlay.unlit.json');
+
+/** Every song file (src/audio/music/mus.*.json), as the game ships them. */
+export const allSongJson: readonly unknown[] = readdirSync(join(AUDIO, 'music'))
+  .filter((f) => f.startsWith('mus.') && f.endsWith('.json'))
+  .sort()
+  .map((f) => readJson('music', f));
+
+/** Ids of the one-shot stinger songs. */
+export const STINGER_IDS: readonly string[] = allSongJson
+  .filter((j) => (j as { oneShot?: boolean }).oneShot === true)
+  .map((j) => (j as { id: string }).id);
 
 export function realCues(): CueTable {
   return parseCueTable(cuesJson);

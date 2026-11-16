@@ -1,0 +1,34 @@
+{
+  "id": "fx-rise",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "glint",
+    "kept-white"
+  ],
+  "status": "final",
+  "note": "Level-up and Temper sparkle rising from the player feet (gold = reward).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 10,
+      "loop": true,
+      "frames": [
+        [
+          ".y.",
+          "ywy",
+          ".y."
+        ],
+        [
+          "y"
+        ]
+      ]
+    }
+  }
+}

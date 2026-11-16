@@ -1,0 +1,29 @@
+{
+  "id": "icon-glint",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Glint currency: a small gold diamond with a white sparkle. Key: rhombus, matches fx-glint.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..w..",
+          ".wyg.",
+          "wyygg",
+          ".ygg.",
+          "..g.."
+        ]
+      ]
+    }
+  }
+}

@@ -3,13 +3,26 @@
 // stream spawn), spawn marks, grace, alive cap with a FIFO queue, quiet end of Pulse.
 
 import { SimEventType } from '../../core/index.ts';
-import { SECTOR_IDS, insideDistance, randomPointInShape, shapeCenter } from '../arena.ts';
+import {
+  SECTOR_IDS,
+  clampInside,
+  insideDistance,
+  randomPointInShape,
+  shapeCenter,
+} from '../arena.ts';
 import type { Point } from '../arena.ts';
-import { BURN_STACK_SLOTS, SCHEDULE_CAPACITY, SPAWN_POINT_ATTEMPTS } from '../capacity.ts';
+import {
+  AFFIX_TIMER_STRIDE,
+  BURN_STACK_SLOTS,
+  SCHEDULE_CAPACITY,
+  SPAWN_POINT_ATTEMPTS,
+} from '../capacity.ts';
 import { AiState } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
+import { cfgOpt } from '../sim-data.ts';
 import type { PulseSlotDef } from '../../content/index.ts';
+import { applyAffix } from './affixes.ts';
 
 const pt: Point = { x: 0, y: 0 };
 const c2: Point = { x: 0, y: 0 };
@@ -40,7 +53,12 @@ export function buildSchedule(ctx: SimCtx, slot: PulseSlotDef): void {
     let left = Math.round(sp.count * spawnMult);
     const lo = Math.min(sp.startFrac * d, quietEnd);
     const hi = Math.max(lo, Math.min(sp.endFrac * d, quietEnd));
-    while (left > 0 && run.scheduleCount < SCHEDULE_CAPACITY) {
+    while (left > 0) {
+      if (run.scheduleCount >= SCHEDULE_CAPACITY) {
+        // Truncated schedule: counted, never silent (LP review M1).
+        ctx.poolOverflow++;
+        break;
+      }
       const gMin = Math.max(1, sp.groupMin);
       const gMax = Math.max(gMin, sp.groupMax);
       const size = Math.min(left, rng.intRange(gMin, gMax));
@@ -91,9 +109,11 @@ export function countedAlive(ctx: SimCtx): number {
 function markRadiusFor(ctx: SimCtx, type: number, size: number): number {
   const sim = ctx.sd.enemies[type];
   let r = sim?.markRadiusU ?? 0;
-  // Groups of 3 or more use at least the medium mark (GDD 3.2).
+  // Groups of spawn_mark_medium_group or more use at least the medium mark (GDD 3.2). The group
+  // size is data (config, requested in gp-requests-m2.md); without the key marks keep their size.
+  const minGroup = cfgOpt(ctx.cfg, 'spawnMarkMediumGroup');
   const medium = ctx.cfg.spawnMarkDiamMediumU * 0.5;
-  if (size >= 3 && r < medium) r = medium;
+  if (minGroup !== null && minGroup > 0 && size >= minGroup && r < medium) r = medium;
   return r;
 }
 
@@ -163,9 +183,29 @@ export function startMark(
   sector: number,
   counted: boolean,
 ): number {
-  const m = ctx.world.spawnMarks;
   const r = markRadiusFor(ctx, type, size);
   pickPoint(ctx, sector, r, pt);
+  return startMarkAt(ctx, type, size, pt.x, pt.y, counted, -1);
+}
+
+/**
+ * Start a spawn mark at a point (summons next to their owner: summoner, brood). owner: enemy slot
+ * whose summon count the members join (-1 none). Returns the mark slot or -1 when the pool is full.
+ */
+export function startMarkAt(
+  ctx: SimCtx,
+  type: number,
+  size: number,
+  x: number,
+  y: number,
+  counted: boolean,
+  owner: number,
+): number {
+  const m = ctx.world.spawnMarks;
+  const r = markRadiusFor(ctx, type, size);
+  pt.x = x;
+  pt.y = y;
+  if (ctx.arena !== null) clampInside(ctx.arena, x, y, r, pt);
   const i = allocSlot(m);
   if (i < 0) {
     ctx.poolOverflow++;
@@ -182,6 +222,8 @@ export function startMark(
   m.ticksTotal[i] = ticks;
   m.members[i] = size;
   m.counted[i] = counted ? 1 : 0;
+  m.owner[i] = owner;
+  m.ownerSerial[i] = owner >= 0 ? ctx.world.enemies.serial[owner]! : 0;
   ctx.events.push(SimEventType.SpawnMarked, pt.x, pt.y, type, ticks, 0);
   return i;
 }
@@ -244,13 +286,34 @@ export function spawnEnemy(
   e.counted[s] = counted ? 1 : 0;
   e.chargeHit[s] = 0;
   e.affixMask[s] = 0;
+  e.guardAdd[s] = 0;
+  e.kbImmune[s] = 0;
+  e.shellRegrow[s] = 0;
+  e.blinkTicks[s] = 0;
+  e.blinkX[s] = 0;
+  e.blinkY[s] = 0;
+  e.summonOwner[s] = -1;
+  e.summonOwnerSerial[s] = 0;
+  for (let k = 0; k < AFFIX_TIMER_STRIDE; k++) e.affixTimer[s * AFFIX_TIMER_STRIDE + k] = 0;
   const slots = run.weaponIndex.length;
   for (let k = 0; k < slots; k++) e.orbitTimer[s * slots + k] = 0;
-  for (const a of sim.affixes) {
-    if (a < 31) e.affixMask[s] = e.affixMask[s] | (1 << a);
-    ctx.events.push(SimEventType.AffixApplied, x, y, a, s, 0);
-  }
   ctx.events.push(SimEventType.EnemySpawned, x, y, type, sim.rank, 0);
+  for (let k = 0; k < sim.affixes.length; k++) applyAffix(ctx, s, sim.affixes[k]!);
+  // Crack 2+: Wardens get warden_extra_affixes random affixes from the pool, no duplicates (GDD 15.2).
+  const extra = sim.rank === 1 ? Math.floor(diff?.wardenExtraAffixes ?? 0) : 0;
+  for (let n = 0; n < extra; n++) {
+    let options = 0;
+    for (const a of ctx.sd.affixPool) if (a < 31 && (e.affixMask[s] & (1 << a)) === 0) options++;
+    if (options === 0) break;
+    let pick = ctx.rng.spawn.int(options);
+    for (const a of ctx.sd.affixPool) {
+      if (a >= 31 || (e.affixMask[s] & (1 << a)) !== 0) continue;
+      if (pick-- === 0) {
+        applyAffix(ctx, s, a);
+        break;
+      }
+    }
+  }
   return s;
 }
 
@@ -267,12 +330,17 @@ export function updateMarks(ctx: SimCtx, onEmerge: (ctx: SimCtx, slot: number) =
     const counted = m.counted[i] === 1;
     const x = m.x[i]!;
     const y = m.y[i]!;
+    const owner = m.owner[i]!;
+    const ownerSerial = m.ownerSerial[i]!;
     freeSlot(m, i);
     for (let k = 0; k < n; k++) {
       const ox = n > 1 ? ctx.rng.spawn.range(-spread, spread) : 0;
       const oy = n > 1 ? ctx.rng.spawn.range(-spread, spread) : 0;
       const s = spawnEnemy(ctx, type, x + ox, y + oy, counted);
-      if (s >= 0) onEmerge(ctx, s);
+      if (s < 0) continue;
+      ctx.world.enemies.summonOwner[s] = owner;
+      ctx.world.enemies.summonOwnerSerial[s] = ownerSerial;
+      onEmerge(ctx, s);
     }
   }
 }

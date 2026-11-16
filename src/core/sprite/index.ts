@@ -9,3 +9,5 @@ export type {
   PackedAtlas,
   PackOptions,
 } from './atlas-pack.ts';
+export { buildIconAtlas, iconImage, iconSpriteId, isUiArt } from './icons.ts';
+export type { IconAtlas, IconEntry, IconImage, IconKind, IconManifest } from './icons.ts';

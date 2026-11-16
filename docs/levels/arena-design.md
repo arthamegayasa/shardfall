@@ -1,12 +1,12 @@
 # Shardfall: Desain Arena
 
-Pemilik: Level Designer (LD). Status: versi 2, 2026-11-17 (M1-07). Perbaikan review M0 (CD 2.9, LP bagian LD) sudah diterapkan; ringkasan di bagian 17.
+Pemilik: Level Designer (LD). Status: versi 3, 2026-11-17 (M2-07: `arena_market` final, draf `arena_cloister` dan `arena_vineyard`). Log di bagian 17.
 Reviewer: CD (rasa dan pilar), GD (dampak gameplay), LP (bisa diimplementasi).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md`, `docs/tech/architecture.md` v2.1 (satuan, kamera, format arena), keputusan di `docs/tasks.md`. Bila bertentangan dalam hal teknis, architecture.md yang berlaku; dalam hal rasa, pilar yang menang (urutan Pilar 2 > 4 > 1 > 3).
 
 Penanda: **[Wajib]** aturan LD yang harus dipatuhi implementasi dan aset. **[Saran untuk X]** keputusan milik peran lain, ini hanya default. **[Asumsi]** perlu dikalibrasi di M1. **[Otomatis]** diperiksa oleh `tools/levels/check-arena.ts`.
 
-Data arena: `content/levels/arena_proto.json` (M1) dan `content/levels/arena_market.json` (draf M2, bioma 1).
+Data arena: `content/levels/arena_proto.json` (M1, cadangan), `content/levels/arena_market.json` (final M2, bioma 1, dipakai `biomes.csv`), `content/levels/arena_cloister.json` dan `arena_vineyard.json` (draf Tingkat C). Isi bioma 1 dan katalog aset untuk LP dan AD: `docs/levels/biome-moth-market.md`.
 
 ---
 
@@ -346,14 +346,15 @@ Nama final disetujui CD (keputusan 2026-11-17), tampil hanya lewat string table 
 - **Tema:** pasar malam festival yang membeku pada detik langit jatuh. Ratusan lentera kertas masih menyala, kain tenda tertahan angin yang tidak pernah selesai bertiup, ngengat beku mengitari cahaya.
 - **Suasana:** hangat dan meriah yang mendadak sunyi. Cahaya kecil yang masih dijaga.
 - **Cahaya** (palet AD `b1`): kunci amber redup `#DCA466` dari kiri belakang atas (azimut 225, elevasi 50). Isi biru bulan `#6F86B8` dari kanan depan (elevasi 35). Lentera `#E8B070`, radius 3.5 u, kedip 12%.
-- **Titik cahaya (7, urut prioritas):** `back_l`, `back_r`, `side_l`, `side_r` (empat pertama, simetris, dipakai kualitas Rendah), lalu `gate`, `front_l`, `front_r`. Gerbang tetap terbaca di kualitas Rendah lewat mesh emisif dan bloom.
+- **Titik cahaya (7, urut prioritas):** `back_l`, `back_r`, `side_l`, `side_r` (empat pertama, simetris, dipakai kualitas Rendah), lalu `gate`, `front_l`, `front_r`. Gerbang tetap terbaca di kualitas Rendah lewat mesh emisif dan bloom. Slot ke-8 sengaja kosong. Lentera lain hanya mesh emisif plus bloom.
 - **Landmark (atas panggung boss):** Gerbang Lentera (`lantern-gate`), gerbang kayu dengan satu lentera besar retak di puncaknya.
-- **Dekorasi tepi (35 objek, 10 beranimasi):**
-  - Belakang: gerbang, 4 kios beratap kain, 2 tiang lentera, 2 tali lentera kertas, 2 tumpukan peti, 2 kios jauh untuk ultrawide, 2 deret atap pasar tinggi di z -15 (latar pita atas).
-  - Samping: kios samping, tiang lentera, gulungan kain; di samping depan hanya tong dan karung rendah. Kios dan tong tambahan di \|x\| 23 sampai 24 untuk ultrawide.
-  - Depan: 2 lentera tanah, 2 kertas melayang beku, 2 serpih kaca di tanah.
-- **Rintangan (3):** meja kios rebah (rect 3 x 1.5), sumur bertutup (lingkaran r 1), tumpukan karung rendah (rect 2 x 1.5). Cakupan 1.71% luas, semua minimal 4.25 u dari batas dan di luar lingkar awal dan panggung boss (terukur).
-- **Elemen bergerak:** kain tenda bergoyang (`cloth-sway`), tali lentera berayun (`lantern-sway`), kertas melayang beku berputar lambat (`paper-drift`), kedip lentera, ngengat di zona dekorasi, debu kaca di atas arena.
+- **Dekorasi tepi (61 objek, 12 beranimasi, 22 jenis aset):**
+  - Belakang: gerbang, 4 kios beratap kain, 2 tiang lentera, 2 tali lentera kertas, 2 gugus lentera terbang beku, keranjang dan peti kecil di kiri kanan gerbang, 2 tumpukan peti, 2 deret atap pasar dan 2 tenda festival di latar, 2 kios jauh untuk ultrawide.
+  - Samping: gerobak dagang atau rak lentera di sudut belakang, gugus lentera terbang, kios samping, tali bendera kertas, tiang lentera, gulungan kain; di samping depan hanya keranjang, tong, lentera tanah, karung, dan peti rendah. Tenda, kios, rak atau gerobak, dan tong tambahan di \|x\| 21 sampai 24 untuk ultrawide.
+  - Depan: 3 lentera tanah, 2 kertas melayang beku, 2 lentera jatuh, tikar dagang, 2 serpih kaca di tanah.
+  - Daftar lengkap, bentuk low-poly, tinggi minimal bagian emisif, dan animasi: `biome-moth-market.md` bagian 5 dan 6.
+- **Rintangan (3, maks 4):** meja kios rebah (rect 3 x 1.5), sumur bertutup (lingkaran r 1), tumpukan karung rendah (rect 2 x 1.5). Cakupan 1.71% luas, semua minimal 4.25 u dari batas dan di luar lingkar awal dan panggung boss (terukur).
+- **Elemen bergerak:** kain dan tali bendera kertas berkibar (`cloth-sway`), tali lentera dan lentera terbang berayun (`lantern-sway`), kertas melayang beku berputar lambat (`paper-drift`), kedip lentera, ngengat dan sobekan kertas di zona dekorasi, debu kaca di atas arena.
 - **Lantai:** batu ubin aus, nada `floor-mid` sampai `floor-lit`, nat sangat halus (`tile-floor`).
 - Cocok dengan Unlit: lentera yang menyerap terang.
 
@@ -535,7 +536,7 @@ Format final ada di architecture 6.10 (tipe `ArenaDef`, `src/core/contracts/aren
 ```json
 { "id": "back_l", "pos": [-10, 2.5, -12], "intensityMul": 1.0 }
 { "id": "well_1", "kind": "covered-well", "shape": { "type": "circle", "center": [9, 4], "radius": 1 }, "height": 0.4, "blocks": ["move"] }
-{ "id": "pole_bl", "kind": "lantern-pole", "zone": "back", "pos": [-10, -12], "rotYDeg": 0, "height": 3.0, "footprintHalf": [0.25, 0.25], "lightId": "back_l" }
+{ "id": "pole_bl", "kind": "lantern-pole", "zone": "back", "pos": [-10, -12], "rotYDeg": 0, "height": 2.6, "footprintHalf": [0.25, 0.25], "lightId": "back_l" }
 ```
 
 ---
@@ -549,21 +550,38 @@ Format final ada di architecture 6.10 (tipe `ArenaDef`, `src/core/contracts/aren
 - Uji M1: LD-T01 dan LD-T10 lewat skrip (lulus), LD-T02, LD-T07, LD-T08 oleh QA dan GP.
 - Bila M1 menunjukkan arena terlalu sempit atau terlalu lapang, yang diubah adalah kecepatan dan kepadatan (GD), bukan ukuran arena, kecuali CD, GD, LD, dan LP sepakat. Ukuran arena terkunci oleh bingkai layar dan pita DoF.
 
-### 15.2 `arena_market` (draf M2, bioma 1)
-- Geometri dan zona sama dengan `arena_proto`. Tambahan: 3 rintangan, 35 dekorasi tepi (10 beranimasi), 7 titik cahaya urut prioritas, landmark `lantern-gate`, partikel debu kaca (arena) dan ngengat (dekorasi). Lulus skrip cek (lihat 15.3).
-- Sudah ikut build data (tidak dirujuk `biomes.csv` sampai M2). Saat M2, GD mengganti `arena_id` `biome_market` menjadi `arena_market`.
-- **Daftar id aset untuk AD (M2)**, tinggi dan tapak sesuai deklarasi di JSON:
+### 15.2 `arena_market` (final M2, bioma 1)
+- Geometri dan zona sama dengan `arena_proto`. Isi: 3 rintangan, 61 dekorasi tepi (12 beranimasi), 7 titik cahaya urut prioritas, landmark `lantern-gate`, partikel debu kaca (arena), ngengat dan sobekan kertas (dekorasi). Lulus skrip cek (15.3).
+- `biomes.csv` kini merujuk `arena_market` untuk `biome_market` (diubah LD di M2-07 karena GD belum mengubahnya; satu sel).
+- **Daftar id aset (M2)**, tinggi dan tapak sesuai deklarasi di JSON. Bentuk dan aturan emisif: `biome-moth-market.md` bagian 5.
   - Landmark: `lantern-gate`.
   - Rintangan: `tipped-stall-table`, `covered-well`, `sack-pile`.
-  - Dekorasi: `stall-awning`, `lantern-pole`, `lantern-string`, `crate-stack`, `market-roofline`, `side-stall`, `cloth-rolls`, `barrel-cluster`, `sack-pile-low`, `ground-lantern`, `frozen-paper`, `glass-shards`.
-  - Animasi: `cloth-sway`, `lantern-sway`, `paper-drift`. Partikel: `glass-dust`, `moth`.
-- Blockout visual dan penyesuaian bersama AD dikerjakan di M2.
+  - Dekorasi: `stall-awning`, `lantern-pole`, `lantern-string`, `floating-lanterns`, `crate-stack`, `crate-low`, `basket-stack`, `market-roofline`, `festival-tent`, `side-stall`, `paper-garland`, `vendor-cart`, `lantern-rack`, `cloth-rolls`, `barrel-cluster`, `sack-pile-low`, `ground-lantern`, `frozen-paper`, `fallen-lantern`, `woven-mat`, `glass-shards`.
+  - Animasi: `cloth-sway`, `lantern-sway`, `paper-drift`. Partikel: `glass-dust`, `moth`, `paper-scrap`.
 
 ### 15.3 Hasil cek (2026-11-17)
 | Arena | Error | Cakupan rintangan | Pita spawn | Spawn ke titik awal | Jarak dekorasi ke batas | Titik cahaya | Dekorasi (animasi) |
 |---|---|---|---|---|---|---|---|
 | `arena_proto` | 0 | 0% | 1.0 sampai 2.5 u | 7.5 u | tidak ada | 0 | 0 (0) |
-| `arena_market` | 0 | 1.71% | 1.0 sampai 2.5 u | 7.5 u | minimal 1.2 u | 7 | 35 (10) |
+| `arena_market` | 0 | 1.71% | 1.0 sampai 2.5 u | 7.5 u | minimal 1.2 u | 7 | 61 (12) |
+| `arena_cloister` (draf C) | 0 | 1.27% | 1.0 sampai 2.5 u | 7.5 u | minimal 1.0 u | 7 | 31 (4) |
+| `arena_vineyard` (draf C) | 0 | 1.63% | 1.0 sampai 2.5 u | 7.5 u | minimal 1.35 u | 7 | 30 (6) |
+
+### 15.4 Draf Tingkat C: `arena_cloister` (Vesper Steps) dan `arena_vineyard` (Stillfire Vineyard)
+Geometri, zona, dan titik awal sama dengan semua arena. Lulus skrip cek. Belum dirujuk `biomes.csv` (bioma 2 dan 3 masih memakai `arena_market`); GD mengganti `arena_id` saat Tingkat C dibangun. Id file mengikuti id arena di bagian 1 (`arena_cloister`, bukan `arena_vesper`). Dekorasi lebih sederhana dari bioma 1 dan dipoles di M3.
+
+| Hal | `arena_cloister` | `arena_vineyard` |
+|---|---|---|
+| Landmark | `bell-tower` (menara lonceng retak) | `burnt-press-house` (rumah peras hangus, kincir patah) |
+| Titik cahaya (7) | `back_l`, `back_r` (lentera batu), `side_l`, `side_r`, `tower`, `front_l`, `front_r` (lilin di depan pagar) | `back_l`, `back_r` (tiang bara), `side_l`, `side_r`, `press`, `front_l`, `front_r` (onggok bara) |
+| Rintangan | `broken-pillar-base` lingkaran r 1 di `[-9, -4]`, `broken-pillar-base-small` r 0.75 di `[9.5, -4.5]`, `stone-bench` rect x 7 sampai 10, y 3.5 sampai 4.5 | `tipped-barrel` rect x -10 sampai -8, y -5.5 sampai -4.5 dan rect x 8 sampai 9, y 3 sampai 5 (mesh sejajar sisi panjang), `vine-stump` r 1 di `[8.5, -4.5]`, `low-stone-wall` rect x -8.5 sampai -5.5, y 4.5 sampai 5.5 |
+| Dekorasi belakang | `cloister-wall`, `cloister-arch`, `stone-lantern`, `prayer-banners` (beranimasi), `cloister-roofline` | `vine-trellis` (beranimasi), `ember-post`, `barrel-row`, `smoke-column` (animasi baru `smoke-rise`), `vine-terrace` |
+| Dekorasi samping | `broken-pillar`, `faceless-statue`, `stone-lantern`, `prayer-banners-short` (beranimasi), `candle-cluster`, `stone-steps-low` | `burnt-cart`, `ember-post`, `vine-trellis-side` (beranimasi), `grape-baskets`, `vine-stumps-low` |
+| Dekorasi depan | `stone-parapet` (0.4 u, 3 ruas), `candle-cluster-low`, `cliff-edge` (jurang berkabut) | `ember-pile`, `ash-drift`, `vine-stumps-low`, `glass-shards` |
+| Partikel dekorasi | `glass-snow` (`b2.glass`), `cliff-mist` (`b2.stone-light`) | `frozen-ember` (`b3.ember`), `ash-flake` (`b3.ash`) |
+| Catatan | `edgeFade` 2 sampai 8 u agar jurang depan cepat gelap | Api dan bara amber, tidak pernah merah. Elevasi kunci b3 tetap perlu diselaraskan AD (12.4) |
+
+Jenis aset yang dipakai dengan deklarasi tinggi atau tapak berbeda (`cloister-wall`, `stone-lantern`, `stone-parapet`, `ember-post`, `vine-stumps-low`, `vine-terrace`, `ash-drift`): mesh mengikuti deklarasi terkecil, atau AD memecahnya menjadi jenis terpisah di M3.
 
 ---
 
@@ -575,9 +593,9 @@ Asumsi yang perlu dikonfirmasi:
 - [Asumsi] Batas tinggi dekorasi samping ditentukan oleh tepi depan tapak (7.1).
 
 Yang dibutuhkan dari peran lain:
-- **GD:** durasi telegraf spawn, aturan sektor per Pulse (kolom opsional `sectors` di `wave_spawns.csv`, saran LP), kecepatan pemain dan Unlit yang cocok dengan arena 32 x 20 u, keputusan proyektil dan rintangan, `arena_id` `biome_market` ke `arena_market` di M2.
+- **GD:** durasi telegraf spawn, aturan sektor per Pulse (kolom opsional `sectors` di `wave_spawns.csv`, saran LP), kecepatan pemain dan Unlit yang cocok dengan arena 32 x 20 u, keputusan proyektil dan rintangan. `arena_id` `biome_market` sudah `arena_market` (M2-07). Saat Tingkat C: `biome_cloister` ke `arena_cloister`, `biome_vineyard` ke `arena_vineyard`.
 - **LP:** validator build `tools/data/validate-arena.ts` (boleh memanggil `checkArena` dari `tools/levels/lib/legibility.ts`), implementasi siluet tembus pemain.
-- **AD:** mesh dan tile sesuai daftar id 15.2 dengan tinggi dan tapak tidak melebihi deklarasi; elevasi kunci b3 (12.4).
+- **AD dan LP:** mesh dan tile sesuai daftar id 15.2 dan katalog `biome-moth-market.md` dengan tinggi dan tapak tidak melebihi deklarasi; arah `rotYDeg`; elevasi kunci b3 (12.4).
 - **UI:** penempatan HUD di zona aman HUD (3.3).
 - **Writer:** nama tampil landmark (Gerbang Lentera, menara lonceng, rumah peras) bila ingin tampil di game.
 
@@ -588,4 +606,5 @@ Yang dibutuhkan dari peran lain:
 | Versi | Tanggal | Perubahan |
 |---|---|---|
 | 1 | 2026-11-16 | Draf M0 |
+| 3 | 2026-11-17 | M2-07: `arena_market` final (61 dekorasi, 12 beranimasi, 22 jenis aset: lentera terbang, tali bendera kertas, rak lentera, gerobak, tenda, partikel sobekan kertas), tiang lentera belakang setinggi tiang samping (2.6), katalog aset `biome-moth-market.md`, `biomes.csv` `biome_market` ke `arena_market`, draf `arena_cloister` dan `arena_vineyard` (15.4) |
 | 2 | 2026-11-17 | Perbaikan review M0: format JSON mengikuti architecture 6.10 dan 9.6 (id `snake_case`, tanpa `units`, `camera`, `nameKey`, `lighting.key` dan `fill`; token warna; `floor.tileId`; titik cahaya urut prioritas); rumus layar merujuk konstanta architecture 7.1 dan pemetaan `z` ke `y`; poligon searah jarum jam di layar (sektor `se` dan `nw` diurutkan ulang); nama bioma final; warna cahaya mengikuti palet AD (`#DCA466`); alternatif 40 derajat dihapus; posisi layar dihitung ulang dengan 12.49 px per u tinggi (3.4); data `arena_proto` dan draf `arena_market`; skrip cek `tools/levels/check-arena.ts` |

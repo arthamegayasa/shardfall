@@ -2,6 +2,7 @@
 // Runs only when the inventory changes (buy, sell, merge, reward, load), not per tick.
 
 import { SimEventType } from '../../core/index.ts';
+import { PER_TARGET_COUNTER_EFFECTS } from '../capacity.ts';
 import { TRIGGER_COUNT } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 
@@ -95,6 +96,28 @@ export function rebuildActiveEffects(ctx: SimCtx, emitEvents: boolean): void {
     }
   }
   active.count = n;
+
+  // per_target every_nth counter slots go to active effects in evaluation order (architecture 8.1:
+  // max 4 per run). A changed assignment clears the counters so no effect reads another's counts.
+  const want = new Int32Array(sd.effects.length).fill(-1);
+  let nextSlot = 0;
+  for (let k = 0; k < n; k++) {
+    const ei = active.effect[k] ?? 0;
+    if (sd.effects[ei]?.perTarget !== true || want[ei] !== -1) continue;
+    if (nextSlot < PER_TARGET_COUNTER_EFFECTS) want[ei] = nextSlot++;
+  }
+  let changed = false;
+  const slotOf = run.targetSlotOf;
+  for (let i = 0; i < want.length; i++) {
+    if (slotOf[i] !== want[i]) {
+      slotOf[i] = want[i] ?? -1;
+      changed = true;
+    }
+  }
+  if (changed) {
+    run.targetCounter.fill(0);
+    run.targetCounterSerial.fill(0);
+  }
 
   // Group by trigger with a stable counting sort.
   active.start.fill(0);

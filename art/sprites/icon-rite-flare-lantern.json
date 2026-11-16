@@ -1,0 +1,38 @@
+{
+  "id": "icon-rite-flare-lantern",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Festival Flare: a lantern flung upward bursting into a big white-gold flare. Key: large eight-ray star over a small lantern.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "........yy....",
+          "...g....yy..g.",
+          "....gy.yww.yg.",
+          ".....ywwwwwy..",
+          "..yyywwwwwwwyy",
+          "..yywwwwwwwwyy",
+          ".....ywwwwwy..",
+          "....gy.ywy.yg.",
+          "...g...yy...g.",
+          ".bb...gy......",
+          "bwgb.gy.......",
+          "bggbg.........",
+          "bggb..........",
+          ".bb..........."
+        ]
+      ]
+    }
+  }
+}

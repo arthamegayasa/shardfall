@@ -1,0 +1,36 @@
+{
+  "id": "icon-weapon-returning-glaive",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Homeward Blade: a crescent throwing blade with a gold return-arrow arc. Key: thick C crescent left, thin arrow loop right.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....wwwc......",
+          "..wwccbb.ggg..",
+          ".wccb......gg.",
+          ".wcb........g.",
+          "wcb.........g.",
+          "wcb.........g.",
+          "wcb.........g.",
+          ".cb.........g.",
+          ".ccb.......g..",
+          "..bbb...g.g...",
+          ".......gggg...",
+          "........g....."
+        ]
+      ]
+    }
+  }
+}

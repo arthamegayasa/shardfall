@@ -84,6 +84,11 @@ export interface PickupPoolView extends PoolView {
   readonly kind: ArrayLike<number>;
   readonly amount: ArrayLike<number>;
   readonly magnetized: ArrayLike<number>;
+  /**
+   * Ticks since the piece started flying to the player (0 on the floor). Pickup animation state for
+   * render (stretch, trail). Speed is (x - prevX, y - prevY). M2-05, additive.
+   */
+  readonly flyTicks?: ArrayLike<number>;
 }
 
 export const AreaShape = { Circle: 0, Ring: 1, Line: 2, Cone: 3 } as const;

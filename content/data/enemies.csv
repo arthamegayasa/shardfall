@@ -1,11 +1,11 @@
 id,name_key,content_tier,role,behavior,size_class,radius,hp,speed,contact_dmg,attack_dmg,glint,guard,kb_resist,telegraph_s,params,affixes,silt,notes
 # Unlit, Wardens, bosses (data-schema 3.15, GDD 14 to 16). hp and damage at t1; scaled by hp(t) and dm(t).
-swarmer,unlit.swarmer,A,swarmer,swarmer,small,,6,2.6,3,0,1,0,0,0,weave_amp=0.3;weave_hz=0.8,,0,arrives in groups of 3 to 6
-charger,unlit.charger,A,charger,charger,medium,,16,2.0,3,6,2,0,0.2,0.6,trigger_range=6;charge_speed=10;charge_s=0.45;recover_s=0.8;cooldown=3,,0,
-shooter,unlit.shooter,A,shooter,shooter,medium,,10,1.7,2,4,2,0,0,0.4,keep_min=5;keep_max=7;shot_speed=5.5;shot_life=2.5;cooldown=2.8,,0,
+swarmer,unlit.swarmer,A,swarmer,swarmer,small,,6,3.4,4,0,1,0,0,0,weave_amp=0.3;weave_hz=0.8,,0,arrives in groups of 3 to 6
+charger,unlit.charger,A,charger,charger,medium,,16,2.2,3,7,2,0,0.2,0.6,trigger_range=6;charge_speed=10;charge_s=0.45;recover_s=0.8;cooldown=2.5,,0,
+shooter,unlit.shooter,A,shooter,shooter,medium,,10,1.7,2,5,2,0,0,0.4,keep_min=5;keep_max=7;shot_speed=6;shot_life=2.5;cooldown=2.2,,0,
 tank,unlit.tank,A,tank,tank,large,,60,1.2,7,0,5,2,0.8,0,,,0,
-warden_hound,unlit.warden_hound,A,warden,warden_hound,warden,,380,2.4,6,10,25,0,0.9,0.6,trigger_range=8;charges=3;charge_gap_s=0.4;charge_speed=10;charge_s=0.45;rest_s=2.5;drop_count=5,volley,4,25 Glint as 5 drops
-boss_lantern,unlit.boss_lantern,A,boss,boss_lantern,boss,,2000,1.0,10,0,40,2,1,1.0,drop_count=8,,8,hp 1600 to 2000 from model M1-02 (A fight below 45 s) [Asumsi]; Glint only matters when non-final (C)
+warden_hound,unlit.warden_hound,A,warden,warden_hound,warden,,360,2.4,6,8,25,0,0.9,0.6,trigger_range=8;charges=3;charge_gap_s=0.4;charge_speed=10;charge_s=0.45;rest_s=2.5;drop_count=5,volley,4,25 Glint as 5 drops; M2-01: hp 380 to 360 and charge 10 to 8 (one charge was 45% of Pulse 5 HP)
+boss_lantern,unlit.boss_lantern,A,boss,boss_lantern,boss,,2500,1.0,10,0,40,2,1,1.0,drop_count=8,,8,hp 1600 to 2000 from model M1-02 (A fight below 45 s) [Asumsi]; Glint only matters when non-final (C)
 exploder,unlit.exploder,B,exploder,exploder,small,,8,3.0,0,10,1,0,0,0.8,trigger_range=1.6;fuse_s=0.8;blast_radius=1.8;fuse_move_mult=0.5;enemy_dmg=20,,0,killed before the fuse ends = no blast
 summoner,unlit.summoner,B,summoner,summoner,medium,,26,1.4,2,0,3,0,0.3,0.8,keep_min=6;keep_max=8;summon_every=5;summon_count=3;max_summons=6;summon_id=mote,,0,
 mote,unlit.mote,B,mote,mote,small,,3,3.3,2,0,0,0,0,0,,,0,0 Glint prevents farming

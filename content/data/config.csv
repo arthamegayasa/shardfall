@@ -3,8 +3,10 @@ key,value,notes
 player_base_speed,4.5,u/s horizontal (GDD 5.1)
 player_vertical_screen_ratio,0.8,screen vertical speed relative to horizontal; calibrate 0.75 to 0.85 (CD K7)
 player_radius,0.35,u
-pickup_radius_base,1.6,u
-glint_fly_speed,12,u/s
+pickup_radius_base,2.0,u; magnet radius (M2-01: 1.6 to 2.0 since denser Pulses scatter Glint wider)
+glint_fly_speed,20,u/s; top speed of a magnetized piece (M2-01: 12 to 20)
+glint_fly_speed_start,3,u/s; speed when a piece is first pulled (M2-01)
+glint_fly_accel,60,u/s^2; acceleration toward the player until glint_fly_speed (M2-01; CD M1 4.2 dart with acceleration)
 glint_collect_dist_add,0.2,collected at player_radius + this
 glint_floor_cap,150,floor pickups before value merging (GDD 4.2)
 pulse_end_collect_frac,0.5,auto collect at Pulse end (Crack 0)
@@ -18,12 +20,12 @@ armor_max_reduction,0.85,
 guard_min_frac,0.25,small hits keep 25%
 proc_growth,0.2,proc_scale(t) = 1 + 0.2 (t - 1)
 burn_dps_nonhit,2,Burn DPS per stack from non-hit sources x proc_scale
-enemy_hp_lin,0.12,hp(t)
-enemy_hp_quad,0.006,hp(t)
-enemy_dmg_lin,0.07,dm(t)
+enemy_hp_lin,0.18,hp(t) = 1 + lin (t - 1) + quad (t - 1)^2 (M2-01: 0.12 to 0.18)
+enemy_hp_quad,0.015,M2-01: 0.006 to 0.015 so late Unlit live long enough to press in
+enemy_dmg_lin,0.1,dm(t) = 1 + lin (t - 1) (M2-01: 0.07 to 0.1)
 price_growth,0.08,price x (1 + 0.08 (t - 1))
-xp_base,15,XP L to L+1 = 15 + 10 L
-xp_per_level,10,
+xp_base,20,XP L to L+1 = 20 + 13 L (M2-01: x1.3 with Glint per run)
+xp_per_level,13,
 extra_projectile_spread_deg,12,
 weapon_slots,6,
 leech_heal_cap_per_s,6,
@@ -34,6 +36,7 @@ spawn_mark_diam_small,1.0,u
 spawn_mark_diam_medium,1.5,u
 spawn_mark_diam_large,2.0,u
 spawn_mark_diam_warden,3.0,u
+spawn_mark_medium_group_min,3,groups of this size or more use at least the medium mark (GDD 3.2; M2-01 moved from code)
 spawn_quiet_end_s,2,no new spawn telegraphs in the last seconds
 enemy_radius_small,0.3,u
 enemy_radius_medium,0.4,u
@@ -57,4 +60,5 @@ boss_trickle_every_s,4,
 boss_trickle_count,2,
 boss_trickle_max_alive,24,
 death_slowmo_s,1.0,
+low_hp_frac,0.3,PlayerHpLowChanged when hp <= this x max hp during a Pulse (ui-spec S03; M2-01 moved from src/core/constants.ts LOW_HP_FRAC)
 victory_delay_s,1.5,

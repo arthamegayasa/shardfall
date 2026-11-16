@@ -1,0 +1,36 @@
+{
+  "id": "icon-stat-dodge",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Dodge: a light feather sweeping up-right. Key: long leaf-shaped vane on a bone quill.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "...........cw.",
+          ".........ccww.",
+          "........cwwcc.",
+          ".......cwwccb.",
+          "......cwwccb..",
+          ".....cwwccb...",
+          "....cwwccb....",
+          "...cwwccb.....",
+          "...ccccb......",
+          "..ecbbb.......",
+          ".ee...........",
+          "ee............"
+        ]
+      ]
+    }
+  }
+}

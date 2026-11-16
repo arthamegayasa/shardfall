@@ -1,0 +1,30 @@
+{
+  "id": "icon-tag-flame",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Flame tag: a teardrop flame. Key: pointed top, round base.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..w...",
+          "..yw..",
+          "y.ywg.",
+          "ygwwyg",
+          "gywwgg",
+          ".gggg."
+        ]
+      ]
+    }
+  }
+}

@@ -89,6 +89,9 @@ export function createSave(ctx: SimCtx): RunSave | null {
       pulsesCleared: world.runStats.pulsesCleared,
       runTicks: world.runStats.runTicks,
     },
+    // M2-05 (additive): view details that would otherwise be lost on load (LP review M1).
+    rewardSourceId: data.enemies[run.rewardSourceType]?.id ?? '',
+    levelsThisPulse: run.levelsThisPulse,
   };
 }
 
@@ -255,10 +258,17 @@ export function applySave(
     if (si >= 0 && card !== undefined) run.statCardAdd[si] = (run.statCardAdd[si] ?? 0) + card[col];
   }
   run.pendingLevelUps = save.pendingLevelUps;
-  run.levelsThisPulse = save.pendingLevelUps;
+  // Older saves have no levelsThisPulse: the pending count is the best known total.
+  const total = save.levelsThisPulse;
+  run.levelsThisPulse =
+    typeof total === 'number' && Number.isFinite(total) && total >= save.pendingLevelUps
+      ? Math.floor(total)
+      : save.pendingLevelUps;
   run.levelChoices = choices;
   run.rewardChoices = reward;
   run.rewardPending = false;
+  run.rewardSourceType =
+    typeof save.rewardSourceId === 'string' ? idx(data.enemies, save.rewardSourceId) : -1;
   run.offers = offers;
   run.rerollCount = save.shop.rerollCount;
   run.freeRerollsUsed = save.shop.freeRerollsUsed;
@@ -301,7 +311,7 @@ export function applySave(
     mementoIndex: m,
     rarity: ctx.sd.mementoRarity[m] ?? 0,
   }));
-  world.reward.sourceTypeIndex = -1;
+  world.reward.sourceTypeIndex = run.rewardSourceType;
   world.reward.revision++;
   refreshShopView(ctx);
   return { ok: true };

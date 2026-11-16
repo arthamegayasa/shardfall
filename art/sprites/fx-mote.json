@@ -1,0 +1,29 @@
+{
+  "id": "fx-mote",
+  "class": "vfx-danger",
+  "faction": "unlit",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "status": "final",
+  "note": "Unlit death mote: dark violet speck that rises and fades (under 0.3 s).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 6,
+      "loop": false,
+      "frames": [
+        [
+          "rr",
+          "ru"
+        ],
+        [
+          "r"
+        ]
+      ]
+    }
+  }
+}

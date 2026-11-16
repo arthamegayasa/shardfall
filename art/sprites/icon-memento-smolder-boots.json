@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-smolder-boots",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Smolder Boots: a pair of blue boots with ember sparks rising off them. Key: two L-shaped boots, gold flecks above.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..y......g....",
+          ".......y......",
+          "...g..........",
+          ".......cBBb...",
+          "cBBb...cBBb...",
+          "cBBb...cBBb...",
+          "cBBb...cBBb...",
+          "cBBb...cBBBBb.",
+          "cBBb...cBBBBBb",
+          "cBBBBb.hhhhhhh",
+          "cBBBBBb.......",
+          "hhhhhhh......."
+        ]
+      ]
+    }
+  }
+}

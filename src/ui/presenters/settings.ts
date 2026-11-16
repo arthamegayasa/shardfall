@@ -29,7 +29,8 @@ export type SettingId =
   | 'colorVision'
   | 'pauseWhenUnfocused'
   | 'showFlavor'
-  | 'solidPanels';
+  | 'solidPanels'
+  | 'shopTimer';
 
 export type RowKind = 'slider' | 'choice' | 'toggle';
 
@@ -63,6 +64,8 @@ export const SETTINGS_ROWS: readonly SettingsRow[] = [
   },
   { id: 'showFlavor', tab: 'access', kind: 'toggle', labelKey: 'ui.settings.flavor' },
   { id: 'solidPanels', tab: 'access', kind: 'toggle', labelKey: 'ui.settings.solid_panels' },
+  // Optional Glazier Timer (A-12, CD K1). Saved now, used once GD gives the shop a timer.
+  { id: 'shopTimer', tab: 'access', kind: 'choice', labelKey: 'ui.settings.shop_timer' },
 ];
 
 /** Slider range and step (ui-spec 6.2: 11 notches, left/right changes 10). */
@@ -85,11 +88,40 @@ const COLOR_VISION: readonly { readonly v: ColorVisionMode; readonly key: string
   { v: 'deutan', key: 'ui.settings.cv_deutan' },
   { v: 'tritan', key: 'ui.settings.cv_tritan' },
 ];
+const SHOP_TIMER: readonly {
+  readonly v: Settings['access']['shopTimer'];
+  readonly key: string;
+}[] = [
+  { v: 'on', key: 'ui.settings.on' },
+  { v: 'extended', key: 'ui.settings.extended' },
+  { v: 'off', key: 'ui.settings.off' },
+];
 const ON_KEY = 'ui.settings.on';
 const OFF_KEY = 'ui.settings.off';
 
 function clampSlider(v: number): number {
   return Math.min(SLIDER_MAX, Math.max(0, Math.round(v / SLIDER_STEP) * SLIDER_STEP));
+}
+
+/** Slider value for a pointer at fraction 0..1 of the notch strip (ui-spec 6.2 "klik atau seret"). */
+export function sliderFromFraction(f: number): number {
+  return clampSlider((Number.isFinite(f) ? f : 0) * SLIDER_MAX);
+}
+
+/** Settings with one slider set to an absolute value (mouse), clamped to the 10-step grid. */
+export function setSlider(s: Settings, id: SettingId, value: number): Settings {
+  const v = clampSlider(value);
+  switch (id) {
+    case 'screenShake':
+      return { ...s, graphics: { ...s.graphics, screenShake: v } };
+    case 'master':
+    case 'music':
+    case 'sfx':
+    case 'ui':
+      return { ...s, audio: { ...s.audio, [id]: v } };
+    default:
+      return s;
+  }
 }
 
 /** Next option in a list, wrapping (ui-spec 6.2 "< Large >"). */
@@ -141,6 +173,8 @@ export function valueKey(s: Settings, id: SettingId): string | null {
       return TEXT_SCALE.find((o) => o.v === s.access.textScale)?.key ?? null;
     case 'colorVision':
       return COLOR_VISION.find((o) => o.v === s.access.colorVision)?.key ?? null;
+    case 'shopTimer':
+      return SHOP_TIMER.find((o) => o.v === s.access.shopTimer)?.key ?? null;
     case 'screenShake':
     case 'master':
     case 'music':
@@ -180,6 +214,8 @@ export function stepSetting(s: Settings, id: SettingId, delta: 1 | -1): Settings
       return { ...s, access: { ...x, textScale: cycle(TEXT_SCALE, x.textScale, delta) } };
     case 'colorVision':
       return { ...s, access: { ...x, colorVision: cycle(COLOR_VISION, x.colorVision, delta) } };
+    case 'shopTimer':
+      return { ...s, access: { ...x, shopTimer: cycle(SHOP_TIMER, x.shopTimer, delta) } };
     case 'reduceEffects':
     case 'damageNumbers':
     case 'pauseWhenUnfocused':
@@ -188,24 +224,3 @@ export function stepSetting(s: Settings, id: SettingId, delta: 1 | -1): Settings
       return { ...s, access: { ...x, [id]: !x[id] } };
   }
 }
-
-/** Gameplay and menu actions listed read-only on the Controls tab (remap is M2). */
-export const CONTROL_ROWS: readonly {
-  readonly action: keyof Settings['keybinds'];
-  readonly labelKey: string;
-}[] = [
-  { action: 'moveUp', labelKey: 'ui.action.move_up' },
-  { action: 'moveDown', labelKey: 'ui.action.move_down' },
-  { action: 'moveLeft', labelKey: 'ui.action.move_left' },
-  { action: 'moveRight', labelKey: 'ui.action.move_right' },
-  { action: 'rite', labelKey: 'ui.action.rite' },
-  { action: 'pause', labelKey: 'ui.action.pause' },
-  { action: 'confirm', labelKey: 'ui.action.confirm' },
-  { action: 'back', labelKey: 'ui.action.back' },
-  { action: 'reroll', labelKey: 'ui.action.reroll' },
-  { action: 'lock', labelKey: 'ui.action.lock' },
-  { action: 'beginPulse', labelKey: 'ui.action.begin_pulse' },
-  { action: 'stats', labelKey: 'ui.action.stats' },
-  { action: 'merge', labelKey: 'ui.action.fuse' },
-  { action: 'sell', labelKey: 'ui.action.sell' },
-];

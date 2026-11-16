@@ -1,0 +1,35 @@
+{
+  "id": "icon-stat-hp-regen",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "HP Regen: a blue heart with a gold up arrow rising beside it. Key: heart plus upward arrow.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..........y...",
+          ".........yyg..",
+          "........yyggg.",
+          "..........gg..",
+          ".cc..cc...gg..",
+          "cwcBcwcB..gg..",
+          "cwBBBBBb..gg..",
+          "cBBBBBBb..gg..",
+          ".BBBBBb.......",
+          "..BBBb........",
+          "...Bb........."
+        ]
+      ]
+    }
+  }
+}

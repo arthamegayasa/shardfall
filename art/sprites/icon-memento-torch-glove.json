@@ -1,0 +1,37 @@
+{
+  "id": "icon-memento-torch-glove",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Torch Glove: a blue glove held palm up with a small flame on its scorched palm. Key: cupped hand, flame above.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "......cB......",
+          "...cBbcBbcBb..",
+          "...cBbyBbcBb..",
+          "...cBbywbcBb..",
+          ".cBcBywgbcBb..",
+          ".cBcBywwgcBb..",
+          ".cBBBgwygBBb..",
+          ".cBBBhgghBBb..",
+          "..cBBBhhBBBb..",
+          "..cBBBBBBBBb..",
+          "...bbbbbbbb...",
+          "...eeeeeeed...",
+          "...dddddddt..."
+        ]
+      ]
+    }
+  }
+}

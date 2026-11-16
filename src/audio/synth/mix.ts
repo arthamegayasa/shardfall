@@ -18,6 +18,8 @@ export interface MixNote {
   readonly releaseSec: number;
   readonly gain: number;
   readonly pan: number;
+  /** Loop start in samples of the sample (looped instruments); the loop ends at the sample end. */
+  readonly loopStart?: number;
 }
 
 /** Adds one note into a stereo mix at outRate with linear interpolation and a linear release. */
@@ -32,10 +34,21 @@ export function mixNote(outL: Float32Array, outR: Float32Array, outRate: number,
   for (let i = 0; i < total; i++) {
     const j = start + i;
     if (j >= outL.length) break;
+    const len = n.sample.length;
+    const loop = n.loopStart !== undefined && n.loopStart < len - 2 ? n.loopStart : -1;
+    if (pos >= len) {
+      if (loop < 0) break;
+      // Wrap like AudioBufferSourceNode: the sample after the last one is loopStart.
+      pos -= len - loop;
+    }
     const k = Math.floor(pos);
-    if (k + 1 >= n.sample.length) break;
+    let k1 = k + 1;
+    if (k1 >= len) {
+      if (loop < 0) break;
+      k1 = loop;
+    }
     const frac = pos - k;
-    const s = (n.sample[k] ?? 0) * (1 - frac) + (n.sample[k + 1] ?? 0) * frac;
+    const s = (n.sample[k] ?? 0) * (1 - frac) + (n.sample[k1] ?? 0) * frac;
     const env = i < hold ? 1 : Math.max(0, 1 - (i - hold) / rel);
     const v = s * env * n.gain;
     if (j >= 0) {

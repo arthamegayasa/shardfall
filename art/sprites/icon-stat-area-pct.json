@@ -1,0 +1,36 @@
+{
+  "id": "icon-stat-area-pct",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Area: a gold centre with an inner ring and a broken outer ring expanding out. Key: target-like rings with gaps.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....cccccc....",
+          "..cc......bb..",
+          ".c...cccc...b.",
+          ".c..c....b..b.",
+          "...c......b...",
+          "c..c..wy..b..b",
+          "c..c..yg..b..b",
+          "...c......b...",
+          ".c..c....b..b.",
+          ".c...bbbb...b.",
+          "..bb......bb..",
+          "....bbbbbb...."
+        ]
+      ]
+    }
+  }
+}

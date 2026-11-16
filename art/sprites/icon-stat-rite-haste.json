@@ -1,0 +1,32 @@
+{
+  "id": "icon-stat-rite-haste",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Rite Haste: a small lantern beside a white hourglass with gold sand. Key: lantern left, hourglass right.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..hh....eeeeed",
+          ".bBBb....eyyd.",
+          "bcwwcb...eggd.",
+          "bcygcb....ed..",
+          "bcggcb....gd..",
+          "bcggcb...eggd.",
+          ".bBBb....eggd.",
+          "..bb....eeeeed"
+        ]
+      ]
+    }
+  }
+}

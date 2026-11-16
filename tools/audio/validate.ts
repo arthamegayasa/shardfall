@@ -20,13 +20,18 @@ try {
 } catch (e) {
   errors.push(String(e));
 }
+const songIds = new Set<string>();
 for (const [file, json] of files.songs) {
   const songErrors: string[] = [];
-  compileSong(json, known, songErrors);
+  const song = compileSong(json, known, songErrors);
   errors.push(...songErrors.map((m) => `${file}: ${m}`));
+  if (song === null) continue;
+  if (`${song.id}.json` !== file) errors.push(`${file}: id ${song.id} must match the file name`);
+  songIds.add(song.id);
 }
 if (errors.length === 0) {
-  errors.push(...validateRoutes(files.routes as Routes, parseCueTable(files.cues)));
+  // Stingers in routes.json must name song files (one-shot songs since M2).
+  errors.push(...validateRoutes(files.routes as Routes, parseCueTable(files.cues), songIds));
 }
 
 // Minified size is what Vite ships.

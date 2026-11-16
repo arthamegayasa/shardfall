@@ -13,10 +13,920 @@
      },
      {
       "area": "decor",
+      "colorToken": "b2.glass",
+      "kind": "glass-snow",
+      "max": 24,
+      "opacity": 0.5,
+      "sizePx": 1
+     },
+     {
+      "area": "decor",
+      "colorToken": "b2.stone-light",
+      "kind": "cliff-mist",
+      "max": 10,
+      "opacity": 0.3,
+      "sizePx": 4
+     }
+    ]
+   },
+   "arena": {
+    "boundary": [
+     [
+      -13,
+      -10
+     ],
+     [
+      13,
+      -10
+     ],
+     [
+      16,
+      -7
+     ],
+     [
+      16,
+      7
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      -13,
+      10
+     ],
+     [
+      -16,
+      7
+     ],
+     [
+      -16,
+      -7
+     ]
+    ],
+    "floor": {
+     "altToken": "floor-lit",
+     "baseToken": "floor-mid",
+     "tileId": "tile-floor"
+    },
+    "lip": 1,
+    "projectileMargin": 3,
+    "rim": {
+     "colorToken": "dust",
+     "height": 0.25,
+     "opacity": 0.5
+    }
+   },
+   "bossStage": {
+    "floorRingContrastMax": 1.15,
+    "landmarkId": "bell-tower",
+    "shape": {
+     "center": [
+      0,
+      -3
+     ],
+     "radius": 4,
+     "type": "circle"
+    }
+   },
+   "decor": [
+    {
+     "footprintHalf": [
+      2,
+      1.5
+     ],
+     "height": 9,
+     "id": "tower",
+     "kind": "bell-tower",
+     "lightId": "tower",
+     "pos": [
+      0,
+      -13.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5.5,
+      0.75
+     ],
+     "height": 3.5,
+     "id": "wall_bl",
+     "kind": "cloister-wall",
+     "pos": [
+      -10,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5.5,
+      0.75
+     ],
+     "height": 3.5,
+     "id": "wall_br",
+     "kind": "cloister-wall",
+     "pos": [
+      10,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      0.5
+     ],
+     "height": 3.2,
+     "id": "arch_bl",
+     "kind": "cloister-arch",
+     "pos": [
+      -4.25,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      0.5
+     ],
+     "height": 3.2,
+     "id": "arch_br",
+     "kind": "cloister-arch",
+     "pos": [
+      4.25,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.35,
+      0.35
+     ],
+     "height": 2.8,
+     "id": "slant_bl",
+     "kind": "stone-lantern",
+     "lightId": "back_l",
+     "pos": [
+      -9,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.35,
+      0.35
+     ],
+     "height": 2.8,
+     "id": "slant_br",
+     "kind": "stone-lantern",
+     "lightId": "back_r",
+     "pos": [
+      9,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      3,
+      0.1
+     ],
+     "height": 4.2,
+     "id": "banners_bl",
+     "kind": "prayer-banners",
+     "pos": [
+      -12,
+      -13.6
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      3,
+      0.1
+     ],
+     "height": 4.2,
+     "id": "banners_br",
+     "kind": "prayer-banners",
+     "pos": [
+      12,
+      -13.6
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6.5,
+     "id": "roof_bl",
+     "kind": "cloister-roofline",
+     "pos": [
+      -9,
+      -16
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6.5,
+     "id": "roof_br",
+     "kind": "cloister-roofline",
+     "pos": [
+      9,
+      -16
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      3,
+      0.75
+     ],
+     "height": 3.5,
+     "id": "wall_bfl",
+     "kind": "cloister-wall",
+     "pos": [
+      -21,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      3,
+      0.75
+     ],
+     "height": 3.5,
+     "id": "wall_bfr",
+     "kind": "cloister-wall",
+     "pos": [
+      21,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 4,
+     "id": "pillar_sl",
+     "kind": "broken-pillar",
+     "pos": [
+      -18.5,
+      -8
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 4,
+     "id": "pillar_sr",
+     "kind": "broken-pillar",
+     "pos": [
+      18.5,
+      -8
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 3.4,
+     "id": "statue_sl",
+     "kind": "faceless-statue",
+     "pos": [
+      -19,
+      -5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 3.4,
+     "id": "statue_sr",
+     "kind": "faceless-statue",
+     "pos": [
+      19,
+      -5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.35,
+      0.35
+     ],
+     "height": 2.2,
+     "id": "slant_sl",
+     "kind": "stone-lantern",
+     "lightId": "side_l",
+     "pos": [
+      -18,
+      -3
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.35,
+      0.35
+     ],
+     "height": 2.2,
+     "id": "slant_sr",
+     "kind": "stone-lantern",
+     "lightId": "side_r",
+     "pos": [
+      18,
+      -3
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      0.1
+     ],
+     "height": 2.8,
+     "id": "banner_sl",
+     "kind": "prayer-banners-short",
+     "pos": [
+      -17.6,
+      0
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      0.1
+     ],
+     "height": 2.8,
+     "id": "banner_sr",
+     "kind": "prayer-banners-short",
+     "pos": [
+      17.6,
+      0
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.5,
+      0.5
+     ],
+     "height": 0.5,
+     "id": "candles_sl",
+     "kind": "candle-cluster",
+     "pos": [
+      -17.75,
+      4
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.5,
+      0.5
+     ],
+     "height": 0.5,
+     "id": "candles_sr",
+     "kind": "candle-cluster",
+     "pos": [
+      17.75,
+      4
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      1.5
+     ],
+     "height": 1,
+     "id": "steps_sl",
+     "kind": "stone-steps-low",
+     "pos": [
+      -18.75,
+      7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      1.5
+     ],
+     "height": 1,
+     "id": "steps_sr",
+     "kind": "stone-steps-low",
+     "pos": [
+      18.75,
+      7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      4,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "parapet_fl",
+     "kind": "stone-parapet",
+     "pos": [
+      -11,
+      11.25
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      5.5,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "parapet_fc",
+     "kind": "stone-parapet",
+     "pos": [
+      0,
+      11.25
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      4,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "parapet_fr",
+     "kind": "stone-parapet",
+     "pos": [
+      11,
+      11.25
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.3,
+     "id": "candle_fl",
+     "kind": "candle-cluster-low",
+     "lightId": "front_l",
+     "pos": [
+      -7,
+      11.75
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.3,
+     "id": "candle_fr",
+     "kind": "candle-cluster-low",
+     "lightId": "front_r",
+     "pos": [
+      7,
+      11.75
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      20,
+      1.5
+     ],
+     "height": 0.1,
+     "id": "cliff_f",
+     "kind": "cliff-edge",
+     "pos": [
+      0,
+      13.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    }
+   ],
+   "id": "arena_cloister",
+   "lighting": {
+    "edgeFade": {
+     "endOutside": 8,
+     "startOutside": 2
+    },
+    "points": [
+     {
+      "id": "back_l",
+      "intensityMul": 1,
+      "pos": [
+       -9,
+       2.4,
+       -12
+      ]
+     },
+     {
+      "id": "back_r",
+      "intensityMul": 1,
+      "pos": [
+       9,
+       2.4,
+       -12
+      ]
+     },
+     {
+      "id": "side_l",
+      "intensityMul": 0.9,
+      "pos": [
+       -18,
+       2,
+       -3
+      ]
+     },
+     {
+      "id": "side_r",
+      "intensityMul": 0.9,
+      "pos": [
+       18,
+       2,
+       -3
+      ]
+     },
+     {
+      "flicker": 0.04,
+      "id": "tower",
+      "intensityMul": 1.3,
+      "pos": [
+       0,
+       4.5,
+       -13.5
+      ]
+     },
+     {
+      "flicker": 0.2,
+      "id": "front_l",
+      "intensityMul": 0.5,
+      "pos": [
+       -7,
+       0.3,
+       11.75
+      ]
+     },
+     {
+      "flicker": 0.2,
+      "id": "front_r",
+      "intensityMul": 0.5,
+      "pos": [
+       7,
+       0.3,
+       11.75
+      ]
+     }
+    ]
+   },
+   "obstacles": [
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "pillar_base_1",
+     "kind": "broken-pillar-base",
+     "shape": {
+      "center": [
+       -9,
+       -4
+      ],
+      "radius": 1,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "pillar_base_2",
+     "kind": "broken-pillar-base-small",
+     "shape": {
+      "center": [
+       9.5,
+       -4.5
+      ],
+      "radius": 0.75,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.35,
+     "id": "bench_1",
+     "kind": "stone-bench",
+     "shape": {
+      "max": [
+       10,
+       4.5
+      ],
+      "min": [
+       7,
+       3.5
+      ],
+      "type": "rect"
+     }
+    }
+   ],
+   "playerStart": {
+    "boss": [
+     0,
+     5
+    ],
+    "default": [
+     0,
+     0
+    ]
+   },
+   "pulseOrigin": [
+    0,
+    0
+   ],
+   "safeZones": [
+    {
+     "blocks": [
+      "obstacle",
+      "spawn",
+      "decor"
+     ],
+     "id": "start",
+     "shape": {
+      "center": [
+       0,
+       0
+      ],
+      "radius": 6,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "obstacle",
+      "decor"
+     ],
+     "id": "boss_stage",
+     "shape": {
+      "center": [
+       0,
+       -3
+      ],
+      "radius": 4,
+      "type": "circle"
+     }
+    }
+   ],
+   "schemaVersion": 1,
+   "spawn": {
+    "interiorMinPlayerDist": 2,
+    "playerSafeRadius": 4,
+    "zones": [
+     {
+      "id": "n",
+      "shape": {
+       "max": [
+        12,
+        -7.5
+       ],
+       "min": [
+        -12,
+        -9
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "s",
+      "shape": {
+       "max": [
+        12,
+        9
+       ],
+       "min": [
+        -12,
+        7.5
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "e",
+      "shape": {
+       "max": [
+        15,
+        6
+       ],
+       "min": [
+        13.5,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "w",
+      "shape": {
+       "max": [
+        -13.5,
+        6
+       ],
+       "min": [
+        -15,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "ne",
+      "shape": {
+       "points": [
+        [
+         12.5,
+         -9
+        ],
+        [
+         15,
+         -6.5
+        ],
+        [
+         13.5,
+         -6
+        ],
+        [
+         12,
+         -7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "se",
+      "shape": {
+       "points": [
+        [
+         12,
+         7.5
+        ],
+        [
+         13.5,
+         6
+        ],
+        [
+         15,
+         6.5
+        ],
+        [
+         12.5,
+         9
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "sw",
+      "shape": {
+       "points": [
+        [
+         -12.5,
+         9
+        ],
+        [
+         -15,
+         6.5
+        ],
+        [
+         -13.5,
+         6
+        ],
+        [
+         -12,
+         7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "nw",
+      "shape": {
+       "points": [
+        [
+         -15,
+         -6.5
+        ],
+        [
+         -12.5,
+         -9
+        ],
+        [
+         -12,
+         -7.5
+        ],
+        [
+         -13.5,
+         -6
+        ]
+       ],
+       "type": "polygon"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "ambient": {
+    "particles": [
+     {
+      "area": "arena",
+      "colorToken": "bone",
+      "kind": "glass-dust",
+      "max": 40,
+      "opacity": 0.2,
+      "sizePx": 1
+     },
+     {
+      "area": "decor",
       "colorToken": "dust",
       "kind": "moth",
       "max": 16,
       "opacity": 0.6,
+      "sizePx": 2
+     },
+     {
+      "area": "decor",
+      "colorToken": "b1.paper",
+      "kind": "paper-scrap",
+      "max": 8,
+      "opacity": 0.7,
       "sizePx": 2
      }
     ]
@@ -99,7 +1009,6 @@
      "zone": "back"
     },
     {
-     "anim": "cloth-sway",
      "footprintHalf": [
       2,
       1
@@ -115,7 +1024,6 @@
      "zone": "back"
     },
     {
-     "anim": "cloth-sway",
      "footprintHalf": [
       2,
       1
@@ -131,7 +1039,6 @@
      "zone": "back"
     },
     {
-     "anim": "cloth-sway",
      "footprintHalf": [
       2,
       1
@@ -147,7 +1054,6 @@
      "zone": "back"
     },
     {
-     "anim": "cloth-sway",
      "footprintHalf": [
       2,
       1
@@ -167,7 +1073,7 @@
       0.25,
       0.25
      ],
-     "height": 3,
+     "height": 2.6,
      "id": "pole_bl",
      "kind": "lantern-pole",
      "lightId": "back_l",
@@ -183,7 +1089,7 @@
       0.25,
       0.25
      ],
-     "height": 3,
+     "height": 2.6,
      "id": "pole_br",
      "kind": "lantern-pole",
      "lightId": "back_r",
@@ -228,6 +1134,36 @@
     },
     {
      "footprintHalf": [
+      0.5,
+      0.5
+     ],
+     "height": 0.9,
+     "id": "baskets_bc",
+     "kind": "basket-stack",
+     "pos": [
+      -3.3,
+      -11.7
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.6,
+      0.5
+     ],
+     "height": 0.8,
+     "id": "crate_bc",
+     "kind": "crate-low",
+     "pos": [
+      3.3,
+      -11.7
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
       1,
       0.75
      ],
@@ -252,6 +1188,98 @@
      "pos": [
       15,
       -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "lantern-sway",
+     "footprintHalf": [
+      1.5,
+      0.5
+     ],
+     "height": 4.8,
+     "id": "floating_l",
+     "kind": "floating-lanterns",
+     "pos": [
+      -8.5,
+      -13.8
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "lantern-sway",
+     "footprintHalf": [
+      1.5,
+      0.5
+     ],
+     "height": 4.8,
+     "id": "floating_r",
+     "kind": "floating-lanterns",
+     "pos": [
+      8,
+      -14
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6,
+     "id": "roof_bl",
+     "kind": "market-roofline",
+     "pos": [
+      -9,
+      -15
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6,
+     "id": "roof_br",
+     "kind": "market-roofline",
+     "pos": [
+      9,
+      -15
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 4,
+     "id": "tent_bl",
+     "kind": "festival-tent",
+     "pos": [
+      -16.5,
+      -15
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 4,
+     "id": "tent_br",
+     "kind": "festival-tent",
+     "pos": [
+      16.5,
+      -15
      ],
      "rotYDeg": 0,
      "zone": "back"
@@ -288,33 +1316,34 @@
     },
     {
      "footprintHalf": [
-      5,
-      1
+      1.25,
+      0.75
      ],
-     "height": 6,
-     "id": "roof_bl",
-     "kind": "market-roofline",
+     "height": 1.8,
+     "id": "cart_sl",
+     "kind": "vendor-cart",
      "pos": [
-      -9,
-      -15
+      -18.75,
+      -9.5
      ],
      "rotYDeg": 0,
-     "zone": "back"
+     "zone": "side"
     },
     {
+     "anim": "lantern-sway",
      "footprintHalf": [
-      5,
-      1
+      1.5,
+      0.5
      ],
-     "height": 6,
-     "id": "roof_br",
-     "kind": "market-roofline",
+     "height": 4.8,
+     "id": "floating_sl",
+     "kind": "floating-lanterns",
      "pos": [
-      9,
-      -15
+      -19,
+      -7.5
      ],
      "rotYDeg": 0,
-     "zone": "back"
+     "zone": "side"
     },
     {
      "anim": "cloth-sway",
@@ -335,17 +1364,17 @@
     {
      "anim": "cloth-sway",
      "footprintHalf": [
-      1.5,
-      1.5
+      1.6,
+      0.1
      ],
-     "height": 3,
-     "id": "stall_sr",
-     "kind": "side-stall",
+     "height": 2.6,
+     "id": "garland_sl",
+     "kind": "paper-garland",
      "pos": [
-      19,
-      -5
+      -17.6,
+      -3.5
      ],
-     "rotYDeg": 270,
+     "rotYDeg": 90,
      "zone": "side"
     },
     {
@@ -362,6 +1391,219 @@
       -2
      ],
      "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 1,
+     "id": "cloth_rolls_sl",
+     "kind": "cloth-rolls",
+     "pos": [
+      -18.5,
+      0.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.5,
+      0.5
+     ],
+     "height": 0.9,
+     "id": "baskets_sl",
+     "kind": "basket-stack",
+     "pos": [
+      -17.75,
+      3
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sl",
+     "kind": "barrel-cluster",
+     "pos": [
+      -18.5,
+      5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "lamp_sl",
+     "kind": "ground-lantern",
+     "pos": [
+      -17.5,
+      7
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 0.8,
+     "id": "sacks_sl",
+     "kind": "sack-pile-low",
+     "pos": [
+      -18,
+      8.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.6,
+      0.5
+     ],
+     "height": 0.8,
+     "id": "crate_sl",
+     "kind": "crate-low",
+     "pos": [
+      -19,
+      10.75
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 4,
+     "id": "tent_sfl",
+     "kind": "festival-tent",
+     "pos": [
+      -23.5,
+      -10
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sfl",
+     "kind": "side-stall",
+     "pos": [
+      -24,
+      -4
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 2.4,
+     "id": "rack_sfl",
+     "kind": "lantern-rack",
+     "pos": [
+      -21.5,
+      1
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sfl",
+     "kind": "barrel-cluster",
+     "pos": [
+      -23,
+      6
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 2.4,
+     "id": "rack_sr",
+     "kind": "lantern-rack",
+     "pos": [
+      18.5,
+      -9.25
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "anim": "lantern-sway",
+     "footprintHalf": [
+      1.5,
+      0.5
+     ],
+     "height": 4.8,
+     "id": "floating_sr",
+     "kind": "floating-lanterns",
+     "pos": [
+      19,
+      -7.75
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sr",
+     "kind": "side-stall",
+     "pos": [
+      19,
+      -5
+     ],
+     "rotYDeg": 270,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.6,
+      0.1
+     ],
+     "height": 2.6,
+     "id": "garland_sr",
+     "kind": "paper-garland",
+     "pos": [
+      17.6,
+      -3.5
+     ],
+     "rotYDeg": 90,
      "zone": "side"
     },
     {
@@ -386,21 +1628,6 @@
       0.5
      ],
      "height": 1,
-     "id": "cloth_rolls_sl",
-     "kind": "cloth-rolls",
-     "pos": [
-      -18.5,
-      0.5
-     ],
-     "rotYDeg": 0,
-     "zone": "side"
-    },
-    {
-     "footprintHalf": [
-      0.75,
-      0.5
-     ],
-     "height": 1,
      "id": "cloth_rolls_sr",
      "kind": "cloth-rolls",
      "pos": [
@@ -412,15 +1639,15 @@
     },
     {
      "footprintHalf": [
-      1,
-      1
+      0.5,
+      0.5
      ],
-     "height": 1.2,
-     "id": "barrels_sl",
-     "kind": "barrel-cluster",
+     "height": 0.9,
+     "id": "baskets_sr",
+     "kind": "basket-stack",
      "pos": [
-      -18.5,
-      5
+      17.75,
+      2.75
      ],
      "rotYDeg": 0,
      "zone": "side"
@@ -442,15 +1669,15 @@
     },
     {
      "footprintHalf": [
-      0.75,
-      0.75
+      0.25,
+      0.25
      ],
-     "height": 0.8,
-     "id": "sacks_sl",
-     "kind": "sack-pile-low",
+     "height": 0.4,
+     "id": "lamp_sr",
+     "kind": "ground-lantern",
      "pos": [
-      -18,
-      8.5
+      17.5,
+      7
      ],
      "rotYDeg": 0,
      "zone": "side"
@@ -472,17 +1699,32 @@
     },
     {
      "footprintHalf": [
+      0.6,
+      0.5
+     ],
+     "height": 0.8,
+     "id": "crate_sr",
+     "kind": "crate-low",
+     "pos": [
+      19,
+      10.75
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
       1.5,
       1.5
      ],
-     "height": 3,
-     "id": "stall_sfl",
-     "kind": "side-stall",
+     "height": 4,
+     "id": "tent_sfr",
+     "kind": "festival-tent",
      "pos": [
-      -24,
-      -4
+      23.5,
+      -10
      ],
-     "rotYDeg": 90,
+     "rotYDeg": 0,
      "zone": "side"
     },
     {
@@ -502,15 +1744,15 @@
     },
     {
      "footprintHalf": [
-      1,
-      1
+      1.25,
+      0.75
      ],
-     "height": 1.2,
-     "id": "barrels_sfl",
-     "kind": "barrel-cluster",
+     "height": 1.8,
+     "id": "cart_sfr",
+     "kind": "vendor-cart",
      "pos": [
-      -23,
-      6
+      21.75,
+      1
      ],
      "rotYDeg": 0,
      "zone": "side"
@@ -563,9 +1805,24 @@
      "zone": "front"
     },
     {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "lamp_fc",
+     "kind": "ground-lantern",
+     "pos": [
+      -0.5,
+      13.25
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
      "anim": "paper-drift",
      "footprintHalf": [
-      2,
+      1.5,
       0.5
      ],
      "height": 0.05,
@@ -590,6 +1847,51 @@
      "pos": [
       5,
       12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.4,
+      0.3
+     ],
+     "height": 0.35,
+     "id": "fallen_lantern_f1",
+     "kind": "fallen-lantern",
+     "pos": [
+      -12,
+      11.9
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.4,
+      0.3
+     ],
+     "height": 0.35,
+     "id": "fallen_lantern_f2",
+     "kind": "fallen-lantern",
+     "pos": [
+      2.5,
+      11.8
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      0.6
+     ],
+     "height": 0.05,
+     "id": "mat_f1",
+     "kind": "woven-mat",
+     "pos": [
+      11,
+      12.9
      ],
      "rotYDeg": 0,
      "zone": "front"
@@ -1243,9 +2545,920 @@
      }
     ]
    }
+  },
+  {
+   "ambient": {
+    "particles": [
+     {
+      "area": "arena",
+      "colorToken": "bone",
+      "kind": "glass-dust",
+      "max": 40,
+      "opacity": 0.2,
+      "sizePx": 1
+     },
+     {
+      "area": "decor",
+      "colorToken": "b3.ember",
+      "kind": "frozen-ember",
+      "max": 20,
+      "opacity": 0.7,
+      "sizePx": 1
+     },
+     {
+      "area": "decor",
+      "colorToken": "b3.ash",
+      "kind": "ash-flake",
+      "max": 16,
+      "opacity": 0.4,
+      "sizePx": 1
+     }
+    ]
+   },
+   "arena": {
+    "boundary": [
+     [
+      -13,
+      -10
+     ],
+     [
+      13,
+      -10
+     ],
+     [
+      16,
+      -7
+     ],
+     [
+      16,
+      7
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      -13,
+      10
+     ],
+     [
+      -16,
+      7
+     ],
+     [
+      -16,
+      -7
+     ]
+    ],
+    "floor": {
+     "altToken": "floor-lit",
+     "baseToken": "floor-mid",
+     "tileId": "tile-floor"
+    },
+    "lip": 1,
+    "projectileMargin": 3,
+    "rim": {
+     "colorToken": "dust",
+     "height": 0.25,
+     "opacity": 0.5
+    }
+   },
+   "bossStage": {
+    "floorRingContrastMax": 1.15,
+    "landmarkId": "burnt-press-house",
+    "shape": {
+     "center": [
+      0,
+      -3
+     ],
+     "radius": 4,
+     "type": "circle"
+    }
+   },
+   "decor": [
+    {
+     "footprintHalf": [
+      3,
+      1.5
+     ],
+     "height": 7.5,
+     "id": "press",
+     "kind": "burnt-press-house",
+     "lightId": "press",
+     "pos": [
+      0,
+      -14
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      3.5,
+      0.3
+     ],
+     "height": 2.4,
+     "id": "trellis_bl",
+     "kind": "vine-trellis",
+     "pos": [
+      -8.5,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      3.5,
+      0.3
+     ],
+     "height": 2.4,
+     "id": "trellis_br",
+     "kind": "vine-trellis",
+     "pos": [
+      8.5,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.3,
+      0.3
+     ],
+     "height": 2.8,
+     "id": "brazier_bl",
+     "kind": "ember-post",
+     "lightId": "back_l",
+     "pos": [
+      -12.5,
+      -12.75
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.3,
+      0.3
+     ],
+     "height": 2.8,
+     "id": "brazier_br",
+     "kind": "ember-post",
+     "lightId": "back_r",
+     "pos": [
+      12.5,
+      -12.75
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      0.6
+     ],
+     "height": 1.4,
+     "id": "barrels_bl",
+     "kind": "barrel-row",
+     "pos": [
+      -14.5,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      0.6
+     ],
+     "height": 1.4,
+     "id": "barrels_br",
+     "kind": "barrel-row",
+     "pos": [
+      14.5,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "smoke-rise",
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 9,
+     "id": "smoke_bl",
+     "kind": "smoke-column",
+     "pos": [
+      -6,
+      -16
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "smoke-rise",
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 9,
+     "id": "smoke_br",
+     "kind": "smoke-column",
+     "pos": [
+      7,
+      -17
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 4.5,
+     "id": "terrace_bl",
+     "kind": "vine-terrace",
+     "pos": [
+      -10,
+      -15.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 4.5,
+     "id": "terrace_br",
+     "kind": "vine-terrace",
+     "pos": [
+      10,
+      -15.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      3,
+      1
+     ],
+     "height": 4.5,
+     "id": "terrace_bfl",
+     "kind": "vine-terrace",
+     "pos": [
+      -21,
+      -13
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      3,
+      1
+     ],
+     "height": 4.5,
+     "id": "terrace_bfr",
+     "kind": "vine-terrace",
+     "pos": [
+      21,
+      -13
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      1
+     ],
+     "height": 2,
+     "id": "cart_sl",
+     "kind": "burnt-cart",
+     "pos": [
+      -19,
+      -7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.25,
+      1
+     ],
+     "height": 2,
+     "id": "cart_sr",
+     "kind": "burnt-cart",
+     "pos": [
+      19,
+      -7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.3,
+      0.3
+     ],
+     "height": 2,
+     "id": "post_sl",
+     "kind": "ember-post",
+     "lightId": "side_l",
+     "pos": [
+      -18.5,
+      -4
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.3,
+      0.3
+     ],
+     "height": 2,
+     "id": "post_sr",
+     "kind": "ember-post",
+     "lightId": "side_r",
+     "pos": [
+      18.5,
+      -4
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      0.25
+     ],
+     "height": 1.8,
+     "id": "trellis_sl",
+     "kind": "vine-trellis-side",
+     "pos": [
+      -17.75,
+      -1
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      0.25
+     ],
+     "height": 1.8,
+     "id": "trellis_sr",
+     "kind": "vine-trellis-side",
+     "pos": [
+      17.75,
+      -1
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 0.8,
+     "id": "baskets_sl",
+     "kind": "grape-baskets",
+     "pos": [
+      -18.25,
+      3.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 0.8,
+     "id": "baskets_sr",
+     "kind": "grape-baskets",
+     "pos": [
+      18.25,
+      3.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1.25
+     ],
+     "height": 0.6,
+     "id": "stumps_sl",
+     "kind": "vine-stumps-low",
+     "pos": [
+      -18.5,
+      7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1.25
+     ],
+     "height": 0.6,
+     "id": "stumps_sr",
+     "kind": "vine-stumps-low",
+     "pos": [
+      18.5,
+      7.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.4,
+      0.4
+     ],
+     "height": 0.3,
+     "id": "embers_fl",
+     "kind": "ember-pile",
+     "lightId": "front_l",
+     "pos": [
+      -10,
+      11.75
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.4,
+      0.4
+     ],
+     "height": 0.3,
+     "id": "embers_fr",
+     "kind": "ember-pile",
+     "lightId": "front_r",
+     "pos": [
+      10,
+      11.75
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      2.5,
+      0.75
+     ],
+     "height": 0.05,
+     "id": "ash_f1",
+     "kind": "ash-drift",
+     "pos": [
+      -4,
+      12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      2,
+      0.75
+     ],
+     "height": 0.05,
+     "id": "ash_f2",
+     "kind": "ash-drift",
+     "pos": [
+      4.5,
+      12.25
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.75
+     ],
+     "height": 0.5,
+     "id": "stumps_fl",
+     "kind": "vine-stumps-low",
+     "pos": [
+      -14.5,
+      12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.75
+     ],
+     "height": 0.5,
+     "id": "stumps_fr",
+     "kind": "vine-stumps-low",
+     "pos": [
+      14.5,
+      12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.5
+     ],
+     "height": 0.1,
+     "id": "shards_f",
+     "kind": "glass-shards",
+     "pos": [
+      0.5,
+      13.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    }
+   ],
+   "id": "arena_vineyard",
+   "lighting": {
+    "edgeFade": {
+     "endOutside": 10,
+     "startOutside": 3
+    },
+    "points": [
+     {
+      "flicker": 0.25,
+      "id": "back_l",
+      "intensityMul": 1,
+      "pos": [
+       -12.5,
+       2.6,
+       -12.75
+      ]
+     },
+     {
+      "flicker": 0.25,
+      "id": "back_r",
+      "intensityMul": 1,
+      "pos": [
+       12.5,
+       2.6,
+       -12.75
+      ]
+     },
+     {
+      "id": "side_l",
+      "intensityMul": 0.9,
+      "pos": [
+       -18.5,
+       1.8,
+       -4
+      ]
+     },
+     {
+      "id": "side_r",
+      "intensityMul": 0.9,
+      "pos": [
+       18.5,
+       1.8,
+       -4
+      ]
+     },
+     {
+      "flicker": 0.1,
+      "id": "press",
+      "intensityMul": 1.4,
+      "pos": [
+       0,
+       3.8,
+       -14
+      ]
+     },
+     {
+      "id": "front_l",
+      "intensityMul": 0.5,
+      "pos": [
+       -10,
+       0.3,
+       11.75
+      ]
+     },
+     {
+      "id": "front_r",
+      "intensityMul": 0.5,
+      "pos": [
+       10,
+       0.3,
+       11.75
+      ]
+     }
+    ]
+   },
+   "obstacles": [
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "barrel_1",
+     "kind": "tipped-barrel",
+     "shape": {
+      "max": [
+       -8,
+       -4.5
+      ],
+      "min": [
+       -10,
+       -5.5
+      ],
+      "type": "rect"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.35,
+     "id": "stump_1",
+     "kind": "vine-stump",
+     "shape": {
+      "center": [
+       8.5,
+       -4.5
+      ],
+      "radius": 1,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "wall_1",
+     "kind": "low-stone-wall",
+     "shape": {
+      "max": [
+       -5.5,
+       5.5
+      ],
+      "min": [
+       -8.5,
+       4.5
+      ],
+      "type": "rect"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "barrel_2",
+     "kind": "tipped-barrel",
+     "shape": {
+      "max": [
+       9,
+       5
+      ],
+      "min": [
+       8,
+       3
+      ],
+      "type": "rect"
+     }
+    }
+   ],
+   "playerStart": {
+    "boss": [
+     0,
+     5
+    ],
+    "default": [
+     0,
+     0
+    ]
+   },
+   "pulseOrigin": [
+    0,
+    0
+   ],
+   "safeZones": [
+    {
+     "blocks": [
+      "obstacle",
+      "spawn",
+      "decor"
+     ],
+     "id": "start",
+     "shape": {
+      "center": [
+       0,
+       0
+      ],
+      "radius": 6,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "obstacle",
+      "decor"
+     ],
+     "id": "boss_stage",
+     "shape": {
+      "center": [
+       0,
+       -3
+      ],
+      "radius": 4,
+      "type": "circle"
+     }
+    }
+   ],
+   "schemaVersion": 1,
+   "spawn": {
+    "interiorMinPlayerDist": 2,
+    "playerSafeRadius": 4,
+    "zones": [
+     {
+      "id": "n",
+      "shape": {
+       "max": [
+        12,
+        -7.5
+       ],
+       "min": [
+        -12,
+        -9
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "s",
+      "shape": {
+       "max": [
+        12,
+        9
+       ],
+       "min": [
+        -12,
+        7.5
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "e",
+      "shape": {
+       "max": [
+        15,
+        6
+       ],
+       "min": [
+        13.5,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "w",
+      "shape": {
+       "max": [
+        -13.5,
+        6
+       ],
+       "min": [
+        -15,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "ne",
+      "shape": {
+       "points": [
+        [
+         12.5,
+         -9
+        ],
+        [
+         15,
+         -6.5
+        ],
+        [
+         13.5,
+         -6
+        ],
+        [
+         12,
+         -7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "se",
+      "shape": {
+       "points": [
+        [
+         12,
+         7.5
+        ],
+        [
+         13.5,
+         6
+        ],
+        [
+         15,
+         6.5
+        ],
+        [
+         12.5,
+         9
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "sw",
+      "shape": {
+       "points": [
+        [
+         -12.5,
+         9
+        ],
+        [
+         -15,
+         6.5
+        ],
+        [
+         -13.5,
+         6
+        ],
+        [
+         -12,
+         7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "nw",
+      "shape": {
+       "points": [
+        [
+         -15,
+         -6.5
+        ],
+        [
+         -12.5,
+         -9
+        ],
+        [
+         -12,
+         -7.5
+        ],
+        [
+         -13.5,
+         -6
+        ]
+       ],
+       "type": "polygon"
+      }
+     }
+    ]
+   }
   }
  ],
- "contentHash": "6b395051",
+ "contentHash": "ff51169c",
  "contentTier": "A",
  "format": "shardfall-game-data",
  "missingTables": [],
@@ -1264,7 +3477,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 26,
+      "count": 18,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1273,6 +3486,30 @@
       "pulse": 1,
       "sectors": [],
       "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 9,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 1,
@@ -1291,7 +3528,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 32,
+      "count": 24,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1312,6 +3549,30 @@
       "pulse": 2,
       "sectors": [],
       "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 2,
@@ -1330,7 +3591,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 36,
+      "count": 28,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1363,6 +3624,30 @@
       "pulse": 3,
       "sectors": [],
       "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 20,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 3,
@@ -1381,7 +3666,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 40,
+      "count": 28,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1426,6 +3711,30 @@
       "pulse": 4,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 22,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 4,
@@ -1444,7 +3753,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 36,
+      "count": 30,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1468,7 +3777,7 @@
      },
      {
       "content_tier": "A",
-      "count": 6,
+      "count": 4,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -1480,7 +3789,7 @@
      },
      {
       "content_tier": "A",
-      "count": 3,
+      "count": 2,
       "end_frac": 0.9,
       "enemy_id": "tank",
       "group_max": 1,
@@ -1489,6 +3798,30 @@
       "pulse": 5,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 5,
@@ -1507,7 +3840,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 50,
+      "count": 40,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1519,7 +3852,7 @@
      },
      {
       "content_tier": "A",
-      "count": 10,
+      "count": 12,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -1531,7 +3864,7 @@
      },
      {
       "content_tier": "A",
-      "count": 10,
+      "count": 12,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -1552,6 +3885,30 @@
       "pulse": 6,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 40,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 6,
@@ -1570,7 +3927,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 56,
+      "count": 46,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1582,7 +3939,7 @@
      },
      {
       "content_tier": "A",
-      "count": 12,
+      "count": 14,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -1594,7 +3951,7 @@
      },
      {
       "content_tier": "A",
-      "count": 12,
+      "count": 14,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -1615,6 +3972,30 @@
       "pulse": 7,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 51,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 7,
@@ -1633,7 +4014,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 62,
+      "count": 52,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1645,7 +4026,7 @@
      },
      {
       "content_tier": "A",
-      "count": 14,
+      "count": 16,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -1657,7 +4038,7 @@
      },
      {
       "content_tier": "A",
-      "count": 14,
+      "count": 17,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -1678,6 +4059,30 @@
       "pulse": 8,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 62,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 8,
@@ -1696,7 +4101,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 70,
+      "count": 58,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1708,7 +4113,7 @@
      },
      {
       "content_tier": "A",
-      "count": 16,
+      "count": 18,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -1720,7 +4125,7 @@
      },
      {
       "content_tier": "A",
-      "count": 16,
+      "count": 20,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -1741,6 +4146,30 @@
       "pulse": 9,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 72,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 9,
@@ -1788,7 +4217,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 26,
+      "count": 18,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1797,6 +4226,30 @@
       "pulse": 1,
       "sectors": [],
       "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 9,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 1,
@@ -1815,7 +4268,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 32,
+      "count": 24,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1836,6 +4289,30 @@
       "pulse": 2,
       "sectors": [],
       "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 2,
@@ -1854,7 +4331,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 36,
+      "count": 28,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 5,
@@ -1887,6 +4364,30 @@
       "pulse": 3,
       "sectors": [],
       "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 4,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 20,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 3,
@@ -1905,7 +4406,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 40,
+      "count": 28,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -1950,6 +4451,30 @@
       "pulse": 4,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 22,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 4,
@@ -1968,7 +4493,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 40,
+      "count": 34,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2013,6 +4538,30 @@
       "pulse": 5,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 31,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 5,
@@ -2031,7 +4580,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 50,
+      "count": 40,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2043,7 +4592,7 @@
      },
      {
       "content_tier": "A",
-      "count": 10,
+      "count": 12,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -2055,7 +4604,7 @@
      },
      {
       "content_tier": "A",
-      "count": 10,
+      "count": 12,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -2076,6 +4625,30 @@
       "pulse": 6,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 5,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 5,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 40,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 6,
@@ -2094,7 +4667,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 56,
+      "count": 46,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2106,7 +4679,7 @@
      },
      {
       "content_tier": "A",
-      "count": 12,
+      "count": 14,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -2118,7 +4691,7 @@
      },
      {
       "content_tier": "A",
-      "count": 12,
+      "count": 14,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -2139,6 +4712,30 @@
       "pulse": 7,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 51,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 7,
@@ -2157,7 +4754,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 62,
+      "count": 52,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2169,7 +4766,7 @@
      },
      {
       "content_tier": "A",
-      "count": 14,
+      "count": 16,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -2181,7 +4778,7 @@
      },
      {
       "content_tier": "A",
-      "count": 14,
+      "count": 17,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -2202,6 +4799,30 @@
       "pulse": 8,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 62,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 8,
@@ -2220,7 +4841,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 70,
+      "count": 58,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2232,7 +4853,7 @@
      },
      {
       "content_tier": "A",
-      "count": 16,
+      "count": 18,
       "end_frac": 1,
       "enemy_id": "charger",
       "group_max": 2,
@@ -2244,7 +4865,7 @@
      },
      {
       "content_tier": "A",
-      "count": 16,
+      "count": 20,
       "end_frac": 1,
       "enemy_id": "shooter",
       "group_max": 2,
@@ -2265,6 +4886,30 @@
       "pulse": 9,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 72,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 9,
@@ -2283,7 +4928,7 @@
     "spawns": [
      {
       "content_tier": "A",
-      "count": 88,
+      "count": 66,
       "end_frac": 1,
       "enemy_id": "swarmer",
       "group_max": 6,
@@ -2328,6 +4973,30 @@
       "pulse": 10,
       "sectors": [],
       "start_frac": 0.3
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 6,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 82,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 7,
+      "group_min": 4,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0.55
      }
     ],
     "threat": 10,
@@ -2364,7 +5033,7 @@
   ],
   "biomes": [
    {
-    "arena_id": "arena_proto",
+    "arena_id": "arena_market",
     "content_tier": "A",
     "id": "biome_market",
     "music_id": "music_market",
@@ -2375,7 +5044,7 @@
    {
     "archetype": "target_circles",
     "boss_id": "boss_lantern",
-    "dmg": 10,
+    "dmg": 9,
     "id": "ember_rain_5",
     "params": {
      "count": 5,
@@ -2388,7 +5057,7 @@
    {
     "archetype": "target_circles",
     "boss_id": "boss_lantern",
-    "dmg": 10,
+    "dmg": 9,
     "id": "ember_rain_8",
     "params": {
      "count": 8,
@@ -2401,32 +5070,32 @@
    {
     "archetype": "ring_gap",
     "boss_id": "boss_lantern",
-    "dmg": 9,
+    "dmg": 8,
     "id": "snuff_ring",
     "params": {
-     "gap_deg": 60,
+     "gap_deg": 90,
      "max_radius": 19,
      "rings": 1,
-     "speed": 5,
+     "speed": 4,
      "thickness": 0.6
     },
-    "telegraph_s": 1
+    "telegraph_s": 1.2
    },
    {
     "archetype": "ring_gap",
     "boss_id": "boss_lantern",
-    "dmg": 9,
+    "dmg": 8,
     "id": "snuff_ring_double",
     "params": {
-     "gap_deg": 60,
+     "gap_deg": 90,
      "max_radius": 19,
      "min_gap_diff_deg": 90,
-     "ring_gap_s": 0.8,
+     "ring_gap_s": 1,
      "rings": 2,
-     "speed": 5,
+     "speed": 4,
      "thickness": 0.6
     },
-    "telegraph_s": 1
+    "telegraph_s": 1.2
    },
    {
     "archetype": "lanes",
@@ -2515,9 +5184,9 @@
    "boss_trickle_max_alive": 24,
    "burn_dps_nonhit": 2,
    "death_slowmo_s": 1,
-   "enemy_dmg_lin": 0.07,
-   "enemy_hp_lin": 0.12,
-   "enemy_hp_quad": 0.006,
+   "enemy_dmg_lin": 0.1,
+   "enemy_hp_lin": 0.18,
+   "enemy_hp_quad": 0.015,
    "enemy_radius_boss": 1.6,
    "enemy_radius_large": 0.6,
    "enemy_radius_medium": 0.4,
@@ -2527,16 +5196,19 @@
    "extra_projectile_spread_deg": 12,
    "glint_collect_dist_add": 0.2,
    "glint_floor_cap": 150,
-   "glint_fly_speed": 12,
+   "glint_fly_accel": 60,
+   "glint_fly_speed": 20,
+   "glint_fly_speed_start": 3,
    "guard_min_frac": 0.25,
    "iframes_block": 0.2,
    "iframes_dodge": 0.2,
    "iframes_hurt": 0.5,
    "knockback_s": 0.1,
    "leech_heal_cap_per_s": 6,
+   "low_hp_frac": 0.3,
    "music_pressure_frac": 0.6,
    "music_pressure_release_frac": 0.5,
-   "pickup_radius_base": 1.6,
+   "pickup_radius_base": 2,
    "player_base_speed": 4.5,
    "player_radius": 0.35,
    "player_shot_radius": 0.15,
@@ -2551,6 +5223,7 @@
    "spawn_mark_diam_medium": 1.5,
    "spawn_mark_diam_small": 1,
    "spawn_mark_diam_warden": 3,
+   "spawn_mark_medium_group_min": 3,
    "spawn_mark_s": 0.8,
    "spawn_quiet_end_s": 2,
    "telegraph_min_area_s": 0.8,
@@ -2561,8 +5234,8 @@
    "warden_overtime_haste_s": 20,
    "warden_spawn_frac": 0.25,
    "weapon_slots": 6,
-   "xp_base": 15,
-   "xp_per_level": 10
+   "xp_base": 20,
+   "xp_per_level": 13
   },
   "difficulty": [
    {
@@ -2764,7 +5437,7 @@
      "distance": 3,
      "dmg": 0,
      "duration": 2,
-     "max_alive": 6,
+     "max_alive": 4,
      "origin": "player",
      "radius": 1,
      "status": "burn",
@@ -3178,7 +5851,7 @@
     "affixes": [],
     "attack_dmg": 0,
     "behavior": "swarmer",
-    "contact_dmg": 3,
+    "contact_dmg": 4,
     "content_tier": "A",
     "glint": 1,
     "guard": 0,
@@ -3194,12 +5867,12 @@
     "role": "swarmer",
     "silt": 0,
     "size_class": "small",
-    "speed": 2.6,
+    "speed": 3.4,
     "telegraph_s": 0
    },
    {
     "affixes": [],
-    "attack_dmg": 6,
+    "attack_dmg": 7,
     "behavior": "charger",
     "contact_dmg": 3,
     "content_tier": "A",
@@ -3212,7 +5885,7 @@
     "params": {
      "charge_s": 0.45,
      "charge_speed": 10,
-     "cooldown": 3,
+     "cooldown": 2.5,
      "recover_s": 0.8,
      "trigger_range": 6
     },
@@ -3220,12 +5893,12 @@
     "role": "charger",
     "silt": 0,
     "size_class": "medium",
-    "speed": 2,
+    "speed": 2.2,
     "telegraph_s": 0.6
    },
    {
     "affixes": [],
-    "attack_dmg": 4,
+    "attack_dmg": 5,
     "behavior": "shooter",
     "contact_dmg": 2,
     "content_tier": "A",
@@ -3236,11 +5909,11 @@
     "kb_resist": 0,
     "name_key": "unlit.shooter",
     "params": {
-     "cooldown": 2.8,
+     "cooldown": 2.2,
      "keep_max": 7,
      "keep_min": 5,
      "shot_life": 2.5,
-     "shot_speed": 5.5
+     "shot_speed": 6
     },
     "radius": null,
     "role": "shooter",
@@ -3273,13 +5946,13 @@
     "affixes": [
      "volley"
     ],
-    "attack_dmg": 10,
+    "attack_dmg": 8,
     "behavior": "warden_hound",
     "contact_dmg": 6,
     "content_tier": "A",
     "glint": 25,
     "guard": 0,
-    "hp": 380,
+    "hp": 360,
     "id": "warden_hound",
     "kb_resist": 0.9,
     "name_key": "unlit.warden_hound",
@@ -3307,7 +5980,7 @@
     "content_tier": "A",
     "glint": 40,
     "guard": 2,
-    "hp": 2000,
+    "hp": 2500,
     "id": "boss_lantern",
     "kb_resist": 1,
     "name_key": "unlit.boss_lantern",
@@ -3679,38 +6352,38 @@
    {
     "color_token": "rarity-plain",
     "id": "plain",
-    "memento_price": 14,
+    "memento_price": 18,
     "order": 0,
     "weapon_cd_mult": 1,
     "weapon_dmg_mult": 1,
-    "weapon_price": 16
+    "weapon_price": 21
    },
    {
     "color_token": "rarity-fine",
     "id": "fine",
-    "memento_price": 28,
+    "memento_price": 36,
     "order": 1,
     "weapon_cd_mult": 0.95,
     "weapon_dmg_mult": 1.5,
-    "weapon_price": 34
+    "weapon_price": 44
    },
    {
     "color_token": "rarity-rare",
     "id": "rare",
-    "memento_price": 50,
+    "memento_price": 65,
     "order": 2,
     "weapon_cd_mult": 0.9,
     "weapon_dmg_mult": 2.2,
-    "weapon_price": 70
+    "weapon_price": 90
    },
    {
     "color_token": "rarity-fabled",
     "id": "fabled",
-    "memento_price": 85,
+    "memento_price": 110,
     "order": 3,
     "weapon_cd_mult": 0.85,
     "weapon_dmg_mult": 3.2,
-    "weapon_price": 130
+    "weapon_price": 170
    }
   ],
   "rarity_weights": [

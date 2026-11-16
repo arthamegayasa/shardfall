@@ -1,0 +1,30 @@
+{
+  "id": "icon-tag-shard",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Shard tag: a tall cyan diamond shard. Key: rhombus.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..w..",
+          ".wcb.",
+          "wccbb",
+          ".ccb.",
+          ".cb..",
+          "..b.."
+        ]
+      ]
+    }
+  }
+}

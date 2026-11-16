@@ -18,6 +18,7 @@ import { startBossEntry } from './boss.ts';
 import { pickLevelCard, rollLevelChoices, rollReward } from './progression.ts';
 import { openShop } from './shop.ts';
 import { dropSchedule, buildSchedule } from './spawner.ts';
+import { applyOvertimeHaste } from './affixes.ts';
 import { gainGlint, sweepPickups } from './pickups.ts';
 import { riteCooldown } from './player.ts';
 
@@ -143,7 +144,22 @@ export function canonicalReset(ctx: SimCtx): void {
   run.bossPatternIndex = -1;
   run.bossPatternTicks = 0;
   run.bossPatternStep = 0;
+  run.bossPatternTotal = 0;
   run.bossHpFloor = 0;
+  // Kill flags are Pulse-scoped: a loaded choice phase must match an uninterrupted one (QA D-4).
+  run.wardenKilled = false;
+  run.bossKilled = false;
+  run.bossPatX = 0;
+  run.bossPatY = 0;
+  run.bossPatDirX = 0;
+  run.bossPatDirY = 0;
+  run.bossPatAngle = 0;
+  run.bossPatHit = false;
+  run.playerSlowPct = 0;
+  run.playerSlowTicks = 0;
+  run.coinGlint.fill(0);
+  run.lungeTimer.fill(0);
+  run.lungeTicks.fill(0);
   run.statsDirty = true;
   const p = world.player;
   p.facing = 1;
@@ -244,9 +260,24 @@ export function beginPulse(ctx: SimCtx, index: number, sc: StatScratch): void {
   fireSimpleTrigger(ctx, Trigger.OnPulseStart);
 }
 
-/** Remove every enemy and hazard without drops (glass flash), keep pickups. */
+/**
+ * Remove every enemy and hazard without drops (glass flash), keep pickups. Each living Unlit raises
+ * EnemyDissolved so render can shatter it where it stood (CD M1: the closing flash dissolves Unlit).
+ */
 function dissolveAll(ctx: SimCtx): void {
   const { world } = ctx;
+  const e = world.enemies;
+  for (let s = 0; s < e.highWater; s++) {
+    if (e.alive[s] === 0) continue;
+    ctx.events.push(
+      SimEventType.EnemyDissolved,
+      e.x[s] ?? 0,
+      e.y[s] ?? 0,
+      e.typeIndex[s] ?? 0,
+      e.rank[s] ?? 0,
+      0,
+    );
+  }
   resetPool(world.enemies);
   resetPool(world.enemyShots);
   resetPool(world.playerShots);
@@ -311,25 +342,13 @@ export function updatePulseTimer(ctx: SimCtx): boolean {
       run.overtimeTicks >= cfg.wardenOvertimeHasteTicks
     ) {
       run.hasteApplied = true;
-      applyHaste(ctx, run.wardenSlot);
+      applyOvertimeHaste(ctx, run.wardenSlot);
     }
     return false;
   }
   if (run.wardenType >= 0 && !run.wardenSpawned) return false;
   endPulse(ctx, run.diff?.pulseEndCollectFrac ?? cfg.pulseEndCollectFrac);
   return true;
-}
-
-/** Affix hasted (GDD 15.2): movement +speed_pct%. */
-function applyHaste(ctx: SimCtx, slot: number): void {
-  const a = ctx.data.affixes.findIndex((x) => x.id === 'hasted');
-  const def = ctx.data.affixes[a];
-  const e = ctx.world.enemies;
-  if (def === undefined) return;
-  const pct = typeof def.params['move_pct'] === 'number' ? def.params['move_pct'] : 0;
-  e.speedMult[slot] = (e.speedMult[slot] ?? 1) * (1 + pct / 100);
-  if (a < 31) e.affixMask[slot] = (e.affixMask[slot] ?? 0) | (1 << a);
-  ctx.events.push(SimEventType.AffixApplied, e.x[slot] ?? 0, e.y[slot] ?? 0, a, slot, 0);
 }
 
 /** Next phase in the choice queue after pulseClear or a pick: reward, levelUp, shop (GDD 12). */
@@ -350,8 +369,13 @@ export function advanceChoices(ctx: SimCtx, sc: StatScratch): void {
   }
   if (run.pendingLevelUps > 0) {
     rollLevelChoices(ctx);
-    setPhase(ctx, 'levelUp');
-    return;
+    if (run.levelChoices.length > 0) {
+      setPhase(ctx, 'levelUp');
+      return;
+    }
+    // Empty card pool (every stat at max): the levels are spent without a screen, never a
+    // levelUp phase with zero choices (LP review M1).
+    run.pendingLevelUps = 0;
   }
   world.levelUp.pending = 0;
   world.levelUp.choices = [];

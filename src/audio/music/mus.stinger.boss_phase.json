@@ -1,0 +1,84 @@
+{
+  "id": "mus.stinger.boss_phase",
+  "oneShot": true,
+  "tailSec": 0.6,
+  "bpm": 132,
+  "meter": [
+    4,
+    4
+  ],
+  "stepsPerBeat": 4,
+  "gainDb": -2,
+  "key": {
+    "root": "D",
+    "mode": "phrygian"
+  },
+  "form": [
+    "A"
+  ],
+  "sections": {
+    "A": {
+      "chords": [
+        "Eb"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "stab",
+      "instrument": "brass",
+      "gainDb": -10,
+      "send": {
+        "hall": 0.4
+      },
+      "type": "chord",
+      "octave": 3,
+      "voicing": "open",
+      "rhythm": "X_______--------"
+    },
+    {
+      "id": "choir",
+      "instrument": "choir",
+      "gainDb": -13,
+      "send": {
+        "hall": 0.5
+      },
+      "type": "chord",
+      "octave": 4,
+      "voicing": "close",
+      "rhythm": "X___________----"
+    },
+    {
+      "id": "bass_d",
+      "instrument": "brass_low",
+      "gainDb": -12,
+      "type": "note",
+      "notes": [
+        "D2"
+      ],
+      "rhythm": "X___________----"
+    },
+    {
+      "id": "sub",
+      "instrument": "sub_bass",
+      "gainDb": -12,
+      "type": "note",
+      "notes": [
+        "D2"
+      ],
+      "rhythm": "X___________----"
+    },
+    {
+      "id": "timp",
+      "instrument": "kit",
+      "gainDb": -11,
+      "send": {
+        "hall": 0.3
+      },
+      "type": "drum",
+      "lanes": {
+        "timp": "X---------------"
+      }
+    }
+  ]
+}

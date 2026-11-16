@@ -2,11 +2,15 @@
 // Damage both ways, kills, statuses, knockback (GDD 5.2 to 5.4, effect-primitives 6.1, 6.2, 6.6).
 
 import {
+  AffixAction,
   HitKind,
+  HitStopReason,
+  HitStopStrength,
   SimEventType,
   SourceKind,
   StatusBit,
   TICK_RATE,
+  atan2Turns,
   cosTurns,
   encodeSource,
   packDamageFlags,
@@ -14,8 +18,15 @@ import {
 } from '../../core/index.ts';
 import { clampInside } from '../arena.ts';
 import type { Point } from '../arena.ts';
-import { BURN_STACK_SLOTS, HIT_STACK_DEPTH } from '../capacity.ts';
-import { AiState, Behavior, Status, Trigger } from '../codes.ts';
+import {
+  BURN_STACK_SLOTS,
+  HIT_FLASH_TICKS,
+  HIT_STACK_DEPTH,
+  IMPACT_CRUSHING_FRAC,
+  IMPACT_HEAVY_FRAC,
+  IMPACT_MEDIUM_FRAC,
+} from '../capacity.ts';
+import { AiState, Behavior, SOURCE_INDEX_LEECH, Status, Trigger } from '../codes.ts';
 import type { HitCtx, SimCtx } from '../ctx.ts';
 import { statOf } from '../ctx.ts';
 import { freeSlot } from '../pools.ts';
@@ -26,7 +37,11 @@ const tmp: Point = { x: 0, y: 0 };
 
 /** Push a fresh hit context (nesting level +1). Returns null when the stack is exhausted. */
 export function beginHit(ctx: SimCtx): HitCtx | null {
-  if (ctx.hitDepth + 1 >= HIT_STACK_DEPTH) return null;
+  if (ctx.hitDepth + 1 >= HIT_STACK_DEPTH) {
+    // Nesting deeper than the stack: skipped deterministically and counted (LP review M1).
+    ctx.poolOverflow++;
+    return null;
+  }
   ctx.hitDepth++;
   const h = ctx.hits[ctx.hitDepth];
   if (h === undefined) return null;
@@ -52,6 +67,8 @@ export function beginHit(ctx: SimCtx): HitCtx | null {
   h.executed = false;
   h.x = 0;
   h.y = 0;
+  h.radius = 0;
+  h.amount = 0;
   h.knockback = 0;
   h.status = -1;
   h.statusChance = 0;
@@ -100,9 +117,12 @@ export function knockEnemy(
   const def = ctx.data.enemies[e.typeIndex[slot]!];
   const sim = ctx.sd.enemies[e.typeIndex[slot]!];
   if (def === undefined || sim === undefined) return;
+  if (e.kbImmune[slot] === 1) return;
   if (
     e.aiState[slot] === AiState.Attack &&
-    (sim.behavior === Behavior.Charger || sim.behavior === Behavior.WardenHound)
+    (sim.behavior === Behavior.Charger ||
+      sim.behavior === Behavior.WardenHound ||
+      sim.behavior === Behavior.Boss)
   )
     return;
   const d = dist * (1 - def.kbResist);
@@ -119,6 +139,15 @@ export function knockEnemy(
   e.kbX[slot] = ((dx / len) * d) / ticks;
   e.kbY[slot] = ((dy / len) * d) / ticks;
   e.kbTicks[slot] = ticks;
+  // Visible knockback (CD M1 4): distance after resist and direction, for dust and recoil VFX.
+  ctx.events.push(
+    SimEventType.EnemyKnockedBack,
+    e.x[slot]!,
+    e.y[slot]!,
+    d,
+    atan2Turns(dy, dx),
+    ctx.hitDepth >= 0 ? (ctx.hits[ctx.hitDepth]?.sourceRef ?? 0) : 0,
+  );
   if (ctx.run.knockbackAddMark > 0) applyMark(ctx, slot, ctx.run.knockbackAddMark * TICK_RATE, -1);
 }
 
@@ -206,6 +235,14 @@ export function killEnemy(ctx: SimCtx, slot: number, sourceRef: number, byPlayer
     run.rewardPending = true;
     run.rewardSourceType = type;
     ctx.events.push(SimEventType.WardenKilled, x, y, type, 0, 0);
+    ctx.events.push(
+      SimEventType.HitStop,
+      x,
+      y,
+      HitStopStrength.Medium,
+      HitStopReason.WardenKilled,
+      type,
+    );
     if (world.pulse.overtime) gainGlint(ctx, glint, true, false);
     else dropPieces(ctx, x, y, glint, ctx.sd.enemies[type]?.glintPieces ?? 1);
   } else if (rank === 2) {
@@ -214,6 +251,14 @@ export function killEnemy(ctx: SimCtx, slot: number, sourceRef: number, byPlayer
     // A non-final boss opens the boss chest (boss_chest_min_rarity), not the Warden's.
     run.rewardSourceType = type;
     ctx.events.push(SimEventType.BossKilled, x, y, type, 0, 0);
+    ctx.events.push(
+      SimEventType.HitStop,
+      x,
+      y,
+      HitStopStrength.Large,
+      HitStopReason.BossKilled,
+      type,
+    );
     dropPieces(ctx, x, y, glint, ctx.sd.enemies[type]?.glintPieces ?? 1);
   } else {
     dropGlint(ctx, x, y, glint);
@@ -266,25 +311,27 @@ export function applyHit(ctx: SimCtx): void {
   const critMult = statOf(ctx, sd.stat.crit_mult, 1) + h.critMultAdd;
   const hit = h.preCrit * (h.crit ? critMult : 1);
   const def = ctx.data.enemies[e.typeIndex[slot]!];
-  const guard = def?.guard ?? 0;
+  const guard = (def?.guard ?? 0) + e.guardAdd[slot]!;
   let dmg = guard > 0 ? Math.max(hit * cfg.guardMinFrac, hit - guard) : hit;
-  // Shell (affix veiled) absorbs first.
-  if (e.shield[slot]! > 0) {
-    const absorbed = Math.min(e.shield[slot]!, dmg);
-    e.shield[slot] = e.shield[slot]! - absorbed;
-    dmg -= absorbed;
-  }
+  // Shell (affix veiled) absorbs first; any damage restarts its regrow countdown.
+  dmg = absorbShell(ctx, slot, dmg);
   let hp = e.hp[slot]! - dmg;
   if (e.rank[slot] === 2 && run.bossHpFloor > 0 && hp < run.bossHpFloor) hp = run.bossHpFloor;
   h.final = e.hp[slot]! - hp;
   e.hp[slot] = hp;
-  e.hitFlashTicks[slot] = 1;
+  e.hitFlashTicks[slot] = HIT_FLASH_TICKS;
   ctx.events.push(
     SimEventType.EnemyDamaged,
     h.x,
     h.y,
     h.final,
-    packDamageFlags(h.crit, h.procDepth > 0, e.rank[slot]!, h.hitKind),
+    packDamageFlags(
+      h.crit,
+      h.procDepth > 0,
+      e.rank[slot]!,
+      h.hitKind,
+      impactTier(h.final, e.maxHp[slot]!),
+    ),
     h.sourceRef,
   );
   // Leech: non-proc hits only, capped per second (GDD 5.1).
@@ -293,7 +340,7 @@ export function applyHit(ctx: SimCtx): void {
     healWindow(ctx);
     if (run.leechHealed + 1 <= cfg.leechHealCapPerTick * TICK_RATE) {
       run.leechHealed += 1;
-      healPlayer(ctx, 1, encodeSource(SourceKind.Status, 0));
+      healPlayer(ctx, 1, encodeSource(SourceKind.Status, SOURCE_INDEX_LEECH));
     }
   }
   if (h.knockback > 0) knockEnemy(ctx, slot, world.player.x, world.player.y, h.knockback);
@@ -307,6 +354,46 @@ export function applyHit(ctx: SimCtx): void {
   }
 }
 
+/** Impact tier of a hit for EnemyDamaged bits 7-8 (presentation thresholds in capacity.ts). */
+export function impactTier(dmg: number, maxHp: number): number {
+  if (maxHp <= 0) return 0;
+  const f = dmg / maxHp;
+  return f >= IMPACT_CRUSHING_FRAC
+    ? 3
+    : f >= IMPACT_HEAVY_FRAC
+      ? 2
+      : f >= IMPACT_MEDIUM_FRAC
+        ? 1
+        : 0;
+}
+
+/**
+ * Affix veiled shell (GDD 15.2): absorbs damage first. Any hit (absorbed or not) restarts the
+ * regrow countdown. Returns the damage left for HP.
+ */
+export function absorbShell(ctx: SimCtx, slot: number, dmg: number): number {
+  const e = ctx.world.enemies;
+  const ai = ctx.sd.affix.veiled;
+  if (ai < 0 || ai > 30 || (e.affixMask[slot]! & (1 << ai)) === 0) return dmg;
+  const def = ctx.data.affixes[ai];
+  if (def !== undefined)
+    e.shellRegrow[slot] = Math.round(pnum(def.params, 'regrow_s', 0) * TICK_RATE);
+  if (e.shield[slot]! <= 0 || dmg <= 0) return dmg;
+  const absorbed = Math.min(e.shield[slot]!, dmg);
+  e.shield[slot] = e.shield[slot]! - absorbed;
+  if (e.shield[slot] <= 0) {
+    ctx.events.push(
+      SimEventType.AffixTriggered,
+      e.x[slot]!,
+      e.y[slot]!,
+      ai,
+      AffixAction.ShellBroken,
+      slot,
+    );
+  }
+  return dmg - absorbed;
+}
+
 /** Kill the current hit's target through execute (ignores guard, counts as a kill by that hit). */
 export function executeTarget(ctx: SimCtx): void {
   const h = ctx.hits[ctx.hitDepth];
@@ -316,6 +403,14 @@ export function executeTarget(ctx: SimCtx): void {
   h.executed = true;
   h.killed = true;
   e.hp[h.target] = 0;
+  ctx.events.push(
+    SimEventType.HitStop,
+    e.x[h.target]!,
+    e.y[h.target]!,
+    HitStopStrength.Small,
+    HitStopReason.ExecuteKill,
+    h.sourceRef,
+  );
   killEnemy(ctx, h.target, h.sourceRef, true);
 }
 
@@ -338,11 +433,12 @@ export function areaDamage(
   knockback: number,
   weaponIndex: number,
   weaponSlot: number,
-): void {
+): number {
   const grid = ctx.grid;
   const depth = ctx.hitDepth + 1;
   const buf = ctx.queryBufs[depth];
-  if (grid === null || buf === undefined) return;
+  if (grid === null || buf === undefined) return 0;
+  let hits = 0;
   const e = ctx.world.enemies;
   const n = grid.query(x, y, radius + ctx.cfg.enemyRadiusBossU, buf);
   for (let k = 0; k < n; k++) {
@@ -353,7 +449,8 @@ export function areaDamage(
     const rr = radius + e.radius[s]!;
     if (dx * dx + dy * dy > rr * rr) continue;
     const h = beginHit(ctx);
-    if (h === null) return;
+    if (h === null) return hits;
+    hits++;
     h.target = s;
     h.base = baseDmg;
     h.sourceRef = sourceRef;
@@ -369,6 +466,23 @@ export function areaDamage(
     endHit(ctx);
   }
   ctx.fx.onArea(ctx, x, y, radius, baseDmg, tagMask, procDepth);
+  return hits;
+}
+
+/** Rite landed (CD M1 4): impact event for VFX and audio, plus a small hit stop when it hit. */
+export function riteLanded(ctx: SimCtx, x: number, y: number, radius: number, hits: number): void {
+  const ri = ctx.world.player.riteIndex;
+  ctx.events.push(SimEventType.RiteLanded, x, y, ri, radius, hits);
+  if (hits > 0) {
+    ctx.events.push(
+      SimEventType.HitStop,
+      x,
+      y,
+      HitStopStrength.Small,
+      HitStopReason.RiteLanded,
+      encodeSource(SourceKind.Rite, ri),
+    );
+  }
 }
 
 /** Burn ticks, status timers, status bits, knockback motion. Once per tick in the pulse phase. */
@@ -393,7 +507,6 @@ export function updateEnemyStatuses(ctx: SimCtx): void {
     }
     if (e.slowTicks[s]! > 0) e.slowTicks[s] = e.slowTicks[s]! - 1;
     if (e.markTicks[s]! > 0) e.markTicks[s] = e.markTicks[s]! - 1;
-    if (e.hitFlashTicks[s]! > 0) e.hitFlashTicks[s] = e.hitFlashTicks[s]! - 1;
     if (e.burnStacks[s]! > 0) {
       e.burnTicks[s] = e.burnTicks[s]! - 1;
       e.burnTickTimer[s] = e.burnTickTimer[s]! - 1;
@@ -429,7 +542,7 @@ function burnTick(ctx: SimCtx, slot: number, dmg: number, sourceRef: number): vo
   h.hpBefore = e.hp[slot]!;
   h.x = e.x[slot]!;
   h.y = e.y[slot]!;
-  let hp = e.hp[slot]! - dmg;
+  let hp = e.hp[slot]! - absorbShell(ctx, slot, dmg);
   if (e.rank[slot] === 2 && ctx.run.bossHpFloor > 0 && hp < ctx.run.bossHpFloor)
     hp = ctx.run.bossHpFloor;
   h.final = e.hp[slot]! - hp;
@@ -439,7 +552,7 @@ function burnTick(ctx: SimCtx, slot: number, dmg: number, sourceRef: number): vo
     h.x,
     h.y,
     h.final,
-    packDamageFlags(false, true, e.rank[slot]!, HitKind.Dot),
+    packDamageFlags(false, true, e.rank[slot]!, HitKind.Dot, impactTier(h.final, e.maxHp[slot]!)),
     sourceRef,
   );
   // Pyre Bell style spread (status_rule spread_chance, spread_range).
@@ -522,8 +635,24 @@ export function damagePlayer(ctx: SimCtx, raw: number, sourceRef: number): void 
     world.runStats.killedBy = sourceRef;
     run.deathTicks = Math.max(1, cfg.deathSlowmoTicks);
     ctx.events.push(SimEventType.PlayerDied, p.x, p.y, 0, 0, sourceRef);
+    ctx.events.push(
+      SimEventType.HitStop,
+      p.x,
+      p.y,
+      HitStopStrength.Large,
+      HitStopReason.PlayerDied,
+      sourceRef,
+    );
     return;
   }
+  ctx.events.push(
+    SimEventType.HitStop,
+    p.x,
+    p.y,
+    HitStopStrength.Small,
+    HitStopReason.PlayerHurt,
+    sourceRef,
+  );
   ctx.fx.onPlayerEvent(ctx, Trigger.OnHurt, sourceRef, dmg);
 }
 

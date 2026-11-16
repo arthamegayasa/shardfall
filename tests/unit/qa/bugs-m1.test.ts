@@ -20,19 +20,16 @@ function ownedWeaponIds(view: {
 }
 
 describe('QA M1 bug regressions', () => {
-  it.fails(
-    'BUG-001: in Pulse 1 the shop view (pause build summary) shows the class weapon of the run',
-    () => {
-      const sim = createSim({ data });
-      const input = createInputFrame();
-      sim.enqueue({ type: 'run.start', seed: 1, classId, profile: 'run_a', difficulty: 0 });
-      sim.step(input);
-      expect(sim.view.phase).toBe('pulse');
-      expect(ownedWeaponIds(sim.view)).toEqual([startWeapon]);
-    },
-  );
+  it('BUG-001: in Pulse 1 the shop view (pause build summary) shows the class weapon of the run', () => {
+    const sim = createSim({ data });
+    const input = createInputFrame();
+    sim.enqueue({ type: 'run.start', seed: 1, classId, profile: 'run_a', difficulty: 0 });
+    sim.step(input);
+    expect(sim.view.phase).toBe('pulse');
+    expect(ownedWeaponIds(sim.view)).toEqual([startWeapon]);
+  });
 
-  it.fails('BUG-001: a new run does not show the previous run weapons and Mementos', () => {
+  it('BUG-001: a new run does not show the previous run weapons and Mementos', () => {
     const sim = createSim({ data, debugCommands: true });
     const input = createInputFrame();
     sim.enqueue({ type: 'run.start', seed: 1, classId, profile: 'run_a', difficulty: 0 });

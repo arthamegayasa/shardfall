@@ -6,6 +6,8 @@ describe('sim fixture data', () => {
     const data = simFixtureData();
     expect(data.profiles['run_a']?.length).toBe(10);
     expect(data.profiles['run_a_m1']?.length).toBe(10);
-    expect(data.mementos.length).toBe(12);
+    // 12 tier A Mementos plus 5 locked per_target test Mementos (pt_1..pt_5, never offered).
+    expect(data.mementos.filter((m) => m.unlock === 'default').length).toBe(12);
+    expect(data.mementos.length).toBe(17);
   });
 });

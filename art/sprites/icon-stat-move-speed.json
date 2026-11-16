@@ -1,0 +1,33 @@
+{
+  "id": "icon-stat-move-speed",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Move Speed: a blue boot dashing right with three white speed lines behind. Key: L boot plus horizontal streaks.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "......cBBb....",
+          "ccc...cBBb....",
+          "......cBBb....",
+          "......cBBb....",
+          ".cccc.cBBb....",
+          "......cBBBBBb.",
+          "......cBBBBBBb",
+          "..ccc.cBBBBBBb",
+          "......hhhhhhhh"
+        ]
+      ]
+    }
+  }
+}

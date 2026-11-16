@@ -13,7 +13,7 @@ Aturan tingkat dan status: `docs/qa/test-plan.md` bagian 14.
 
 | Id | Judul | Tingkat | Status | Milestone ditemukan | Area | Pemilik perbaikan | Tes regresi |
 |---|---|---|---|---|---|---|---|
-| BUG-001 | Ringkasan build (Pause, akhir run) menampilkan build run sebelumnya, atau kosong, selama Pulse 1 | MAYOR | TERBUKA | M1 | sim, ui | GP (usulan) | `tests/unit/qa/bugs-m1.test.ts` (2 kasus `it.fails`) |
+| BUG-001 | Ringkasan build (Pause, akhir run) menampilkan build run sebelumnya, atau kosong, selama Pulse 1 | MAYOR | MENUNGGU UJI ULANG | M1 | sim, ui | GP (usulan) | `tests/unit/qa/bugs-m1.test.ts` (2 kasus, kini `it`) |
 | BUG-002 | `favicon.ico` 404 memunculkan `console.error` di Chrome dan Edge sungguhan | MINOR | TERBUKA | M1 | build | LP (usulan) | `tests/e2e/smoke-chrome.spec.ts`, `smoke-msedge.spec.ts` |
 | BUG-003 | Teks flavor kartu Memento terpotong elipsis di the Glazier dan hadiah Warden | MINOR | TERBUKA | M1 | ui | UI (usulan), WR bila memendekkan teks | `tests/e2e/screens.spec.ts` (`screens-layout-*.json`) |
 | BUG-004 | Hook `goToScreen('confirm')` gagal: berakhir di layar `pause` | MINOR | TERBUKA | M1 | build | LP (usulan) | Jalur keyboard di `tests/e2e/screens.spec.ts` |
@@ -60,7 +60,7 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 ### BUG-001: Ringkasan build menampilkan build run sebelumnya, atau kosong, selama Pulse 1
 
 - Tingkat: MAYOR
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M1, oleh QA (M1-09b)
 - Build: kerja lokal 2026-11-17 (contentHash 6b395051), build e2e dan sim Node
 - Lingkungan: Chromium Playwright 1.64.1, 1920x1080; juga terbukti di sim Node tanpa UI
@@ -81,7 +81,7 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Bukti:** `docs/qa/evidence/M1/kb-12-pause.png` (Pause di run baru setelah Try Again, ARMS memuat Leaping Wick dari run sebelumnya); tes `tests/unit/qa/bugs-m1.test.ts` (dijalankan sebagai `it` biasa: "expected [] to deeply equal ['lantern_bolt']" dan "expected ['lantern_bolt','splinter_shot'] to deeply equal ['lantern_bolt']").
 
-**Catatan perbaikan (diisi programmer):** saat memperbaiki, ubah kedua `it.fails` menjadi `it` di `tests/unit/qa/bugs-m1.test.ts`.
+**Catatan perbaikan (diisi programmer):** saat memperbaiki, ubah kedua `it.fails` menjadi `it` di `tests/unit/qa/bugs-m1.test.ts`. GP M2-05, 2026-11-17: `run.start` kini mengisi ShopView (inventaris, Memento, tag) dari run yang baru sebelum Pulse 1, dan `debug.grant` menyegarkannya di fase apa pun (`src/sim/create-sim.ts`). Kedua tes kini `it` dan lulus.
 
 **Uji ulang (diisi QA):**
 

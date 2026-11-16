@@ -1,6 +1,6 @@
 # Shardfall: Arah Audio
 
-Pemilik: Audio Director (AU). Status: versi 1.1 (2026-11-17), perbaikan review M0 (`docs/reviews/M0-cd.md`, `M0-lp.md`) dan engine M1-06 (bagian 13). Reviewer: CD (rasa), LP (teknis dan ukuran).
+Pemilik: Audio Director (AU). Status: versi 1.2 (2026-11-17), perbaikan review M0 (`docs/reviews/M0-cd.md`, `M0-lp.md`), engine M1-06 (bagian 13), musik bioma 1 dan SFX final slice M2-04 (bagian 14). Reviewer: CD (rasa), LP (teknis dan ukuran).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md` bagian 3, keputusan Producer di `docs/tasks.md`.
 Pasangan dokumen: `docs/audio-list.md` (daftar semua cue dengan id, pemicu, prioritas, durasi, polifoni).
 
@@ -11,7 +11,7 @@ Penanda: **[Wajib]** keputusan AU yang mengikat implementasi. **[Saran]** boleh 
 ## 0. Ringkasan keputusan
 
 1. **Semua audio disintesis di runtime dengan Web Audio API.** Build 1.0 tidak mengirim file audio sama sekali. Musik dan SFX didefinisikan sebagai data JSON plus resep sintesis di kode. Unduhan audio sekitar 0 KB, kode dan data audio di bawah 40 KB.
-2. **SFX dirender sekali ke AudioBuffer saat boot** dari fungsi DSP murni (Float32Array, sesuai `docs/tech/architecture.md` bagian 11), lalu diputar sebagai buffer murah. Musik dimainkan oleh sequencer langsung dengan penjadwalan lookahead.
+2. **SFX dirender sekali ke AudioBuffer saat boot** dari fungsi DSP murni (Float32Array, sesuai `docs/tech/architecture.md` bagian 11) di Web Worker (M2), lalu diputar sebagai buffer murah. Musik dan stinger dimainkan oleh sequencer dengan penjadwalan lookahead.
 3. **Pusat nada seluruh musik bioma 1 adalah D.** Pulse: D dorian 116 BPM. Toko: F lydian 76 BPM (berbagi nada D, E, G, A, B). Boss: D phrygian 132 BPM. Karena semua berpusat di D, SFX bernada (hadiah, Glint) selalu cocok dengan musik.
 4. **Musik adaptif 4 lapis intensitas** (L0 sampai L3) yang naik seiring progres Pulse dan nomor Pulse, ditambah riser 6 detik terakhir (selaras lonjakan spawn di `docs/gdd.md` 3.2), stinger akhir Pulse, dan overlay Unlit saat Warden hidup.
 5. **Tiga bus utama: music, sfx, ui**, plus dua bus reverb kirim (hall, room). Prioritas SFX 1 sampai 6 mengikuti style guide 3.2, voice stealing, dan ducking saat pemain kena hit.
@@ -238,12 +238,13 @@ Catatan teori: G mayor adalah warna khas dorian. Bb dipinjam dari aeolian sebaga
 Fase mengikuti `RunPhase` di `docs/tech/architecture.md` 4.4 (`idle`, `pulse`, `pulseClear`, `reward`, `levelUp`, `shop`, `victory`, `defeat`). Fase `reward` (pilihan Memento dari Warden) memakai musik toko seperti `levelUp`. Layar judul dan jeda adalah state app.
 
 ```
-Judul (mus.title, state app)
+Judul (mus.title, fase idle; fade in 1.5 s)
   -> startRun: fade 1 s
 Fase pulse, Pulse non-boss (mus.biome1.pulse)
   awal: mus.stinger.pulse_start + loop mulai di level dasar
   sepanjang Pulse: level naik di batas birama
   Warden hidup: overlay mus.overlay.unlit, level minimal 2
+  Tekanan: event MusicPressureChanged (sim, config.csv), ditahan minimal 2 birama
   T minus 6 s: mus.riser.pulse_end (dilewati bila Warden masih hidup)
   T = 0 (PulseEnded, masuk pulseClear): loop berhenti (fade 80 ms, pad dan reverb dibiarkan meluruh), mus.stinger.pulse_end
 Fase pulseClear: hanya stinger, sfx.pulse.end_flash, sfx.glint.sweep
@@ -251,13 +252,15 @@ Fase levelUp atau shop (yang lebih dulu, mus.shop)
   saat keluar dari pulseClear: ui.glazier.arrive, mus.shop fade in 2 s
   levelUp ke shop: musik terus tanpa putus
   pulse.begin (masuk fase pulse): mus.shop fade out 0.6 s, kembali ke Pulse
-Pulse boss (mus.biome1.boss)
+Pulse boss (mus.biome1.boss, sejak PulseStarted di L0)
   BossSpawned: mus.stinger.boss_intro, loop boss L1
-  BossPhaseChanged ke fase 2: mus.stinger.boss_phase, level 3
-  BossKilled: loop berhenti, mus.stinger.boss_defeated
+  BossPhaseChanged ke fase 2: mus.stinger.boss_phase, jeda loop 1.5 s, level 3
+  BossEnraged: mus.stinger.boss_phase, level 4
+  BossKilled: loop berhenti, mus.stinger.boss_defeated (menggantikan stinger akhir Pulse)
 Akhir run
-  fase victory: mus.stinger.victory lalu mus.end
+  fase victory: mus.stinger.victory lalu mus.end (mulai setelah ekor stinger)
   fase defeat (PlayerDied): efek lambat, mus.stinger.defeat lalu mus.end
+  Layar judul setelah run: fase tetap victory atau defeat, jadi mus.end terus berbunyi
 ```
 
 ### 6.2 Lapisan intensitas Pulse
@@ -286,7 +289,7 @@ bila wardenAlive: level = max(level, wardenAliveMinLevel)
 Nilai awal untuk `mus.biome1.pulse`:
 - `baseByPulse`: Pulse 1 sampai 3 = 0, Pulse 4 sampai 7 = 1, Pulse 8 ke atas = 2.
 - `progressAdd`: plus 1 pada 35% durasi, plus 2 pada 70% durasi.
-- `pressureAdd`: plus 1 selama jumlah Unlit hidup di atas 60 [Asumsi, GD dan GP mengkalibrasi], ditahan minimal 2 birama.
+- `pressureAdd`: plus 1 selama event `MusicPressureChanged` menyatakan ramai (ambang milik sim di `config.csv`, GD Q21), ditahan minimal 2 birama. Diubah di M2: lagu tidak lagi menyimpan jumlah Unlit; validator menolak `pressure.enemiesAlive`.
 - Maksimal 3.
 
 Akibatnya Pulse 1 berjalan L0, L1, L2. Pulse 4 berjalan L1, L2, L3. Pulse akhir sudah L3 sejak 35%. Pemain merasakan run makin panas.
@@ -310,12 +313,12 @@ Aturan transisi:
 - Musik toko dimulai dari birama 1 setiap kali toko dibuka (pemain mengenali "jeda").
 
 ### 6.6 Boss
-- Level boss ditentukan fase, bukan progres waktu: fase 1 = L1, naik ke L2 setelah 30 detik atau HP boss di bawah 75% [Asumsi], fase 2 (HP 50% ke bawah, gdd 16.1) = L3. Jeda 1.5 s pembuka fase 2 diisi `mus.stinger.boss_phase`; loop berhenti selama jeda lalu masuk lagi di downbeat setelahnya. Mengamuk (setelah 120 s) memaksa L3. Fase boss dilacak audio dari event `BossPhaseChanged`; HP boss dibaca dari `view.enemies` (rank 2).
+- Level boss ditentukan fase, bukan progres waktu: fase 1 = L1, naik ke L2 setelah 30 detik atau HP boss di bawah 75% [Asumsi], fase 2 (HP 50% ke bawah, gdd 16.1) = L3. Jeda 1.5 s pembuka fase 2 diisi `mus.stinger.boss_phase`; loop berhenti selama jeda lalu masuk lagi di downbeat bagian berikutnya. Mengamuk (setelah 120 s) = **L4** (lapisan rage: kick ganda, hat 16-an, brass rendah tritone, choir panjang). Diubah di M2: fase, HP, dan mengamuk dibaca dari `view.pulse.boss` (BigFoeView); event `BossPhaseChanged` hanya memicu jeda. Angka ada di `intensity.boss` lagu boss.
 - L0 boss (dipakai saat intro 3 detik): drone Unlit plus choir.
 - Saat boss memanggil anak (summon), tidak ada perubahan level; hanya SFX.
 
 ### 6.7 Overlay Unlit (Warden)
-`mus.overlay.unlit` mengikuti tempo dan jam lagu tuan rumah. Lapisan: `unlit_drone` pada D1 dan G#1, plus Motif Rembes dengan `brass_low` setiap 4 birama. Fade in 2 ketukan saat `WardenSpawned`, fade out 1 birama saat `WardenKilled`.
+`mus.overlay.unlit` mengikuti tempo dan jam lagu tuan rumah. Lapisan: `unlit_drone` pada D1 dan G#1, plus Motif Rembes dengan `brass_low` setiap 4 birama (dua varian bergantian), dan cluster kaca C#6 dan D6 tiap 8 birama. Fade in 2 ketukan saat Warden hidup (`view.pulse.wardenAlive`), fade out 1 birama saat mati.
 
 ### 6.8 Kematian pemain dan jeda
 - Kematian (`PlayerDied`, fase `defeat`): master lowpass menyapu ke 300 Hz dalam 1.2 s selama efek lambat, music bus turun 12 dB, `sfx.player.death`, lalu `mus.stinger.defeat` saat layar akhir.
@@ -799,4 +802,59 @@ Prinsip [Wajib]:
 | CPU `update` per frame | di bawah 1 ms | median 0.1 ms; frame `PulseStarted` sekitar 1.7 ms (sekali per Pulse) |
 
 ### 13.4 Belum ada (masuk M2)
-Lagu boss, judul, akhir, overlay Unlit, fade lapisan, uji A-1 sampai A-6 dengan telinga, cue Tingkat B lain (`hit_heavy`, exploder, summoner, ambience), `sfx.pulse.tick` opsional.
+Lagu boss, judul, akhir, overlay Unlit, fade lapisan, uji A-1 sampai A-6 dengan telinga, cue Tingkat B lain (`hit_heavy`, exploder, summoner, ambience), `sfx.pulse.tick` opsional. Status M2: bagian 14.
+
+---
+
+## 14. Implementasi M2 (M2-04)
+
+### 14.1 Musik bioma 1 lengkap
+| Lagu | Isi | Panjang loop |
+|---|---|---|
+| `mus.title` | D dorian 84 BPM, A dan B. Motif Cahaya di lonceng (A), melodi B Pulse di pluck dengan dobel lonceng (B), arpeggio pluck | 16 birama, 45.7 s |
+| `mus.biome1.pulse` | D dorian 116 BPM, 11 lapisan, 4 level. Baru: motif lonceng L0 sampai L2 (kepala Motif Cahaya), kontramelodi `chip_lead` hanya L2, pola drum, bass, brass, arpeggio berganti per birama dengan fill di birama 4 dan 8 tiap bagian | 16 birama, 33.1 s |
+| `mus.overlay.unlit` | Drone, Motif Rembes 2 varian, cluster kaca, di jam tuan rumah | siklus 8 birama |
+| `mus.shop` | F lydian 76 BPM, A dan B baru. Bagian B dibuka kutipan Motif Glazier (E6 B5) dan pluck gema; tanpa perkusi | 16 birama, 50.5 s |
+| `mus.biome1.boss` | D phrygian 132 BPM, 5 level (L0 intro sampai L4 mengamuk). Lead A dobel choir, jawaban `chip_lead` di B (tanya jawab) | 16 birama, 29.1 s |
+| `mus.end` | D dorian 72 BPM, pad, bass, pluck lambat, lonceng tiap 4 birama | 16 birama, 53.3 s |
+| 8 stinger | `pulse_start`, `pulse_end`, `warden`, `boss_intro`, `boss_phase`, `boss_defeated`, `victory`, `defeat` | sekali main |
+
+Keputusan AU [Wajib]:
+1. **Stinger adalah lagu sekali main** (`"oneShot": true`), bukan buffer. Alasan: memakai instrumen yang sama dengan loop (warna konsisten) dan menghemat sekitar 1.1 MB memori. Cue lama `mus.stinger.*` di `cues.json` ditandai `deprecated` (id stabil). Pemetaan event ke stinger ada di `routes.json` `stingers`.
+2. **Variasi frasa:** `rhythm`, `lanes`, dan `tokens` boleh berupa daftar pola yang bergilir per birama loop; `sections` membatasi lapisan ke bagian tertentu. Tidak ada lapisan yang hanya mengulang satu birama.
+3. **Fade lapisan di batas birama:** satu GainNode per lapisan. Naik level: fade in 1 ketukan dari downbeat. Turun level: fade out 2 ketukan, dan lapisan yang keluar hanya membawa not di 2 ketukan pertama.
+4. **`gainDb` tingkat lagu** untuk gain staging (Pulse dan boss minus 5 dB): puncak L3 preview sekitar minus 12 dBFS dengan hall, sesuai 8.2.
+5. **Riser** diperkaya: kuint A3 ke A4 dan gulungan snare yang dipercepat ke akhir; tetap berhenti tegas.
+6. Instrumen baru: `choir`, `brass_low`, `unlit_drone`, `chip_lead`, `shimmer`. Instrumen sustain (`string_pad`, `sub_bass`, `brass`, `choir`, `brass_low`, `unlit_drone`, `chip_lead`) memakai **loop sampel** dengan crossfade equal-power (field `loop` di `instruments.json`); playback memakai `AudioBufferSourceNode.loop`.
+
+### 14.2 SFX final slice
+| Hal | Perubahan |
+|---|---|
+| Dampak (event GP M2-05) | `RiteLanded` memicu `sfx.rite.impact.lantern` di posisi mendarat (jeda tebakan 350 ms dihapus). Bit impact `EnemyDamaged` berat atau remuk memakai `sfx.weapon.hit_heavy`. `AffixTriggered`: cangkang pecah, cangkang tumbuh, blink. `EnemyExploded`: `sfx.enemy.exploder.blast`. Diam: `HitStop`, `EnemyKnockedBack`, `EnemyDissolved` (sudah di `sfx.pulse.end_flash`), `BossPatternStarted` (telegraf sudah bersuara), `GlintPulled` |
+| Paper Sun per pola | `routes.telegraphs.bossPatternById`: `ember_rain_8` badai bara (windup 3 saw tritone, 5 dentum), `snuff_ring_double` windup minus 2 semitone dan dua gelombang, `moth_call` kepak ngengat tritone. Pola lain lewat arketipe |
+| Affix Warden | `volley` dan `hasted` (A) tetap; disiapkan `blinking` (`sfx.telegraph.blink`), `brood` (`sfx.enemy.summon`), `veiled` (cangkang) |
+| Polesan terukur | `sfx.weapon.hit` dan `hit_crit` (thud plus tik 4.8 kHz di atas pita bahaya), kematian Unlit dengan butir motes gelap, ledakan Rite dengan sub dan pecahan kaca (suara pemain terbesar). `fire.chain` dan `fire.arc` dikeluarkan dari pita 1 sampai 3 kHz; `warden.charge.windup` dan `moth_call` dimasukkan ke pita bahaya. Diuji otomatis: serangan dan hit pemain di bawah 25% energi pita bahaya, windup bahaya Tingkat A di atas 30% |
+
+### 14.3 Perbaikan temuan LP M1
+| Temuan | Perbaikan | Bukti |
+|---|---|---|
+| `boot()` tidak cek `disposed` | Cek setelah `resume()` dan setelah tiap job render; context ditutup | Tes fake AudioContext |
+| Detak HP rendah saat jeda | Tidak berbunyi saat `setPaused(true)`; lanjut 1 periode setelah jeda ditutup | Tes |
+| 5 `setTargetAtTime` tiap frame | Gain duck hanya disentuh saat nilainya berubah lebih dari 0.05 dB | Tes: 0 panggilan saat diam |
+| Alokasi kecil tiap frame | `PlayRequest` dipakai ulang, `NoteBuffer` menyimpan objek not, `stopCue` tanpa array literal dan sekali per Warden, tanpa closure sort | Tes: pool not stabil setelah satu loop |
+| Render live di thread utama, cache dikosongkan penuh | Cache LRU (buang satu per satu); miss diputar dari durasi terdekat yang ujungnya disejajarkan ke saat kena, render baru di Worker | Kode dan tes engine lewat sistem |
+| `pressure.enemiesAlive` | Dihapus; `"pressure": { "source": "MusicPressureChanged", "add": 1, "holdBars": 2 }`, latch tahan 2 birama | Tes validator dan latch |
+
+### 14.4 Kinerja dan anggaran (terukur, `node tools/audio/render-cues.ts`)
+| Hal | Anggaran | Terukur |
+|---|---|---|
+| Memori buffer | di bawah 8 MB | 7.05 MB (SFX 3.16, warmup telegraf 0.45, instrumen 2.33, IR 1.11) |
+| Render boot | tidak membekukan frame | Web Worker (chunk 4.6 KB gzip); 298 ms total di Node. Cadangan tanpa Worker: thread utama per job dengan jeda MessageChannel, job terpanjang 24.5 ms |
+| Data JSON audio gzip | di bawah 15 KB | 11.1 KB |
+| Chromium headless | | Worker dibuat, tanpa error; tidak ada long task baru saat unlock di atas biaya frame render headless |
+
+### 14.5 Preview dan uji
+- `node tools/audio/render-cues.ts [filter] [--dry]`: SFX ke `audio/preview/sfx/`, musik ke `audio/preview/music/` (tiap level, timeline Pulse 4 dengan fade dan riser, timeline tekanan, overlay Warden, timeline boss dengan jeda fase), stinger ke `audio/preview/stingers/`. Musik memakai hall reverb offline (konvolusi FFT dengan `ir.hall`).
+- `npm run audio:check` memvalidasi juga bahwa stinger di `routes.json` menunjuk file lagu.
+- Sambungan loop instrumen diuji otomatis (lompatan sampel maksimal di bawah 1.6 kali persentil 99.9).
+- Belum bisa: uji telinga A-1, A-2, A-3, A-6 butuh pendengar manusia.

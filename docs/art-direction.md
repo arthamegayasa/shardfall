@@ -1,6 +1,6 @@
 # Shardfall: Arah Art
 
-Pemilik: Art Director (AD). Status: versi 1.1 (2026-11-17, M1-05: perbaikan review M0 dan placeholder M1). Reviewer: CD (visual), LP (teknis).
+Pemilik: Art Director (AD). Status: versi 1.2 (2026-11-17, M2-03: aset final vertical slice dan VFX inti; keputusan CD K4 dan K5). Reviewer: CD (visual), LP (teknis).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md`. Bila bertentangan, pilar dan style guide menang.
 Diselaraskan dengan: `docs/tech/architecture.md` (LP: kamera, lapisan, post-processing), `docs/levels/arena-design.md` (LD: arena), `docs/gdd.md` (GD: peran Unlit, kelas, Warden, boss), `docs/narrative/glossary.md` (WR: nama kerja).
 Pipeline produksi aset: `docs/art-pipeline.md`. Sumber kebenaran warna: `art/palette.json`.
@@ -228,22 +228,28 @@ Kualitas grafis mengikuti tabel LP 7.7. Rendah mematikan DoF, bloom, dan kilau k
 | Efek | Lapis | Visual | Durasi |
 |---|---|---|---|
 | Proyektil pemain | L3 | Satu sprite per senjata (`fx-shot-<id senjata>`), inti `kept-white`, badan `kept-cyan`, aksen `kept-blue`, tanpa emas. Proyektil garis (Splinter Shot) memilih 4 orientasi menurut arah di layar. Jejak memudar menyusul di M2 | Selama terbang |
-| Percikan hit pemain | L3 | 3 sampai 5 piksel `kept-white` memencar | 0,15 s |
 | Burn pada Unlit | L3 | Lidah api kaca 2x3 `kept-cyan` dan `kept-white` (`fx-burn`) 1 px di atas kepala Unlit (efek milik pemain, bukan bagian sprite Unlit). Tidak memakai emas: emas kecil di area main berarti "pungut aku" (review CD M0 2.2) | Selama status |
-| Ledakan Lantern Bolt, zona api Rite | L3 | Isian `kept-gold` 25%, tepi `kept-white` putus-putus | Sesuai GDD |
-| Glint jatuh dan dipungut | L2/L3 | Glint 2 bingkai berkilau; saat dipungut terbang ke pemain dengan jejak emas 2 piksel | 0,2 s |
-| Level up, Keepsake | L3 | Cincin `kept-gold` mengembang dari kaki pemain, 8 piksel naik | 0,5 s |
+| Ledakan Lantern Bolt, zona api Rite | L3 | Isian `kept-gold` 25% efektif, tepi 1 px `kept-cyan` solid, tidak putus-putus (K5). Zona Rite tumbuh dari tengah 0,2 s, bara emas kecil naik 10 per detik | Sesuai GDD |
+| Glint jatuh dan dipungut | L2/L3 | Glint 2 bingkai berkilau; saat ditarik (`magnetized`) dua titik jejak emas (`fx-glint-trail`) di belakangnya; saat dipungut kilau emas kecil naik di pemain (`fx-rise`) | 0,2 s |
+| Level up (Temper) | L1/L3 | Cincin `kept-gold` mengembang dari kaki ke 1,7 u, 8 kilau emas naik (`fx-rise`), kilat emas 55% pada sprite pemain 0,18 s | 0,5 s |
+| Memento didapat | L1/L3 | Dua cincin `kept-cyan` dan `kept-white`, 6 bintang empat sudut (`fx-star`), kilat putih 0,22 s. Beda bentuk dan warna dari level up (S-5) | 0,45 s |
 | Rite siap | UI dan L1 | Cincin kaki pemain berdenyut emas satu kali | 0,3 s |
 | Telegraf area | L4 | Isian `danger-red` 30% tumbuh dari tengah ke tepi selama waktu telegraf, tepi solid 1 px. Pola boss memakai `danger-magenta`. Digambar shader lantai (lingkaran, cincin bercelah, garis, kerucut), bukan sprite, karena ukurannya dari data | Sesuai GDD |
 | Telegraf terjang | L4 | Outline dan mata berkedip `danger-red`, garis arah putus-putus (3 px isi, 3 px kosong) | 0,6 s |
 | Telegraf spawn (retakan) | L4 | Retakan bercabang `danger-violet` berinti `danger-core` (`fx-spawn-crack`, 4 tahap menurut progres), tepi lingkaran `danger-violet` solid 1 px di radius tanda | Sesuai LD |
-| Angka damage | L3 | Digit bitmap 3x5 px plus outline `ink` (`fx-digits`), `bone` biasa, `kept-gold` kritikal (style guide 1.8). Naik 10 px dengan ease-out, pudar di 30% akhir, umur 0,65 s. Dirender, bukan DOM; mati bila `damageNumbers` off | 0,65 s |
-| Zona pemain | L3 di lantai | Isian `kept-gold` 25%, tepi `kept-white` putus-putus 3 px isi 3 px kosong | Sesuai GDD |
+| Angka damage | L3 | Digit bitmap 3x5 `bone` biasa; kritikal set sendiri 4x6 `kept-cyan` (K4), outline `ink` (`fx-digits`). Naik 10 px dengan ease-out, pudar di 30% akhir, umur 0,65 s. Maksimal 24 di layar (LP `damage-cap.ts`), digeser keluar dari kotak sprite pemain. Dirender, bukan DOM; mati bila `damageNumbers` off | 0,65 s |
+| Zona pemain | L3 di lantai | Zona Rite: isian `kept-gold` 25%, tepi 1 px `kept-cyan` solid. Jejak berulang (Smolder Boots dan efek lain): isian 15% tanpa tepi (K5) | Sesuai GDD |
 | Proyektil musuh | L4 | `fx-shot-danger` 7x7, tiga lapis | Selama terbang |
 | Aura Warden | L1 | Cincin `danger-violet` 70% plus isian 14%, radius 1,75 u | Selama hidup |
-| Kematian Unlit | L3 | 4 sampai 8 motes `unlit-body` dan `unlit-rim` memencar dan memudar | Kurang dari 0,3 s |
+| Kematian Unlit | L3 | Bingkai terakhir dikilatkan `bone`, lalu larut per texel (dither 4x4) dengan tepi `unlit-rim`; 4 serpihan gelap (`fx-shard`) dan 3 motes (`fx-mote`). Warden 10/8, boss 26/22 dan lebih lama. Berlaku juga saat Pulse ditutup (Unlit tersapu) | 0,28 s (Warden 0,6 s, boss 1,4 s) |
+| Unlit muncul | L2 | Unlit biasa naik dari retakan: larut terbalik selama 18 tick | 0,3 s |
+| Ancang-ancang Unlit | L2 | Pose `windup` per jenis plus denyut `danger-red` 35% tiap 4 tick pada sprite (bukan boss) | Selama `Windup` |
+| Percikan hit | L3 | 3 percikan `kept-white` (kritikal 5) memencar dari titik hit, tidak untuk Burn dan zona. Maksimal 36 per bingkai | 0,15 s |
+| Rite Festival Flare | L1/L3 | Pose cast 2 bingkai (lentera diangkat), kilat pelepasan `fx-flare` di lentera, cincin cyan kecil di kaki, lentera melengkung ke titik bidik dengan ekor cyan (waktu terbang dari data `flight_s`), saat mendarat: ledakan `fx-flare`, cincin cyan ke 1,08 x radius zona, cincin putih, 10 percikan, 8 bara | 0,35 s terbang, 0,3 s mendarat |
+| Proyektil pemain | L3 | Dua titik ekor `kept-cyan` (`fx-trail`) di belakang proyektil cepat (lebih dari 0,03 u per tick), tidak untuk Glass Halo | Selama terbang |
+| Bayangan dan cincin kaki | L1 | Elips `ink` 32% di bawah setiap aktor (lebar 0,42 x lebar sprite), cincin kaki pemain `kept-cyan` 85% radius 0,55 u | Terus |
 | Pemain kena hit | Layar | Kilat tepi layar `danger-red` tipis 6 px virtual, sprite kilat `kept-white` | 0,2 s |
-| Kematian pemain | L3 | Serpihan kaca `kept-blue` dan `kept-cyan`, layar melambat | 0,8 s |
+| Kematian pemain | L3 | 16 serpihan kaca `fx-glass-shard` jatuh dengan gravitasi, cincin `kept-blue`, sprite pemain larut per texel dengan tepi cyan | 0,8 s |
 | Suasana | L0/L3 | Debu kaca `glass` melayang (semua bioma), ngengat di sekitar lentera (b1), abu di berkas bulan (b2), bara naik (b3) | Terus menerus |
 
 ### 8.3 Batas dan aksesibilitas [Wajib]
@@ -315,7 +321,27 @@ Semua dibuat ulang dengan `node tools/art/build-concepts.mjs` (sekitar 5 detik).
 4. Kilat kena hit: `kept-white` untuk pemain, `bone` untuk Unlit.
 5. Proyektil musuh tanpa bloom scene; kilau bahaya di shader L4 bila diperlukan.
 6. Nama sprite mengikuti id GDD (`unlit-swarmer` untuk `swarmer`, dan seterusnya) dan nama kerja bioma dari glosarium.
-7. (1.1) Burn pada Unlit `kept-cyan` dan `kept-white`; proyektil pemain tanpa emas. Emas kecil di area main hanya Glint dan angka kritikal.
+7. (1.1) Burn pada Unlit `kept-cyan` dan `kept-white`; proyektil pemain tanpa emas. (1.2, K4) Emas kecil di area main hanya Glint dan hadiah; angka kritikal `kept-cyan` 4x6.
 8. (1.1) Lantai b3 `#646260` dan `#53524F`.
 9. (1.1) Telegraf berukuran data digambar shader lantai dengan tepi 1 px tepat; retakan spawn, proyektil, Glint, Burn, dan angka damage adalah sprite.
 10. (1.1) Sprite pemain tidak simetris (lentera di tangan kanan) agar arah hadap terbaca; menghadap kanan, runtime membalik untuk kiri.
+11. (1.2) Cahaya sprite per instance di kaki (konstan per quad, piksel tetap tajam), memakai `sfSpriteLight` LP; Kept minimal 70%. Texel emisif lewat alpha atlas, tidak diterangi.
+12. (1.2) Larut (dissolve) memakai dither 4x4 pada texel atlas, jadi sprite pecah per piksel utuh.
+13. (1.2) Ikon UI 16x16 (kartu), 8x8 (inline), potret 48x48; satu arah cahaya kiri atas; tag dibedakan bentuk.
+
+## 14. Aset final M2 (M2-03)
+
+| Aktor | Animasi | Kejanggalan "sedikit salah" |
+|---|---|---|
+| `kept-lantern` (Lamplighter) | idle 4, walk 4, cast 2, hit 2 | Tidak ada (pemain) |
+| `unlit-swarmer` (Lampmoth) | idle 2, walk 4, windup 2 | Tiga mata berjajar, terlalu banyak kaki |
+| `unlit-charger` (Market Cur) | idle 2, walk 4, windup 2 (jongkok, mata pucat) | Lutut berlebih di setiap kaki |
+| `unlit-shooter` (Hawker) | idle 2, walk 2, windup 2 (lubang melebar) | Cahayanya lubang magenta |
+| `unlit-tank` (Porter) | idle 2, walk 4, windup 2 (kepalan diangkat) | Tanpa wajah, mata di dada |
+| `warden-hound` (Brass Collar) | idle 1, walk 4, windup 2, attack 2 (lompat 7 px runtime) | Tiga mata magenta, lutut ganda |
+| `boss-lantern` (Paper Sun) | idle 2, idle2 3, windup 2, windup2 2 | Fase 2: sangkar retak, dua rusuk hilang, lubang membesar, 4 mata tambahan, sulur lebih panjang |
+| `kept-bell`, `kept-blade` (Tingkat B) | idle 2, walk 4 | Tidak ada |
+
+Sprite VFX baru: `fx-spark`, `fx-trail`, `fx-glint-trail`, `fx-mote`, `fx-shard`, `fx-glass-shard`, `fx-flare`, `fx-ember`, `fx-rise`, `fx-star`; `fx-burn` 3 bingkai; `fx-digits` kritikal 4x6 cyan. Ikon: 8 senjata, 12 Memento Tingkat A, Rite, 14 stat Temper, 6 tag, Glint, Silt, potret the Glazier (pipeline 12).
+
+Gelombang cahaya pembuka Pulse dan kilat kaca penutup digambar LP di shader lingkungan (`src/render/pipeline/pulse-light.ts`); AD menambah larutnya Unlit yang tersapu saat Pulse ditutup. Bibir, rim kaca, dan dekorasi arena sekarang milik LP (`src/render/env/`).

@@ -1,0 +1,35 @@
+{
+  "id": "icon-memento-prism-lens",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Prism Lens: a glass triangle prism splitting one white ray into gold, cyan and blue rays. Key: triangle, one bar in, three prongs out.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....wb.......",
+          "....wccb......",
+          "....wccb.....g",
+          "...wcccbb..gg.",
+          "...wccccbgg...",
+          "wwwccccccb....",
+          "wwwccccccbcccc",
+          ".wcccccccccb..",
+          ".wccccccccbBB.",
+          "wccccccccccb.B",
+          "bbbbbbbbbbbb.."
+        ]
+      ]
+    }
+  }
+}

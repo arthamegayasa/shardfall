@@ -53,3 +53,15 @@ export const WEAPON_MAX_TIER = 4;
 export const LEVEL_CARD_CHOICES = 3;
 /** Rejection sampling attempts for a random point inside a shape before using its centre. */
 export const SHAPE_SAMPLE_ATTEMPTS = 16;
+
+/** Ticks an Unlit shows its white hit flash (CD M1 4: 2 frames at 60 Hz). Presentation, not balance. */
+export const HIT_FLASH_TICKS = 2;
+/**
+ * Impact tier thresholds of EnemyDamaged bits 7-8, as fraction of the target's max HP (presentation:
+ * VFX size and audio weight). Below the first: Light; then Medium, Heavy, Crushing.
+ */
+export const IMPACT_MEDIUM_FRAC = 0.1;
+export const IMPACT_HEAVY_FRAC = 0.25;
+export const IMPACT_CRUSHING_FRAC = 0.5;
+/** Affix timer slots per enemy (AffixIndex; affix masks are 31 bits). */
+export const AFFIX_TIMER_STRIDE = 32;

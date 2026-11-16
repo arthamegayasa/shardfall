@@ -4,12 +4,22 @@
 import { HitKind, cosTurns, sinTurns } from '../../core/index.ts';
 import { insideDistance } from '../arena.ts';
 import { PIERCE_MEMORY, PROC_SHOT_SOFT_CAP } from '../capacity.ts';
-import { ShotMode, Status } from '../codes.ts';
+import { Archetype, ShotMode, Status } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { statOf } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
-import { applyHit, areaDamage, beginHit, burnDpsNonHit, canDamage, endHit } from './combat.ts';
+import { pnum } from '../sim-data.ts';
+import {
+  applyHit,
+  areaDamage,
+  beginHit,
+  burnDpsNonHit,
+  canDamage,
+  endHit,
+  riteLanded,
+} from './combat.ts';
 import { spawnPlayerZone } from './areas.ts';
+import { dropGlint } from './pickups.ts';
 
 /** Reusable spawn description (filled by the caller, read by spawnPlayerShot). */
 export interface ShotSpec {
@@ -46,6 +56,8 @@ export interface ShotSpec {
   /** Fire zone extras: Slow percent and damage tick interval (Rite Flare zone). */
   zoneSlow: number;
   zoneTick: number;
+  /** Coin tier IV: extra targets after the first hit. */
+  bounce: number;
 }
 
 export function createShotSpec(): ShotSpec {
@@ -80,7 +92,16 @@ export function createShotSpec(): ShotSpec {
     zoneTicks: 0,
     zoneSlow: 0,
     zoneTick: 0,
+    bounce: 0,
   };
+}
+
+/** Recount live proc projectiles (start of each pulse tick). */
+export function recountProcShots(ctx: SimCtx): void {
+  const ps = ctx.world.playerShots;
+  let n = 0;
+  for (let i = 0; i < ps.highWater; i++) if (ps.alive[i] === 1 && ps.isProc[i] === 1) n++;
+  ctx.procLive = n;
 }
 
 /** Reset a spec to defaults before filling it. */
@@ -116,24 +137,24 @@ export function resetShotSpec(s: ShotSpec): void {
   s.zoneTicks = 0;
   s.zoneSlow = 0;
   s.zoneTick = 0;
+  s.bounce = 0;
 }
 
 /** Spawn a player projectile. Proc projectiles above the soft cap are skipped (counted as overflow). */
 export function spawnPlayerShot(ctx: SimCtx, s: ShotSpec): number {
   const ps = ctx.world.playerShots;
-  if (s.isProc) {
-    let procLive = 0;
-    for (let i = 0; i < ps.highWater; i++) if (ps.alive[i] === 1 && ps.isProc[i] === 1) procLive++;
-    if (procLive >= PROC_SHOT_SOFT_CAP) {
-      ctx.poolOverflow++;
-      return -1;
-    }
+  // procLive is recounted once per pulse tick and raised per spawn (never lowered within the tick:
+  // conservative, deterministic, no 512-slot scan per proc; LP review M1).
+  if (s.isProc && ctx.procLive >= PROC_SHOT_SOFT_CAP) {
+    ctx.poolOverflow++;
+    return -1;
   }
   const i = allocSlot(ps);
   if (i < 0) {
     ctx.poolOverflow++;
     return -1;
   }
+  if (s.isProc) ctx.procLive++;
   ps.x[i] = s.x;
   ps.y[i] = s.y;
   ps.prevX[i] = s.x;
@@ -171,6 +192,7 @@ export function spawnPlayerShot(ctx: SimCtx, s: ShotSpec): number {
   ps.zoneTicks[i] = s.zoneTicks;
   ps.zoneSlow[i] = s.zoneSlow;
   ps.zoneTick[i] = s.zoneTick;
+  ps.bounceLeft[i] = s.bounce;
   return i;
 }
 
@@ -196,6 +218,58 @@ function rememberHit(ctx: SimCtx, i: number, target: number): void {
   if (n < PIERCE_MEMORY) ps.hitCount[i] = n + 1;
 }
 
+/**
+ * Tithe Coin (GDD 4.1, 6.2): a kill by a coin drops glint_per_kill (+ tier add) Glint as a piece at
+ * the kill point, at most glint_cap_base + glint_cap_per_tier x tier per weapon slot per Pulse.
+ * Missing keys: no Glint (behavior off).
+ */
+function coinKill(ctx: SimCtx, i: number, x: number, y: number): void {
+  const ps = ctx.world.playerShots;
+  const wi = ps.weaponIndex[i]!;
+  const slot = ps.weaponSlot[i]!;
+  const w = wi >= 0 ? ctx.sd.weapons[wi] : undefined;
+  if (w?.archetype !== Archetype.Coin || slot < 0) return;
+  const tier = Math.max(1, ps.tier[i]!);
+  const t = w.tiers[tier - 1];
+  if (t === undefined) return;
+  const per = pnum(t.p, 'glint_per_kill', 0) + pnum(t.p, 'glint_per_kill_add', 0);
+  const cap = pnum(t.p, 'glint_cap_base', 0) + pnum(t.p, 'glint_cap_per_tier', 0) * tier;
+  const run = ctx.run;
+  const left = cap - run.coinGlint[slot]!;
+  const amount = Math.min(per, left);
+  if (amount <= 0) return;
+  run.coinGlint[slot] = run.coinGlint[slot]! + amount;
+  dropGlint(ctx, x, y, amount);
+}
+
+/** Coin bounce: turn toward the nearest Unlit not hit yet within the remaining range. */
+function bounceShot(ctx: SimCtx, i: number, from: number): boolean {
+  const ps = ctx.world.playerShots;
+  const e = ctx.world.enemies;
+  const x = ps.x[i]!;
+  const y = ps.y[i]!;
+  let best = -1;
+  let bestD = ps.rangeLeft[i]! * ps.rangeLeft[i]!;
+  for (let s = 0; s < e.highWater; s++) {
+    if (s === from || !canDamage(ctx, s) || alreadyHit(ctx, i, s)) continue;
+    const dx = e.x[s]! - x;
+    const dy = e.y[s]! - y;
+    const d = dx * dx + dy * dy;
+    if (d < bestD) {
+      bestD = d;
+      best = s;
+    }
+  }
+  if (best < 0) return false;
+  const sp = Math.sqrt(ps.vx[i]! * ps.vx[i]! + ps.vy[i]! * ps.vy[i]!);
+  const d = Math.sqrt(bestD);
+  if (d <= 0 || sp <= 0) return false;
+  ps.vx[i] = ((e.x[best]! - x) / d) * sp;
+  ps.vy[i] = ((e.y[best]! - y) / d) * sp;
+  ps.bounceLeft[i] = ps.bounceLeft[i]! - 1;
+  return true;
+}
+
 function hitWithShot(ctx: SimCtx, i: number, target: number): void {
   const ps = ctx.world.playerShots;
   const h = beginHit(ctx);
@@ -211,6 +285,7 @@ function hitWithShot(ctx: SimCtx, i: number, target: number): void {
   h.weaponSlot = ps.weaponSlot[i]!;
   h.knockback = ps.knockback[i]!;
   applyHit(ctx);
+  if (h.killed && h.procDepth === 0) coinKill(ctx, i, h.x, h.y);
   endHit(ctx);
 }
 
@@ -218,7 +293,7 @@ function hitWithShot(ctx: SimCtx, i: number, target: number): void {
 function explode(ctx: SimCtx, i: number, x: number, y: number): void {
   const ps = ctx.world.playerShots;
   const st = ps.blastStatus[i]!;
-  areaDamage(
+  const hits = areaDamage(
     ctx,
     x,
     y,
@@ -234,6 +309,7 @@ function explode(ctx: SimCtx, i: number, x: number, y: number): void {
     ps.weaponIndex[i]!,
     ps.weaponSlot[i]!,
   );
+  if (ps.isRite[i] === 1) riteLanded(ctx, x, y, ps.areaRadius[i]!, hits);
   const zr = ps.zoneRadius[i]!;
   const zt = ps.zoneTicks[i]!;
   if (zr > 0 && zt > 0) {
@@ -325,7 +401,11 @@ export function updatePlayerShots(ctx: SimCtx): void {
           break;
         }
         hitWithShot(ctx, i, s);
-        if (mode === ShotMode.Straight) {
+        if (mode === ShotMode.Straight && ps.alive[i] === 1) {
+          if (ps.bounceLeft[i]! > 0 && bounceShot(ctx, i, s)) {
+            ended = true;
+            break;
+          }
           ps.pierceLeft[i] = ps.pierceLeft[i]! - 1;
           if (ps.pierceLeft[i]! < 0) {
             ctx.fx.onProjectileEnd(ctx, i);
@@ -341,8 +421,12 @@ export function updatePlayerShots(ctx: SimCtx): void {
       if (mode === ShotMode.Bolt) {
         explode(ctx, i, ps.x[i]!, ps.y[i]!);
       } else if (mode === ShotMode.Boomerang) {
-        ps.phase[i] = 1;
-        ps.hitCount[i] = 0; // may hit each enemy again on the way back
+        // Only once at the turn: rangeLeft stays <= 0 while returning (GD M2-01: the reset every
+        // tick let a returning blade hit a large target once per tick).
+        if (ps.phase[i] === 0) {
+          ps.phase[i] = 1;
+          ps.hitCount[i] = 0; // may hit each enemy again on the way back
+        }
       } else {
         ctx.fx.onProjectileEnd(ctx, i);
         freeSlot(ps, i);

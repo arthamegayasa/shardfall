@@ -1,0 +1,95 @@
+{
+  "id": "mus.stinger.warden",
+  "oneShot": true,
+  "tailSec": 1.2,
+  "bpm": 116,
+  "meter": [
+    4,
+    4
+  ],
+  "stepsPerBeat": 4,
+  "key": {
+    "root": "D",
+    "mode": "chromatic"
+  },
+  "form": [
+    "A"
+  ],
+  "sections": {
+    "A": {
+      "chords": [
+        "Dm"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "low",
+      "instrument": "brass_low",
+      "gainDb": -11,
+      "type": "note",
+      "notes": [
+        "D2",
+        "G#2"
+      ],
+      "rhythm": "X_________------",
+      "send": {
+        "hall": 0.4
+      }
+    },
+    {
+      "id": "seep",
+      "instrument": "brass_low",
+      "gainDb": -15,
+      "send": {
+        "hall": 0.4
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:8 D3:2 C#3:2 C3:2 G#2:2"
+        ]
+      }
+    },
+    {
+      "id": "cluster_a",
+      "instrument": "glass_bell",
+      "gainDb": -19,
+      "send": {
+        "hall": 0.6
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:2 C#6:14"
+        ]
+      }
+    },
+    {
+      "id": "cluster_b",
+      "instrument": "glass_bell",
+      "gainDb": -19,
+      "send": {
+        "hall": 0.6
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:2 D6:14"
+        ]
+      }
+    },
+    {
+      "id": "timp",
+      "instrument": "kit",
+      "gainDb": -14,
+      "send": {
+        "hall": 0.3
+      },
+      "type": "drum",
+      "lanes": {
+        "timp": "X---------------"
+      }
+    }
+  ]
+}

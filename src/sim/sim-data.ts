@@ -34,6 +34,16 @@ export function phas(p: ParamsRaw, key: string): boolean {
   return p[key] !== undefined;
 }
 
+/**
+ * Optional config value by GameData key (camelCase plus unit suffix, architecture 19 v2.1 item 7).
+ * Returns null when the key is not in this build: the behavior that needs it stays off
+ * (gp-core-loop 3, never a number in code). Used for keys requested from GD in gp-requests-m2.md.
+ */
+export function cfgOpt(cfg: object, key: string): number | null {
+  const v = (cfg as Readonly<Record<string, unknown>>)[key];
+  return typeof v === 'number' && Number.isFinite(v) ? v : null;
+}
+
 /** Stat ids the sim reads by name (GDD 5.1). Missing stats resolve to -1 and read as neutral. */
 export const STAT_IDS = [
   'max_hp',
@@ -105,8 +115,6 @@ export interface ConditionSim {
   readonly str: string;
   /** every_nth scope: 0 global, 1 per_weapon, 2 per_target. */
   readonly scope: number;
-  /** Slot in the per-target counter table for per_target scope, -1 otherwise. */
-  readonly targetCounter: number;
 }
 
 export interface StatPart {
@@ -162,6 +170,8 @@ export interface EffectSim {
   /** stat_mod `stat` as a StatIndex, -1 when absent or unknown. */
   readonly statIndex: number;
   readonly sourceRef: number;
+  /** Has an every_nth condition with per_target scope (needs a counter slot while active). */
+  readonly perTarget: boolean;
 }
 
 export interface SimData {
@@ -191,7 +201,24 @@ export interface SimData {
   /** Synergy rows in evaluation order: tag order, then ascending threshold (effect-primitives 6.1). */
   readonly synergyOrder: readonly number[];
   readonly synergyTag: readonly number[];
+  /** AffixIndex by id (-1 when the affix is not in this build). */
+  readonly affix: Readonly<Record<AffixId, number>>;
+  /** Affixes with random_pool = 1 (Crack extra affixes, GDD 15.2), in table order. */
+  readonly affixPool: readonly number[];
 }
+
+/** Affix ids the sim implements (GDD 15.2). */
+export const AFFIX_IDS = [
+  'hasted',
+  'volley',
+  'veiled',
+  'blinking',
+  'brood',
+  'tar_trail',
+  'pulsing',
+  'bulwark',
+] as const;
+export type AffixId = (typeof AFFIX_IDS)[number];
 
 const REQUIRED_TABLES = [
   'config',
@@ -347,8 +374,6 @@ export function buildSimData(data: GameData): SimData {
     affixes: e.affixes.map(affixIndex).filter((i) => i >= 0),
   }));
 
-  // per_target every_nth counters get a slot each, in effect order, up to the capacity.
-  let perTargetSlots = 0;
   const effects: EffectSim[] = data.effects.map((e, index) => {
     const action = ACTION_CODES[e.action] ?? Action.StatMod;
     const conds: ConditionSim[] = e.conditions.map((c) => {
@@ -356,7 +381,6 @@ export function buildSimData(data: GameData): SimData {
       let num = Number(c.value);
       let str = c.value;
       let scope = 0;
-      let targetCounter = -1;
       // Pre-resolve string values to codes so hot-path checks compare numbers.
       if (c.name === 'source_tag') num = data.tags.findIndex((t) => t.id === c.value);
       else if (c.name === 'source_kind') num = HIT_KIND_CODES[c.value] ?? -1;
@@ -369,10 +393,9 @@ export function buildSimData(data: GameData): SimData {
         const sc = at >= 0 ? c.value.slice(at + 1) : 'global';
         scope = sc === 'per_weapon' ? 1 : sc === 'per_target' ? 2 : 0;
         str = sc;
-        if (scope === 2) targetCounter = perTargetSlots++;
       }
       if (!Number.isFinite(num)) num = 0;
-      return { code: code, num, str, scope, targetCounter };
+      return { code: code, num, str, scope };
     });
     return {
       index,
@@ -397,6 +420,7 @@ export function buildSimData(data: GameData): SimData {
       buffParts: buffPartsOf(statIdx, e.params),
       statIndex: typeof e.params['stat'] === 'string' ? (statIdx.get(e.params['stat']) ?? -1) : -1,
       sourceRef: encodeSource(SourceKind.Effect, index),
+      perTarget: conds.some((c) => c.code === COND_CODES['every_nth'] && c.scope === 2),
     };
   });
 
@@ -451,5 +475,10 @@ export function buildSimData(data: GameData): SimData {
     missingRequired: REQUIRED_TABLES.filter((t) => missing.has(t)),
     synergyOrder,
     synergyTag,
+    affix: Object.fromEntries(AFFIX_IDS.map((id) => [id, affixIndex(id)])) as Record<
+      AffixId,
+      number
+    >,
+    affixPool: data.affixes.flatMap((a, i) => (a.randomPool ? [i] : [])),
   };
 }

@@ -2,7 +2,7 @@
 // Pools implement the matching *PoolView of the WorldView directly, so the view needs no copies.
 // Columns beyond the view are sim-internal (architecture 8.2: GP adjusts outside the view).
 
-import { BURN_STACK_SLOTS, PIERCE_MEMORY } from './capacity.ts';
+import { AFFIX_TIMER_STRIDE, BURN_STACK_SLOTS, PIERCE_MEMORY } from './capacity.ts';
 
 export interface PoolCore {
   readonly capacity: number;
@@ -107,6 +107,21 @@ export interface EnemyPool extends PoolCore {
   readonly affixMask: Int32Array;
   /** Orbit re-contact cooldown per weapon slot: index slot * weaponSlots + weaponSlot. */
   readonly orbitTimer: Int32Array;
+  /** Affix timers, AFFIX_TIMER_STRIDE per slot indexed by AffixIndex (blinking, brood, pulsing, tar). */
+  readonly affixTimer: Int32Array;
+  /** Blink destination and ticks until the blink lands (0 = none). */
+  readonly blinkX: Float64Array;
+  readonly blinkY: Float64Array;
+  readonly blinkTicks: Int32Array;
+  /** Veiled: ticks until the shell regrows (counts down after damage). */
+  readonly shellRegrow: Int32Array;
+  /** Summoner and brood: summons alive owned by this slot are counted from summonOwner. */
+  readonly summonOwner: Int32Array;
+  readonly summonOwnerSerial: Uint32Array;
+  /** Extra guard from affixes (bulwark), added to the enemies.csv guard. */
+  readonly guardAdd: Float64Array;
+  /** 1 when immune to knockback (affix bulwark). */
+  readonly kbImmune: Uint8Array;
 }
 
 export function createEnemyPool(capacity: number, weaponSlots: number): EnemyPool {
@@ -144,6 +159,15 @@ export function createEnemyPool(capacity: number, weaponSlots: number): EnemyPoo
     chargeHit: new Uint8Array(capacity),
     affixMask: new Int32Array(capacity),
     orbitTimer: new Int32Array(capacity * Math.max(1, weaponSlots)),
+    affixTimer: new Int32Array(capacity * AFFIX_TIMER_STRIDE),
+    blinkX: new Float64Array(capacity),
+    blinkY: new Float64Array(capacity),
+    blinkTicks: new Int32Array(capacity),
+    shellRegrow: new Int32Array(capacity),
+    summonOwner: new Int32Array(capacity),
+    summonOwnerSerial: new Uint32Array(capacity),
+    guardAdd: new Float64Array(capacity),
+    kbImmune: new Uint8Array(capacity),
   };
 }
 
@@ -184,6 +208,8 @@ export interface PlayerShotPool extends PoolCore {
   readonly zoneTicks: Int32Array;
   readonly zoneSlow: Float64Array;
   readonly zoneTick: Int32Array;
+  /** Coin: bounces left (tier IV bounce). */
+  readonly bounceLeft: Int32Array;
 }
 
 export function createPlayerShotPool(capacity: number): PlayerShotPool {
@@ -219,6 +245,7 @@ export function createPlayerShotPool(capacity: number): PlayerShotPool {
     zoneTicks: new Int32Array(capacity),
     zoneSlow: new Float64Array(capacity),
     zoneTick: new Int32Array(capacity),
+    bounceLeft: new Int32Array(capacity),
   };
 }
 
@@ -246,6 +273,9 @@ export interface PickupPool extends PoolCore {
   readonly amount: Float64Array;
   readonly magnetized: Uint8Array;
   readonly dropTick: Int32Array;
+  /** Ticks since magnetized (view flyTicks) and current fly speed in u/tick. */
+  readonly flyTicks: Int32Array;
+  readonly flySpeed: Float64Array;
 }
 
 export function createPickupPool(capacity: number): PickupPool {
@@ -255,6 +285,8 @@ export function createPickupPool(capacity: number): PickupPool {
     amount: new Float64Array(capacity),
     magnetized: new Uint8Array(capacity),
     dropTick: new Int32Array(capacity),
+    flyTicks: new Int32Array(capacity),
+    flySpeed: new Float64Array(capacity),
   };
 }
 
@@ -325,6 +357,9 @@ export interface SpawnMarkPool extends PoolCore {
   // internal
   readonly members: Int32Array;
   readonly counted: Uint8Array;
+  /** Enemy slot that summoned this group (summoner, brood), with its serial; -1 none. */
+  readonly owner: Int32Array;
+  readonly ownerSerial: Uint32Array;
 }
 
 export function createSpawnMarkPool(capacity: number): SpawnMarkPool {
@@ -335,6 +370,8 @@ export function createSpawnMarkPool(capacity: number): SpawnMarkPool {
     ticksTotal: new Int32Array(capacity),
     members: new Int32Array(capacity),
     counted: new Uint8Array(capacity),
+    owner: new Int32Array(capacity),
+    ownerSerial: new Uint32Array(capacity),
   };
 }
 

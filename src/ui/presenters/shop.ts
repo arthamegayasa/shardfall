@@ -192,3 +192,9 @@ export function tagPreview(model: ShopModel, data: GameData, offer: OfferCard): 
 export function initialOfferFocus(model: ShopModel): number {
   return model.offers.findIndex((o) => o.buyable);
 }
+
+/** Inventory slot index from a focused control's data-ui ("shop-slot-3" -> 2), -1 otherwise. */
+export function focusedSlotIndex(dataUi: string): number {
+  const m = /^shop-slot-(\d+)$/.exec(dataUi);
+  return m?.[1] === undefined ? -1 : Number(m[1]) - 1;
+}

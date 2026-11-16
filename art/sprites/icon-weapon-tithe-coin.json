@@ -1,0 +1,36 @@
+{
+  "id": "icon-weapon-tithe-coin",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Tithe Shard: a gold coin with a cyan glass shard set in its face. Key: round disc with a vertical diamond.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....wyyg....",
+          "..wygggggd..",
+          ".wgggwcgggd.",
+          ".yggwccbggd.",
+          "ygggwccbgggd",
+          "yggwcccbbggd",
+          "yggccccbbggd",
+          "ygggccbbgggd",
+          ".yggcbbbggd.",
+          ".dgggbbgggd.",
+          "..dggggggd..",
+          "....dddd...."
+        ]
+      ]
+    }
+  }
+}

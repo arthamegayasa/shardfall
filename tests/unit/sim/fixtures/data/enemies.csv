@@ -5,3 +5,10 @@ shooter,unlit.shooter,A,shooter,shooter,medium,,10,1.7,2,4,2,0,0,0.4,keep_min=5;
 tank,unlit.tank,A,tank,tank,large,,60,1.2,7,0,5,2,0.8,0,,,0
 warden_hound,unlit.warden_hound,A,warden,warden_hound,warden,,380,2.4,6,10,25,0,0.9,0.6,trigger_range=8;charge_speed=10;charge_s=0.45;charges=3;charge_gap_s=0.4;rest_s=2.5;drop_count=5,volley,4
 boss_lantern,unlit.boss_lantern,A,boss,boss_lantern,boss,,600,1,10,0,40,2,1,1,drop_count=8,,8
+exploder,unlit.exploder,B,exploder,exploder,small,,8,3,0,10,1,0,0,0.8,trigger_range=1.6;fuse_s=0.8;blast_radius=1.8;fuse_move_mult=0.5;enemy_dmg=20,,0
+summoner,unlit.summoner,B,summoner,summoner,medium,,26,1.4,2,0,3,0,0.3,0.8,keep_min=6;keep_max=8;summon_every=5;summon_count=3;max_summons=6;summon_id=mote,,0
+mote,unlit.mote,B,mote,mote,small,,3,3.3,2,0,0,0,0,0,,,0
+warden_choir,unlit.warden_choir,B,warden,warden_choir,warden,,520,1.6,4,5,25,0,0.9,0.4,keep_min=5;keep_max=7;fan_count=5;fan_deg=40;shot_speed=5.5;shot_life=2.5;cooldown=2.4;drop_count=5,blinking|veiled,4
+lobber,unlit.lobber,C,lobber,lobber,medium,,14,1.3,2,7,3,0,0.2,1,keep_min=6;keep_max=9;cooldown=3.5;zone_radius=1.6,,0
+warden_bulwark,unlit.warden_bulwark,C,warden,warden_bulwark,warden,,750,1.3,9,12,25,5,0.9,0.9,slam_every=4;slam_radius=2.5;drop_count=5,brood|tar_trail|pulsing|bulwark,4
+boss_vine,unlit.boss_vine,C,boss,boss_vine,boss,,2400,1.4,12,0,0,4,1,1,,,8

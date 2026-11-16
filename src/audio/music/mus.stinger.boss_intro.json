@@ -1,0 +1,88 @@
+{
+  "id": "mus.stinger.boss_intro",
+  "oneShot": true,
+  "tailSec": 1.5,
+  "bpm": 160,
+  "meter": [
+    4,
+    4
+  ],
+  "stepsPerBeat": 4,
+  "gainDb": -3,
+  "key": {
+    "root": "D",
+    "mode": "phrygian"
+  },
+  "form": [
+    "A"
+  ],
+  "sections": {
+    "A": {
+      "chords": [
+        "Dm",
+        "Dm"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "drone",
+      "instrument": "unlit_drone",
+      "gainDb": -12,
+      "type": "note",
+      "notes": [
+        "D1",
+        "G#1"
+      ],
+      "rhythm": [
+        "X_______________",
+        "X_______________"
+      ]
+    },
+    {
+      "id": "choir",
+      "instrument": "choir",
+      "gainDb": -14,
+      "send": {
+        "hall": 0.5
+      },
+      "type": "chord",
+      "octave": 3,
+      "voicing": "close",
+      "rhythm": [
+        "----X___________",
+        "X_______________"
+      ]
+    },
+    {
+      "id": "seep",
+      "instrument": "brass_low",
+      "gainDb": -12,
+      "send": {
+        "hall": 0.35
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "D3:8 C#3:8",
+          "C3:8 G#2:8"
+        ]
+      }
+    },
+    {
+      "id": "timp_roll",
+      "instrument": "kit",
+      "gainDb": -15,
+      "send": {
+        "hall": 0.3
+      },
+      "type": "drum",
+      "lanes": {
+        "timp": [
+          "x.x.x.x.x.x.x.x.",
+          "xxxxxxxxxxxxxxxX"
+        ]
+      }
+    }
+  ]
+}

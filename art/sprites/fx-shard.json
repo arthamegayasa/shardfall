@@ -1,0 +1,38 @@
+{
+  "id": "fx-shard",
+  "class": "vfx-danger",
+  "faction": "unlit",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "status": "final",
+  "note": "Unlit death splinter: dark shard tumbling outward when an Unlit breaks.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 3,
+      "loop": true,
+      "frames": [
+        [
+          "ku",
+          "ur"
+        ],
+        [
+          "kur"
+        ],
+        [
+          "k",
+          "u",
+          "r"
+        ],
+        [
+          "uk",
+          "ru"
+        ]
+      ]
+    }
+  }
+}

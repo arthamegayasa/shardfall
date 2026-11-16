@@ -1,0 +1,36 @@
+{
+  "id": "icon-stat-attack-speed-pct",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Attack Speed: twin short daggers, the right one ahead, with cyan motion streaks under them. Key: two blades side by side.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".........w....",
+          "........wcb...",
+          "...w....wcb...",
+          "..wcb...wcb...",
+          "..wcb...wcb...",
+          "..wcb...wcb...",
+          "..wcb..ygggd..",
+          "..wcb....dt...",
+          ".ygggd...dt...",
+          "...dt.........",
+          "...dt...c.c...",
+          "..c.c........."
+        ]
+      ]
+    }
+  }
+}

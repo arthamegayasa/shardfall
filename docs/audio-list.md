@@ -1,6 +1,6 @@
 # Shardfall: Daftar Cue Audio
 
-Pemilik: Audio Director (AU). Status: versi 1.1 (2026-11-17), perbaikan review M0 dan status implementasi M1-06 (bagian 12). Reviewer: CD (rasa), LP (teknis).
+Pemilik: Audio Director (AU). Status: versi 1.2 (2026-11-17), perbaikan review M0, status M1-06 (bagian 12) dan M2-04 (bagian 13). Reviewer: CD (rasa), LP (teknis).
 Pasangan: `docs/audio-direction.md` (palet, instrumen, mix, struktur musik, format data).
 Selaras dengan: `docs/gdd.md` (isi Tingkat A, senjata, Unlit, Warden, boss, toko) dan `docs/tech/architecture.md` 6.5 (`SimEventType`).
 
@@ -33,23 +33,25 @@ Payload final: `x`, `y`, `a`, `b`, `c` (architecture.md 6.5). `c` biasanya Sourc
 | Event | Yang dipakai audio | Cue |
 |---|---|---|
 | `PhaseChanged` | `a` fase baru | masuk `shop`: `ui.glazier.arrive`. Musik dari `WorldView.phase` |
-| `PulseStarted`, `PulseEnded` | (musik dari `WorldView.pulse`) | `sfx.pulse.start_wave` + `mus.stinger.pulse_start`; `sfx.pulse.end_flash` + `mus.stinger.pulse_end` |
-| `RunEnded` | `a` `RunOutcome` | `mus.stinger.victory` atau `mus.stinger.defeat` |
+| `PulseStarted`, `PulseEnded` | (musik dari `WorldView.pulse`) | `sfx.pulse.start_wave` + stinger `mus.stinger.pulse_start`; `sfx.pulse.end_flash` + stinger `mus.stinger.pulse_end` (dilewati bila boss baru mati) |
+| `RunEnded` | `a` `RunOutcome` | stinger `mus.stinger.victory` atau `mus.stinger.defeat` (Abandon diam) |
 | `PlayerDamaged` | | `sfx.player.hit`, ducking `player_hit` |
 | `PlayerHealed`, `DamageBlocked`, `PlayerDied` | | `sfx.player.heal`, `sfx.player.block`, `sfx.player.death` (efek lambat) |
 | `PlayerHpLowChanged` | `a` 1 masuk, 0 keluar | `sfx.player.lowhp` berulang tiap 1 s selama fase `pulse` |
 | `WeaponFired` | `a` `WeaponIndex` | `routes.weapons.fireById`, cadangan `fireByArchetype` |
-| `RiteCast`, `RiteReady`, `RiteRejected` | `a` `RiteIndex`, `x` titik bidik | per `archetype` Rite; `sfx.rite.ready` (diam 1.5 s setelah `PulseStarted`); `ui.rite.denied` |
+| `RiteCast`, `RiteLanded`, `RiteReady`, `RiteRejected` | `a` `RiteIndex`, `x` titik bidik atau mendarat | cast per `archetype` Rite; ledakan saat `RiteLanded` di posisinya; `sfx.rite.ready` (diam 1.5 s setelah `PulseStarted`); `ui.rite.denied` |
 | `PlayerLeveledUp`, `MementoAcquired` | | `sfx.levelup`, `sfx.memento.gain` |
 | `SynergyActivated` | `b` ambang 2, 4, 6 | `sfx.synergy.activate` digeser 0, +5, +12 semitone |
 | `BuffMaxed` | | `sfx.proc.rush_full` (Rush penuh, Edge 6) |
-| `EnemyDamaged` | `b` bit 0 kritikal, bit 2-3 rank, bit 4-6 `HitKind`; `c` sumber | rank Warden `sfx.warden.hurt`, boss `sfx.boss.hurt`, kritikal `sfx.weapon.hit_crit`, senjata dengan dampak sendiri dan `HitKind` bukan proyektil `routes.weapons.impactByArchetype`, lainnya `sfx.weapon.hit`. Diam untuk `Dot`, `Zone`, sumber `Status` dan `Rite` |
+| `EnemyDamaged` | `b` bit 0 kritikal, bit 2-3 rank, bit 4-6 `HitKind`, bit 7-8 impact; `c` sumber | rank Warden `sfx.warden.hurt`, boss `sfx.boss.hurt`, kritikal `sfx.weapon.hit_crit`, senjata dengan dampak sendiri dan `HitKind` bukan proyektil `routes.weapons.impactByArchetype`, impact berat atau remuk `sfx.weapon.hit_heavy`, lainnya `sfx.weapon.hit`. Diam untuk `Dot`, `Zone`, sumber `Status` dan `Rite` |
 | `EnemyKilled` | `a` `EnemyTypeIndex`, `b` rank | rank normal: `routes.enemies.deathById`, cadangan `deathBySize` (`sizeClass`). Warden dan boss lewat event masing-masing |
 | `EnemyProjectileFired` | `c` sumber | `sfx.enemy.shooter.fire`; diam bila sumber `Affix` (suara volley dari `TelegraphResolved`) |
 | `TelegraphStarted`, `TelegraphResolved` | `a` `TelegraphKind`, `b` durasi tick, `c` sumber | `BossPattern`: per `archetype` pola; `Affix`: per id affix; terjang `EnemyAttack` milik musuh peran `warden`: cue Warden (naik 2 semitone per terjang beruntun); lainnya per `TelegraphKind`. Durasi `b / 60` s untuk cue `live`. Telegraf memicu ducking `telegraph` |
-| `WardenSpawned`, `WardenKilled` | | `sfx.warden.arrive` + `mus.stinger.warden`; `sfx.warden.death` |
-| `BossSpawned`, `BossPhaseChanged`, `BossEnraged`, `BossSummoned`, `BossKilled` | | `sfx.boss.intro`, `sfx.boss.phase`, `sfx.boss.enrage`, `sfx.boss.summon`, `sfx.boss.death` |
+| `WardenSpawned`, `WardenKilled` | | `sfx.warden.arrive` + stinger `mus.stinger.warden`; `sfx.warden.death` |
+| `BossSpawned`, `BossPhaseChanged`, `BossEnraged`, `BossSummoned`, `BossKilled` | | `sfx.boss.intro`, `sfx.boss.phase`, `sfx.boss.enrage`, `sfx.boss.summon`, `sfx.boss.death`; stinger `boss_intro`, `boss_phase` (fase naik dan mengamuk), `boss_defeated` |
 | `AffixApplied` | `a` `AffixIndex` | `hasted`: `sfx.warden.hasted` |
+| `AffixTriggered` | `b` `AffixAction` | `ShellBroken` `sfx.warden.shell_break`, `ShellUp` `sfx.warden.shell_up`, `Blink` `sfx.warden.blink`, `Pulse` `sfx.telegraph.area_impact`; `Haste`, `Brood`, `Tar` diam |
+| `EnemyExploded` | | `sfx.enemy.exploder.blast` |
 | `SpawnMarked` | | `sfx.enemy.spawn` (retakan spawn) |
 | `GlintCollected` | `b` panjang rentetan | `sfx.glint.pickup`, nada dari `glintLadder` lagu aktif; bila `b` 0, penghitung audio dengan reset 500 ms |
 | `GlintSwept`, `MementoOfferSpawned` | | `sfx.glint.sweep`, `sfx.reward.drop` |
@@ -59,7 +61,7 @@ Payload final: `x`, `y`, `a`, `b`, `c` (architecture.md 6.5). `c` biasanya Sourc
 | `ItemMerged` | `b` tier baru | `ui.shop.merge` (Fuse) digeser 0, +7, +12 semitone untuk tier II, III, IV |
 | `ItemLocked` | `b` 1 kunci, 0 buka | `ui.shop.lock`, buka kunci -4 semitone |
 | `CommandRejected` | `a` `RejectReason` | `ui.denied`, kecuali `WrongPhase`, `UnknownId`, `DebugDisabled` |
-| `PlayerDodged`, `BarrierGained`, `EnemySpawned`, `GlintDropped`, `RewardChosen` | | Sengaja diam (dinyatakan di `routes.silent`) |
+| `PlayerDodged`, `BarrierGained`, `EnemySpawned`, `GlintDropped`, `RewardChosen`, `HitStop`, `EnemyKnockedBack`, `EnemyDissolved`, `BossPatternStarted`, `GlintPulled` | | Sengaja diam (dinyatakan di `routes.silent`) |
 
 ---
 
@@ -121,7 +123,7 @@ Tabel `simple` (event ke daftar cue), `silent` (event yang sengaja diam), dan ta
 | `sfx.player.block` | B | `DamageBlocked` (Barrier dari Ward) | 3 | 180 ms | 2 / 80 | -14 | "Ting" kaca tumpul: sine 1.2 kHz ditambah noise pendek bandpass 4 kHz, room kecil |
 | `sfx.rite.ready` | A | `RiteReady`, kecuali dalam 1.5 s setelah `PulseStarted` (Rite selalu siap di awal Pulse, gdd 7.1, jadi tidak perlu ditandai) | 3 | 300 ms | 1 / - | -14 | `glass_bell` kecil D6 dan A6 bersamaan, tengah |
 | `sfx.rite.cast.lantern` | A | `RiteCast` Rite `flare_lantern` | 3 | 400 ms | 1 / - | -12 | Lemparan: whoosh noise bandpass naik 400 Hz ke 2 kHz, denting `glass_bell` A5 kecil (lentera berayun) |
-| `sfx.rite.impact.lantern` | A | `RiteCast` `flare_lantern`, `delayMs` 350 (lentera mendarat) | 3 | 700 ms | 1 / - | -10 | Ledakan hangat: noise lowpass 2.5 kHz menyapu turun, thump sine 70 Hz, `glass_bell` D5 dan A5 pecah. Tanpa tritone (milik pemain) |
+| `sfx.rite.impact.lantern` | A | `RiteLanded` `flare_lantern` (posisi mendarat) | 3 | 900 ms | 1 / - | -10 | Ledakan hangat: noise lowpass menyapu turun, sub 90 ke 48 Hz, `glass_bell` D5, A5, E6, pecahan kaca 4 sampai 7.5 kHz. Tanpa tritone (milik pemain) |
 | `sfx.rite.zone.lantern` | B | Zona api `flare_lantern` aktif 4 s | 5 | loop 4 s | 1 / - | -26 | Derak api lembut: klik noise lowpass 3 kHz acak 6 per detik, dengung noise lowpass 300 Hz. `mode: live` |
 | `sfx.rite.cast.bell` | B | `RiteCast` `great_toll` | 3 | 900 ms | 1 / - | -10 | Dentang `glass_bell` rendah D3 dan A3 dengan sapuan noise melebar |
 | `sfx.rite.cast.blade` | B | `RiteCast` `glass_step` | 3 | 250 ms | 1 / - | -12 | Sabetan kaca cepat: noise bandpass 600 Hz ke 5 kHz dalam 150 ms, butir kaca tinggi |
@@ -160,7 +162,8 @@ CSV GD tidak memuat kolom audio (keputusan LP). Pemetaan di `routes.json`: `weap
 | `sfx.weapon.fire.glaive` | A | `WeaponFired` | 6 | 80 ms | 3 / 60 | -24 | Desing berputar: sine 450 Hz dengan tremolo 30 Hz, noise bandpass 1 kHz tipis |
 | `sfx.weapon.fire.ring` | B | `WeaponFired` | 6 | 80 ms | 3 / 60 | -24 | Sine 330 dan 495 Hz 50 ms dengan pengulangan pendek 30 ms (slapback) pada minus 8 dB |
 | `sfx.weapon.hit` | A | `EnemyDamaged` tidak kritikal, sumber senjata proyektil atau sabetan | 6 | 50 ms | 3 / 50 | -27 | Thud lembut: noise lowpass 900 Hz 30 ms, sine 180 Hz 40 ms. Coalesce 30 ms |
-| `sfx.weapon.hit_crit` | A | `EnemyDamaged` kritikal | 5 | 80 ms | 2 / 80 | -22 | `weapon.hit` ditambah denting sine 4.5 kHz 40 ms (di atas pita bahaya) |
+| `sfx.weapon.hit_crit` | A | `EnemyDamaged` kritikal | 5 | 80 ms | 2 / 80 | -22 | `weapon.hit` ditambah denting 4.5 kHz dan 6.75 kHz (di atas pita bahaya) |
+| `sfx.weapon.hit_heavy` | A | `EnemyDamaged` impact berat atau remuk (bukan kritikal) | 5 | 110 ms | 2 / 60 | -23 | Thud lebih berat 160 ke 80 Hz, butir motes, tik 4.8 kHz |
 
 Status Burn, Slow, dan Mark sengaja tanpa suara per tick (terlalu sering). Hanya visual.
 
@@ -230,6 +233,10 @@ Semua telegraf: pita 1 sampai 3 kHz, bentuk naik, tritone atau noise, `send.room
 | `sfx.boss.ember_rain.impact` | A | `TelegraphResolved` Ember Rain | 2 | 500 ms | 1 / - | -9 | Rentetan 3 thump berjarak 40 ms, crunch |
 | `sfx.boss.snuff_ring.windup` | A | `TelegraphStarted` Snuff Ring (1.0 s) | 2 | telegraf | 2 / 300 | -10 | Swell tritone rendah D4 dan G#4 dengan bandpass naik, napas noise |
 | `sfx.boss.snuff_ring.wave` | A | `TelegraphResolved` Snuff Ring (cincin melebar) | 2 | 800 ms | 2 / 300 | -10 | Whoosh melebar: noise bandpass turun 2 kHz ke 400 Hz selama cincin melebar, pan melebar dari posisi boss |
+| `sfx.boss.ember_storm.windup` | A | `TelegraphStarted` pola `ember_rain_8` | 2 | telegraf | 1 / - | -9 | Tiga saw tritone menyapu, derak bara lebih padat |
+| `sfx.boss.ember_storm.impact` | A | `TelegraphResolved` `ember_rain_8` | 2 | 650 ms | 1 / - | -8 | Lima dentum berjarak 45 ms, crunch |
+| `sfx.boss.snuff_ring.wave_double` | A | `TelegraphResolved` `snuff_ring_double` (windup memakai `snuff_ring.windup` minus 2 semitone) | 2 | 1.7 s | 1 / - | -10 | Dua gelombang berjarak 800 ms |
+| `sfx.boss.moth_call.windup` | A | `TelegraphStarted` `moth_call` | 2 | telegraf | 1 / - | -12 | Kepak ngengat noise 380 Hz, saw tritone D5 dan G#5 bergetar |
 | `sfx.boss.lanes.windup` | A | `TelegraphStarted` Lantern Lanes (fase 2, 1.0 s) | 2 | telegraf | 1 / - | -10 | Tiga nada tritone naik bertumpuk (satu per jalur) |
 | `sfx.boss.lanes.fire` | A | `TelegraphResolved` Lantern Lanes (deret proyektil) | 2 | 1.0 s | 1 / - | -12 | Rentetan chirp `shooter.fire` cepat 12 per detik, digabung satu suara, lowpass 3 kHz agar tidak menusuk |
 | `sfx.boss.summon` | A | `BossSummoned` (Moth Call, 6 swarmer) | 2 | 800 ms | 1 / - | -12 | Reverse swell ditambah Motif Rembes, kepak noise bandpass 300 Hz bergetar |
@@ -349,3 +356,13 @@ Pemetaan Tingkat A (gdd 2.3) ke cue:
 - Belum ada (M2 atau Tingkat B): `mus.title`, `mus.end`, `mus.biome1.boss`, `mus.overlay.unlit`, `mus.stinger.boss_*`, `sfx.player.hit_heavy`, `sfx.rite.zone.lantern`, `sfx.rite.cast.bell`, `sfx.rite.cast.blade`, `sfx.proc.echo_repeat`, `sfx.proc.barrier_up`, `sfx.proc.interest`, `sfx.enemy.tank.step`, `sfx.enemy.exploder.*`, `sfx.enemy.summon`, `sfx.telegraph.blink`, `sfx.warden.fan.windup`, `sfx.pulse.tick` (opsional), `ui.class.select`, `ui.end.tally`, `ui.unlock`, ambience `amb.*`.
 - Preview: `node tools/audio/render-cues.ts` menulis `audio/preview/sfx/<cue-id>.wav` dan `audio/preview/music/<lagu>.L<level>.wav`. Validasi: `node tools/audio/validate.ts`.
 - Cue UI yang dipicu tombol (bukan event sim) diputar UI lewat `UiDeps.sound.play(cueId)`: `ui.focus`, `ui.confirm`, `ui.back`, `ui.toggle`, `ui.slider.tick`, `ui.pause.open`, `ui.pause.close`, `ui.pulse.begin`. Cue toko dan kartu dipicu event sim; bila UI juga memutarnya saat klik, `minIntervalMs` mencegah bunyi ganda.
+
+---
+
+## 13. Status implementasi M2 (M2-04)
+
+- Musik lengkap bioma 1: `mus.title`, `mus.biome1.pulse` (4 level, fade, riser), `mus.overlay.unlit`, `mus.shop`, `mus.biome1.boss` (L0 sampai L4), `mus.end`, dan 8 stinger sebagai lagu sekali main (`src/audio/music/mus.stinger.*.json`). Detail: audio-direction 14.
+- Cue baru: `sfx.weapon.hit_heavy`, `sfx.boss.ember_storm.windup`, `sfx.boss.ember_storm.impact`, `sfx.boss.snuff_ring.wave_double`, `sfx.boss.moth_call.windup`, `sfx.warden.shell_break`, `sfx.warden.shell_up`, `sfx.warden.blink` (B), `sfx.telegraph.blink` (B), `sfx.enemy.summon` (B), `sfx.enemy.exploder.blast` (B). Total 98 resep, 93 aktif.
+- Deprecated (diputar sebagai lagu): `mus.stinger.pulse_start`, `pulse_end`, `warden`, `victory`, `defeat` di `cues.json`.
+- Cue Warden dan affix Tingkat B baru (`sfx.warden.shell_*`, `sfx.warden.blink`): pemicu `AffixTriggered` (GP M2-05), di luar tabel 6.1 lama.
+- Masih belum: `sfx.player.hit_heavy`, `sfx.rite.zone.lantern`, `sfx.rite.cast.bell`, `sfx.rite.cast.blade`, `sfx.proc.echo_repeat`, `sfx.proc.barrier_up`, `sfx.proc.interest`, `sfx.enemy.tank.step`, `sfx.enemy.exploder.fuse`, `sfx.warden.fan.windup`, `sfx.pulse.tick` (opsional), `ui.class.select`, `ui.end.tally`, `ui.unlock`, ambience `amb.*`.

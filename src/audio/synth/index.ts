@@ -30,7 +30,7 @@ export {
   noteToMidi,
   semisToRatio,
 } from './notes.ts';
-export { pickRef, renderCue, renderInstrumentSample, seedFor } from './render.ts';
+export { loopPointsOf, pickRef, renderCue, renderInstrumentSample, seedFor } from './render.ts';
 export type { InstrumentDef, SynthRecipe } from './render.ts';
 export { IR_HALL, IR_ROOM, renderIr } from './ir.ts';
 export type { IrSpec } from './ir.ts';

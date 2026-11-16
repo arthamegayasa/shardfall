@@ -1,6 +1,19 @@
 # Shardfall: Spesifikasi UI
 
-Pemilik: UI Programmer (UI). Status: versi 1.1 (M1-04, 2026-11-17), perbaikan review M0 diterapkan. Reviewer: CD (rasa dan gaya), LP (teknis dan kontrak), QA (aksesibilitas).
+Pemilik: UI Programmer (UI). Status: versi 1.2 (M2-06, 2026-11-17), UI final vertical slice. Reviewer: CD (rasa dan gaya), LP (teknis dan kontrak), QA (aksesibilitas).
+
+**Perubahan versi 1.2 (M2-06, review `docs/reviews/M1-cd.md` 4 dan `docs/reviews/M1-lp.md` MINOR UI, BUG-003, BUG-005):**
+- Font bitmap tim "Shardfall Pixel" aktif (7.2): glyph 5x7 dalam sel 6x9 sebagai data di `src/ui/pixel-font.ts`, dirakit menjadi TrueType kecil saat boot dan didaftarkan lewat `FontFace`. Cadangan monospace bila browser menolak.
+- Ikon AD dipakai otomatis (12.4): `src/ui/icons.ts` mencari sprite `icon-<jenis>-<id>` di `UiDeps.art`, dirasterisasi skala integer; fallback monogram nama plus bentuk tag.
+- Kartu (6.1): flavor membungkus maksimal 2 baris di kolom isi (BUG-003), lencana Fuse dan harga di kaki kolom samping, ikon 32 satuan (sprite 16 px skala 2).
+- Baris build di Jeda dan Akhir run memakai kolom ikon dan pip tetap (BUG-005).
+- HUD (S03): Pulse boss sebelum boss muncul menampilkan nama boss dengan bar kosong yang mengisi saat masuk (bukan "0:00"); banner kedatangan Warden dan boss (nama plus julukan), banner "Pulse {n} Held", banner singkat "Pulse {n}", petunjuk kontrol di Pulse 1, ikon dan muatan Rite, getar saat `RiteRejected`.
+- The Glazier (S05): potret dan satu baris dari string table (aturan pilih di S05), tombol pintas Sell dan Fuse hanya bekerja pada slot yang difokus, slot terpilih ditandai.
+- Temper (S04): "Lv {n}" besar, penghitung antrean kecil terpisah dengan pip.
+- Judul (S01): `ui.title.save_lost` tampil bila Continue gagal.
+- Pengaturan (S07): remap kontrol penuh, slider bisa diklik dan diseret, panah pilihan bisa diklik, baris Glazier Timer.
+- `CommandRejected`: UI tidak lagi memutar `ui.denied` (AU memetakannya dari event) dan tidak mengumumkan alasan yang senyap di AU (`WrongPhase`, `UnknownId`, `DebugDisabled`).
+- Ukuran teks Large dan Largest (7.3) dan varian mode warna (9) diterapkan; nilai palet buta warna masih placeholder UI sampai AD.
 
 **Perubahan versi 1.1 (review `docs/reviews/M0-cd.md` 2.10 dan `docs/reviews/M0-lp.md` UI):** Keepsake menjadi Memento (identifier `memento`); Archive menjadi The Keeping di teks (identifier layar tetap `archive`); Depth menjadi Crack; judul menang "Light Kept" plus layar antara Vitrine Steady (Tingkat C); judul level-up "Temper" dengan subjudul "Lv {n}"; Merge menjadi Fuse di teks (identifier dan command tetap `merge`); HUD slot timer menjadi bar HP Warden berlabel "Held" saat Pulse ditahan; bagian 12 memakai kontrak final architecture v2.1; `uiScale` dari piksel fisik; kualitas default Medium; volume 80/70/100/80 plus slider Interface, Mono Audio, Reduce Repeats; id cue UI mengikuti `docs/audio-list.md`; nama event `PlayerDamaged` dan `EnemyDamaged`; id layar `credits`.
 Dasar: `docs/pillars.md`, `docs/style-guide.md` bagian 2, `docs/vision.md`. Bila bertentangan, pilar yang menang (Pilar 2 > Pilar 4 > Pilar 1 > Pilar 3).
@@ -178,13 +191,17 @@ Hanya elemen ini (style guide 2.2):
   - **Pulse boss** (`pulse.isBoss`, `ticksTotal = 0`): slot timer menjadi bar HP boss dari `pulse.boss` (`BigFoeView`): nama boss di atas (`enemy.nameKey`), isian `danger-violet`, bingkai tipis, tanpa angka besar. Fase boss tampil sebagai pip kecil (1 sampai 3).
   - **Warden menahan Pulse** (`pulse.overtime` dan `pulse.wardenAlive`): komponen bar yang sama dari `pulse.warden`, label "Held" (`ui.hud.held`) di atas bar plus nama Warden. Pemain selalu tahu bahwa Pulse berakhir saat Warden jatuh.
   - Mengamuk (`enraged`) menambah ikon kecil di kanan bar (bentuk, bukan hanya warna).
-- **Elemen sesaat di HUD:**
-  - Banner Warden atau boss: nama plus julukan di bawah timer, bingkai `danger-violet`, 2.5 detik, tanpa input.
-  - Petunjuk kontrol di Pulse 1 run pertama: "WASD Move / Space Rite" di tengah bawah di atas ikon Rite, memudar setelah 6 detik atau setelah pemain bergerak dan memakai Rite.
+- **Pulse boss sebelum boss muncul** (`isBoss` dan `boss.active` false): slot berisi nama boss yang diharapkan (slot profil di `GameData.profiles` dengan indeks Pulse ini, cadangan musuh pertama berperan `boss`) dan bar kosong berbingkai netral; bar mengisi dalam 600 ms saat boss aktif. Tidak pernah "0:00".
+- **Elemen sesaat di HUD** (diukur dalam tick sim, jadi membeku saat jeda; `src/ui/presenters/hud-transient.ts`):
+  - Banner Warden atau boss dari `WardenSpawned` dan `BossSpawned`: nama plus julukan (`unlit.<id>.epithet`, bila ada) di bawah slot timer, bingkai `danger-violet`, 2.5 detik, tanpa input.
+  - Banner "Pulse {n} Held" (`ui.banner.pulse_held`) 2.5 detik saat slot timer berubah menjadi bar Warden.
+  - Banner singkat "Pulse {n}" 1.2 detik saat `PulseStarted` (CD M1 4 [S]); tidak pernah menutupi banner kedatangan yang masih tampil.
+  - Petunjuk kontrol di Pulse 1 (setiap run, [Asumsi]: MetaView tidak membawa jumlah run): `ui.hud.hint_move` dan `ui.hud.hint_rite` dari binding aktif ("WASD Move", "Space Rite") di atas ikon Rite, memudar setelah 6 detik atau setelah pemain bergerak 1 u dan memakai Rite.
+  - Slot Rite: ikon Rite AD, angka muatan di sudut bila Rite punya lebih dari satu muatan, getar 250 ms saat `RiteRejected` (mati bila kurangi efek).
 - Bukan milik HUD: kilat merah di tepi layar saat kena hit (VFX, style guide 1.8), angka damage (three.js).
 
 ### S04 Pilihan level-up
-- Judul "Temper", subjudul "Lv 5" (Pilar 4: angka level tetap cepat dibaca), dan penghitung antrean "1 of 2" bila ada lebih dari satu level.
+- Judul "Temper", subjudul "Lv 5" (Pilar 4: angka level tetap cepat dibaca), dan di bawahnya penghitung antrean kecil terpisah "1 of 2" (`ui.levelup.queue`) dengan pip per level (pip hanya sampai 8 level; lebih dari itu hanya teks), bila ada lebih dari satu level (review M1 CD dan LP).
 - 3 kartu bertumpuk vertikal di tengah (format kartu baris, bagian 6.1). Setiap kartu: ikon stat besar, nama, efek 1 sampai 2 baris, angka tombol pintas 1, 2, 3.
 - Ringkasan stat kecil di kanan: nilai stat sekarang. Saat kartu difokus, stat yang terdampak menampilkan nilai baru ("Speed 110 > 118" dengan nilai baru `kept-gold`). Ini menjawab "apa yang berubah" tanpa hitungan (P4-a).
 - [Asumsi] Tidak ada reroll level-up. Bila GD menambahkannya, tombol Reroll muncul di bawah kartu dengan pola yang sama seperti toko.
@@ -214,6 +231,8 @@ Perilaku keputusan cepat:
 - **Slot penuh.** Bila senjata baru tidak muat dan tidak bisa merge, kartu menampilkan "No free slot" di tempat lencana. Aturan jual atau ganti adalah milik GD. Aksi Sell dan Fuse ada di slot inventaris (fokus slot, tekan X atau M, atau klik tombol kecil di slot), bukan di menu baru. Slot dengan `canMerge` menampilkan tombol Fuse.
 - **Gembok.** Ikon gembok di setiap kartu. Kartu terkunci punya bingkai bergaris dan ikon gembok tertutup. Aturan gembok (bertahan setelah reroll, gratis atau tidak) milik GD.
 - **Setelah membeli,** slot kartu berubah menjadi kosong bertuliskan "Taken" (tidak bergeser), agar posisi kartu lain dan tombol pintasnya tetap sama.
+- **Sell dan Fuse (review M1 LP):** tombol pintas X dan M hanya bekerja pada slot inventaris yang sedang difokus; di tempat lain memberi umpan balik "denied". Tombol Sell dan Fuse di bar bawah bekerja pada slot terakhir yang difokus (slot terpilih ditandai bingkai emas ganda); memfokus tawaran menghapus pilihan slot. Tombol tampil redup bila tidak ada slot yang bisa dijual atau di-Fuse.
+- **Potret dan baris the Glazier** (CD M1 4, `src/ui/presenters/glazier-line.ts`): potret dari sprite `icon-portrait-glazier` (fallback topeng kaca CSS). Satu baris dari string table WR (`glazier.<pemicu>`), dipilih deterministik agar screenshot dan replay sama: saat kunjungan dibuka, `warden_fell` bila hadiah Warden tampil sejak Pulse terakhir, `first` di kunjungan pertama run, selain itu bergantian `open` dan `after_temper` (bila ada Temper) menurut nomor Pulse. Reaksi: `reroll` (ShopRerolled), `fuse` (ItemMerged), `no_glint` (CommandRejected NotEnoughGlint). Varian WR `glazier.<pemicu>.1` sampai `.9` otomatis masuk kumpulan; indeks = benih modulo jumlah varian (benih: nomor Pulse untuk pembuka, revisi toko untuk reaksi). Kembali dari jeda tidak mengganti baris.
 - **Langkah beli:** fokus kartu lalu Enter (2 input), atau tekan angka slot (1 input), atau satu klik pada tombol harga (P4-c).
 - [Asumsi] Toko tanpa batas waktu. Bila GD menambahkan timer, timer tampil di bar atas di sebelah judul.
 - Fokus awal: kartu tawaran pertama yang mampu dibeli. Bila tidak ada, tombol Begin Pulse.
@@ -259,7 +278,8 @@ Empat tab dalam satu layar: Graphics, Audio, Controls, Accessibility. Perubahan 
 - Pemetaan memakai `KeyboardEvent.code` (posisi fisik), label tombol di layar memakai nama tombol sesuai tata letak keyboard pemain (mengikuti QA A-01).
 - **Jalur aman menu:** Confirm dan Back bisa di-remap, tapi Enter dan Esc selalu tetap berfungsi sebagai Confirm dan Back di layar menu, sebagai cadangan tetap yang tidak bisa dihapus. Pemain tidak pernah bisa mengunci dirinya keluar dari menu.
 - Disimpan oleh app di `localStorage` kunci `shardfall.settings.v1` (architecture.md bagian 12). UI hanya menampilkan dan memanggil `AppActions.applySettings` dengan objek `Settings` baru (bertingkat `graphics`, `audio`, `access`, `keybinds`; architecture 6.11). Default ada di `src/app/settings.ts` (LP).
-- M1 (M1-04): tab Graphics, Audio, Accessibility fungsional. Remap Controls menyusul di M2 (tab tampil dengan daftar binding hanya-baca).
+- M2 (M2-06): semua tab fungsional. Controls: dua kolom (Gameplay: gerak, Rite, jeda; Menus), dua tombol binding per aksi. Klik atau Enter pada binding memulai perekaman ("Press a key", juga di catatan bar bawah), tombol berikutnya menjadi binding, Esc batal, tombol modifier diabaikan. Tukar binding hanya di dalam konteks yang sama ("Swapped with {action}."). Reset Controls memakai pola "Press again" 3 detik (tanpa dialog). Default disalin di `src/ui/presenters/remap.ts` karena UI tidak boleh mengimpor app; tes `tests/unit/ui/remap.test.ts` menjaga salinan sama dengan `src/app/settings.ts`.
+- Mouse: klik atau seret strip takik slider mengatur nilai langsung; klik panah "<" dan ">" pada baris pilihan. Baris Glazier Timer (On, Extended, Off) di Accessibility, disimpan sekarang dan dipakai bila GD memberi toko timer.
 
 ### S08 Akhir run
 - Judul besar: kalah "Kept Lost" dengan subjudul "Another wakes beneath the glass." atau menang "Light Kept" (teks final dari WR). Tingkat C: setelah boss bioma yang bukan terakhir tampil layar antara "Vitrine Steady" (bukan akhir run), memakai tata letak yang sama dengan tombol Continue. Teks contoh dari style guide 4.1.
@@ -294,9 +314,12 @@ Satu komponen untuk toko, level-up, hadiah Warden, dan detail Arsip.
 
 - **Ikon besar di kiri, bukan di atas.** Alasan: efek boleh 2 baris x 40 karakter (style guide 2.4). Pada skala font minimum yang sah, 40 karakter memakan 240 satuan UI (480 piksel di 720p, 720 piksel di 1080p). Tiga kartu tegak berdampingan tidak muat di 1280 atau 1920 piksel tanpa melanggar ukuran teks atau batas 2 baris. Kartu baris bertumpuk juga membuat nama sejajar kiri sehingga mata bisa memindai ke bawah. [Usulan ke CD] Ini menyimpang dari urutan "ikon besar di atas" di style guide 2.1; isi dan urutan baca lainnya sama.
 - Bingkai kartu memakai warna rarity, plus **pip rarity** di sudut kiri atas (Plain 0, Fine 1, Rare 2, Fabled 3) agar rarity tidak hanya dibedakan warna.
-- Nama (`bone`), efek 2 baris (`bone`), flavor 1 baris (`dust`, bisa disembunyikan di pengaturan), baris tag (ikon tag 8 x 8 dengan singkatan 2 huruf), harga (ikon Glint plus angka tabular), gembok, lencana Merge.
+- Nama (`kept-white`), efek 2 baris (`bone`), flavor (`dust`, bisa disembunyikan di pengaturan) di bawah efek dalam kolom isi, membungkus maksimal 2 baris tanpa elipsis (BUG-003). Kolom samping: chip tag bertumpuk (ikon tag AD atau bentuk per tag, plus singkatan 2 huruf), lalu di kaki kolom lencana Fuse, tanda gembok, dan harga (ikon Glint AD plus angka tabular).
+- Ikon besar: kotak 34 satuan (isi 32), sprite AD 16 x 16 dirender skala 2. Fallback: monogram 2 huruf dari nama tampil (misalnya "LB") dalam warna tag pertama, plus bentuk tag di sudut.
+- Bingkai panel, tombol, dan kartu: 1 satuan dengan sudut tangga 1 piksel dan satu piksel bingkai di anak tangga dalam (tajam di semua skala), kilau kaca tipis sebagai gradien latar. Panel utama punya dua garis kilau di sudut kiri atas (mati bila kurangi efek atau panel solid).
 - Fokus: bingkai `kept-gold` 1 satuan plus kartu naik 2 satuan (tanpa naik bila kurangi efek).
-- Ukuran: lebar 344 satuan, tinggi 50 satuan (dengan flavor) atau 40 (tanpa flavor).
+- Ukuran: lebar 344 satuan, tinggi minimal 44 satuan; dengan flavor 2 baris sekitar 55 satuan. Large dan Largest: lebar penuh kolom.
+- Masuk: stagger 60 ms per kartu (naik 4 satuan plus fade, 160 ms). Dimatikan oleh kurangi efek.
 
 ### 6.2 Komponen lain
 - **Panel:** `night` opasitas 90%, bingkai 1 satuan `bone` opasitas 60%, sudut terpotong miring 2 satuan (CSS `clip-path`). Kilau kaca opsional di sudut kiri atas panel utama.
@@ -320,8 +343,9 @@ Satu komponen untuk toko, level-up, hadiah Warden, dan detail Arsip.
 - Rasio selain 16:9 (16:10, ultrawide): area aman tetap di tengah, ruang sisa diisi arena.
 
 ### 7.2 Font
-- **Placeholder (M1):** font sistem monospace: `ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace`. Monospace dipilih agar angka sudah tabular dan lebar 40 karakter bisa diprediksi. Keputusan Producer melarang unduhan font eksternal.
-- **Target:** font bitmap tim (glyph 5x7 dalam sel 6x9) lewat komponen `PixelText` yang merender ke canvas pada skala integer. Teks asli tetap disimpan di `aria-label` untuk pembaca layar.
+- **Final (M2):** font bitmap tim "Shardfall Pixel" (glyph 5x7 dalam sel 6x9, ASCII 32 sampai 126, huruf kecil dengan descender 2 baris). Data glyph ada di `src/ui/pixel-font.ts`; saat boot UI merakitnya menjadi file TrueType kecil (satu kontur persegi per deret piksel, sekitar 13 KB, tanpa unduhan) dan mendaftarkannya lewat `FontFace`. Teks tetap teks DOM asli, jadi wrap, fokus, dan pembaca layar tidak berubah (komponen `PixelText` canvas tidak diperlukan). Kelas `has-pixel-font` dipasang setelah font diterima.
+- CSS: `font-size` isi = 9 x `--f` dan `line-height` sama, sehingga satu piksel font = `--f` = bilangan bulat piksel fisik. Judul 18 x `--f` (skala 2), judul utama 27 x `--f`. Label kecil memakai `--fs` = `max(2, fontScale - 1)` piksel fisik. Tanpa bold sintetis (`font-synthesis: none`); penekanan memakai warna.
+- **Cadangan:** font sistem monospace `ui-monospace, "Cascadia Mono", Consolas, monospace` bila `FontFace` gagal. Keputusan Producer melarang unduhan font eksternal.
 - **Skala font** (piksel layar per piksel font): isi `fs = uiScale` (3 di 1080p, 2 di 720p); label kecil `max(2, uiScale - 1)`; judul `uiScale + 1` sampai `uiScale + 3`. Tinggi huruf besar minimum 14 piksel layar (style guide 2.3).
 - Untuk placeholder, `font-size` diatur agar tinggi baris sama dengan 9 piksel font kali skala, sehingga layout tidak berubah saat font bitmap masuk.
 
@@ -344,6 +368,7 @@ Wadah teks diukur dalam piksel layar dari skala font, bukan dari satuan UI, kare
   - Toko: kolom tawaran memakai hampir seluruh lebar area aman. Flavor disembunyikan di kartu toko (tetap tampil di Arsip dan panel detail Jeda). Panel Tag pindah menjadi satu strip ikon plus angka di bar atas, sehingga Glint, harga, dan tag tetap terlihat di layar yang sama (P4-e). Inventaris dan Stats tampil di tempat kolom tawaran lewat tombol T (toggle di layar yang sama, bukan menu baru). Pratinjau tag kartu fokus tetap tampil di strip dan di baris info bawah.
   - Layar lain: satu kolom, panel detail di bawah daftar bila tidak muat di samping.
 - QA menguji ketiga tingkat di 1280 x 720, 1366 x 768, dan 1920 x 1080. Wadah teks memakai `overflow: hidden` agar cek otomatis `scrollWidth <= clientWidth` di A-05 bermakna.
+- **Implementasi M2:** Large dan Largest menyembunyikan kolom kiri toko (potret, baris, panel Tag) dan menampilkan strip tag ringkas (chip plus "1/2") di bar atas; label "Next: Pulse" disembunyikan. Largest juga menyembunyikan flavor kartu toko, dan kolom inventaris tidak tampil: tombol Stats (T) mengganti tawaran dengan inventaris, Memento, dan stat. Daftar stat Jeda dua kolom (tiga di Largest). Badan Pengaturan boleh scroll di Large dan Largest; fokus keyboard menjaga barisnya terlihat.
 
 ## 8. Interaksi keyboard dan mouse
 
@@ -423,7 +448,7 @@ UI memancarkan id cue lewat `UiDeps.sound.play(cueId)` (app meneruskan ke `Audio
 | Ukuran teks | Normal, Large, Largest (bagian 7.3). Skala integer, layout varian per tingkat |
 | Kurangi efek | Mematikan geser dan stagger panel, naik kartu, denyut timer, kilau kaca di panel, getar tombol, angka Silt yang menghitung naik. Perubahan status tetap terlihat seketika. Default On bila sistem meminta `prefers-reduced-motion`. Getar layar dan kilat juga dikurangi oleh sistem lain (LP, AD) |
 | Angka damage | Toggle On/Off. Render layer membaca pengaturan ini |
-| Mode warna (Color vision) | Off, Protanopia, Deuteranopia, Tritanopia (sesuai QA A-04). UI menukar token warna lewat CSS variable; nilai palet alternatif milik AD, diuji QA. Selain itu, UI **tidak pernah memakai warna sebagai satu-satunya tanda**: rarity punya pip, tidak mampu beli punya ikon Glint bergaris, gembok punya ikon, HP rendah punya ikon retak dan denyut, tag punya bentuk ikon berbeda, fokus punya bingkai tebal |
+| Mode warna (Color vision) | Off, Protanopia, Deuteranopia, Tritanopia (sesuai QA A-04). UI menukar token warna lewat CSS variable (`[data-cv]` di `ui.css`). M2: varian placeholder UI untuk penanda UI (rarity Fine biru muda dan Rare biru tua di protan dan deutan, merah bahaya UI menjadi magenta; Plain lebih gelap dan Fine oranye di tritan); nilai final milik AD, diuji QA. Selain itu, UI **tidak pernah memakai warna sebagai satu-satunya tanda**: rarity punya pip, tidak mampu beli punya ikon Glint bergaris, gembok punya ikon, HP rendah punya ikon retak dan denyut, tag punya bentuk ikon berbeda, fokus punya bingkai tebal |
 | Panel solid | Panel opasitas 100% untuk keterbacaan di atas arena yang ramai |
 | Jeda saat tidak fokus | Default On |
 | Pembaca layar | Menu memakai tombol asli dengan label teks. Live region mengumumkan hasil aksi toko ("Bought Ember Ring. 12 Glint left.", "Not enough Glint."). HUD `aria-hidden` saat Pulse agar tidak membanjiri pembaca layar. Ini dukungan dasar, bukan target sertifikasi |
@@ -505,9 +530,12 @@ Semua permintaan K1 sampai K11 versi 1 sudah diputuskan LP (`docs/reviews/M0-lp.
 | K9 | Angka damage | Render dari `EnemyDamaged` lewat `Renderer.applySettings`; bukan DOM | (tidak ada di UI) |
 | K10 | Proyeksi | `Projector` (plus `cssToWorld` untuk bidik mouse); HUD minimal tidak memakainya | (masa depan) |
 | K11 | Suara UI | `UiDeps.sound.play(cueId)` diteruskan app ke `AudioSystem.playUi`. Id dari audio-list (8.5) | 8.5 |
-| (baru) | Art ikon dan potret | `UiDeps.art` (`RenderAssets`), dirasterisasi `src/core/sprite`. M1 memakai ikon placeholder huruf | Kartu, slot |
+| (baru) | Art ikon dan potret | `UiDeps.art` (`RenderAssets`), dirasterisasi `src/core/sprite` (12.4) | Kartu, slot, HUD Rite, Glint, potret Glazier |
 
 Perubahan kontrak berikutnya hanya lewat LP (architecture 19). Usulan UI yang tersisa dicatat di laporan tugas, bukan di sini.
+
+### 12.4 Ikon dan potret (M2)
+UI tidak boleh mengimpor `src/render` (lint architecture 5), jadi ikon datang dari `UiDeps.art.sprites` yang dimuat app dari `art/sprites/*.json|ts`. `src/ui/icons.ts` mencari id berurutan: `icon-<jenis>-<id kebab>` (jenis `weapon`, `memento`, `stat`, `rite`, `tag`; kartu Temper memakai `icon-card-<stat>` atau `icon-stat-<stat>`), lalu `icon-<id>`, lalu sprite kelas `icon` apa pun yang berakhiran `-<id>`. Potret: `portrait-<nama>`, `icon-portrait-<nama>`, atau kelas `portrait` yang memuat nama. Glint: `icon-glint`. Raster di-cache per id; skala integer terbesar yang muat di kotak (satuan UI). Sprite yang rusak atau belum ada jatuh ke monogram, jadi layar tidak menunggu art.
 
 ### 12.3 Presenter murni
 Logika tampilan (format waktu "0:24", "lama > baru" untuk stat, status mampu beli, isi baris info toko) ditulis sebagai fungsi murni di `src/ui/presenters/` yang menerima `WorldView` dan `GameData`, sehingga bisa diuji Vitest dengan `WorldView` palsu (`tests/fixtures/`) tanpa DOM.
@@ -535,7 +563,7 @@ src/ui/
 
 Tes presenter dan navigasi ada di `tests/unit/ui/` (lokasi standar coding-standards 6.1; `vite.config.ts` hanya menjalankan `tests/unit/**`).
 
-**Pratinjau dengan data palsu:** jalankan `npm run dev`, buka `http://localhost:5173/src/ui/dev/preview.html`. Parameter `?screen=` menerima `title`, `class`, `pulse`, `held`, `boss`, `reward`, `levelup`, `glazier`, `pause`, `settings`, `lost`, `won`. Harness memakai `tests/fixtures/fake-world.ts`, sim palsu kecil untuk command toko dan pilihan, data dan string asli bila build-nya valid (cadangan: fixture tes).
+**Pratinjau dengan data palsu:** jalankan `npm run dev`, buka `http://localhost:5173/src/ui/dev/preview.html`. Parameter `?screen=` menerima `title`, `class`, `pulse`, `held`, `boss`, `pending`, `warden`, `reward`, `levelup`, `queue`, `glazier`, `pause`, `settings`, `lost`, `won`; tambahan `&text=0|1|2`, `&cv=protan|deutan|tritan`, `&reduce=1`, `&savelost=1`. Harness memakai `tests/fixtures/fake-world.ts`, sim palsu kecil untuk command toko dan pilihan, data, string, dan art asli bila build-nya valid (cadangan: fixture tes).
 
 ## 13. Rencana verifikasi (untuk M1 dan seterusnya)
 
@@ -554,7 +582,7 @@ Tes presenter dan navigasi ada di `tests/unit/ui/` (lokasi standar coding-standa
 
 ## Lampiran A. Kunci string UI (kontrak dengan WR)
 
-Sumber teks final: `content/strings/en.json` (milik WR). Tabel ini mencatat kunci `ui.*` yang dipakai kode `src/ui/` dan status tiap kunci di string table per 2026-11-17. Kolom teks berisi teks WR bila sudah ada, atau draf usulan UI bila kunci baru (WR memutuskan teks final dalam batas style guide 2.4 dan 4.3). Tes `tests/unit/ui/strings.test.ts` gagal bila kode memakai kunci `ui.*` yang tidak tercantum di sini. Kunci yang belum ada di string table tampil sebagai nama kunci (rilis) atau `[[kunci]]` (dev) sampai WR menambahkannya.
+Sumber teks final: `content/strings/en.json` (milik WR). Tabel ini mencatat kunci `ui.*` yang dipakai kode `src/ui/` dan status tiap kunci di string table per 2026-11-17 (M2-06: semua kunci ada di `en.json`; kunci yang belum dipakai UI disimpan untuk Tingkat B dan C). Kunci non-UI yang dibaca UI: `glazier.<pemicu>` (dan varian `.1` sampai `.9`), `unlit.<id>.epithet`. Kolom teks berisi teks WR bila sudah ada, atau draf usulan UI bila kunci baru (WR memutuskan teks final dalam batas style guide 2.4 dan 4.3). Tes `tests/unit/ui/strings.test.ts` gagal bila kode memakai kunci `ui.*` yang tidak tercantum di sini. Kunci yang belum ada di string table tampil sebagai nama kunci (rilis) atau `[[kunci]]` (dev) sampai WR menambahkannya.
 
 Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_key`, `flavor_key`, `display_key`) dan pola WR `tag.<id>.name`, `tag.<id>.abbr`, `class.<id>.role`, `class.<id>.passive`. Id cue suara (`ui.focus` dan lainnya) bukan kunci string; daftarnya di bagian 8.5 dan `src/ui/cues.ts`.
 
@@ -563,7 +591,7 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.action.back` | Back | Ada |
 | `ui.action.begin_pulse` | Begin Pulse | Ada |
 | `ui.action.confirm` | Confirm | Ada |
-| `ui.action.fuse` | Fuse | **Baru, minta WR** |
+| `ui.action.fuse` | Fuse | Ada |
 | `ui.action.lock` | Lock | Ada |
 | `ui.action.move_down` | Move Down | Ada |
 | `ui.action.move_left` | Move Left | Ada |
@@ -572,9 +600,9 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.action.pause` | Pause | Ada |
 | `ui.action.reroll` | Reroll | Ada |
 | `ui.action.rite` | Rite | Ada |
-| `ui.action.sell` | Sell | **Baru, minta WR** |
+| `ui.action.sell` | Sell | Ada |
 | `ui.action.stats` | Stats | Ada |
-| `ui.banner.pulse_held` | Pulse {n} Held | Ada (belum dipakai M1) |
+| `ui.banner.pulse_held` | Pulse {n} Held | Ada |
 | `ui.class.begin` | Begin | Ada |
 | `ui.class.cooldown` | {s}s cooldown | Ada |
 | `ui.class.difficulty` | Crack {n} | Ada (belum dipakai M1) |
@@ -584,17 +612,17 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.class.title` | Choose Your Kept | Ada |
 | `ui.class.weapon` | Weapon | Ada |
 | `ui.common.back` | Back | Ada |
-| `ui.common.denied` | Not possible now | **Baru, minta WR** |
+| `ui.common.denied` | Not possible now | Ada |
 | `ui.common.glint` | {n} Glint | Ada (belum dipakai M1) |
-| `ui.common.press_again` | Press again | Ada (belum dipakai M1) |
+| `ui.common.press_again` | Press again | Ada |
 | `ui.common.silt` | {n} Silt | Ada (belum dipakai M1) |
 | `ui.common.small_window` | Enlarge the window to play | Ada |
 | `ui.confirm.abandon` | Abandon this run? | Ada |
 | `ui.confirm.abandon_yes` | Abandon | Ada |
-| `ui.confirm.reset_controls` | Reset all controls? | Ada (belum dipakai M1) |
-| `ui.confirm.reset_yes` | Reset | Ada (belum dipakai M1) |
+| `ui.confirm.reset_controls` | Reset all controls? | Ada |
+| `ui.confirm.reset_yes` | Reset | Ada |
 | `ui.confirm.stay` | Stay | Ada |
-| `ui.credits.body` | Made by the Shardfall team. Full credits come later. | **Baru, minta WR** |
+| `ui.credits.body` | Made by the Shardfall team. Full credits come later. | Ada |
 | `ui.credits.title` | Credits | Ada |
 | `ui.end.again` | Try Again | Ada |
 | `ui.end.choose` | Choose Kept | Ada |
@@ -616,8 +644,8 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.end.won_sub` | The last crack seals. The light stops pulsing and simply shines. | Ada |
 | `ui.error.webgl2` | This game needs WebGL2. Please open it in a current browser. | Ada (belum dipakai M1) |
 | `ui.hud.held` | Held | Ada |
-| `ui.hud.hint_move` | {keys} Move | Ada (belum dipakai M1) |
-| `ui.hud.hint_rite` | {key} Rite | Ada (belum dipakai M1) |
+| `ui.hud.hint_move` | {keys} Move | Ada |
+| `ui.hud.hint_rite` | {key} Rite | Ada |
 | `ui.hud.hp` | {hp}/{max} | Ada |
 | `ui.hud.level` | Lv {n} | Ada |
 | `ui.hud.pulse` | Pulse {n} | Ada |
@@ -643,31 +671,31 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.settings.cv_protan` | Protanopia | Ada |
 | `ui.settings.cv_tritan` | Tritanopia | Ada |
 | `ui.settings.damage_numbers` | Damage Numbers | Ada |
-| `ui.settings.extended` | Extended | Ada (belum dipakai M1) |
+| `ui.settings.extended` | Extended | Ada |
 | `ui.settings.flavor` | Flavor Text | Ada |
 | `ui.settings.fullscreen` | Fullscreen | Ada |
 | `ui.settings.master` | Master | Ada |
-| `ui.settings.mono` | Mono Audio | **Baru, minta WR** |
+| `ui.settings.mono` | Mono Audio | Ada |
 | `ui.settings.music` | Music | Ada |
 | `ui.settings.mute_unfocused` | Mute When Away | Ada |
 | `ui.settings.off` | Off | Ada |
 | `ui.settings.on` | On | Ada |
 | `ui.settings.pause_unfocused` | Pause When Away | Ada |
-| `ui.settings.press_key` | Press a key | Ada (belum dipakai M1) |
+| `ui.settings.press_key` | Press a key | Ada |
 | `ui.settings.quality` | Quality | Ada |
 | `ui.settings.quality_high` | High | Ada |
 | `ui.settings.quality_low` | Low | Ada |
 | `ui.settings.quality_medium` | Medium | Ada |
 | `ui.settings.reduce_effects` | Reduce Effects | Ada |
-| `ui.settings.reduce_repeats` | Reduce Repeats | **Baru, minta WR** |
-| `ui.settings.remap_gameplay` | Gameplay | Ada (belum dipakai M1) |
-| `ui.settings.remap_menu` | Menus | Ada (belum dipakai M1) |
-| `ui.settings.reset_controls` | Reset Controls | Ada (belum dipakai M1) |
+| `ui.settings.reduce_repeats` | Reduce Repeats | Ada |
+| `ui.settings.remap_gameplay` | Gameplay | Ada |
+| `ui.settings.remap_menu` | Menus | Ada |
+| `ui.settings.reset_controls` | Reset Controls | Ada |
 | `ui.settings.sfx` | Sound Effects | Ada |
 | `ui.settings.shake` | Screen Shake | Ada |
-| `ui.settings.shop_timer` | Glazier Timer | Ada (belum dipakai M1) |
+| `ui.settings.shop_timer` | Glazier Timer | Ada |
 | `ui.settings.solid_panels` | Solid Panels | Ada |
-| `ui.settings.swapped` | Swapped with {action}. | Ada (belum dipakai M1) |
+| `ui.settings.swapped` | Swapped with {action}. | Ada |
 | `ui.settings.tab_access` | Accessibility | Ada |
 | `ui.settings.tab_audio` | Audio | Ada |
 | `ui.settings.tab_controls` | Controls | Ada |
@@ -677,7 +705,7 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.settings.text_normal` | Normal | Ada |
 | `ui.settings.text_size` | Text Size | Ada |
 | `ui.settings.title` | Settings | Ada |
-| `ui.settings.ui_volume` | Interface | **Baru, minta WR** |
+| `ui.settings.ui_volume` | Interface | Ada |
 | `ui.shop.begin` | Begin Pulse | Ada |
 | `ui.shop.bought` | Bought {name}. {n} Glint left. | Ada |
 | `ui.shop.lock` | Lock | Ada |
@@ -687,9 +715,9 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.shop.next` | Next: Pulse {n} | Ada |
 | `ui.shop.no_glint` | Not enough Glint | Ada |
 | `ui.shop.reroll` | Reroll | Ada |
-| `ui.shop.reroll_free` | Free | **Baru, minta WR** |
+| `ui.shop.reroll_free` | Free | Ada |
 | `ui.shop.sell` | Sell | Ada |
-| `ui.shop.sell_for` | Sell for {n} Glint | **Baru, minta WR** |
+| `ui.shop.sell_for` | Sell for {n} Glint | Ada |
 | `ui.shop.slots_full` | No free slot | Ada |
 | `ui.shop.stats` | Stats | Ada |
 | `ui.shop.tag_new` | New | Ada |
@@ -699,16 +727,16 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.shop.title` | The Glazier | Ada |
 | `ui.shop.unlock` | Unlock | Ada |
 | `ui.shop.weapons` | Arms | Ada |
-| `ui.tier.1` | I | **Baru, minta WR** |
-| `ui.tier.2` | II | **Baru, minta WR** |
-| `ui.tier.3` | III | **Baru, minta WR** |
-| `ui.tier.4` | IV | **Baru, minta WR** |
+| `ui.tier.1` | I | Ada |
+| `ui.tier.2` | II | Ada |
+| `ui.tier.3` | III | Ada |
+| `ui.tier.4` | IV | Ada |
 | `ui.title.begin` | Begin | Ada |
 | `ui.title.continue` | Continue | Ada |
 | `ui.title.credits` | Credits | Ada |
 | `ui.title.keeping` | The Keeping | Ada |
-| `ui.title.name` | Shardfall | **Baru, minta WR** |
-| `ui.title.save_lost` | The last run could not be restored. | Ada (belum dipakai M1) |
+| `ui.title.name` | Shardfall | Ada |
+| `ui.title.save_lost` | The last run could not be restored. | Ada |
 | `ui.title.settings` | Settings | Ada |
 | `ui.title.tagline` | The sky broke. The pieces kept us. Now we keep the light. | Ada |
 | `ui.title.version` | Build {version} | Ada |

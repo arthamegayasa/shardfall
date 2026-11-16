@@ -1,0 +1,38 @@
+{
+  "id": "icon-memento-headsman-hook",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Pruning Hook: a broad straight blade on a pole, its tip bent into a short beak. Key: straight blade, small hook, long grip.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....bBBBb....",
+          "....bBBBBBBb..",
+          "...bBBBwwwBBb.",
+          "...bBBw...wBb.",
+          "...bBBw....wb.",
+          "...bBBw.......",
+          "...bBBw.......",
+          "...bBBw.......",
+          "...bBw........",
+          "...ggg........",
+          "...dth........",
+          "...dth........",
+          "...dth........",
+          "...hhh........"
+        ]
+      ]
+    }
+  }
+}

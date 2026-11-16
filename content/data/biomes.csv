@@ -1,6 +1,6 @@
 id,name_key,content_tier,arena_id,music_id
-# Biomes (data-schema 3.19). M1 uses arena_proto for biome_market. Biomes 2 and 3 reuse arena_market geometry
+# Biomes (data-schema 3.19). M2: biome_market uses arena_market (LD, M2-07). Biomes 2 and 3 reuse arena_market geometry
 # with their own palette until LD ships arena_cloister and arena_vineyard (Producer decision) [Asumsi].
-biome_market,biome.biome_market.name,A,arena_proto,music_market
+biome_market,biome.biome_market.name,A,arena_market,music_market
 biome_cloister,biome.biome_cloister.name,C,arena_market,music_cloister
 biome_vineyard,biome.biome_vineyard.name,C,arena_market,music_vineyard

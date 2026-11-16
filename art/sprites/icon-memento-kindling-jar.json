@@ -1,0 +1,38 @@
+{
+  "id": "icon-memento-kindling-jar",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Kindling Jar: a glass jar packed with twigs, twig ends poking out of the neck. Key: rounded jar with spiky top.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..d...t...d...",
+          "..dt..td..dt..",
+          "...dt.td.dt...",
+          "....dttddt....",
+          "...eeeeeeed...",
+          "....hhhhhh....",
+          "..wcbbbbbbbb..",
+          ".wcbdbbdbbdbb.",
+          ".wcbdbbdbbdbb.",
+          ".wcbdbbdbbdbb.",
+          ".cBbdbbdbbdbb.",
+          ".cBbbbbbbbbbb.",
+          "..BBbbbbbbbb..",
+          "...BBBBBBBB..."
+        ]
+      ]
+    }
+  }
+}

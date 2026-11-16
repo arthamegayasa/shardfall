@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { defaultSettings } from '../../../src/app/settings.ts';
 import {
   SETTINGS_ROWS,
+  setSlider,
+  sliderFromFraction,
   sliderValue,
   stepSetting,
   toggleValue,
@@ -63,5 +65,34 @@ describe('settings model', () => {
       'reduceRepeats',
       'muteWhenUnfocused',
     ]);
+  });
+});
+
+describe('settings model (M2 mouse sliders and Glazier Timer)', () => {
+  it('maps a pointer fraction to the 10-step slider grid', () => {
+    expect(sliderFromFraction(0)).toBe(0);
+    expect(sliderFromFraction(0.04)).toBe(0);
+    expect(sliderFromFraction(0.06)).toBe(10);
+    expect(sliderFromFraction(0.5)).toBe(50);
+    expect(sliderFromFraction(1.4)).toBe(100);
+    expect(sliderFromFraction(-1)).toBe(0);
+    expect(sliderFromFraction(Number.NaN)).toBe(0);
+  });
+
+  it('sets one slider to an absolute value and leaves other rows alone', () => {
+    const s = setSlider(base, 'music', 33);
+    expect(s.audio.music).toBe(30);
+    expect(s.audio.master).toBe(base.audio.master);
+    expect(setSlider(base, 'screenShake', 57).graphics.screenShake).toBe(60);
+    expect(setSlider(base, 'mono', 50)).toBe(base);
+  });
+
+  it('cycles the optional Glazier Timer on, extended, off', () => {
+    expect(SETTINGS_ROWS.some((r) => r.id === 'shopTimer' && r.tab === 'access')).toBe(true);
+    const a = stepSetting(base, 'shopTimer', 1);
+    expect(a.access.shopTimer).toBe('extended');
+    expect(valueKey(a, 'shopTimer')).toBe('ui.settings.extended');
+    expect(stepSetting(a, 'shopTimer', 1).access.shopTimer).toBe('off');
+    expect(stepSetting(base, 'shopTimer', -1).access.shopTimer).toBe('off');
   });
 });

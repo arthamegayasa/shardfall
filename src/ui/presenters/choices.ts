@@ -3,6 +3,7 @@
 import type { GameData, TagId } from '../../content/index.ts';
 import type { StringParams, WorldView } from '../../core/index.ts';
 import { formatStatValue } from '../format.ts';
+import type { IconRef } from '../icons.ts';
 import { enemyNameKey, mementoInfo } from './content.ts';
 
 export interface StatChange {
@@ -20,6 +21,8 @@ export interface ChoiceCard {
   readonly flavorKey: string | null;
   readonly tags: readonly TagId[];
   readonly rarityOrder: number;
+  /** Stat icon for Temper cards, Memento icon for rewards. */
+  readonly icon: IconRef | null;
   /** Temper only: "Speed 110 > 118" preview (ui-spec S04). */
   readonly statChange: StatChange | null;
 }
@@ -66,6 +69,7 @@ export function buildLevelUpModel(view: WorldView, data: GameData): LevelUpModel
       flavorKey: null,
       tags: [],
       rarityOrder: c.rarity,
+      icon: card === undefined ? null : { kind: 'stat', id: card.stat },
       statChange,
     };
   });
@@ -90,6 +94,7 @@ export function buildRewardModel(view: WorldView, data: GameData): RewardModel {
       flavorKey: info?.flavorKey ?? null,
       tags: info?.tags ?? [],
       rarityOrder: c.rarity,
+      icon: info === null ? null : { kind: 'memento', id: info.id },
       statChange: null,
     };
   });

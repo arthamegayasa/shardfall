@@ -152,9 +152,20 @@
           "releaseMs": 30,
           "filter": {
             "type": "bp",
-            "freq": 400,
-            "freqEnd": 900,
-            "q": 1.2
+            "freq": 350,
+            "freqEnd": 750,
+            "q": 2.4
+          }
+        },
+        {
+          "kind": "noise",
+          "attackMs": 10,
+          "env": "flat",
+          "releaseMs": 30,
+          "gainDb": -22,
+          "filter": {
+            "type": "hp",
+            "freq": 5000
           }
         }
       ]
@@ -213,19 +224,44 @@
       },
       "layers": [
         {
-          "kind": "noise",
-          "durMs": 12,
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 620,
+          "freqEnd": 520,
+          "glideMs": 12,
+          "durMs": 14,
           "decayMs": 12,
           "attackMs": 1,
-          "filter": {
-            "type": "bp",
-            "freq": 700,
-            "q": 2
-          },
           "repeat": {
             "count": 3,
             "everyMs": 15,
             "semis": 2
+          }
+        },
+        {
+          "kind": "noise",
+          "durMs": 10,
+          "decayMs": 8,
+          "attackMs": 1,
+          "gainDb": -8,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          },
+          "repeat": {
+            "count": 3,
+            "everyMs": 15
+          }
+        },
+        {
+          "kind": "noise",
+          "durMs": 6,
+          "decayMs": 5,
+          "attackMs": 1,
+          "gainDb": -20,
+          "filter": {
+            "type": "hp",
+            "freq": 5000
           }
         }
       ]
@@ -336,7 +372,7 @@
       "minIntervalMs": 50,
       "pitchJitter": 0.06,
       "gainJitterDb": 2,
-      "lowpassHz": 7000,
+      "lowpassHz": 8000,
       "send": {
         "room": 0
       },
@@ -349,20 +385,31 @@
         {
           "kind": "noise",
           "durMs": 30,
-          "decayMs": 30,
+          "decayMs": 28,
           "attackMs": 1,
           "filter": {
             "type": "lp",
-            "freq": 900
+            "freq": 1000
           }
         },
         {
           "kind": "tone",
           "wave": "sine",
-          "freq": 180,
-          "durMs": 40,
+          "freq": 210,
+          "freqEnd": 140,
+          "glideMs": 35,
+          "durMs": 45,
           "decayMs": 40,
-          "attackMs": 2
+          "attackMs": 1
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 4800,
+          "durMs": 12,
+          "decayMs": 10,
+          "attackMs": 1,
+          "gainDb": -14
         }
       ]
     },
@@ -390,30 +437,42 @@
         {
           "kind": "noise",
           "durMs": 30,
-          "decayMs": 30,
+          "decayMs": 28,
           "attackMs": 1,
           "filter": {
             "type": "lp",
-            "freq": 900
+            "freq": 1000
           }
         },
         {
           "kind": "tone",
           "wave": "sine",
-          "freq": 180,
-          "durMs": 40,
+          "freq": 210,
+          "freqEnd": 140,
+          "glideMs": 35,
+          "durMs": 45,
           "decayMs": 40,
-          "attackMs": 2
+          "attackMs": 1
         },
         {
           "kind": "tone",
           "wave": "sine",
           "freq": 4500,
-          "startMs": 5,
-          "durMs": 40,
-          "decayMs": 40,
-          "attackMs": 2,
+          "startMs": 4,
+          "durMs": 60,
+          "decayMs": 55,
+          "attackMs": 1,
           "gainDb": -6
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 6750,
+          "startMs": 8,
+          "durMs": 45,
+          "decayMs": 40,
+          "attackMs": 1,
+          "gainDb": -13
         }
       ]
     },
@@ -725,7 +784,7 @@
       "tier": "A",
       "bus": "sfx",
       "priority": 3,
-      "durationMs": 700,
+      "durationMs": 900,
       "gainDb": -10,
       "maxVoices": 1,
       "send": {
@@ -736,26 +795,28 @@
         {
           "kind": "noise",
           "attackMs": 3,
-          "decayMs": 600,
+          "decayMs": 650,
           "filter": {
             "type": "lp",
-            "freq": 2500,
-            "freqEnd": 400
+            "freq": 2600,
+            "freqEnd": 350
           }
         },
         {
           "kind": "tone",
           "wave": "sine",
-          "freq": 70,
+          "freq": 90,
+          "freqEnd": 48,
+          "glideMs": 180,
           "attackMs": 2,
-          "decayMs": 300
+          "decayMs": 380
         },
         {
           "kind": "tone",
           "wave": "sine",
           "freq": "D5",
           "attackMs": 2,
-          "decayMs": 600,
+          "decayMs": 700,
           "gainDb": -6,
           "fm": {
             "ratio": 3.5,
@@ -769,7 +830,7 @@
           "wave": "sine",
           "freq": "A5",
           "attackMs": 2,
-          "decayMs": 500,
+          "decayMs": 600,
           "gainDb": -8,
           "fm": {
             "ratio": 3.5,
@@ -777,6 +838,27 @@
             "indexEnd": 0.2,
             "indexDecayMs": 250
           }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 40,
+          "attackMs": 2,
+          "decayMs": 500,
+          "gainDb": -14
+        },
+        {
+          "kind": "grains",
+          "count": 14,
+          "freqMin": 4000,
+          "freqMax": 7500,
+          "spreadMs": 260,
+          "grainMs": 60,
+          "grainMsMax": 180,
+          "wave": "sine",
+          "drop": 3,
+          "gainDb": -12
         }
       ]
     },
@@ -847,6 +929,18 @@
           "glideMs": 80,
           "attackMs": 2,
           "decayMs": 90
+        },
+        {
+          "kind": "grains",
+          "count": 5,
+          "freqMin": 300,
+          "freqMax": 900,
+          "spreadMs": 60,
+          "grainMs": 25,
+          "grainMsMax": 55,
+          "wave": "sine",
+          "drop": 5,
+          "gainDb": -8
         }
       ]
     },
@@ -901,6 +995,18 @@
             "freq": 800,
             "q": 2
           }
+        },
+        {
+          "kind": "grains",
+          "count": 7,
+          "freqMin": 250,
+          "freqMax": 800,
+          "spreadMs": 80,
+          "grainMs": 25,
+          "grainMsMax": 55,
+          "wave": "sine",
+          "drop": 5,
+          "gainDb": -8
         }
       ]
     },
@@ -947,6 +1053,18 @@
           "attackMs": 2,
           "decayMs": 200,
           "gainDb": -6
+        },
+        {
+          "kind": "grains",
+          "count": 10,
+          "freqMin": 200,
+          "freqMax": 700,
+          "spreadMs": 140,
+          "grainMs": 25,
+          "grainMsMax": 55,
+          "wave": "sine",
+          "drop": 5,
+          "gainDb": -9
         }
       ]
     },
@@ -1252,6 +1370,24 @@
             "freq": 500,
             "q": 4
           }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1250,
+          "freqEnd": 1580,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -3
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1768,
+          "freqEnd": 2230,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -5
         }
       ]
     },
@@ -3588,82 +3724,7 @@
       "bus": "music",
       "priority": 3,
       "sampleRate": 16000,
-      "durationMs": 2500,
-      "gainDb": -14,
-      "maxVoices": 1,
-      "send": {
-        "hall": 0.5
-      },
-      "layers": [
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D2",
-          "attackMs": 2,
-          "decayMs": 2200,
-          "fm": {
-            "ratio": 3.5,
-            "index": 3,
-            "indexEnd": 0.4,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D3",
-          "attackMs": 2,
-          "decayMs": 2200,
-          "fm": {
-            "ratio": 3.5,
-            "index": 3,
-            "indexEnd": 0.4,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "A3",
-          "startMs": 250,
-          "attackMs": 2,
-          "decayMs": 2000,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D2",
-          "attackMs": 3,
-          "decayMs": 1000,
-          "gainDb": -6
-        },
-        {
-          "kind": "noise",
-          "durMs": 100,
-          "decayMs": 100,
-          "attackMs": 2,
-          "gainDb": -14,
-          "filter": {
-            "type": "lp",
-            "freq": 400
-          }
-        }
-      ]
-    },
-    {
-      "id": "mus.stinger.pulse_end",
-      "tier": "A",
-      "bus": "music",
-      "priority": 3,
-      "sampleRate": 16000,
-      "durationMs": 2500,
+      "durationMs": 100,
       "gainDb": -14,
       "maxVoices": 1,
       "send": {
@@ -3674,83 +3735,32 @@
           "kind": "tone",
           "wave": "sine",
           "freq": "D4",
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "A4",
-          "startMs": 60,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D5",
-          "startMs": 120,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "F#5",
-          "startMs": 180,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "A5",
-          "startMs": 240,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "grains",
-          "count": 10,
-          "freqMin": 3000,
-          "freqMax": 7000,
-          "spreadMs": 1200,
-          "grainMs": 300,
-          "grainMsMax": 800,
-          "startMs": 200,
-          "gainDb": -10
+          "decayMs": 80
         }
-      ]
+      ],
+      "deprecated": true
+    },
+    {
+      "id": "mus.stinger.pulse_end",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 100,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.5
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D4",
+          "decayMs": 80
+        }
+      ],
+      "deprecated": true
     },
     {
       "id": "mus.stinger.warden",
@@ -3758,7 +3768,7 @@
       "bus": "music",
       "priority": 2,
       "sampleRate": 16000,
-      "durationMs": 2000,
+      "durationMs": 100,
       "gainDb": -14,
       "maxVoices": 1,
       "send": {
@@ -3767,58 +3777,12 @@
       "layers": [
         {
           "kind": "tone",
-          "wave": "saw",
-          "freq": "D2",
-          "attackMs": 1200,
-          "env": "flat",
-          "releaseMs": 300,
-          "filter": {
-            "type": "lp",
-            "freq": 700
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "saw",
-          "freq": "G#2",
-          "attackMs": 1200,
-          "env": "flat",
-          "releaseMs": 300,
-          "gainDb": -2,
-          "filter": {
-            "type": "lp",
-            "freq": 700
-          }
-        },
-        {
-          "kind": "tone",
           "wave": "sine",
-          "freq": "C#6",
-          "attackMs": 2,
-          "decayMs": 1500,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D6",
-          "attackMs": 2,
-          "decayMs": 1500,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
+          "freq": "D4",
+          "decayMs": 80
         }
-      ]
+      ],
+      "deprecated": true
     },
     {
       "id": "mus.stinger.victory",
@@ -3826,7 +3790,7 @@
       "bus": "music",
       "priority": 3,
       "sampleRate": 16000,
-      "durationMs": 6200,
+      "durationMs": 100,
       "gainDb": -12,
       "maxVoices": 1,
       "send": {
@@ -3835,224 +3799,12 @@
       "layers": [
         {
           "kind": "tone",
-          "wave": "square",
-          "freq": "D5",
-          "startMs": 0,
-          "durMs": 834,
-          "attackMs": 25,
-          "decayMs": 2142,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
           "wave": "sine",
-          "freq": "D5",
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "square",
-          "freq": "A4",
-          "startMs": 714,
-          "durMs": 834,
-          "attackMs": 25,
-          "decayMs": 2142,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "A4",
-          "startMs": 714,
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "square",
-          "freq": "G4",
-          "startMs": 1429,
-          "durMs": 477,
-          "attackMs": 25,
-          "decayMs": 1071,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "G4",
-          "startMs": 1429,
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "square",
-          "freq": "F#4",
-          "startMs": 1786,
-          "durMs": 477,
-          "attackMs": 25,
-          "decayMs": 1071,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "F#4",
-          "startMs": 1786,
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "square",
-          "freq": "G4",
-          "startMs": 2143,
-          "durMs": 834,
-          "attackMs": 25,
-          "decayMs": 2142,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "G4",
-          "startMs": 2143,
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "square",
-          "freq": "D5",
-          "startMs": 2857,
-          "durMs": 2620,
-          "attackMs": 25,
-          "decayMs": 7500,
-          "releaseMs": 120,
-          "detuneCents": 4,
-          "filter": {
-            "type": "lp",
-            "freq": 1800
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "D5",
-          "startMs": 2857,
-          "attackMs": 2,
-          "decayMs": 900,
-          "gainDb": -6,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.2,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "saw",
-          "freq": "D3",
-          "attackMs": 400,
-          "env": "flat",
-          "releaseMs": 800,
-          "gainDb": -10,
-          "filter": {
-            "type": "lp",
-            "freq": 1200
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "saw",
-          "freq": "F#3",
-          "attackMs": 400,
-          "env": "flat",
-          "releaseMs": 800,
-          "gainDb": -10,
-          "filter": {
-            "type": "lp",
-            "freq": 1200
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "saw",
-          "freq": "A3",
-          "attackMs": 400,
-          "env": "flat",
-          "releaseMs": 800,
-          "gainDb": -10,
-          "filter": {
-            "type": "lp",
-            "freq": 1200
-          },
-          "detuneCents": 7
+          "freq": "D4",
+          "decayMs": 80
         }
-      ]
+      ],
+      "deprecated": true
     },
     {
       "id": "mus.stinger.defeat",
@@ -4060,7 +3812,7 @@
       "bus": "music",
       "priority": 3,
       "sampleRate": 16000,
-      "durationMs": 4600,
+      "durationMs": 100,
       "gainDb": -14,
       "maxVoices": 1,
       "send": {
@@ -4070,59 +3822,11 @@
         {
           "kind": "tone",
           "wave": "sine",
-          "freq": "D5",
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "A4",
-          "startMs": 1667,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
-          "freq": "G4",
-          "startMs": 2500,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
-        },
-        {
-          "kind": "tone",
-          "wave": "sine",
           "freq": "D4",
-          "startMs": 3333,
-          "attackMs": 2,
-          "decayMs": 1800,
-          "fm": {
-            "ratio": 3.5,
-            "index": 1.5,
-            "indexEnd": 0.2,
-            "indexDecayMs": 250
-          }
+          "decayMs": 80
         }
-      ]
+      ],
+      "deprecated": true
     },
     {
       "id": "mus.riser.pulse_end",
@@ -4159,8 +3863,615 @@
           "gainDb": -8,
           "filter": {
             "type": "lp",
+            "freq": 900,
+            "freqEnd": 3000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "A3",
+          "freqEnd": "A4",
+          "env": "swell",
+          "releaseMs": 5,
+          "gainDb": -13,
+          "detuneCents": 6,
+          "filter": {
+            "type": "lp",
+            "freq": 900,
+            "freqEnd": 3000
+          }
+        },
+        {
+          "kind": "noise",
+          "startMs": 2200,
+          "durMs": 45,
+          "decayMs": 40,
+          "attackMs": 1,
+          "gainDb": -20,
+          "filter": {
+            "type": "bp",
+            "freq": 1800,
+            "q": 0.9
+          },
+          "repeat": {
+            "count": 36,
+            "everyMs": 190,
+            "everyEndMs": 55,
+            "gainDb": 0.42
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.ember_storm.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -9,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D5",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2700,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#5",
+          "env": "swell",
+          "releaseMs": 6,
+          "detuneCents": 15,
+          "gainDb": -2,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2700,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D4",
+          "env": "swell",
+          "releaseMs": 6,
+          "detuneCents": -12,
+          "gainDb": -5,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "freqEnd": 1800,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 55,
+          "freqMin": 2200,
+          "freqMax": 4200,
+          "spreadMs": 950,
+          "grainMs": 8,
+          "wave": "noise",
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.ember_storm.impact",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 650,
+      "gainDb": -8,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.25
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 85,
+          "freqEnd": 45,
+          "glideMs": 90,
+          "durMs": 160,
+          "decayMs": 150,
+          "attackMs": 1,
+          "repeat": {
+            "count": 5,
+            "everyMs": 45,
+            "gainDb": -1
+          }
+        },
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 420,
+          "filter": {
+            "type": "bp",
+            "freq": 1300,
+            "freqEnd": 500,
+            "q": 0.9
+          },
+          "gainDb": -3
+        },
+        {
+          "kind": "grains",
+          "count": 24,
+          "freqMin": 600,
+          "freqMax": 2600,
+          "spreadMs": 380,
+          "grainMs": 10,
+          "wave": "noise",
+          "gainDb": -9,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.snuff_ring.wave_double",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 1700,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 800,
+          "attackMs": 20,
+          "decayMs": 780,
+          "filter": {
+            "type": "bp",
+            "freq": 2000,
+            "freqEnd": 400,
+            "q": 1.2
+          },
+          "repeat": {
+            "count": 2,
+            "everyMs": 800,
+            "semis": -2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 70,
+          "durMs": 300,
+          "attackMs": 2,
+          "decayMs": 280,
+          "gainDb": -6,
+          "repeat": {
+            "count": 2,
+            "everyMs": 800
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.moth_call.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "grains",
+          "count": 60,
+          "freqMin": 250,
+          "freqMax": 520,
+          "spreadMs": 950,
+          "grainMs": 18,
+          "grainMsMax": 30,
+          "wave": "noise",
+          "filter": {
+            "type": "bp",
+            "freq": 380,
+            "q": 1.2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D5",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 14,
+          "tremoloDepth": 0.6,
+          "gainDb": -4,
+          "filter": {
+            "type": "bp",
+            "freq": 1100,
+            "freqEnd": 2200,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#5",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 14,
+          "tremoloDepth": 0.6,
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 1100,
+            "freqEnd": 2200,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.telegraph.blink",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 800,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 12,
+          "tremoloDepth": 0.5
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G#6",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 12,
+          "tremoloDepth": 0.5,
+          "gainDb": -3
+        },
+        {
+          "kind": "noise",
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -14,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "freqEnd": 2800,
+            "q": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.summon",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 800,
+      "gainDb": -14,
+      "maxVoices": 2,
+      "minIntervalMs": 200,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "color": "pink",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 500,
+            "freqEnd": 1600,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "D4",
+          "durMs": 400,
+          "attackMs": 30,
+          "env": "flat",
+          "releaseMs": 40,
+          "gainDb": -6,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "C#4",
+          "startMs": 400,
+          "attackMs": 30,
+          "env": "flat",
+          "releaseMs": 40,
+          "gainDb": -6,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.hit_heavy",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 110,
+      "gainDb": -23,
+      "attackMs": 2,
+      "maxVoices": 2,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 50,
+          "decayMs": 45,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 160,
+          "freqEnd": 80,
+          "glideMs": 70,
+          "durMs": 100,
+          "decayMs": 90,
+          "attackMs": 1
+        },
+        {
+          "kind": "grains",
+          "count": 4,
+          "freqMin": 300,
+          "freqMax": 800,
+          "spreadMs": 40,
+          "grainMs": 25,
+          "grainMsMax": 45,
+          "wave": "sine",
+          "drop": 4,
+          "gainDb": -9
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 4800,
+          "durMs": 14,
+          "decayMs": 12,
+          "attackMs": 1,
+          "gainDb": -14
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.shell_break",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 500,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "minIntervalMs": 200,
+      "send": {
+        "room": 0.25
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 1,
+          "decayMs": 180,
+          "filter": {
+            "type": "hp",
             "freq": 2500
           }
+        },
+        {
+          "kind": "grains",
+          "count": 16,
+          "freqMin": 3500,
+          "freqMax": 7000,
+          "spreadMs": 220,
+          "grainMs": 40,
+          "grainMsMax": 140,
+          "wave": "sine",
+          "drop": 4,
+          "gainDb": -6
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 120,
+          "freqEnd": 60,
+          "glideMs": 120,
+          "attackMs": 1,
+          "decayMs": 200,
+          "gainDb": -4
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.shell_up",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 600,
+      "gainDb": -20,
+      "maxVoices": 1,
+      "minIntervalMs": 300,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D3",
+          "env": "swell",
+          "releaseMs": 40,
+          "filter": {
+            "type": "lp",
+            "freq": 400,
+            "freqEnd": 1200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#3",
+          "env": "swell",
+          "releaseMs": 40,
+          "gainDb": -3,
+          "filter": {
+            "type": "lp",
+            "freq": 400,
+            "freqEnd": 1200
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.blink",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 300,
+      "gainDb": -16,
+      "maxVoices": 1,
+      "minIntervalMs": 200,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 220,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "freqEnd": 600,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 900,
+          "freqEnd": 300,
+          "glideMs": 200,
+          "attackMs": 2,
+          "decayMs": 220,
+          "gainDb": -6
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.exploder.blast",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 400,
+      "gainDb": -9,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 1,
+          "decayMs": 350,
+          "filter": {
+            "type": "lp",
+            "freq": 4000,
+            "freqEnd": 300
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 90,
+          "freqEnd": 40,
+          "glideMs": 200,
+          "attackMs": 1,
+          "decayMs": 300
         }
       ]
     }

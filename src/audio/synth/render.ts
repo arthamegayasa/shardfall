@@ -79,25 +79,62 @@ export interface InstrumentDef {
   readonly highpassHz: number | null;
   readonly lowpassHz: number | null;
   readonly layers: readonly LayerSpec[];
+  /**
+   * Sustained instruments loop instead of rendering long samples (buffer memory, audio-direction
+   * 2.2): the sample ends releaseGuardMs before lengthMs, and its last xfadeMs are crossfaded
+   * with the audio just before startMs, so playback can jump from the end back to startMs.
+   */
+  readonly loop: { readonly startMs: number; readonly xfadeMs: number } | null;
+}
+
+/** Part of a looped sample cut off at the end so the layer release never enters the loop. */
+const LOOP_RELEASE_GUARD_MS = 80;
+
+/** Loop region in seconds of a rendered instrument sample, null for one-shot samples. */
+export function loopPointsOf(
+  inst: InstrumentDef,
+  sampleLength: number,
+): { readonly startSec: number; readonly endSec: number } | null {
+  if (inst.loop === null) return null;
+  return { startSec: inst.loop.startMs / 1000, endSec: sampleLength / inst.sampleRate };
+}
+
+/** Equal-power crossfade of the loop tail into the audio before the loop start. */
+function makeLoop(buf: Float32Array, startN: number, xfadeN: number, endN: number): Float32Array {
+  const x = Math.max(1, Math.min(xfadeN, startN, endN - startN - 1));
+  const out = buf.slice(0, endN);
+  for (let i = 0; i < x; i++) {
+    const t = (i + 0.5) / x;
+    const a = Math.cos(t * 0.5 * Math.PI);
+    const b = Math.sin(t * 0.5 * Math.PI);
+    const j = endN - x + i;
+    out[j] = (buf[j] ?? 0) * a + (buf[startN - x + i] ?? 0) * b;
+  }
+  return out;
 }
 
 export function renderInstrumentSample(inst: InstrumentDef, refMidi: number | null): Float32Array {
   const rng = createRng(seedFor(inst.id, refMidi ?? 0));
   const hz = refMidi === null ? 440 : midiToHz(refMidi);
   const buf = renderLayers(inst.layers, inst.lengthMs, inst.sampleRate, rng, hz);
-  return finish(
-    buf,
-    {
-      id: inst.id,
-      durationMs: inst.lengthMs,
-      gainDb: inst.peakDb,
-      attackMs: 0,
-      lowpassHz: inst.lowpassHz,
-      highpassHz: inst.highpassHz,
-      layers: inst.layers,
-    },
-    inst.sampleRate,
-  );
+  const recipe: SynthRecipe = {
+    id: inst.id,
+    durationMs: inst.lengthMs,
+    gainDb: inst.peakDb,
+    attackMs: 0,
+    lowpassHz: inst.lowpassHz,
+    highpassHz: inst.highpassHz,
+    layers: inst.layers,
+  };
+  if (inst.loop === null) return finish(buf, recipe, inst.sampleRate);
+  // Looped: filter and normalise, but keep the sustained end (no tail trim, no end fade).
+  const sr = inst.sampleRate;
+  if (recipe.highpassHz !== null) filterInPlace(buf, 'hp', recipe.highpassHz, 0.707, sr);
+  if (recipe.lowpassHz !== null) filterInPlace(buf, 'lp', recipe.lowpassHz, 0.707, sr);
+  normalizePeak(buf, dbToGain(inst.peakDb));
+  const endN = Math.max(2, buf.length - Math.round((LOOP_RELEASE_GUARD_MS / 1000) * sr));
+  const startN = Math.min(endN - 2, Math.round((inst.loop.startMs / 1000) * sr));
+  return makeLoop(buf, startN, Math.round((inst.loop.xfadeMs / 1000) * sr), endN);
 }
 
 /** Index of the reference note closest to midi, and the playback rate that reaches midi. */

@@ -44,7 +44,7 @@ import { gainGlint, updatePickups } from './systems/pickups.ts';
 import { handleRiteInput, movePlayer, updatePlayerTimers } from './systems/player.ts';
 import { acquireMemento } from './systems/progression.ts';
 import { updatePlayerShots } from './systems/projectiles.ts';
-import { createShotSpec } from './systems/projectiles.ts';
+import { createShotSpec, recountProcShots } from './systems/projectiles.ts';
 import {
   advanceChoices,
   beginPulse,
@@ -122,6 +122,7 @@ export function createSimInternals(config: SimConfig): SimInternals {
     fx: createEffectHooks(),
     shot: createShotSpec(),
     poolOverflow: 0,
+    procLive: 0,
   };
   const sc = createStatScratch(sd.statCount);
   const queue: Command[] = [];
@@ -223,6 +224,9 @@ export function createSimInternals(config: SimConfig): SimInternals {
     ctx.run.statsDirty = true;
     ensureStats(ctx, sc);
     world.player.hp = world.player.maxHp;
+    // BUG-001: the build summary (Pause, run end) reads the shop view; fill it from this run now,
+    // not only when the first shop opens.
+    refreshShopView(ctx);
     beginPulse(ctx, 0, sc);
   };
 
@@ -272,7 +276,7 @@ export function createSimInternals(config: SimConfig): SimInternals {
           acquireMemento(ctx, mi, true);
         }
         ensureStats(ctx, sc);
-        if (world.phase === 'shop') refreshShopView(ctx);
+        refreshShopView(ctx);
         return;
       }
       case 'debug.spawn': {
@@ -459,6 +463,7 @@ export function createSimInternals(config: SimConfig): SimInternals {
       return;
     }
     if (updatePulseTimer(ctx)) return;
+    recountProcShots(ctx);
     const p = world.player;
     p.prevX = p.x;
     p.prevY = p.y;

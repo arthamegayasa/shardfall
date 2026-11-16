@@ -6,6 +6,7 @@ import {
   HitKind,
   SimEventType,
   SourceKind,
+  TAU,
   TICK_RATE,
   atan2Turns,
   cosTurns,
@@ -119,6 +120,7 @@ export function fireWeapon(ctx: SimCtx, slot: number, power: number): boolean {
             s.pierce = t.pierce;
           } else {
             s.pierce = t.pierce + Math.floor(statOf(ctx, sd.stat.pierce, 0));
+            if (w.archetype === Archetype.Coin) s.bounce = Math.floor(pnum(t.p, 'bounce', 0));
           }
           spawnPlayerShot(ctx, s);
         }
@@ -321,6 +323,46 @@ function chain(
   }
 }
 
+/**
+ * Orbit tier IV lunge (GDD 6.2): every lunge_every_s the shards fly lunge_dist out and back. The
+ * out-and-back takes lunge_s when given, else the time the shards need at their own orbit speed
+ * (2 pi r / rev_s), so no duration is invented in code. Returns the radius offset this tick.
+ */
+function lungeOffset(
+  ctx: SimCtx,
+  slot: number,
+  t: WeaponTierSim,
+  radius: number,
+  revTicks: number,
+  wi: number,
+  count: number,
+): number {
+  const run = ctx.run;
+  const every = Math.round(pnum(t.p, 'lunge_every_s', 0) * TICK_RATE);
+  const dist = pnum(t.p, 'lunge_dist', 0);
+  if (every <= 0 || dist <= 0) return 0;
+  let secs = pnum(t.p, 'lunge_s', 0);
+  if (secs <= 0 && revTicks > 0 && radius > 0) {
+    const orbitSpeed = (TAU * radius) / (revTicks / TICK_RATE);
+    secs = (2 * dist) / orbitSpeed;
+  }
+  const total = Math.round(secs * TICK_RATE);
+  if (total <= 0) return 0;
+  if (run.lungeTicks[slot]! > 0) {
+    run.lungeTicks[slot] = run.lungeTicks[slot]! - 1;
+    const u = 1 - run.lungeTicks[slot] / total;
+    return dist * (1 - Math.abs(2 * u - 1));
+  }
+  run.lungeTimer[slot] = run.lungeTimer[slot]! + 1;
+  if (run.lungeTimer[slot] >= every) {
+    run.lungeTimer[slot] = 0;
+    run.lungeTicks[slot] = total;
+    const p = ctx.world.player;
+    ctx.events.push(SimEventType.WeaponFired, p.x, p.y, wi, count, slot);
+  }
+  return 0;
+}
+
 /** Orbit shards: keep `count` shards around the player per orbit weapon; contact hits with re-hit timers. */
 export function updateOrbits(ctx: SimCtx): void {
   const { world, sd, run } = ctx;
@@ -336,13 +378,18 @@ export function updateOrbits(ctx: SimCtx): void {
     const t = w.tiers[tier - 1];
     if (t === undefined) continue;
     const count = Math.max(0, Math.floor(t.count));
-    const revTicks = Math.max(1, Math.round(pnum(t.p, 'rev_s', 1) * TICK_RATE));
-    const radius = t.radiusU * areaScale(ctx);
+    // rev_s missing: the shards stay still around the player (no number in code, LP review M1).
+    const revTicks = Math.round(pnum(t.p, 'rev_s', 0) * TICK_RATE);
+    const baseRadius = t.radiusU * areaScale(ctx);
     const rehit = weaponCooldown(ctx, t);
     const dmg = t.dmg * t.dmgMult;
     const src = encodeSource(SourceKind.Weapon, wi);
-    run.weaponTimer[slot] = (run.weaponTimer[slot]! + 1) % revTicks;
-    const base = run.weaponTimer[slot]! / revTicks;
+    let base = 0;
+    if (revTicks > 0) {
+      run.weaponTimer[slot] = (run.weaponTimer[slot]! + 1) % revTicks;
+      base = run.weaponTimer[slot]! / revTicks;
+    }
+    const radius = baseRadius + lungeOffset(ctx, slot, t, baseRadius, revTicks, wi, count);
     let k = 0;
     for (let i = 0; i < ps.highWater; i++) {
       if (ps.alive[i] === 0 || ps.mode[i] !== ShotMode.Orbit || ps.weaponSlot[i] !== slot) continue;

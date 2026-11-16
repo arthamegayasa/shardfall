@@ -1,0 +1,65 @@
+{
+  "id": "fx-flare",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan",
+    "glint"
+  ],
+  "status": "final",
+  "note": "Festival Flare release and landing burst: white core, cyan rays, glint tips. 4 frames, one shot.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 4,
+      "loop": false,
+      "frames": [
+        [
+          "..w..",
+          ".wcw.",
+          "wcwcw",
+          ".wcw.",
+          "..w.."
+        ],
+        [
+          "...y...",
+          "..wcw..",
+          ".wcwcw.",
+          "ywwwwwy",
+          ".wcwcw.",
+          "..wcw..",
+          "...y..."
+        ],
+        [
+          "y...y...y",
+          "..c.c.c..",
+          "...www...",
+          ".cwwwwwc.",
+          "ywwwwwwwy",
+          ".cwwwwwc.",
+          "...www...",
+          "..c.c.c..",
+          "y...y...y"
+        ],
+        [
+          "y.......y",
+          "...c.c...",
+          "....w....",
+          ".c.....c.",
+          "yw.....wy",
+          ".c.....c.",
+          "....w....",
+          "...c.c...",
+          "y.......y"
+        ]
+      ]
+    }
+  }
+}

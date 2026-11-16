@@ -1,5 +1,6 @@
 // S01 Title (ui-spec 5): Continue (only with a run save), New Run, The Keeping (tier B+), Settings,
-// Credits. Initial focus: Continue when present, else New Run.
+// Credits. Initial focus: Continue when present, else New Run. A save that cannot be restored is
+// dropped by app (boot.ts) and leaves us on the title: then ui.title.save_lost shows here.
 
 import { button, h, put } from '../dom.ts';
 import { titleBlock } from './components.ts';
@@ -10,12 +11,14 @@ export function createTitleScreen(ctx: UiContext): Screen {
   const { doc, t, deps } = ctx;
   const el = h(doc, 'div', 'screen screen-title');
   const focus = ctx.newFocusList();
+  /** The last Continue failed: show ui.title.save_lost until the title is left. */
+  let saveLost = false;
 
   const enter = (): void => {
     el.textContent = '';
     focus.reset();
     const safe = h(doc, 'div', 'safe title-safe');
-    const menu = h(doc, 'nav', 'menu panel');
+    const menu = h(doc, 'nav', 'menu panel glass');
     const add = (dataUi: string, key: string, run: () => void): void => {
       const b = button(doc, dataUi, t(key));
       menu.appendChild(b);
@@ -26,6 +29,13 @@ export function createTitleScreen(ctx: UiContext): Screen {
       add('title-continue', 'ui.title.continue', () => {
         ctx.sound(Cue.Confirm);
         deps.app.continueRun();
+        // Success switches to the run (this element leaves the DOM). Still here without a save:
+        // app could not restore it and already removed it (review M1 LP).
+        if (el.isConnected && !deps.meta().hasRunSave) {
+          saveLost = true;
+          enter();
+          ctx.announce(t('ui.title.save_lost'));
+        }
       });
     }
     add('title-new-run', 'ui.title.begin', () => {
@@ -54,9 +64,17 @@ export function createTitleScreen(ctx: UiContext): Screen {
       'version-label',
       t('ui.title.version', { version: deps.data.meta.contentHash.slice(0, 8) }),
     );
-    put(el, put(safe, head, menu, version));
+    const notice = saveLost ? h(doc, 'p', 'title-notice', t('ui.title.save_lost')) : null;
+    put(el, put(safe, head, menu, notice, version));
     focus.focus(0, true);
   };
 
-  return { el, focus, enter };
+  return {
+    el,
+    focus,
+    enter,
+    leave() {
+      saveLost = false;
+    },
+  };
 }

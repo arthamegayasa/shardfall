@@ -12,3 +12,8 @@ whetstone,memento.whetstone.name,memento.whetstone.desc,,A,plain,edge,3,default,
 duelist_ribbon,memento.duelist_ribbon.name,memento.duelist_ribbon.desc,,A,fine,edge,1,default,0,,11
 headsman_hook,memento.headsman_hook.name,memento.headsman_hook.desc,,A,rare,edge,1,default,0,,12
 iron_thimble,memento.iron_thimble.name,memento.iron_thimble.desc,,B,plain,ward,5,default,1,,15
+pt_1,memento.pt_1.name,memento.pt_1.desc,,A,plain,trade,1,test_lock,0,,91
+pt_2,memento.pt_2.name,memento.pt_2.desc,,A,plain,trade,1,test_lock,0,,92
+pt_3,memento.pt_3.name,memento.pt_3.desc,,A,plain,trade,1,test_lock,0,,93
+pt_4,memento.pt_4.name,memento.pt_4.desc,,A,plain,trade,1,test_lock,0,,94
+pt_5,memento.pt_5.name,memento.pt_5.desc,,A,plain,trade,1,test_lock,0,,95

@@ -1,161 +1,158 @@
-# Laporan Balance (draf M1-02)
+# Laporan Balance (M2-01, vertical slice)
 
-Pemilik: Game Designer. Status: draf, 2026-11-17. Sumber angka: `content/data/*.csv` (CSV menang bila berbeda dengan dokumen). Model: `tools/balance/model.py` (Python standar, tanpa dependensi).
+Pemilik: Game Designer. Status: M2-01, 2026-11-17 (menggantikan draf M1-02). Sumber angka: `content/data/*.csv` (CSV menang bila berbeda dengan dokumen). Alat: `tools/balance/model.py` (model ekonomi, Python standar) dan `tools/balance/bot/` (bot yang memainkan sim asli).
 
 ## 1. Cara menjalankan
 
 | Perintah | Hasil |
 |---|---|
-| `python tools/balance/model.py gen` | Menulis `content/data/waves.csv` dan `wave_spawns.csv` dari tabel `PROFILES` (GDD 2 dan 3.4) dan `SPAWN_RULES` |
-| `python tools/balance/model.py check` | Gagal (exit 1) bila kedua CSV itu beda dari model atau aturan data dilanggar (durasi, Warden dan boss id, telegraf minimum musuh). Target GDD 19 dicetak PASS atau WARN |
-| `python tools/balance/model.py report` | Mencetak tabel di bawah dalam Markdown |
+| `python tools/balance/model.py gen` | Menulis `waves.csv` dan `wave_spawns.csv` dari `PROFILES`, `SPAWN_RULES`, baris pembuka dan lonjakan |
+| `python tools/balance/model.py check` | Gagal bila kedua CSV beda dari model atau aturan data dilanggar (durasi, id Warden dan boss, telegraf minimum, `alive_cap` di atas anggaran 120). Target GDD 19 dicetak PASS atau WARN |
+| `python tools/balance/model.py report` | Tabel Markdown model (Pulse, kurva musuh, harga, DPS senjata) |
+| `node tools/balance/bot/run-bots.ts --bot good --seeds 1-100` | Bot memainkan `run_a` dengan sim asli dan data build; mencetak ringkasan dan tabel per Pulse. Opsi: `--bot expert|good|naive`, `--profile`, `--class`, `--data <game-data.json>`, `--json <file>`, `--verbose` |
 
-Model membaca semua angka lain (musuh, senjata, harga, rarity, XP, kartu) dari CSV, jadi kurva di laporan ini selalu mengikuti data yang dikirim. Setelah mengubah CSV: `npm run data:build`, lalu `python tools/balance/model.py check`.
+Urutan setelah mengubah CSV: `python tools/balance/model.py gen` (bila profil berubah), `npm run data:build`, `python tools/balance/model.py check`, lalu bot. 100 seed per bot sekitar 15 s.
 
-## 2. Ringkasan
+## 2. Bot (`tools/balance/bot/`)
 
-- Data Tingkat A lengkap: kelas `lantern`, 6 senjata dengan tier II sampai IV, 12 Memento, sinergi Flame, Shard, Edge (ambang 2, 4, 6), 4 Unlit, `warden_hound` dengan affix `volley` dan `hasted`, `boss_lantern` dengan 2 fase dan 6 pola, profil `run_a_m1` dan `run_a`, 14 kartu Temper, toko, config. Baris B dan C juga sudah ditulis dengan `content_tier` yang benar; build tingkat A, B, dan C semuanya 0 error dan 0 peringatan.
-- Ekonomi: Glint diharapkan kumulatif A 853 (M1 1031), level akhir 12 (M1 13), sekitar 1 level per Pulse. Pulse 1 memberi 24 Glint, cukup untuk 1 Memento Plain atau 1 senjata Tier I.
-- Senjata awal `lantern_bolt` membunuh swarmer dengan satu tembakan (tumbukan + ledakan) sampai t8 (target: t6).
-- Warden 15.5 s pada DPS referensi (target 8 sampai 15 s): di batas atas, dibiarkan karena selisih 3% di bawah ketelitian model.
-- Boss: dengan HP 1600 model memberi 40 s (target 45 sampai 90 s). **Keputusan: HP dasar `boss_lantern` dinaikkan ke 2000** (A t10 sekitar 5140), hasil model 49 s. GDD 16.1 sudah disesuaikan. Di C t7 hasilnya sekitar 69 s, tetap dalam target.
-- Pembelian per run: model 21 (A dan M1), di atas target GDD 19 (12 sampai 18) tetapi sesuai GDD 4.3 ("2 sampai 3 pembelian per toko" = 18 sampai 27 untuk 9 toko). Dua target GDD saling bertentangan; angka harga **tidak** diubah. Usulan: target 19 menjadi 16 sampai 22, diputuskan setelah bot M2 (pertanyaan terbuka).
-- P1-a: 3 dari 12 Memento A datar (25%, batas 30%). Pool penuh: 7 dari 30 (23%).
+Bot hanya membaca `WorldView` dan bertindak lewat `InputFrame` dan `Command`, persis seperti pemain. RNG bot terpisah dari sim.
 
-## 3. Asumsi model [Asumsi]
-
-Semua angka kekuatan pemain di bawah adalah model referensi, bukan simulasi kombat. Bot M2 menggantikannya.
-
-| Asumsi | Nilai | Alasan |
+| Bot | Gerak | Belanja dan kartu |
 |---|---|---|
-| Glint terpungut selama Pulse | 85%, sisanya 50% dipungut otomatis (total 92.5%); Pulse boss 100% | GDD 3.4, 3.3 |
-| Reroll per toko | 0 (t1 sampai 2), 1 (t3 sampai 6), 2 (t7+) | Pemain wajar mulai mencari sinergi setelah toko kedua |
-| Pembelian | Glint dibagi harga tawaran rata-rata (rarity per threat, senjata 35%) | GDD 12 |
-| Senjata yang dibeli | Pengali DPS = rata-rata `weapon_dmg_mult / weapon_cd_mult` menurut bobot rarity; salinan di atas 6 slot digabung (efisiensi 0.79) | GDD 4.4: tier II 1.58x vs dua tier I 2.0x |
-| Memento | +4% DPS satu target per Memento | Banyak Memento A bersyarat atau untuk kerumunan |
-| Kartu Temper | 50% pilihan ke damage atau attack speed (nilai kartu `card_damage` menurut rarity saat itu), 15% ke `max_hp` | Pemain wajar menyeimbangkan |
-| Kritikal | +2.5% (crit dasar 5% x 0.5) | `stats.csv` |
-| Fokus ke Warden | 70% DPS | Bidik otomatis ke Unlit terdekat |
-| Boss | 85% fokus, 75% waktu dalam jangkauan, guard 2 vs hit rata-rata 9 x bonus, ditambah 2.0 s masuk dan 1.5 s transisi fase | GDD 16 |
-| DPS senjata satu target | Rumus per arketipe di `Data.weapon_dps` (Burn ledakan Lantern Bolt 30% x 1.3 pasif kelas; Orbit dibatasi kontak ulang 0.5 s) | GDD 5.2, 5.4, 6.1 |
+| `expert` | 16 arah plus diam, tiap arah dinilai di 3 horizon (0,15, 0,3, 0,6 s): tubuh Unlit, proyektil musuh (posisi diprediksi), telegraf dan zona bahaya (dibobot waktu sampai kena), dinding, tarikan Glint saat aman, jarak jangkau ke Warden dan boss. Rite ke kerumunan terpadat. Keputusan tiap 2 tick tanpa batas | Tag kelas lalu tag terbanyak, utamakan merge senjata, Fuse otomatis, reroll maks 2 per toko, kartu Temper dengan prioritas dan imbal hasil menurun, Max HP bila HP rendah |
+| `good` | Sama dengan `expert` ditambah batas manusia: keputusan tiap 15 tick (0,25 s), jeda persepsi ke aksi 9 tick (0,15 s), jadi reaksi efektif 0,15 sampai 0,4 s (waktu reaksi visual manusia sekitar 0,2 sampai 0,25 s ditambah memilih arah); hanya 8 Unlit terdekat yang dilacak; proyektil baru disadari dalam 5 u; 15% keputusan memakai arah terbaik kedua | Sama dengan `expert` |
+| `naive` | Lari dari Unlit terdekat dengan tarikan ke pusat, Rite ke Unlit terdekat (sama dengan QA `dodgerRandom`) | Beli tawaran terjangkau acak, kartu acak |
 
-## 4. Kurva per Pulse
+Batas bot dipilih dari angka reaksi manusia, bukan untuk mengejar persentase menang. Angka bot tidak pernah masuk sim. Perkiraan durasi run = waktu sim + 20 s per toko + 4 s per kartu Temper + 5 s per peti (target CD S-12: toko median 25 s atau kurang) [Asumsi].
 
-### 4.1 Profil `run_a_m1` (prototipe M1)
+## 3. Hasil bot, `run_a`, kelas `lantern`, 100 seed (contentHash ff51169c)
 
-| Pulse | Jenis | t | Durasi (s) | Unlit | Laju (/s) | Glint mentah | Glint diharapkan | Kumulatif | Level akhir | Beli di toko | Reroll | DPS ref |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | normal | 1 | 20 | 26 | 1.3 | 26 | 24 | 24 | 1 | 1 | 0 | 13 |
-| 2 | normal | 2 | 23 | 36 | 1.6 | 40 | 37 | 61 | 3 | 2 | 0 | 18 |
-| 3 | normal | 3 | 26 | 46 | 1.8 | 56 | 52 | 113 | 4 | 2 | 1 | 29 |
-| 4 | normal | 4 | 29 | 56 | 1.9 | 78 | 72 | 185 | 5 | 2 | 1 | 40 |
-| 5 | normal | 5 | 32 | 62 | 1.9 | 96 | 89 | 274 | 6 | 3 | 1 | 55 |
-| 6 | normal | 6 | 35 | 74 | 2.1 | 110 | 102 | 376 | 7 | 3 | 1 | 79 |
-| 7 | normal | 7 | 38 | 86 | 2.3 | 134 | 124 | 500 | 9 | 2 | 2 | 107 |
-| 8 | normal | 8 | 40 | 98 | 2.5 | 158 | 146 | 646 | 10 | 3 | 2 | 132 |
-| 9 | normal | 9 | 40 | 112 | 2.8 | 184 | 170 | 816 | 11 | 3 | 2 | 164 |
-| 10 | normal | 10 | 45 | 141 | 3.1 | 233 | 216 | 1031 | 13 | 0 | 0 | 200 |
+| Metrik | Target | good | naive | expert |
+|---|---|---|---|---|
+| Menang | good 30 sampai 60%, naive kalah | **51%** | **0%** | 81% |
+| Pulse kematian | Pulse non-boss di bawah 15% | P5 7%, P6 1%, P8 2%, P9 2%, boss 37% | P3 8%, P4 28%, P5 42%, P6 10%, P7+ 12% | boss 19% |
+| Durasi run menang (perkiraan) | 8 sampai 10 menit | 9,6 menit (sim 5,9) | | 9,5 menit |
+| Waktu bunuh Warden | 15 sampai 25 s | median 20,6 s (13 sampai 31) | 45 s | 18,1 s |
+| Waktu bunuh boss | 45 sampai 90 s | median 65,7 s (33 sampai 121) | | 60,6 s |
+| Pembelian per run | 16 sampai 22 | median 18 | 4 | 18 |
+| Level akhir | 11 sampai 13 | 11 | 4 | 11 |
+| Unlit hidup maks satu run | di bawah 120 dan pool 256 | 77 | 62 | 78 |
+| `poolOverflow` | 0 | 0 | 0 | 0 |
 
-Total pembelian: 21. Sisa Glint tak terpakai: 29.
+Tabel per Pulse, bot `good` (median dari run yang mencapai Pulse itu):
 
-### 4.2 Profil `run_a` (Tingkat A)
+| Pulse | Run | Puncak Unlit hidup | Puncak 6 s terakhir | Rata-rata 6 s terakhir | Glint terpungut | Damage diterima |
+|---|---|---|---|---|---|---|
+| 1 | 100 | 12 | 11 | 5,6 | 89% | 0 |
+| 2 | 100 | 17 | 17 | 10,9 | 88% | 0 |
+| 3 | 100 | 24,5 | 24 | 16,7 | 84% | 2 |
+| 4 | 100 | 26 | 24,5 | 16,8 | 86% | 0 |
+| 5 (Warden) | 100 | 24 | 20,5 | 12,0 | 82% | 14 |
+| 6 | 93 | 35 | 30 | 20,2 | 83% | 8 |
+| 7 | 92 | 40 | 34 | 23,4 | 81% | 8 |
+| 8 | 92 | 44 | 40 | 26,4 | 78% | 9 |
+| 9 | 90 | 49,5 | 42 | 29,1 | 76% | 9 |
+| 10 (boss) | 88 | 9,5 | | | 51% | 42 |
 
-| Pulse | Jenis | t | Durasi (s) | Unlit | Laju (/s) | Glint mentah | Glint diharapkan | Kumulatif | Level akhir | Beli di toko | Reroll | DPS ref |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | normal | 1 | 20 | 26 | 1.3 | 26 | 24 | 24 | 1 | 1 | 0 | 13 |
-| 2 | normal | 2 | 23 | 36 | 1.6 | 40 | 37 | 61 | 3 | 2 | 0 | 18 |
-| 3 | normal | 3 | 26 | 46 | 1.8 | 56 | 52 | 113 | 4 | 2 | 1 | 29 |
-| 4 | normal | 4 | 29 | 56 | 1.9 | 78 | 72 | 185 | 5 | 2 | 1 | 40 |
-| 5 | warden | 5 | 32 | 53 | 1.7 | 104 | 96 | 281 | 6 | 3 | 1 | 55 |
-| 6 | normal | 6 | 35 | 74 | 2.1 | 110 | 102 | 383 | 7 | 3 | 1 | 79 |
-| 7 | normal | 7 | 38 | 86 | 2.3 | 134 | 124 | 507 | 9 | 2 | 2 | 107 |
-| 8 | normal | 8 | 40 | 98 | 2.5 | 158 | 146 | 653 | 10 | 3 | 2 | 132 |
-| 9 | normal | 9 | 40 | 112 | 2.8 | 184 | 170 | 823 | 11 | 3 | 2 | 164 |
-| 10 | boss | 10 | boss | 30 |  | 30 | 30 | 853 | 12 | 0 | 0 | 200 |
+Bacaan:
+- Kepadatan memenuhi target CD: sekitar 40 Unlit di 6 detik terakhir Pulse 8, puncak 50 di Pulse 9, sekitar 25 di Pulse 4 sampai 5, Unlit pertama keluar 0,8 s setelah Pulse dibuka. Sebelum M2-01 bot yang sama hanya melihat puncak 21 di 6 detik terakhir Pulse 8.
+- Glint terpungut 76 sampai 89% (CD: radius lebih lega bila di bawah 70%). Bot naif 38 sampai 63% karena tidak mengejar Glint.
+- Sumber damage utama di Pulse biasa: proyektil Hawker. Di Pulse 5: Hawker, volley dan terjang Brass Collar. Di boss: Snuff Ring (terutama ganda), lalu Ember Rain.
+- Boss adalah ujian akhir: 42% run yang mencapainya kalah. Bot `good` jarang terluka di Pulse biasa (median 8 sampai 9 dari sekitar 40 HP), jadi target GDD 19 "HP tersisa turun ke sekitar 50% di Pulse 9" belum tercapai untuk bot ini. Manusia diperkirakan lebih sering terkena; dicek ulang dengan playtest dan telemetri M4.
+- Varians bot antar putaran sekitar plus minus 7 poin persentase untuk 100 seed. Sim GP masih berubah selama M2-05 (hasil `good` bergeser dari 44% ke 51% antara dua build dengan data sama). Ulangi bot setelah M2-05 selesai.
 
-Total pembelian: 21. Sisa Glint tak terpakai: 36.
+## 4. Perubahan angka M2-01 dan alasannya
 
-### 4.3 Profil `run_b` dan `run_c` (ringkas)
+| Angka | Sebelum | Sesudah | Alasan |
+|---|---|---|---|
+| Baris spawn per Pulse berwaktu | 1 baris per jenis, jendela seragam | + baris pembuka (4 sampai 6 swarmer di tau 0) + baris lonjakan (swarmer dasar x min(1,25, 0,4 + 0,1 t), Warden x 0,5, di 55 sampai 100% durasi, grup 4 sampai 7) | Spawner menaruh grup seragam per baris; kurva w(tau) GDD 3.2 (tekanan naik, lonjakan akhir) dibangun dari baris. Unlit pertama dalam 1 s (CD M1 4.1) |
+| Swarmer dasar `run_a` P1 sampai P9 | 26, 32, 36, 40, 36, 50, 56, 62, 70 | 18, 24, 28, 28, 30, 40, 46, 52, 58 | Sebagian jumlah pindah ke lonjakan. Total Unlit per Pulse naik 19 sampai 64% |
+| Shooter `run_a` P5 sampai P9, tank P5 | 6, 10, 12, 14, 16; 3 | 4, 12, 14, 17, 20; 2 | Ancaman jarak jauh di Pulse akhir; Pulse Warden diberi ruang |
+| `enemy_hp_lin`, `enemy_hp_quad` | 0,12, 0,006 | 0,18, 0,015 | Daya pemain naik sekitar 10 kali per run, HP Unlit dulu 2,6 kali: bot melihat Unlit akhir mati sebelum menyentuh pemain. t10 kini 3,83. Swarmer tetap mati 1 tembakan Lantern Bolt sampai t6 |
+| `enemy_dmg_lin` | 0,07 | 0,1 | Kontak dan proyektil akhir harus terasa (t10 = 1,9) |
+| Swarmer gerak, kontak | 2,6 u/s, 3 | 3,4 u/s, 4 | Pada 2,6 u/s (58% pemain) kerumunan tidak pernah memotong jalur kabur. 3,4 = 75% pemain, tetap bisa dihindari |
+| Charger jeda, terjang, gerak | 3 s, 6, 2,0 | 2,5 s, 7, 2,2 | Tekanan arah lebih sering |
+| Shooter jeda, kecepatan peluru, damage | 2,8 s, 5,5 u/s, 4 | 2,2 s, 6 u/s, 5 | Pemaksa gerak utama di Pulse biasa |
+| `warden_hound` HP, terjang | 380, 10 | 360, 8 | Satu terjang dulu sekitar 45% HP di Pulse 5; bot `good` mati 22% di Pulse 5. Kini 7%, Warden 21 s |
+| `boss_lantern` HP | 2000 | 2500 | Dengan kurva HP baru: t10 sekitar 9590 HP, median 66 s |
+| Snuff Ring | celah 60 derajat, 5 u/s, telegraf 1,0 s, dmg 9; ganda berjeda 0,8 s | celah 90 derajat, 4 u/s, telegraf 1,2 s, dmg 8; ganda berjeda 1,0 s | Celah lama hanya terjangkau dari sekitar 2 u dari boss (tidak adil, P2). Kini sekitar 4 u |
+| Ember Rain dmg | 10 | 9 | Boss membunuh lebih dari setengah run yang mencapainya |
+| Harga dasar Memento / senjata | 14/28/50/85, 16/34/70/130 | 18/36/65/110, 21/44/90/170 | Glint per run naik sekitar 34% (853 ke 1125 di model). Pembelian bot kembali ke 18 |
+| `xp_base`, `xp_per_level` | 15, 10 | 20, 13 | Sama x1,3: tetap sekitar 1 level per Pulse (level akhir 11 sampai 12) |
+| `pickup_radius_base` | 1,6 u | 2,0 u | Pulse padat menyebar Glint lebih luas; rasa memungut (CD) |
+| `glint_fly_speed` | 12 u/s tetap | puncak 20 u/s | Glint melesat |
+| `glint_fly_speed_start`, `glint_fly_accel` | tidak ada | 3 u/s, 60 u/s^2 | Mulai pelan lalu melesat, tiba sekitar 0,3 s dari tepi radius. Butuh kode GP (bagian 6) |
+| Smolder Boots `max_alive` | 6 | 4 | CD M1 4 [S]: maksimal 4 tambalan bara sekaligus (keterbacaan, K5) |
+| `spawn_mark_medium_group_min` | angka 3 di `spawner.ts` | `config.csv` 3 | Temuan LP M1 MAYOR 20 |
+| `low_hp_frac` | `LOW_HP_FRAC` 0,3 di `src/core/constants.ts` | `config.csv` 0,3 | Ambang balance milik GD (temuan LP M1, butir 2.3) |
+| Target GDD 19 | Warden 8 sampai 15 s, pembelian 12 sampai 18, bot wajar menang 50 sampai 65% | Warden 15 sampai 25 s, pembelian 16 sampai 22, bot baik 30 sampai 60%, durasi run 8 sampai 10 menit, kepadatan, Glint terpungut 70%+ | Selaras brief M2 dan GDD 4.3 (sekitar 2 pembelian per toko). Menutup pertanyaan terbuka M1-02 nomor 1 |
 
-- `run_b` (15 Pulse, B1 sampai 6 = C1 sampai 6, B7 sampai 12 = C8 sampai 13, B13 sampai 14 = C15 sampai 16 tanpa lobber): Total pembelian: 32. Sisa Glint tak terpakai: 48.
-- `run_c` (20 Pulse, 3 bioma): Total pembelian: 39. Sisa Glint tak terpakai: 55.
-- Catatan: DPS referensi B dan C tumbuh lebih cepat daripada HP musuh di paruh akhir (model tidak memodelkan kerumunan). Pertarungan `boss_lantern` di B t15 sekitar 38 s (di bawah target); `boss_bell` C t14 sekitar 48 s, `boss_vine` C t20 sekitar 47 s. Warden C: `warden_hound` t4 sekitar 19 s (di atas target, pemain baru punya 1 sampai 2 senjata), `warden_choir` t11 sekitar 10 s, `warden_bulwark` t17 sekitar 12 s. Ditinjau di M3 dengan bot.
+`content/data/biomes.csv`: `biome_market` memakai `arena_market` (diubah LD untuk M2-07; bot dijalankan di arena ini, tanpa tabrakan rintangan karena sim belum memakai rintangan).
 
-## 5. Kurva musuh
+## 5. Tingkat B (data siap, balance M3)
 
-| t | hp(t) | dm(t) | proc_scale | HP swarmer | HP charger | HP shooter | HP tank | Kontak swarmer | Kontak tank | Terjang charger |
+- `node tools/data/build-data.ts --tier B --out tests/out/game-data-b.json`: 0 error, 0 peringatan. Tingkat C juga 0 error.
+- Isi B: profil `run_b` 15 Pulse (Warden P4 `warden_hound`, P10 `warden_choir`, boss P15), 3 kelas (`lantern`, `bell` 60 Silt, `blade` 40 Silt, unlock lewat `meta_unlocks`), 8 senjata, 22 Memento, 6 tag dengan 18 ambang sinergi, 3 Rite, 14 kartu Temper, Silt dari Warden dan boss, 5 baris `meta_unlocks` B.
+- Bot `good`, 20 seed per kelas, `run_b`: `lantern` menang 80%, `bell` 55% (Warden 49 s, boss 103 s: lemah melawan target tunggal), `blade` 95%. Durasi run menang 14,6 sampai 15,9 menit (target B 15 sampai 20). Tidak ada timeout atau overflow. Angka ini hanya bukti data B bisa dimainkan; tuning B di M3 (HP boss B t15 sekitar 16150 [Asumsi], `bell` perlu daya satu target).
+
+## 6. Kebutuhan ke peran lain
+
+| Untuk | Isi |
+|---|---|
+| GP | Baca `cfg.glintFlySpeedStartUPerTick` dan `cfg.glintFlyAccel` (u/s^2, bagi `TICK_RATE`^2 untuk u/tick^2) di `pickups.ts`: kecepatan butir mulai dari start, naik per tick sampai `glintFlySpeedUPerTick`. Ganti angka 3 di `spawner.ts` `markRadiusFor` dengan `cfg.spawnMarkMediumGroupMin`. Ganti `LOW_HP_FRAC` di `signals.ts` dengan `cfg.lowHpFrac`. Semua kunci punya default perilaku lama |
+| GP (sudah diperbaiki GD, mohon ditinjau) | `projectiles.ts`: boomerang mereset memori hit setiap tick saat kembali (karena `rangeLeft` tetap di bawah 0), sehingga Homeward Blade mengenai target besar sekali per tick (bot: 424 DPS ke boss, boss mati 7,5 s). Perbaikan satu blok: reset hanya saat berbalik (`phase` 0 ke 1) |
+| LP | Kunci `low_hp_frac` dan `spawn_mark_medium_group_min` di `config.csv` (skema `src/content/tables/config.ts`). `LOW_HP_FRAC` di `src/core/constants.ts` boleh dihapus setelah GP memakai kunci data. Kunci `glint_fly_accel` memakai `col.float` karena skema belum punya satuan u/s^2 |
+| QA | Ulangi `npx vitest run tests/unit/qa/bot-real-data.test.ts` setelah data ini. Bot GD ada di `tools/balance/bot/` bila QA ingin bot yang menghindar dan berbelanja sesuai tag |
+
+## 7. Model ekonomi (referensi)
+
+Model membaca semua angka dari CSV. Daya pemain di model adalah asumsi [Asumsi] (bagian asumsi tidak berubah dari M1-02: pungut 85%, reroll 0 sampai 2, Memento +4% DPS, kartu 50% ofensif). Bot di bagian 3 menggantikan model untuk keputusan balance; model tetap dipakai untuk kurva harga dan Glint.
+
+### 7.1 Profil `run_a`
+
+| Pulse | Jenis | t | Durasi (s) | Unlit | Laju (/s) | Glint mentah | Glint diharapkan | Kumulatif | Level akhir | Beli di toko |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 1.00 | 1.00 | 1.0 | 6 | 16 | 10 | 60 | 3.0 | 7.0 | 6.0 |
-| 2 | 1.13 | 1.07 | 1.2 | 7 | 18 | 11 | 68 | 3.2 | 7.5 | 6.4 |
-| 3 | 1.26 | 1.14 | 1.4 | 8 | 20 | 13 | 76 | 3.4 | 8.0 | 6.8 |
-| 4 | 1.41 | 1.21 | 1.6 | 8 | 23 | 14 | 85 | 3.6 | 8.5 | 7.3 |
-| 5 | 1.58 | 1.28 | 1.8 | 9 | 25 | 16 | 95 | 3.8 | 9.0 | 7.7 |
-| 6 | 1.75 | 1.35 | 2.0 | 10 | 28 | 18 | 105 | 4.1 | 9.5 | 8.1 |
-| 7 | 1.94 | 1.42 | 2.2 | 12 | 31 | 19 | 116 | 4.3 | 9.9 | 8.5 |
-| 8 | 2.13 | 1.49 | 2.4 | 13 | 34 | 21 | 128 | 4.5 | 10.4 | 8.9 |
-| 9 | 2.34 | 1.56 | 2.6 | 14 | 38 | 23 | 141 | 4.7 | 10.9 | 9.4 |
-| 10 | 2.57 | 1.63 | 2.8 | 15 | 41 | 26 | 154 | 4.9 | 11.4 | 9.8 |
-| 12 | 3.05 | 1.77 | 3.2 | 18 | 49 | 30 | 183 | 5.3 | 12.4 | 10.6 |
-| 15 | 3.86 | 1.98 | 3.8 | 23 | 62 | 39 | 231 | 5.9 | 13.9 | 11.9 |
-| 17 | 4.46 | 2.12 | 4.2 | 27 | 71 | 45 | 267 | 6.4 | 14.8 | 12.7 |
-| 20 | 5.45 | 2.33 | 4.8 | 33 | 87 | 54 | 327 | 7.0 | 16.3 | 14.0 |
+| 1 | normal | 1 | 20 | 31 | 1,6 | 31 | 29 | 29 | 1 | 1 |
+| 2 | normal | 2 | 23 | 46 | 2,0 | 50 | 46 | 75 | 2 | 1 |
+| 3 | normal | 3 | 26 | 62 | 2,4 | 72 | 67 | 142 | 4 | 3 |
+| 4 | normal | 4 | 29 | 71 | 2,4 | 93 | 86 | 228 | 5 | 2 |
+| 5 | warden | 5 | 32 | 63 | 2,0 | 108 | 100 | 327 | 6 | 2 |
+| 6 | normal | 6 | 35 | 113 | 3,2 | 153 | 142 | 469 | 7 | 3 |
+| 7 | normal | 7 | 38 | 137 | 3,6 | 189 | 175 | 644 | 9 | 3 |
+| 8 | normal | 8 | 40 | 161 | 4,0 | 226 | 209 | 853 | 10 | 3 |
+| 9 | normal | 9 | 40 | 184 | 4,6 | 262 | 242 | 1095 | 12 | 4 |
+| 10 | boss | 10 | boss | 30 | | 30 | 30 | 1125 | 12 | 0 |
 
-## 6. Harga
+Total pembelian model: 22 (bot `good`: 18). `run_b` model: 37 pembelian; `run_c`: 44 (ditinjau M3).
 
-| t | Memento P | Memento F | Memento R | Memento Fb | Senjata I | Senjata II | Senjata III | Senjata IV | Reroll 1, 2, 3 | Rata-rata tawaran | Jual senjata I |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 14 | 28 | 50 | 85 | 16 | 34 | 70 | 130 | 2, 3, 4 | 18.6 | 6 |
-| 3 | 16 | 32 | 58 | 99 | 19 | 39 | 81 | 151 | 3, 4, 5 | 21.6 | 7 |
-| 5 | 18 | 37 | 66 | 112 | 21 | 45 | 92 | 172 | 4, 5, 6 | 31.7 | 8 |
-| 7 | 21 | 41 | 74 | 126 | 24 | 50 | 104 | 192 | 5, 6, 7 | 44.8 | 9 |
-| 9 | 23 | 46 | 82 | 139 | 26 | 56 | 115 | 213 | 6, 7, 8 | 49.7 | 10 |
-| 10 | 24 | 48 | 86 | 146 | 28 | 58 | 120 | 224 | 6, 7, 8 | 52.1 | 11 |
-| 12 | 26 | 53 | 94 | 160 | 30 | 64 | 132 | 244 | 7, 8, 9 | 68.3 | 12 |
-| 15 | 30 | 59 | 106 | 180 | 34 | 72 | 148 | 276 | 9, 10, 11 | 88.7 | 13 |
-| 19 | 34 | 68 | 122 | 207 | 39 | 83 | 171 | 317 | 11, 12, 13 | 102.1 | 15 |
+### 7.2 Kurva musuh
 
-## 7. DPS senjata
+| t | hp(t) | dm(t) | HP swarmer | HP charger | HP shooter | HP tank | Kontak swarmer | Terjang charger |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 1,00 | 1,00 | 6 | 16 | 10 | 60 | 4,0 | 7,0 |
+| 3 | 1,42 | 1,20 | 9 | 23 | 14 | 85 | 4,8 | 8,4 |
+| 5 | 1,96 | 1,40 | 12 | 31 | 20 | 118 | 5,6 | 9,8 |
+| 7 | 2,62 | 1,60 | 16 | 42 | 26 | 157 | 6,4 | 11,2 |
+| 9 | 3,40 | 1,80 | 20 | 54 | 34 | 204 | 7,2 | 12,6 |
+| 10 | 3,83 | 1,90 | 23 | 61 | 38 | 230 | 7,6 | 13,3 |
+| 15 | 6,46 | 2,40 | 39 | 103 | 65 | 388 | 9,6 | 16,8 |
+| 20 | 9,84 | 2,90 | 59 | 157 | 98 | 590 | 11,6 | 20,3 |
 
-| Senjata | Tk | Tier I | Tier II | Tier III | Tier IV |
-|---|---|---|---|---|---|
-| `lantern_bolt` | A | 13.1 | 20.7 | 32.0 | 49.4 |
-| `splinter_shot` | A | 8.6 | 13.5 | 21.0 | 32.3 |
-| `arc_blade` | A | 12.2 | 19.2 | 29.8 | 45.8 |
-| `orbit_shards` | A | 6.2 | 9.9 | 15.3 | 23.5 |
-| `chain_spark` | A | 7.6 | 12.0 | 18.6 | 28.6 |
-| `returning_glaive` | A | 10.0 | 15.8 | 24.4 | 37.6 |
-| `echo_bell` | B | 4.8 | 7.5 | 11.7 | 18.0 |
-| `tithe_coin` | B | 7.8 | 12.3 | 19.0 | 29.3 |
+### 7.3 Harga
 
-Catatan: `orbit_shards` dan `chain_spark` rendah untuk satu target karena perannya kerumunan (pengali kerumunan tidak dimodelkan). `echo_bell` (B) paling rendah satu target; peran kontrol kerumunan, tinjau saat Tingkat B.
+| t | Memento P | F | R | Fb | Senjata I | II | III | IV | Reroll 1, 2, 3 |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 18 | 36 | 65 | 110 | 21 | 44 | 90 | 170 | 2, 3, 4 |
+| 5 | 24 | 48 | 86 | 145 | 28 | 58 | 119 | 224 | 4, 5, 6 |
+| 9 | 30 | 59 | 107 | 180 | 34 | 72 | 148 | 279 | 6, 7, 8 |
+| 15 | 38 | 76 | 138 | 233 | 45 | 93 | 191 | 360 | 9, 10, 11 |
 
-## 8. Target GDD 19
+### 7.4 Target model (`model.py check`)
 
-| Target | Status | Nilai model |
-|---|---|---|
-| Starter one-shots swarmer to t6 | PASS | one-shot up to t8 |
-| Purchases per run A 12-18 | WARN | 21 (run_a) |
-| Purchases per run M1 12-18 | WARN | 21 (run_a_m1) |
-| Warden kill 8-15 s | WARN | 15.5 s at ref DPS 55 |
-| Boss fight 45-90 s | PASS | 49 s at ref DPS 200 |
-| About 1 level per Pulse (A end ~ L11-13) | PASS | L12 |
-| Pulse 1 buys at least 1 item | PASS | 24 Glint vs 14 |
+Semua PASS: swarmer 1 tembakan sampai t6, pembelian 22 (16 sampai 22), Warden 18,3 s pada DPS referensi, boss 82 s, level akhir 12, Pulse 1 memberi 29 Glint (harga termurah 18).
 
-## 9. Keputusan di M1-02
+## 8. Pertanyaan terbuka
 
-1. HP `boss_lantern` 1600 menjadi 2000 (bagian 2).
-2. `content_tier` opsional di `effects.csv`, `waves.csv`, `wave_spawns.csv` (data-schema 0.1), skema kode diubah di `src/content/tables/effects.ts` dan `run.ts`, menunggu review LP.
-3. `waves.csv` dan `wave_spawns.csv` dihasilkan model. Aturan spawn: swarmer grup 3 sampai 6 (3 sampai 5 di t1 sampai 3), charger dan shooter 1 sampai 2 (masuk setelah 10% dan 15% Pulse), tank 1 (30% sampai 90%), exploder 1 sampai 2, summoner 1 (20% sampai 85%), lobber 1 (20% sampai 95%). Baris tetesan boss: swarmer, grup 2, `count` nominal.
-4. `stats.csv` `barrier_recharge` min 0 (bukan 4): dasar 0 berarti tidak mengisi ulang, dan jepit min 4 akan membuatnya mengisi tiap 4 s. Batas 4 s GDD berlaku untuk nilai bukan nol (semua sumber 10 atau 14 s).
-5. Bioma 2 dan 3 memakai `arena_market` sampai LD membuat arena sendiri. `biome_market` memakai `arena_proto` untuk M1.
-6. Pola `summon` boss (Moth Call, Call Choir, Seed Pods) memakai telegraf 1.0 s agar lolos `telegraph_min_boss_s`; tanda spawn 0.8 s berjalan di dalamnya.
-7. `desc_key` kartu crit dan pickup disamakan dengan string WR (`card.crit`, `card.pickup`).
-
-## 10. Pertanyaan terbuka
-
-1. Target pembelian per run (GDD 19: 12 sampai 18) bertentangan dengan GDD 4.3 (2 sampai 3 per toko). Usulan 16 sampai 22 setelah bot M2.
-2. LP: setuju dengan kolom `content_tier` opsional di tiga tabel? Alternatif: validator pemilik efek dan join profil yang sadar tingkat.
-3. GP: kunci `params` di data-schema 5 menjadi isi registri; bila nama lain lebih cocok, tulis di `docs/specs/gp-*.md`.
-4. Dua sumber durasi knockback (`config.csv knockback_s` dan `statuses.csv knockback.duration`, keduanya 0.1). Usulan: sim memakai `config`.
-5. `boss_hp_mult` Crack 4 dikali bersama `enemy_hp_mult` Crack 1? Usulan GD: ya (kumulatif), dicatat untuk M3.
-6. WR: kunci `affix.hasted` dan `affix.volley` belum ada di `content/strings/en.json`.
+1. Boss mengalahkan 42% run bot `good` yang mencapainya, sedangkan Pulse biasa hampir tanpa luka bagi bot ini. Bila playtest manusia menunjukkan Pulse biasa sudah berat, turunkan HP boss dulu (2500 ke 2200) sebelum menyentuh Pulse.
+2. Target GDD 19 "HP tersisa sekitar 50% di Pulse 9" belum terpenuhi oleh bot `good`. Dipertahankan sebagai target manusia; diukur ulang dengan telemetri M4.
+3. Hasil bot perlu diulang setelah GP menyelesaikan M2-05 (knockback, affix, event) karena perilaku sim masih bergeser.

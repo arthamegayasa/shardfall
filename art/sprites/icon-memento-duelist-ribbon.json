@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-duelist-ribbon",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Duelist Ribbon: a blue ribbon bow with a gold knot and two trailing tails. Key: bow-tie loops over a V of tails.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "cc.........bb.",
+          "cBBb.....bBBb.",
+          "cBcBb...bBcBb.",
+          "cBBcBbybBcBBb.",
+          "cBBBcgwgcBBBb.",
+          "cBBBBgggBBBBb.",
+          "cBBbb.gbBBBBb.",
+          "bbb..cBb..bbb.",
+          "....cBb.cBb...",
+          "...cBb...cBb..",
+          "..cBb.....cBb.",
+          "..bb.......bb."
+        ]
+      ]
+    }
+  }
+}

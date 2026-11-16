@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- typed array hot loops, coding-standards 1.3 */
 // Glint pieces: drop, floor cap merge, magnet, fly, collect, and the end of Pulse sweep (GDD 4.1, 4.2).
 
-import { PickupKind, SimEventType } from '../../core/index.ts';
+import { PickupKind, SimEventType, TICK_RATE } from '../../core/index.ts';
 import { clampInside } from '../arena.ts';
 import type { Point } from '../arena.ts';
 import { EDGE_INSET_U, GLINT_STREAK_RESET_TICKS } from '../capacity.ts';
@@ -9,6 +9,7 @@ import { Trigger } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { statOf } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
+import { cfgOpt } from '../sim-data.ts';
 import { addXp } from './xp.ts';
 
 const tmp: Point = { x: 0, y: 0 };
@@ -79,9 +80,16 @@ export function dropGlint(ctx: SimCtx, x: number, y: number, amount: number): vo
   pk.amount[s] = amount;
   pk.magnetized[s] = 0;
   pk.dropTick[s] = ctx.world.tick;
+  pk.flyTicks[s] = 0;
+  pk.flySpeed[s] = 0;
   ctx.events.push(SimEventType.GlintDropped, tmp.x, tmp.y, amount, 0, 0);
 }
 
+/**
+ * Glint pull (GDD 4.2, CD M1 4 "Glint melesat"): a piece inside the pickup radius starts flying at
+ * glint_fly_speed and speeds up by glint_fly_accel (u/s^2) each tick, capped at glint_fly_speed_max.
+ * Both keys are optional data (gp-requests-m2.md); without them the speed stays constant (M1).
+ */
 export function updatePickups(ctx: SimCtx): void {
   const { world, cfg, sd } = ctx;
   const pk = world.pickups;
@@ -91,6 +99,10 @@ export function updatePickups(ctx: SimCtx): void {
   const collect = p.radius + cfg.glintCollectDistAddU;
   const collect2 = collect * collect;
   const speed = cfg.glintFlySpeedUPerTick;
+  const accelRaw = cfgOpt(cfg, 'glintFlyAccel');
+  const accel = accelRaw !== null && accelRaw > 0 ? accelRaw / (TICK_RATE * TICK_RATE) : 0;
+  const maxRaw = cfgOpt(cfg, 'glintFlySpeedMaxUPerTick');
+  const vmax = maxRaw !== null && maxRaw > 0 ? maxRaw : Infinity;
   for (let i = 0; i < pk.highWater; i++) {
     if (pk.alive[i] === 0) continue;
     pk.prevX[i] = pk.x[i]!;
@@ -98,14 +110,21 @@ export function updatePickups(ctx: SimCtx): void {
     let dx = p.x - pk.x[i]!;
     let dy = p.y - pk.y[i]!;
     let d2 = dx * dx + dy * dy;
-    if (pk.magnetized[i] === 0 && d2 <= r2) pk.magnetized[i] = 1;
+    if (pk.magnetized[i] === 0 && d2 <= r2) {
+      pk.magnetized[i] = 1;
+      pk.flyTicks[i] = 0;
+      pk.flySpeed[i] = speed;
+      ctx.events.push(SimEventType.GlintPulled, pk.x[i]!, pk.y[i]!, pk.amount[i]!, 0, 0);
+    }
     if (pk.magnetized[i] === 1) {
       const d = Math.sqrt(d2);
+      pk.flyTicks[i] = pk.flyTicks[i]! + 1;
       if (d > 0) {
-        const step = Math.min(speed, d);
+        const step = Math.min(pk.flySpeed[i]!, d);
         pk.x[i] = pk.x[i]! + (dx / d) * step;
         pk.y[i] = pk.y[i]! + (dy / d) * step;
       }
+      if (accel > 0) pk.flySpeed[i] = Math.min(vmax, pk.flySpeed[i]! + accel);
       dx = p.x - pk.x[i]!;
       dy = p.y - pk.y[i]!;
       d2 = dx * dx + dy * dy;

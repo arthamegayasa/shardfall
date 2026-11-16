@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  AffixAction,
   EnemyRank,
   HitKind,
+  ImpactTier,
   RejectReason,
   SimEventType,
   SourceKind,
@@ -25,7 +27,7 @@ import { resolve } from 'node:path';
 import { buildGameData } from '../../../src/content/index.ts';
 import type { RawGameData } from '../../../src/content/index.ts';
 import { fixtureGameData } from '../../support/fixture-data.ts';
-import { events, realCues, routes } from './audio-fixtures.ts';
+import { STINGER_IDS, events, realCues, routes } from './audio-fixtures.ts';
 import type { EventRow } from './audio-fixtures.ts';
 
 /** D dorian Glint ladder of mus.biome1.pulse as MIDI notes. */
@@ -42,7 +44,7 @@ interface Setup {
 function setup(tier: 'A' | 'B' = 'A'): Setup {
   const data = fixtureGameData(tier);
   const cues = realCues();
-  const map = createEventMap(data, cues, routes);
+  const map = createEventMap(data, cues, routes, STINGER_IDS);
   const out = createTriggerList(cues.cues.length);
   return {
     data,
@@ -61,7 +63,12 @@ function setup(tier: 'A' | 'B' = 'A'): Setup {
 
 describe('routes.json', () => {
   it('references only existing cues and routes or silences every SimEventType', () => {
-    expect(validateRoutes(routes, realCues())).toEqual([]);
+    expect(validateRoutes(routes, realCues(), new Set(STINGER_IDS))).toEqual([]);
+  });
+
+  it('rejects stingers that name no song', () => {
+    const bad = { ...routes, stingers: { ...routes.stingers, byEvent: { PulseStarted: 'mus.stinger.nope' } } };
+    expect(validateRoutes(bad, realCues(), new Set(STINGER_IDS)).join()).toMatch(/unknown song/);
   });
 
   it('gives every weapon, enemy, Rite, and effect of the data a cue or a declared silence', () => {
@@ -136,6 +143,19 @@ describe('event map', () => {
     expect(dmg(packDamageFlags(false, false, 0, HitKind.Area), encodeSource(SourceKind.Rite, 0))).toEqual([]);
   });
 
+  it('gives heavy and crushing hits the heavier hit cue (impact tier, M2-05)', () => {
+    const s = setup();
+    const bolt = encodeSource(SourceKind.Weapon, s.data.index.weapon('test_bolt'));
+    const dmg = (b: number): string[] => s.run([{ type: SimEventType.EnemyDamaged, a: 5, b, c: bolt }]);
+    const hit = (impact: number): number => packDamageFlags(false, false, 0, HitKind.Projectile, impact);
+    expect(dmg(hit(ImpactTier.Light))).toEqual(['sfx.weapon.hit']);
+    expect(dmg(hit(ImpactTier.Medium))).toEqual(['sfx.weapon.hit']);
+    expect(dmg(hit(ImpactTier.Heavy))).toEqual(['sfx.weapon.hit_heavy']);
+    expect(dmg(hit(ImpactTier.Crushing))).toEqual(['sfx.weapon.hit_heavy']);
+    // Crits keep their own cue whatever the weight.
+    expect(dmg(packDamageFlags(true, false, 0, HitKind.Projectile, ImpactTier.Crushing))).toEqual(['sfx.weapon.hit_crit']);
+  });
+
   it('coalesces same-cue events of one frame into one trigger with a hit count and mean x', () => {
     const s = setup();
     const a = s.data.index.enemy('test_swarmer');
@@ -186,12 +206,76 @@ describe('event map', () => {
     ]);
   });
 
-  it('casts the Rite and schedules its impact with a delay', () => {
+  it('casts the Rite at the throw and blasts where RiteLanded says it landed', () => {
     const s = setup();
-    const ids = s.run([{ type: SimEventType.RiteCast, a: s.data.index.rite('test_flare'), x: 3 }]);
-    expect(ids).toEqual(['sfx.rite.cast.lantern', 'sfx.rite.impact.lantern']);
-    expect(s.out.delaySec[1]).toBeCloseTo(0.35, 10);
-    expect(s.out.x[1]).toBe(3);
+    const rite = s.data.index.rite('test_flare');
+    expect(s.run([{ type: SimEventType.RiteCast, a: rite, x: 3 }])).toEqual(['sfx.rite.cast.lantern']);
+    expect(s.run([{ type: SimEventType.RiteLanded, a: rite, x: 5, b: 2, c: 4 }])).toEqual(['sfx.rite.impact.lantern']);
+    expect(s.out.x[0]).toBe(5);
+    expect(s.out.delaySec[0]).toBe(0);
+  });
+
+  it('gives each Paper Sun pattern its own telegraph sound', () => {
+    // The unit fixtures have no boss patterns: use the build data (ids only, no balance numbers).
+    const raw = JSON.parse(
+      readFileSync(resolve(import.meta.dirname, '../../../content/generated/game-data.json'), 'utf8'),
+    ) as RawGameData;
+    const data = buildGameData(raw);
+    const cues = realCues();
+    const map = createEventMap(data, cues, routes, STINGER_IDS);
+    const out = createTriggerList(cues.cues.length);
+    const s = {
+      out,
+      run(rows: readonly EventRow[]): string[] {
+        out.reset();
+        map.map(events(rows), out, 10, LADDER);
+        const ids: string[] = [];
+        for (let i = 0; i < out.count; i++) ids.push(cues.cues[out.cue[i] ?? -1]?.id ?? '?');
+        return ids;
+      },
+    };
+    const bp = (id: string): number =>
+      encodeSource(SourceKind.BossPattern, data.bossPatterns.findIndex((p) => p.id === id));
+    const start = (id: string): string[] =>
+      s.run([{ type: SimEventType.TelegraphStarted, a: TelegraphKind.BossArea, b: 60, c: bp(id) }]);
+    const resolveOf = (id: string): string[] =>
+      s.run([{ type: SimEventType.TelegraphResolved, a: TelegraphKind.BossArea, c: bp(id) }]);
+    expect(start('ember_rain_5')).toEqual(['sfx.boss.ember_rain.windup']);
+    expect(start('ember_rain_8')).toEqual(['sfx.boss.ember_storm.windup']);
+    expect(resolveOf('ember_rain_8')).toEqual(['sfx.boss.ember_storm.impact']);
+    expect(start('snuff_ring')).toEqual(['sfx.boss.snuff_ring.windup']);
+    expect(s.out.semis[0]).toBe(0);
+    expect(start('snuff_ring_double')).toEqual(['sfx.boss.snuff_ring.windup']);
+    expect(s.out.semis[0]).toBe(-2);
+    expect(resolveOf('snuff_ring_double')).toEqual(['sfx.boss.snuff_ring.wave_double']);
+    expect(start('lantern_lanes')).toEqual(['sfx.boss.lanes.windup']);
+    expect(start('moth_call')).toEqual(['sfx.boss.moth_call.windup']);
+    expect(resolveOf('moth_call')).toEqual([]);
+  });
+
+  it('maps Warden affix actions (AffixTriggered) per action', () => {
+    const s = setup();
+    const at = (b: number): string[] => s.run([{ type: SimEventType.AffixTriggered, a: 0, b, x: 2 }]);
+    expect(at(AffixAction.ShellBroken)).toEqual(['sfx.warden.shell_break']);
+    expect(at(AffixAction.ShellUp)).toEqual(['sfx.warden.shell_up']);
+    expect(at(AffixAction.Blink)).toEqual(['sfx.warden.blink']);
+    // Haste already sounds from AffixApplied in the same tick; brood from its summon telegraph.
+    expect(at(AffixAction.Haste)).toEqual([]);
+    expect(at(AffixAction.Brood)).toEqual([]);
+  });
+
+  it('keeps hit stop, knockback, dissolve, pattern start, and Glint pull silent', () => {
+    const s = setup();
+    for (const type of [
+      SimEventType.HitStop,
+      SimEventType.EnemyKnockedBack,
+      SimEventType.EnemyDissolved,
+      SimEventType.BossPatternStarted,
+      SimEventType.GlintPulled,
+    ]) {
+      expect(s.run([{ type }]), String(type)).toEqual([]);
+    }
+    expect(s.run([{ type: SimEventType.EnemyExploded, x: 1 }])).toEqual(['sfx.enemy.exploder.blast']);
   });
 
   it('suppresses RiteReady right after PulseStarted', () => {
@@ -215,15 +299,45 @@ describe('event map', () => {
     expect(s.run([{ type: SimEventType.CommandRejected, a: RejectReason.WrongPhase }])).toEqual([]);
   });
 
-  it('maps Pulse flow, Warden arrival, and run end to SFX and stingers', () => {
+  it('maps Pulse flow and Warden arrival to SFX, and signals the stinger songs', () => {
     const s = setup();
-    expect(s.run([{ type: SimEventType.PulseStarted }])).toEqual(['sfx.pulse.start_wave', 'mus.stinger.pulse_start']);
-    expect(s.run([{ type: SimEventType.PulseEnded }])).toEqual(['sfx.pulse.end_flash', 'mus.stinger.pulse_end']);
-    expect(s.run([{ type: SimEventType.WardenSpawned }])).toEqual(['sfx.warden.arrive', 'mus.stinger.warden']);
-    expect(s.run([{ type: SimEventType.RunEnded, a: 0 }])).toEqual(['mus.stinger.defeat']);
-    expect(s.run([{ type: SimEventType.RunEnded, a: 1 }])).toEqual(['mus.stinger.victory']);
+    const stingers = (): string[] => {
+      const sig = s.map.signals;
+      return Array.from(sig.stingers.subarray(0, sig.stingerCount), (i) => STINGER_IDS[i] ?? '?');
+    };
+    expect(s.run([{ type: SimEventType.PulseStarted }])).toEqual(['sfx.pulse.start_wave']);
+    expect(stingers()).toEqual(['mus.stinger.pulse_start']);
+    expect(s.run([{ type: SimEventType.PulseEnded }])).toEqual(['sfx.pulse.end_flash']);
+    expect(stingers()).toEqual(['mus.stinger.pulse_end']);
+    expect(s.run([{ type: SimEventType.WardenSpawned }])).toEqual(['sfx.warden.arrive']);
+    expect(stingers()).toEqual(['mus.stinger.warden']);
+    s.run([{ type: SimEventType.RunEnded, a: 0 }]);
+    expect(stingers()).toEqual(['mus.stinger.defeat']);
+    s.run([{ type: SimEventType.RunEnded, a: 1 }]);
+    expect(stingers()).toEqual(['mus.stinger.victory']);
+    s.run([{ type: SimEventType.RunEnded, a: 2 }]);
+    expect(stingers()).toEqual([]);
     expect(s.run([{ type: SimEventType.ItemMerged, b: 3 }])).toEqual(['ui.shop.merge']);
     expect(s.out.semis[0]).toBe(7);
+  });
+
+  it('signals boss stingers and the phase rise; the boss stinger replaces the Pulse-end one', () => {
+    const s = setup();
+    const stingers = (): string[] => {
+      const sig = s.map.signals;
+      return Array.from(sig.stingers.subarray(0, sig.stingerCount), (i) => STINGER_IDS[i] ?? '?');
+    };
+    s.run([{ type: SimEventType.PulseStarted, b: 2 }]);
+    s.run([{ type: SimEventType.BossSpawned }]);
+    expect(stingers()).toEqual(['mus.stinger.boss_intro']);
+    s.run([{ type: SimEventType.BossPhaseChanged, a: 2, b: 1 }]);
+    expect(stingers()).toEqual(['mus.stinger.boss_phase']);
+    expect(s.map.signals.bossPhase).toBe(2);
+    s.run([{ type: SimEventType.BossEnraged }]);
+    expect(stingers()).toEqual(['mus.stinger.boss_phase']);
+    expect(s.map.signals.bossPhase).toBe(-1);
+    s.run([{ type: SimEventType.BossKilled }, { type: SimEventType.PulseEnded }]);
+    expect(stingers()).toEqual(['mus.stinger.boss_defeated']);
   });
 
   it('raises signals for low HP and player death', () => {

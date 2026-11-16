@@ -23,3 +23,8 @@ syn_edge_2a,syn_edge_2,on_hit,target_within:2.5,,,,,none,hit_mod,mode=bonus;valu
 syn_edge_2b,syn_edge_2,on_hit,target_within:2.5,,,,,none,apply_status,status=knockback;value=0.5
 syn_edge_4a,syn_edge_4,on_crit,,,,,,none,spawn_projectile,pattern=aimed;count=1;range=3;pierce=99;dmg_frac=0.5;kind=melee;speed=15
 syn_edge_6a,syn_edge_6,on_crit,,,,,,none,buff,stats=attack_speed_pct:5|move_speed:3;duration=3;max_stacks=10;refresh=1
+pt_1_1,pt_1,on_hit,every_nth:2@per_target,,,,,none,hit_mod,mode=bonus;value=1
+pt_2_1,pt_2,on_hit,every_nth:2@per_target,,,,,none,hit_mod,mode=bonus;value=1
+pt_3_1,pt_3,on_hit,every_nth:2@per_target,,,,,none,hit_mod,mode=bonus;value=1
+pt_4_1,pt_4,on_hit,every_nth:2@per_target,,,,,none,hit_mod,mode=bonus;value=1
+pt_5_1,pt_5,on_hit,every_nth:2@per_target,,,,,none,hit_mod,mode=bonus;value=1

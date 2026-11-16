@@ -35,9 +35,17 @@ function everyNth(ctx: SimCtx, eff: EffectSim, c: ConditionSim, target: number):
     return v % n === 0;
   }
   if (c.scope === 2) {
+    if (target < 0) return false;
+    const slot = run.targetSlotOf[eff.index] ?? -1;
+    if (slot < 0) {
+      // More active per_target effects than counter slots (architecture 8.1: max 4 per run): the
+      // condition fails deterministically and is counted, never silently (LP review M1, MAYOR 19).
+      ctx.poolOverflow++;
+      return false;
+    }
     const cap = ctx.world.enemies.capacity;
-    const i = c.targetCounter * cap + target;
-    if (target < 0 || c.targetCounter < 0 || i >= run.targetCounter.length) return false;
+    const i = slot * cap + target;
+    if (i >= run.targetCounter.length) return false;
     const serial = ctx.world.enemies.serial[target] ?? 0;
     if (run.targetCounterSerial[i] !== serial) {
       run.targetCounterSerial[i] = serial;

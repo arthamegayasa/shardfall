@@ -1,0 +1,39 @@
+{
+  "id": "fx-spark",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan"
+  ],
+  "status": "final",
+  "note": "Hit spark particle (player hit on Unlit). kept-white, 3 frames shrinking. Pushed outward by src/render/vfx.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 3,
+      "loop": false,
+      "frames": [
+        [
+          ".w.",
+          "www",
+          ".w."
+        ],
+        [
+          "w.w",
+          ".w.",
+          "w.w"
+        ],
+        [
+          "w"
+        ]
+      ]
+    }
+  }
+}

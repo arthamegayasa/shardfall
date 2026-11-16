@@ -1,0 +1,30 @@
+{
+  "id": "icon-tag-echo",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Echo tag: a small cyan bell with a clapper. Key: bell dome on a flat lip.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..wc..",
+          ".wcBb.",
+          ".cBBb.",
+          "cBBBBb",
+          "bbbbbb",
+          "..wb.."
+        ]
+      ]
+    }
+  }
+}

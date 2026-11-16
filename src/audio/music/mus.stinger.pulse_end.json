@@ -1,0 +1,123 @@
+{
+  "id": "mus.stinger.pulse_end",
+  "oneShot": true,
+  "tailSec": 1.8,
+  "bpm": 250,
+  "meter": [
+    4,
+    4
+  ],
+  "stepsPerBeat": 4,
+  "key": {
+    "root": "D",
+    "mode": "major"
+  },
+  "form": [
+    "A"
+  ],
+  "sections": {
+    "A": {
+      "chords": [
+        "D"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "b1",
+      "instrument": "glass_bell",
+      "gainDb": -14,
+      "send": {
+        "hall": 0.55
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "D4:16"
+        ]
+      }
+    },
+    {
+      "id": "b2",
+      "instrument": "glass_bell",
+      "gainDb": -15,
+      "send": {
+        "hall": 0.55
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:1 A4:15"
+        ]
+      }
+    },
+    {
+      "id": "b3",
+      "instrument": "glass_bell",
+      "gainDb": -15,
+      "send": {
+        "hall": 0.55
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:2 D5:14"
+        ]
+      }
+    },
+    {
+      "id": "b4",
+      "instrument": "glass_bell",
+      "gainDb": -16,
+      "send": {
+        "hall": 0.55
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:3 F#5:13"
+        ]
+      }
+    },
+    {
+      "id": "b5",
+      "instrument": "glass_bell",
+      "gainDb": -16,
+      "send": {
+        "hall": 0.55
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:4 A5:12"
+        ]
+      }
+    },
+    {
+      "id": "shimmer",
+      "instrument": "shimmer",
+      "gainDb": -20,
+      "send": {
+        "hall": 0.5
+      },
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "r:2 A5:14"
+        ]
+      }
+    },
+    {
+      "id": "pad",
+      "instrument": "string_pad",
+      "gainDb": -22,
+      "send": {
+        "hall": 0.5
+      },
+      "type": "chord",
+      "octave": 3,
+      "voicing": "open",
+      "rhythm": "X_______________"
+    }
+  ]
+}

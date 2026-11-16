@@ -1,0 +1,30 @@
+{
+  "id": "icon-tag-trade",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Trade tag: a gold coin with a square hole. Key: round disc.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".wyyg.",
+          "wygggd",
+          "ygnngd",
+          "ygnngd",
+          "ggggdd",
+          ".dddd."
+        ]
+      ]
+    }
+  }
+}

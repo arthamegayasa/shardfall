@@ -1,0 +1,38 @@
+{
+  "id": "icon-memento-coal-locket",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Coal Locket: an open gold heart locket on a chain, a glowing coal inside. Key: heart with a ring on top.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....ddd.....",
+          ".....d.d.....",
+          "......g......",
+          "..wyg.g.yyg..",
+          ".ynnhggynnnd.",
+          "ynhhhhhhhnnnd",
+          "ynhhgyyghhnnd",
+          "ynhgywwyghnnd",
+          ".ynhgyyghhnd.",
+          "..ynhgghhnd..",
+          "...ynhhnnd...",
+          "....ynnnd....",
+          ".....ggd.....",
+          "......d......"
+        ]
+      ]
+    }
+  }
+}

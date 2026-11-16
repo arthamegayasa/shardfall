@@ -1,0 +1,549 @@
+{
+  "schemaVersion": 1,
+  "id": "arena_cloister",
+  "arena": {
+    "boundary": [
+      [-13, -10],
+      [13, -10],
+      [16, -7],
+      [16, 7],
+      [13, 10],
+      [-13, 10],
+      [-16, 7],
+      [-16, -7]
+    ],
+    "lip": 1,
+    "rim": {
+      "height": 0.25,
+      "colorToken": "dust",
+      "opacity": 0.5
+    },
+    "projectileMargin": 3,
+    "floor": {
+      "baseToken": "floor-mid",
+      "altToken": "floor-lit",
+      "tileId": "tile-floor"
+    }
+  },
+  "playerStart": {
+    "default": [0, 0],
+    "boss": [0, 5]
+  },
+  "pulseOrigin": [0, 0],
+  "safeZones": [
+    {
+      "id": "start",
+      "shape": {
+        "type": "circle",
+        "center": [0, 0],
+        "radius": 6
+      },
+      "blocks": ["obstacle", "spawn", "decor"]
+    },
+    {
+      "id": "boss_stage",
+      "shape": {
+        "type": "circle",
+        "center": [0, -3],
+        "radius": 4
+      },
+      "blocks": ["obstacle", "decor"]
+    }
+  ],
+  "spawn": {
+    "playerSafeRadius": 4,
+    "interiorMinPlayerDist": 2,
+    "zones": [
+      {
+        "id": "n",
+        "shape": {
+          "type": "rect",
+          "min": [-12, -9],
+          "max": [12, -7.5]
+        }
+      },
+      {
+        "id": "s",
+        "shape": {
+          "type": "rect",
+          "min": [-12, 7.5],
+          "max": [12, 9]
+        }
+      },
+      {
+        "id": "e",
+        "shape": {
+          "type": "rect",
+          "min": [13.5, -6],
+          "max": [15, 6]
+        }
+      },
+      {
+        "id": "w",
+        "shape": {
+          "type": "rect",
+          "min": [-15, -6],
+          "max": [-13.5, 6]
+        }
+      },
+      {
+        "id": "ne",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12.5, -9],
+            [15, -6.5],
+            [13.5, -6],
+            [12, -7.5]
+          ]
+        }
+      },
+      {
+        "id": "se",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12, 7.5],
+            [13.5, 6],
+            [15, 6.5],
+            [12.5, 9]
+          ]
+        }
+      },
+      {
+        "id": "sw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-12.5, 9],
+            [-15, 6.5],
+            [-13.5, 6],
+            [-12, 7.5]
+          ]
+        }
+      },
+      {
+        "id": "nw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-15, -6.5],
+            [-12.5, -9],
+            [-12, -7.5],
+            [-13.5, -6]
+          ]
+        }
+      }
+    ]
+  },
+  "bossStage": {
+    "shape": {
+      "type": "circle",
+      "center": [0, -3],
+      "radius": 4
+    },
+    "landmarkId": "bell-tower",
+    "floorRingContrastMax": 1.15
+  },
+  "lighting": {
+    "edgeFade": {
+      "startOutside": 2,
+      "endOutside": 8
+    },
+    "points": [
+      {
+        "id": "back_l",
+        "pos": [-9, 2.4, -12],
+        "intensityMul": 1
+      },
+      {
+        "id": "back_r",
+        "pos": [9, 2.4, -12],
+        "intensityMul": 1
+      },
+      {
+        "id": "side_l",
+        "pos": [-18, 2, -3],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "side_r",
+        "pos": [18, 2, -3],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "tower",
+        "pos": [0, 4.5, -13.5],
+        "intensityMul": 1.3,
+        "flicker": 0.04
+      },
+      {
+        "id": "front_l",
+        "pos": [-7, 0.3, 11.75],
+        "intensityMul": 0.5,
+        "flicker": 0.2
+      },
+      {
+        "id": "front_r",
+        "pos": [7, 0.3, 11.75],
+        "intensityMul": 0.5,
+        "flicker": 0.2
+      }
+    ]
+  },
+  "obstacles": [
+    {
+      "id": "pillar_base_1",
+      "kind": "broken-pillar-base",
+      "shape": {
+        "type": "circle",
+        "center": [-9, -4],
+        "radius": 1
+      },
+      "height": 0.4,
+      "blocks": ["move"]
+    },
+    {
+      "id": "pillar_base_2",
+      "kind": "broken-pillar-base-small",
+      "shape": {
+        "type": "circle",
+        "center": [9.5, -4.5],
+        "radius": 0.75
+      },
+      "height": 0.4,
+      "blocks": ["move"]
+    },
+    {
+      "id": "bench_1",
+      "kind": "stone-bench",
+      "shape": {
+        "type": "rect",
+        "min": [7, 3.5],
+        "max": [10, 4.5]
+      },
+      "height": 0.35,
+      "blocks": ["move"]
+    }
+  ],
+  "decor": [
+    {
+      "id": "tower",
+      "kind": "bell-tower",
+      "zone": "back",
+      "pos": [0, -13.5],
+      "rotYDeg": 0,
+      "height": 9,
+      "footprintHalf": [2, 1.5],
+      "lightId": "tower"
+    },
+    {
+      "id": "wall_bl",
+      "kind": "cloister-wall",
+      "zone": "back",
+      "pos": [-10, -12.5],
+      "rotYDeg": 0,
+      "height": 3.5,
+      "footprintHalf": [5.5, 0.75]
+    },
+    {
+      "id": "wall_br",
+      "kind": "cloister-wall",
+      "zone": "back",
+      "pos": [10, -12.5],
+      "rotYDeg": 0,
+      "height": 3.5,
+      "footprintHalf": [5.5, 0.75]
+    },
+    {
+      "id": "arch_bl",
+      "kind": "cloister-arch",
+      "zone": "back",
+      "pos": [-4.25, -12],
+      "rotYDeg": 0,
+      "height": 3.2,
+      "footprintHalf": [1.25, 0.5]
+    },
+    {
+      "id": "arch_br",
+      "kind": "cloister-arch",
+      "zone": "back",
+      "pos": [4.25, -12],
+      "rotYDeg": 0,
+      "height": 3.2,
+      "footprintHalf": [1.25, 0.5]
+    },
+    {
+      "id": "slant_bl",
+      "kind": "stone-lantern",
+      "zone": "back",
+      "pos": [-9, -12],
+      "rotYDeg": 0,
+      "height": 2.8,
+      "footprintHalf": [0.35, 0.35],
+      "lightId": "back_l"
+    },
+    {
+      "id": "slant_br",
+      "kind": "stone-lantern",
+      "zone": "back",
+      "pos": [9, -12],
+      "rotYDeg": 0,
+      "height": 2.8,
+      "footprintHalf": [0.35, 0.35],
+      "lightId": "back_r"
+    },
+    {
+      "id": "banners_bl",
+      "kind": "prayer-banners",
+      "zone": "back",
+      "pos": [-12, -13.6],
+      "rotYDeg": 0,
+      "height": 4.2,
+      "footprintHalf": [3, 0.1],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "banners_br",
+      "kind": "prayer-banners",
+      "zone": "back",
+      "pos": [12, -13.6],
+      "rotYDeg": 0,
+      "height": 4.2,
+      "footprintHalf": [3, 0.1],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "roof_bl",
+      "kind": "cloister-roofline",
+      "zone": "back",
+      "pos": [-9, -16],
+      "rotYDeg": 0,
+      "height": 6.5,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "roof_br",
+      "kind": "cloister-roofline",
+      "zone": "back",
+      "pos": [9, -16],
+      "rotYDeg": 0,
+      "height": 6.5,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "wall_bfl",
+      "kind": "cloister-wall",
+      "zone": "back",
+      "pos": [-21, -12.5],
+      "rotYDeg": 0,
+      "height": 3.5,
+      "footprintHalf": [3, 0.75]
+    },
+    {
+      "id": "wall_bfr",
+      "kind": "cloister-wall",
+      "zone": "back",
+      "pos": [21, -12.5],
+      "rotYDeg": 0,
+      "height": 3.5,
+      "footprintHalf": [3, 0.75]
+    },
+    {
+      "id": "pillar_sl",
+      "kind": "broken-pillar",
+      "zone": "side",
+      "pos": [-18.5, -8],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [0.75, 0.75]
+    },
+    {
+      "id": "pillar_sr",
+      "kind": "broken-pillar",
+      "zone": "side",
+      "pos": [18.5, -8],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [0.75, 0.75]
+    },
+    {
+      "id": "statue_sl",
+      "kind": "faceless-statue",
+      "zone": "side",
+      "pos": [-19, -5],
+      "rotYDeg": 0,
+      "height": 3.4,
+      "footprintHalf": [0.75, 0.75]
+    },
+    {
+      "id": "statue_sr",
+      "kind": "faceless-statue",
+      "zone": "side",
+      "pos": [19, -5],
+      "rotYDeg": 0,
+      "height": 3.4,
+      "footprintHalf": [0.75, 0.75]
+    },
+    {
+      "id": "slant_sl",
+      "kind": "stone-lantern",
+      "zone": "side",
+      "pos": [-18, -3],
+      "rotYDeg": 0,
+      "height": 2.2,
+      "footprintHalf": [0.35, 0.35],
+      "lightId": "side_l"
+    },
+    {
+      "id": "slant_sr",
+      "kind": "stone-lantern",
+      "zone": "side",
+      "pos": [18, -3],
+      "rotYDeg": 0,
+      "height": 2.2,
+      "footprintHalf": [0.35, 0.35],
+      "lightId": "side_r"
+    },
+    {
+      "id": "banner_sl",
+      "kind": "prayer-banners-short",
+      "zone": "side",
+      "pos": [-17.6, 0],
+      "rotYDeg": 90,
+      "height": 2.8,
+      "footprintHalf": [1.5, 0.1],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "banner_sr",
+      "kind": "prayer-banners-short",
+      "zone": "side",
+      "pos": [17.6, 0],
+      "rotYDeg": 90,
+      "height": 2.8,
+      "footprintHalf": [1.5, 0.1],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "candles_sl",
+      "kind": "candle-cluster",
+      "zone": "side",
+      "pos": [-17.75, 4],
+      "rotYDeg": 0,
+      "height": 0.5,
+      "footprintHalf": [0.5, 0.5]
+    },
+    {
+      "id": "candles_sr",
+      "kind": "candle-cluster",
+      "zone": "side",
+      "pos": [17.75, 4],
+      "rotYDeg": 0,
+      "height": 0.5,
+      "footprintHalf": [0.5, 0.5]
+    },
+    {
+      "id": "steps_sl",
+      "kind": "stone-steps-low",
+      "zone": "side",
+      "pos": [-18.75, 7.5],
+      "rotYDeg": 0,
+      "height": 1,
+      "footprintHalf": [1.25, 1.5]
+    },
+    {
+      "id": "steps_sr",
+      "kind": "stone-steps-low",
+      "zone": "side",
+      "pos": [18.75, 7.5],
+      "rotYDeg": 0,
+      "height": 1,
+      "footprintHalf": [1.25, 1.5]
+    },
+    {
+      "id": "parapet_fl",
+      "kind": "stone-parapet",
+      "zone": "front",
+      "pos": [-11, 11.25],
+      "rotYDeg": 0,
+      "height": 0.4,
+      "footprintHalf": [4, 0.25]
+    },
+    {
+      "id": "parapet_fc",
+      "kind": "stone-parapet",
+      "zone": "front",
+      "pos": [0, 11.25],
+      "rotYDeg": 0,
+      "height": 0.4,
+      "footprintHalf": [5.5, 0.25]
+    },
+    {
+      "id": "parapet_fr",
+      "kind": "stone-parapet",
+      "zone": "front",
+      "pos": [11, 11.25],
+      "rotYDeg": 0,
+      "height": 0.4,
+      "footprintHalf": [4, 0.25]
+    },
+    {
+      "id": "candle_fl",
+      "kind": "candle-cluster-low",
+      "zone": "front",
+      "pos": [-7, 11.75],
+      "rotYDeg": 0,
+      "height": 0.3,
+      "footprintHalf": [0.25, 0.25],
+      "lightId": "front_l"
+    },
+    {
+      "id": "candle_fr",
+      "kind": "candle-cluster-low",
+      "zone": "front",
+      "pos": [7, 11.75],
+      "rotYDeg": 0,
+      "height": 0.3,
+      "footprintHalf": [0.25, 0.25],
+      "lightId": "front_r"
+    },
+    {
+      "id": "cliff_f",
+      "kind": "cliff-edge",
+      "zone": "front",
+      "pos": [0, 13.5],
+      "rotYDeg": 0,
+      "height": 0.1,
+      "footprintHalf": [20, 1.5]
+    }
+  ],
+  "ambient": {
+    "particles": [
+      {
+        "kind": "glass-dust",
+        "area": "arena",
+        "max": 40,
+        "colorToken": "bone",
+        "opacity": 0.2,
+        "sizePx": 1
+      },
+      {
+        "kind": "glass-snow",
+        "area": "decor",
+        "max": 24,
+        "colorToken": "b2.glass",
+        "opacity": 0.5,
+        "sizePx": 1
+      },
+      {
+        "kind": "cliff-mist",
+        "area": "decor",
+        "max": 10,
+        "colorToken": "b2.stone-light",
+        "opacity": 0.3,
+        "sizePx": 4
+      }
+    ]
+  }
+}

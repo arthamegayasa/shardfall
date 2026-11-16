@@ -10,24 +10,30 @@
   },
   "outline": "none",
   "emissive": [
-    "kept-white"
+    "kept-white",
+    "kept-cyan"
   ],
-  "status": "placeholder",
-  "note": "Status burn on an Unlit. Cyan and white glass flame (never gold, gold means pick me up).",
+  "status": "final",
+  "note": "Burn flame over an Unlit: cyan and white glass fire (player effect, never gold).",
   "animations": {
     "idle": {
-      "ticksPerFrame": 8,
+      "ticksPerFrame": 6,
       "loop": true,
       "frames": [
         [
-          "c.",
+          ".c",
           "cw",
           "wc"
         ],
         [
-          ".c",
+          "c.",
           "wc",
           "cw"
+        ],
+        [
+          ".c.",
+          "cwc",
+          ".w."
         ]
       ]
     }

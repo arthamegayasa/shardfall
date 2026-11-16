@@ -1,6 +1,6 @@
 # Shardfall: Pipeline Art
 
-Pemilik: Art Director (AD). Status: versi 1.1 (2026-11-17, M1-05). Reviewer: LP (teknis), CD (visual).
+Pemilik: Art Director (AD). Status: versi 1.2 (2026-11-17, M2-03). Reviewer: LP (teknis), CD (visual).
 Arah visual: `docs/art-direction.md`. Kontrak teknis: `docs/tech/architecture.md` bagian 7 dan 10 (LP).
 
 Tim tidak punya tool menggambar. Semua art dibuat dari data dan kode: sprite pixel art sebagai grid karakter, lingkungan 3D dari primitif three.js dengan tekstur piksel prosedural, VFX dari parameter. Semua bisa dibuat ulang dan diaudit otomatis.
@@ -20,7 +20,7 @@ art/tiles/*.json  ─┘                                            │         
 
 - **Runtime (keputusan LP):** saat boot, semua sprite dirasterisasi dan dipak ke satu atlas `DataTexture` (filter nearest, tanpa mipmap). Tidak ada PNG sprite di repo atau di bundle.
 - **Tool (AD):** `tools/art/check-sprites.ts` memakai rasterizer dan packer runtime `src/core/sprite/` (`compileSprite`, `packAtlas`, `frameToRgba`), jadi validasi, lembar preview, atlas review, dan game identik.
-- Pengecualian [Asumsi, port di M2]: perender konsep mood `tools/art/build-concepts.mjs` dan `lib/scene.mjs` tetap `.mjs` bersama rasterizer referensi M0 `lib/sprite.mjs` dan `lib/atlas.mjs`. Keduanya dipakai tes kesetaraan LP (`tests/unit/core/sprite.test.ts`) sebagai acuan, tidak dipakai pipeline produksi, dan dikecualikan dari lint.
+- Pengecualian (keputusan M2-03, temuan LP M1): perender konsep mood `tools/art/build-concepts.mjs` dan `lib/scene.mjs` tetap `.mjs` bersama rasterizer referensi M0 `lib/sprite.mjs` dan `lib/atlas.mjs`. **Tidak dihapus**: tes kesetaraan LP `tests/unit/core/sprite.test.ts` masih mengimpor `sprite.mjs` dan `atlas.mjs` dan membandingkan setiap sprite (termasuk semua aset M2) dengan rasterizer runtime; `npm run art:concepts` masih memakai `build-concepts.mjs`. Tidak dipakai pipeline produksi, dikecualikan dari lint. Bisa dipensiunkan bila LP menganggap tes kesetaraan sudah tidak perlu.
 - Node 24 menjalankan `.ts` langsung (type stripping). Tanpa dependensi npm.
 
 ## 2. Lokasi file dan penamaan [Wajib]
@@ -61,6 +61,8 @@ Penamaan:
 | Angka damage | `fx-digits` | `normal` 10, `crit` 10 | L3 |
 | Telegraf lingkaran, cincin, garis, kerucut; zona pemain | shader `src/render/shaders/area.ts` | progres dari pool | L4 / L3 |
 | Lantai | `tile-floor` | `variants` 2 | L0 |
+
+Set M2 (wajib, dicek `art:check`): semua di atas plus animasi `cast` dan `hit` (pemain), `windup` (4 Unlit), `windup` dan `attack` (Warden), `idle2`, `windup`, `windup2` (boss), jumlah bingkai minimal per brief CD, dan sprite VFX `fx-spark`, `fx-trail`, `fx-glint-trail`, `fx-mote`, `fx-shard`, `fx-glass-shard`, `fx-flare`, `fx-ember`, `fx-rise`, `fx-star`. Generator boleh memakai helper grid (`blank`, `fit`, `shift`, `paste`, `recolor`, `flipX`, `replaceRows`, `fillWhere`) dari `art/sprites/sprite-types.ts`, satu-satunya modul selain `src/core/math` yang boleh diimpor generator.
 
 Pemetaan id data ke sprite ada di `src/render/sprites/sprite-ids.ts` dengan urutan cadangan: id sendiri, lalu `behavior`, lalu `role`, lalu sprite per `size_class`. Kelas dan senjata tanpa sprite memakai `kept-lantern` dan `fx-shot-kept`. Tes `tests/render/sprite-ids.test.ts` memastikan semua id Tingkat A punya sprite sendiri (data GD asli juga sudah tercakup penuh).
 
@@ -266,7 +268,27 @@ Cara CD mereview: buka `art/atlas/preview/sprites.png` (baris 1 warna, baris 2 s
 - Pemain menghadap arah gerak horizontal (sprite tidak simetris), `walk` saat bergerak, `idle` saat diam. Unlit memakai `facing` dari view.
 - Tes: `tests/render/` (pemilihan bingkai, orientasi `dir4` di ruang layar, hadap, penempatan quad, tata letak digit, cakupan id, isi tiap lapis dari dunia palsu).
 
-## 11. Sisa untuk M2
+## 11. Sisa (dari M1)
 
 - Port `build-concepts.mjs` dan `lib/scene.mjs` ke `.ts` (atau pensiunkan setelah screenshot game menggantikan konsep).
 - Cahaya sprite per instance (Kept minimal 70%), bayangan elips L1, cincin kaki pemain, jejak proyektil, aura Warden, kematian Unlit, animasi `windup` dari `aiState` setelah kode state AI GP stabil.
+
+- Status M2-03: cahaya sprite per instance, bayangan elips L1, cincin kaki, jejak proyektil dan Glint, aura Warden, kematian Unlit, animasi `windup` dari `aiState` selesai (bagian 13). Port atau pensiun `.mjs` lihat bagian 1.
+
+## 12. Ikon UI dan potret (M2-03)
+
+- Sumber: `art/sprites/icon-<jenis>-<id data kebab>.json`, kelas `icon` (frame 16x16 kartu, 8x8 inline) atau `portrait` (48x48), faksi `kept` atau `neutral`, outline `ink`, satu animasi `icon` satu bingkai.
+- Jenis: `weapon` (semua senjata Tingkat A dan B), `memento` (Tingkat A), `rite` (Tingkat A), `stat` (stat kartu Temper `levelup.csv` Tingkat A), `tag` (6 tag, 8x8), plus `icon-glint`, `icon-silt`, `icon-portrait-glazier`. Daftar wajib dibaca `art:check` dari `content/data/*.csv`, jadi baris data baru tanpa ikon langsung gagal.
+- Atlas: `src/core/sprite/icons.ts` (murni, tanpa DOM): `buildIconAtlas(sprites, palette)` memak bingkai pertama semua ikon (lebar 256) dengan packer runtime dan manifest JSON `{ version, image, width, height, filter, icons: { id: { x, y, w, h, size, ox, oy } } }`; `iconImage(atlas, id, scale)` memberi piksel siap `ImageData` (persegi `size x scale`, ikon di tengah); `iconSpriteId(kind, dataId)`; `isUiArt(src)`.
+- DOM: `src/render/sprites/icons.ts` `createIconProvider(assets, doc)` dengan `getIcon(id, scale)` (canvas baru, `image-rendering: pixelated`), `getIconDataUrl(id, scale)` (cache), `iconFor(kind, dataId, scale)`. Diekspor dari `src/render/index.ts`. Catatan: `src/ui` tidak boleh mengimpor `src/render` (ESLint), jadi UI memakai fungsi core langsung atau menerima provider dari `src/app`.
+- Atlas game (`sprites/atlas-texture.ts`) melewatkan ikon dan potret.
+- Review: `npm run art:preview` menulis `art/atlas/preview/icons.png` dan `icons-atlas.png` plus `icons-atlas.json`. `node tools/art/check-sprites.ts --icons` memvalidasi ikon saja.
+
+## 13. Shader sprite dan VFX (M2-03)
+
+- Cahaya: `createEntityLayers(..., { lighting: { glsl: SCENE_LIGHTING_GLSL, uniforms: sceneLighting.uniforms } })` (antarmuka LP di `src/render/shaders/lighting.ts`). Vertex shader memanggil `sfSpriteLight(kaki, minLevel)` sekali per instance: mode `SpriteLight.Kept` (min 0,7), `Unlit` (min 0), `None` (efek). Tanpa `lighting` sprite tampil warna palet.
+- Emisif: atlas game menulis alpha 200 (`EMISSIVE_ALPHA_BYTE`) untuk token emisif palet dan `emissive` per sprite; texel ini tidak diterangi dan dikali `entities.emissiveGain.value` (LP menaikkannya saat bloom aktif).
+- Kilat kena hit: `iFlash` (pemain `kept-white`, Unlit `bone`, ancang-ancang `danger-red` 35%, level up emas, Memento putih).
+- Larut: `iParams.z` 0 sampai 1, ambang dither Bayer 4x4 pada texel atlas, tepi 1 texel memakai warna flash.
+- VFX: `src/render/vfx/effects.ts` (event ke partikel, terbang Rite, cincin lantai, hantu Unlit mati), `particles.ts` (pool SoA tetap 600, gerak dalam piksel layar bulat, hash deterministik, tanpa `Math.random`). Reduce Effects menurunkan semburan ke 30%. Lapis: dekal L1 (`decals`, `fxAreas`), efek L3; semua di bawah L4.
+- Preview: `npm run art:shot` merender arena `arena_market` asli (lingkungan dan cahaya LP) dengan dunia palsu dan garis waktu efek (`tests/render/preview/preview.ts`).

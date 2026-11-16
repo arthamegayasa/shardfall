@@ -1,6 +1,6 @@
 # Skema Data CSV
 
-Pemilik: Game Designer (isi dan arti kolom). Format teknis (dialek CSV, bentuk JSON, tipe) milik Lead Programmer di `docs/tech/architecture.md` versi 2 bagian 9; bila berbeda, architecture yang berlaku. Status: versi 2.1, 2026-11-17 (versi 2: perbaikan review M0 dan jawaban `docs/specs/gd-answers-m0.md`; versi 2.1: M1-02, lihat 0.1).
+Pemilik: Game Designer (isi dan arti kolom). Format teknis (dialek CSV, bentuk JSON, tipe) milik Lead Programmer di `docs/tech/architecture.md` versi 2 bagian 9; bila berbeda, architecture yang berlaku. Status: versi 2.2, 2026-11-17 (versi 2: perbaikan review M0 dan jawaban `docs/specs/gd-answers-m0.md`; versi 2.1: M1-02, lihat 0.1; versi 2.2: M2-01, lihat 0.2).
 Terkait: `docs/gdd.md`, `docs/systems/effect-primitives.md`.
 
 ## 0. Perubahan versi 2
@@ -25,6 +25,14 @@ Terkait: `docs/gdd.md`, `docs/systems/effect-primitives.md`.
 | Kolom `notes` | Semua tabel baris boleh punya kolom `notes` (diabaikan build) |
 | Bioma 2 dan 3 | `arena_id` sementara `arena_market` sampai LD membuat `arena_cloister` dan `arena_vineyard` |
 | Kunci `params` | Daftar kunci yang dipakai data ada di bagian 5, untuk registri GP |
+
+### 0.2 Perubahan versi 2.2 (M2-01)
+
+| Hal | Isi |
+|---|---|
+| Kunci `config.csv` baru | `glint_fly_speed_start`, `glint_fly_accel` (Glint melesat dengan percepatan), `spawn_mark_medium_group_min` (ambang grup tanda sedang, dulu angka 3 di `spawner.ts`), `low_hp_frac` (dulu `LOW_HP_FRAC` di `src/core/constants.ts`). Semua opsional dengan default sama dengan perilaku lama, sehingga build tetap jalan sebelum sim membacanya. Kode sim yang membaca: GP (`pickups.ts`, `spawner.ts`, `signals.ts`) |
+| Arti `glint_fly_speed` | Kini kecepatan puncak. Sim lama (kecepatan tetap) tetap benar karena memakai nilai ini |
+| `wave_spawns.csv` | Satu Unlit boleh punya beberapa baris per Pulse dengan jendela berbeda. Model menulis baris pembuka (grup swarmer di tau 0) dan baris lonjakan (swarmer di 55% sampai 100% durasi), membentuk kurva w(tau) GDD 3.2 |
 
 ## 1. Konvensi
 
@@ -106,8 +114,10 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `player_base_speed` | 4.5 | u/s horizontal | GDD 5.1 |
 | `player_vertical_screen_ratio` | 0.8 | Kecepatan layar vertikal pemain relatif horizontal (rentang kalibrasi 0.75 sampai 0.85) | CD K7, architecture 7.1 |
 | `player_radius` | 0.35 | u | GDD 5.1 |
-| `pickup_radius_base` | 1.6 | u | GDD 4.2 |
-| `glint_fly_speed` | 12 | u/s | GDD 4.2 |
+| `pickup_radius_base` | 2.0 | u, radius tarik (M2-01: dari 1.6) | GDD 4.2 |
+| `glint_fly_speed` | 20 | u/s, kecepatan puncak butir yang tertarik (M2-01: dari 12) | GDD 4.2 |
+| `glint_fly_speed_start` | 3 | u/s, kecepatan saat butir mulai tertarik (M2-01, opsional, default 12) | GDD 4.2 |
+| `glint_fly_accel` | 60 | u/s^2, percepatan ke pemain sampai `glint_fly_speed`. GameData tanpa konversi tick: sim membagi dengan `TICK_RATE`^2 (M2-01, opsional, default 0 = kecepatan tetap) | GDD 4.2, CD M1 4.2 |
 | `glint_collect_dist_add` | 0.2 | Butir terpungut pada jarak `player_radius` + nilai ini | jawaban GD |
 | `glint_floor_cap` | 150 | Butir di lantai sebelum aturan gabung | GDD 4.2 |
 | `pulse_end_collect_frac` | 0.5 | Pungutan otomatis akhir Pulse | GDD 3.3 |
@@ -121,12 +131,12 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `guard_min_frac` | 0.25 | | GDD 5.2 |
 | `proc_growth` | 0.2 | `proc_scale(t)` | GDD 5.2 |
 | `burn_dps_nonhit` | 2 | DPS Burn per tumpukan dari sumber non-hit, dikali `proc_scale` | Q07 |
-| `enemy_hp_lin` | 0.12 | `hp(t)` | GDD 5.5 |
-| `enemy_hp_quad` | 0.006 | `hp(t)` | GDD 5.5 |
-| `enemy_dmg_lin` | 0.07 | `dm(t)` | GDD 5.3 |
+| `enemy_hp_lin` | 0.18 | `hp(t)` (M2-01: dari 0.12) | GDD 5.5 |
+| `enemy_hp_quad` | 0.015 | `hp(t)` (M2-01: dari 0.006) | GDD 5.5 |
+| `enemy_dmg_lin` | 0.1 | `dm(t)` (M2-01: dari 0.07) | GDD 5.3 |
 | `price_growth` | 0.08 | | GDD 4.3 |
-| `xp_base` | 15 | | GDD 11.1 |
-| `xp_per_level` | 10 | | GDD 11.1 |
+| `xp_base` | 20 | (M2-01: dari 15) | GDD 11.1 |
+| `xp_per_level` | 13 | (M2-01: dari 10) | GDD 11.1 |
 | `extra_projectile_spread_deg` | 12 | | GDD 5.2 |
 | `weapon_slots` | 6 | | GDD 4.4 |
 | `leech_heal_cap_per_s` | 6 | | GDD 5.1 |
@@ -137,6 +147,7 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `spawn_mark_diam_medium` | 1.5 | u | arena-design 5.3 |
 | `spawn_mark_diam_large` | 2.0 | u | arena-design 5.3 |
 | `spawn_mark_diam_warden` | 3.0 | u | arena-design 5.3 |
+| `spawn_mark_medium_group_min` | 3 | Grup sebesar ini atau lebih memakai minimal tanda sedang (M2-01, dipindah dari kode; opsional, default 3) | GDD 3.2 |
 | `spawn_quiet_end_s` | 2 | Tanpa telegraf spawn baru di detik terakhir Pulse | GDD 3.2 |
 | `enemy_radius_small` | 0.3 | u | Q20 |
 | `enemy_radius_medium` | 0.4 | u | Q20 |
@@ -160,6 +171,7 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `boss_trickle_count` | 2 | | GDD 3.3 |
 | `boss_trickle_max_alive` | 24 | | Q35 |
 | `death_slowmo_s` | 1.0 | | Q38 |
+| `low_hp_frac` | 0.3 | Ambang `PlayerHpLowChanged`: HP <= nilai ini x HP maks selama `pulse` (M2-01, dipindah dari `LOW_HP_FRAC` di `src/core/constants.ts`; opsional, default 0.3) | ui-spec S03 |
 | `victory_delay_s` | 1.5 | | Q38 |
 
 Kunci yang dihapus di versi 2: `tick_rate` (konstanta LP), `glint_merge_value` (aturan gabung baru), `pulse_dur_base`, `pulse_dur_step`, `pulse_dur_max` (durasi dari `waves.csv`), `spawn_min_dist` (sumber tunggal: `spawn.playerSafeRadius` di JSON arena).

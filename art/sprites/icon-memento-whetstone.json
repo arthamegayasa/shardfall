@@ -1,0 +1,34 @@
+{
+  "id": "icon-memento-whetstone",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Whetstone: a grey sharpening stone slab with a white-gold spark off its corner. Key: long slab, four-point spark.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..........y...",
+          ".........ywy..",
+          "..........y...",
+          "..............",
+          "..eeeeeeee....",
+          ".eddddddddd...",
+          "eddddddddtth..",
+          "tttttttttthh..",
+          "ttttttttthh...",
+          "hhhhhhhhhh...."
+        ]
+      ]
+    }
+  }
+}

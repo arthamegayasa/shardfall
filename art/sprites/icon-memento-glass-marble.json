@@ -1,0 +1,36 @@
+{
+  "id": "icon-memento-glass-marble",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Glass Marble: a glass sphere holding a swirl of sky and a tiny gold star. Key: round disc, bright highlight top-left.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....cccc....",
+          "..cwwccBBb..",
+          ".cwwcBBBBbb.",
+          ".cwcBBccBBb.",
+          "cccBBcBBcBbb",
+          "cBBBcBBBBcbb",
+          "cBBBcBgBBcbb",
+          "cBBBBcBBBcbb",
+          ".BBBBBccBbb.",
+          ".bBBBBBBbbb.",
+          "..bbBBbbbb..",
+          "....bbbb...."
+        ]
+      ]
+    }
+  }
+}

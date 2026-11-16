@@ -1,0 +1,53 @@
+{
+  "id": "mus.end",
+  "bpm": 72,
+  "meter": [4, 4],
+  "stepsPerBeat": 4,
+  "key": { "root": "D", "mode": "dorian" },
+  "form": ["A", "B"],
+  "sections": {
+    "A": { "chords": ["Dm", "G", "Bb", "C", "Dm", "G", "Am", "A7"] },
+    "B": { "chords": ["Bb", "C", "Am", "Dm", "G", "Bb", "Csus4", "A7"] }
+  },
+  "layers": [
+    {
+      "id": "pad",
+      "instrument": "string_pad",
+      "gainDb": -19,
+      "send": { "hall": 0.45 },
+      "type": "chord",
+      "octave": 3,
+      "voicing": "close",
+      "rhythm": "X_______________"
+    },
+    {
+      "id": "bass_hold",
+      "instrument": "sub_bass",
+      "gainDb": -18,
+      "type": "chordRoot",
+      "octave": 2,
+      "rhythm": "X_______________"
+    },
+    {
+      "id": "pluck_arp",
+      "instrument": "pluck",
+      "gainDb": -23,
+      "send": { "hall": 0.4 },
+      "pan": -0.15,
+      "type": "arp",
+      "octave": 4,
+      "stepLen": 4,
+      "tokens": ["0 2 1+ 2", "0 2 1+ 2", "0 2 1+ 2", "0 2 0+ r"]
+    },
+    {
+      "id": "bell_mark",
+      "instrument": "glass_bell",
+      "gainDb": -24,
+      "send": { "hall": 0.6 },
+      "everyBars": 4,
+      "type": "chordRoot",
+      "octave": 5,
+      "rhythm": "X_______________"
+    }
+  ]
+}

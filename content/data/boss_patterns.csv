@@ -1,9 +1,9 @@
 id,boss_id,archetype,telegraph_s,dmg,params,notes
 # Boss attack patterns (data-schema 3.18, GDD 16). telegraph_s >= telegraph_min_boss_s (cone: telegraph_min_charge_s).
-ember_rain_5,boss_lantern,target_circles,1.0,10,count=5;radius=1.5;spread=3;first_on_player=1,
-ember_rain_8,boss_lantern,target_circles,1.0,10,count=8;radius=1.5;spread=3;first_on_player=1,
-snuff_ring,boss_lantern,ring_gap,1.0,9,rings=1;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
-snuff_ring_double,boss_lantern,ring_gap,1.0,9,rings=2;ring_gap_s=0.8;min_gap_diff_deg=90;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
+ember_rain_5,boss_lantern,target_circles,1.0,9,count=5;radius=1.5;spread=3;first_on_player=1,
+ember_rain_8,boss_lantern,target_circles,1.0,9,count=8;radius=1.5;spread=3;first_on_player=1,
+snuff_ring,boss_lantern,ring_gap,1.2,8,rings=1;thickness=0.6;speed=4;max_radius=19;gap_deg=90,M2-01: gap 60 to 90 deg + speed 5 to 4 + telegraph 1.2 s so the gap is reachable from about 4 u (was about 2 u)
+snuff_ring_double,boss_lantern,ring_gap,1.2,8,rings=2;ring_gap_s=1.0;min_gap_diff_deg=90;thickness=0.6;speed=4;max_radius=19;gap_deg=90,M2-01: as snuff_ring; second ring 1.0 s later
 lantern_lanes,boss_lantern,lanes,1.0,6,count=3;width=1.2;y_min=-9;y_max=9;min_sep=3;spacing=0.6;speed=8,
 moth_call,boss_lantern,summon,1.0,0,count=6;enemy_id=swarmer,spawn mark 0.8 s inside the 1.0 s telegraph [Asumsi]
 toll_waves_3,boss_bell,ring_gap,1.0,10,rings=3;ring_gap_s=0.6;thickness=0.6;speed=5;max_radius=19;gap_deg=60,

@@ -69,6 +69,8 @@ describe('Temper (level-up) model', () => {
     expect(m.cards[0]?.descParams).toEqual({ value: '2' });
     expect(m.cards[0]?.statChange).toEqual({ statKey: 'stat.armor', before: '2', after: '4' });
     expect(m.cards[0]?.rarityOrder).toBe(1);
+    // Temper cards carry the stat icon (AD icon-stat-*), M2-06.
+    expect(m.cards[0]?.icon).toEqual({ kind: 'stat', id: 'armor' });
   });
 
   it('counts the second pick of a queue as 2 of 2', () => {
@@ -94,6 +96,7 @@ describe('Warden reward model', () => {
     expect(m.cards[0]?.nameKey).toBe('memento.test_lens.name');
     expect(m.cards[0]?.flavorKey).toBe('memento.test_lens.flavor');
     expect(m.cards[0]?.tags).toEqual(['shard']);
+    expect(m.cards[0]?.icon).toEqual({ kind: 'memento', id: 'test_lens' });
   });
 });
 

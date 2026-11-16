@@ -1,16 +1,19 @@
 // UI preview harness (dev server only, never bundled: vite builds index.html alone).
 // Open http://localhost:5173/src/ui/dev/preview.html (optional ?screen=title|class|pulse|held|boss|
-// reward|levelup|glazier|pause|settings|lost|won). Runs every M1 screen on a fake world driven by a
-// tiny fake sim, with real data and strings when they build, else the test fixtures (ui-spec 12.3).
+// pending|warden|reward|levelup|queue|glazier|pause|settings|lost|won, &text=0|1|2, &cv=protan|
+// deutan|tritan, &reduce=1, &savelost=1). Runs every screen on a fake world driven by a tiny fake
+// sim, with real data, strings, and art when they build, else the test fixtures (ui-spec 12.3).
 
-import type { AppActions, MetaView } from '../../core/dom.ts';
+import type { AppActions, MetaView, RenderAssets } from '../../core/dom.ts';
 import { encodeSource, OfferKind, SimEventType, SourceKind, TICK_RATE } from '../../core/index.ts';
 import type {
   Command,
   InventorySlotView,
+  PaletteDef,
   Settings,
   ShopOfferView,
   SimEventReader,
+  SpriteSheetDef,
 } from '../../core/index.ts';
 import { buildGameData, buildRaw } from '../../content/index.ts';
 import type { GameData } from '../../content/index.ts';
@@ -27,6 +30,27 @@ const fixtureCsv = import.meta.glob('/tests/fixtures/data/*.csv', {
   import: 'default',
   eager: true,
 });
+// Art as the app loads it (src/app/assets.ts): AD icons and portraits show up here automatically.
+const paletteMods = import.meta.glob('/art/palette.json', { eager: true, import: 'default' });
+const spriteMods = import.meta.glob(
+  ['/art/sprites/*.json', '/art/sprites/*.ts', '!/art/sprites/*-types.ts'],
+  { eager: true, import: 'default' },
+);
+const params = new URLSearchParams(location.search);
+
+function loadArt(): RenderAssets {
+  const palette = Object.values(paletteMods)[0] as PaletteDef | undefined;
+  const sprites = Object.entries(spriteMods)
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([, v]) => v as SpriteSheetDef)
+    .filter((v) => typeof v === 'object' && typeof v.id === 'string');
+  return {
+    sprites: palette === undefined ? [] : sprites,
+    tiles: [],
+    palette: palette as PaletteDef,
+  };
+}
+
 const stringsText = import.meta.glob('/content/strings/en.json', {
   query: '?raw',
   import: 'default',
@@ -84,10 +108,10 @@ let settings: Settings = {
     muteWhenUnfocused: true,
   },
   access: {
-    textScale: 0,
-    reduceEffects: false,
+    textScale: (Number(params.get('text') ?? '0') || 0) as 0 | 1 | 2,
+    reduceEffects: params.get('reduce') === '1',
     damageNumbers: true,
-    colorVision: 'off',
+    colorVision: (params.get('cv') ?? 'off') as Settings['access']['colorVision'],
     pauseWhenUnfocused: true,
     showFlavor: true,
     solidPanels: false,
@@ -248,6 +272,7 @@ function beginPulse(): void {
   PU.isBoss = false;
   PU.boss = { ...PU.boss, active: false };
   setPhase('pulse');
+  emit(SimEventType.PulseStarted, PU.index);
 }
 
 function endPulse(): void {
@@ -434,6 +459,7 @@ const commands = {
 
 // ---- Fake app ----
 let held = false;
+let saveGone = false;
 let ui: ReturnType<ReturnType<typeof createUiWith>> | null = null;
 const app: AppActions = {
   startRun() {
@@ -441,6 +467,11 @@ const app: AppActions = {
     ui?.setScreen('run');
   },
   continueRun() {
+    if (params.get('savelost') === '1') {
+      saveGone = true;
+      ui?.setScreen('title');
+      return;
+    }
     startRun();
     openShop();
     ui?.setScreen('run');
@@ -477,7 +508,7 @@ const meta = (): MetaView => ({
   mementosFound: [],
   highestDifficultyWon: -1,
   lastClassId: data.classes[0]?.id ?? '',
-  hasRunSave: true,
+  hasRunSave: !saveGone,
 });
 
 const root = document.querySelector<HTMLElement>('#ui-root');
@@ -495,11 +526,21 @@ ui = createUiWith({ devStrings: false })({
   sound: { play: () => undefined },
   settings: () => settings,
   meta,
-  art: { sprites: [], tiles: [], palette: {} as never },
+  art: loadArt(),
 });
 
 // ---- Deep links for screenshots ----
-const jump = new URLSearchParams(location.search).get('screen') ?? 'title';
+const jump = params.get('screen') ?? 'title';
+
+/** Two owned Mementos so pause and run end show both build lists (BUG-005). */
+function ownMementos(): void {
+  world.shop = {
+    ...world.shop,
+    mementos: [0, Math.min(3, data.mementos.length - 1)]
+      .filter((i, k, a) => i >= 0 && a.indexOf(i) === k)
+      .map((mementoIndex) => ({ mementoIndex, count: 1 })),
+  };
+}
 const initial: Record<string, () => void> = {
   title: () => undefined,
   class: () => {
@@ -511,22 +552,59 @@ const initial: Record<string, () => void> = {
   held: () => {
     app.startRun('', 0);
     PU.index = 4;
+    // One timed frame first, so the HUD sees the timer turn into the held bar (Held banner).
+    setTimeout(holdWarden, 300);
+  },
+};
+function holdWarden(): void {
+  PU.ticksLeft = 0;
+  PU.overtime = true;
+  PU.wardenAlive = true;
+  const wi = Math.max(
+    0,
+    data.enemies.findIndex((e) => e.role === 'warden'),
+  );
+  PU.warden = {
+    active: true,
+    typeIndex: wi,
+    hp: 30,
+    maxHp: 80,
+    shield: 0,
+    phase: 1,
+    enraged: true,
+  };
+}
+const moreInitial: Record<string, () => void> = {
+  pending: () => {
+    app.startRun('', 0);
+    PU.index = 9;
+    PU.isBoss = true;
     PU.ticksLeft = 0;
-    PU.overtime = true;
-    PU.wardenAlive = true;
-    const wi = Math.max(
-      0,
-      data.enemies.findIndex((e) => e.role === 'warden'),
+    PU.ticksTotal = 0;
+    PU.boss = { ...PU.boss, active: false, typeIndex: -1 };
+  },
+  warden: () => {
+    app.startRun('', 0);
+    PU.index = 4;
+    emit(
+      SimEventType.WardenSpawned,
+      Math.max(
+        0,
+        data.enemies.findIndex((e) => e.role === 'warden'),
+      ),
     );
-    PU.warden = {
-      active: true,
-      typeIndex: wi,
-      hp: 30,
-      maxHp: 80,
-      shield: 0,
-      phase: 1,
-      enraged: true,
+  },
+  queue: () => {
+    app.startRun('', 0);
+    PU.index = 1;
+    endPulse();
+    world.levelUp = {
+      ...world.levelUp,
+      revision: world.levelUp.revision + 1,
+      pending: 11,
+      total: 12,
     };
+    setPhase('levelUp');
   },
   boss: () => {
     app.startRun('', 0);
@@ -558,6 +636,8 @@ const initial: Record<string, () => void> = {
   },
   pause: () => {
     app.continueRun();
+    ownMementos();
+    refreshShop();
     app.pause();
   },
   settings: () => {
@@ -565,6 +645,7 @@ const initial: Record<string, () => void> = {
   },
   lost: () => {
     app.startRun('', 0);
+    ownMementos();
     PU.index = 6;
     world.runStats = {
       ...world.runStats,
@@ -581,6 +662,7 @@ const initial: Record<string, () => void> = {
     setPhase('victory');
   },
 };
+Object.assign(initial, moreInitial);
 const run = initial[jump] ?? initial['title'];
 // Jump after the first frame so the UI has seen a view (the pause summary reads it).
 let jumped = false;
@@ -590,6 +672,7 @@ let last = performance.now();
 function frame(now: number): void {
   const dt = now - last;
   last = now;
+  if (!held) world.tick++;
   if (!held && world.phase === 'pulse' && !PU.overtime && !PU.isBoss) {
     PU.ticksLeft = Math.max(0, PU.ticksLeft - Math.round((dt / 1000) * TICK_RATE));
     P.riteCooldownTicks = Math.max(0, P.riteCooldownTicks - 1);
@@ -597,11 +680,12 @@ function frame(now: number): void {
     if (PU.ticksLeft === 0) endPulse();
   }
   if (!held) ui?.update(world, events);
+  ev.count = 0;
+  // Events emitted by the jump reach the UI on the next frame, like real sim events.
   if (!jumped) {
     jumped = true;
     run?.();
   }
-  ev.count = 0;
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

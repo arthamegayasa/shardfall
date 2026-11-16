@@ -1,15 +1,18 @@
-/* Shardfall UI (ui-spec 2, 6, 7; style guide 1.2 and 2). Display-case label panels.
-   Every size is a multiple of --u (CSS px per UI unit, from physical pixels) or --f (font pixel). */
+/* Shardfall UI (ui-spec 2, 6, 7, 10; style guide 1.2 and 2). Display-case label panels.
+   Every size is a multiple of --u (CSS px per UI unit, from physical pixels) or --f / --fs (CSS px
+   per font pixel). Text is 9 font px per line in a 6 x 9 cell (team pixel font, style guide 2.3). */
 
 .sf-ui {
-  /* Palette tokens, style guide 1.2. Colour vision modes swap these later (AD, M4). */
+  /* Palette tokens, style guide 1.2. */
   --ink: #14121c;
   --night: #1c1926;
   --shadow: #3e3a46;
+  --floor-mid: #57515a;
   --stone: #8a817a;
   --dust: #a39a8c;
   --bone: #ede6d8;
   --kept-blue: #3d7dff;
+  --kept-blue-deep: #2449a8;
   --kept-cyan: #4fe3f0;
   --kept-white: #f2fbff;
   --kept-gold: #ffc94a;
@@ -20,23 +23,85 @@
   --rarity-1: #6fd08c;
   --rarity-2: #3d7dff;
   --rarity-3: #ffc94a;
+  /* Tag accents: player palette only (style guide 1.3), each tag also has its own shape. */
+  --tag-flame: #ffc94a;
+  --tag-shard: #4fe3f0;
+  --tag-edge: #f2fbff;
+  --tag-echo: #3d7dff;
+  --tag-ward: #a39a8c;
+  --tag-trade: #ffd966;
   --panel-bg: rgb(28 25 38 / 90%);
   --frame: rgb(237 230 216 / 60%);
+  --sheen: linear-gradient(170deg, rgb(242 251 255 / 7%) 0%, rgb(242 251 255 / 0%) 38%);
   --u: 2px;
   --f: 2px;
+  --fs: 2px;
 
   position: fixed;
   inset: 0;
   pointer-events: none;
   color: var(--bone);
   font-family: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace;
-  font-size: calc(var(--f) * 8);
+  font-size: calc(var(--f) * 9);
   line-height: calc(var(--f) * 9);
+  font-weight: normal;
+  font-synthesis: none;
   font-variant-numeric: tabular-nums;
+  font-kerning: none;
+  letter-spacing: 0;
+}
+
+.sf-ui.has-pixel-font {
+  font-family: 'Shardfall Pixel', ui-monospace, Consolas, monospace;
+}
+
+/* Stair-stepped 1-pixel corner cut (style guide 2.1 "sudut terpotong", crisp at any UI scale). */
+.sf-ui {
+  --cut: polygon(
+    0 calc(var(--u) * 2),
+    var(--u) calc(var(--u) * 2),
+    var(--u) var(--u),
+    calc(var(--u) * 2) var(--u),
+    calc(var(--u) * 2) 0,
+    calc(100% - var(--u) * 2) 0,
+    calc(100% - var(--u) * 2) var(--u),
+    calc(100% - var(--u)) var(--u),
+    calc(100% - var(--u)) calc(var(--u) * 2),
+    100% calc(var(--u) * 2),
+    100% calc(100% - var(--u) * 2),
+    calc(100% - var(--u)) calc(100% - var(--u) * 2),
+    calc(100% - var(--u)) calc(100% - var(--u)),
+    calc(100% - var(--u) * 2) calc(100% - var(--u)),
+    calc(100% - var(--u) * 2) 100%,
+    calc(var(--u) * 2) 100%,
+    calc(var(--u) * 2) calc(100% - var(--u)),
+    var(--u) calc(100% - var(--u)),
+    var(--u) calc(100% - var(--u) * 2),
+    0 calc(100% - var(--u) * 2)
+  );
+}
+
+/* Colour vision (ui-spec 9, QA A-04): UI marker variants. Placeholder values until AD's palette;
+   rarity keeps its pips, focus its thick frame, low HP its crack mark. */
+.sf-ui[data-cv='protan'],
+.sf-ui[data-cv='deutan'] {
+  --rarity-1: #a8e4ff;
+  --rarity-2: #3d5bff;
+  --danger-red: #ff4fd8;
+  --tag-ward: #c9c2b6;
+}
+
+.sf-ui[data-cv='tritan'] {
+  --rarity-0: #8a817a;
+  --rarity-1: #ff9e6b;
+  --kept-cyan: #8fe8f0;
+  --tag-shard: #8fe8f0;
+  --tag-echo: #ff9e6b;
 }
 
 .sf-ui.solid-panels {
   --panel-bg: var(--night);
+  --sheen: linear-gradient(transparent, transparent);
 }
 
 .sf-ui * {
@@ -69,7 +134,7 @@
 
 .sf-ui .screen-choice,
 .sf-ui .screen-glazier {
-  background: rgb(20 18 28 / 45%);
+  background: rgb(20 18 28 / 50%);
 }
 
 /* Menu safe area: 640 x 360 UI units, centred (ui-spec 7.1). */
@@ -82,23 +147,78 @@
   flex-direction: column;
   gap: calc(var(--u) * 6);
   overflow: hidden;
+  animation: sf-enter 120ms ease-out backwards;
 }
 
-/* Panel: night 90%, 1 unit bone frame at 60%, 2 unit cut corners (style guide 2.1). */
+/* Framed elements: night 90%, 1 unit frame, stair corners with the frame pixel on the inner step,
+   a faint glass sheen. --edge drives the frame and the corner pixels together. */
+.sf-ui .panel,
+.sf-ui .btn,
+.sf-ui .bar,
+.sf-ui .rite,
+.sf-ui .hud-banner,
+.sf-ui .icon,
+.sf-ui .portrait,
+.sf-ui .tag-chip,
+.sf-ui .badge {
+  --edge: var(--frame);
+  border: var(--u) solid var(--edge);
+  background-color: var(--panel-bg);
+  background-image:
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    var(--sheen);
+  background-size:
+    var(--u) var(--u),
+    var(--u) var(--u),
+    var(--u) var(--u),
+    var(--u) var(--u),
+    100% 100%;
+  background-position:
+    0 0,
+    100% 0,
+    0 100%,
+    100% 100%,
+    0 0;
+  background-repeat: no-repeat;
+  clip-path: var(--cut);
+}
+
 .sf-ui .panel {
-  background: var(--panel-bg);
-  border: var(--u) solid var(--frame);
   padding: calc(var(--u) * 6);
-  clip-path: polygon(
-    calc(var(--u) * 2) 0,
-    calc(100% - var(--u) * 2) 0,
-    100% calc(var(--u) * 2),
-    100% calc(100% - var(--u) * 2),
-    calc(100% - var(--u) * 2) 100%,
-    calc(var(--u) * 2) 100%,
-    0 calc(100% - var(--u) * 2),
-    0 calc(var(--u) * 2)
-  );
+}
+
+/* Corner glint on main panels (style guide 2.1, off with reduce effects or solid panels). */
+.sf-ui .panel.glass {
+  position: relative;
+}
+
+.sf-ui .panel.glass::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--u) * 2);
+  top: calc(var(--u) * 2);
+  width: calc(var(--u) * 22);
+  height: calc(var(--u) * 22);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      transparent calc(var(--u) * 9),
+      rgb(242 251 255 / 16%) calc(var(--u) * 9) calc(var(--u) * 10),
+      transparent calc(var(--u) * 10)
+    ),
+    linear-gradient(
+      135deg,
+      transparent calc(var(--u) * 13),
+      rgb(242 251 255 / 9%) calc(var(--u) * 13) calc(var(--u) * 14),
+      transparent calc(var(--u) * 14)
+    );
+}
+
+.sf-ui.reduce-effects .panel.glass::before,
+.sf-ui.solid-panels .panel.glass::before {
+  display: none;
 }
 
 .sf-ui .title-block {
@@ -107,16 +227,27 @@
 
 .sf-ui .heading {
   margin: 0;
-  font-size: calc(var(--f) * 16);
+  font-size: calc(var(--f) * 18);
   line-height: calc(var(--f) * 18);
-  font-weight: bold;
-  letter-spacing: calc(var(--f) * 1);
+  font-weight: normal;
+}
+
+/* Display-case label rule under screen titles: thin line with a small diamond. */
+.sf-ui .title-block .heading::after {
+  content: '';
+  display: block;
+  width: calc(var(--u) * 96);
+  height: calc(var(--u) * 5);
+  margin: calc(var(--u) * 3) auto 0;
+  background:
+    linear-gradient(var(--kept-gold), var(--kept-gold)) center / calc(var(--u) * 3)
+      calc(var(--u) * 3) no-repeat,
+    linear-gradient(var(--frame), var(--frame)) center / 100% var(--u) no-repeat;
 }
 
 .sf-ui .screen-sub,
 .sf-ui .dim,
-.sf-ui .label,
-.sf-ui .card-flavor {
+.sf-ui .label {
   color: var(--dust);
 }
 
@@ -129,28 +260,30 @@
 }
 
 .sf-ui .col-title {
-  margin: calc(var(--u) * 2) 0;
-  font-size: calc(var(--f) * 8);
+  margin: 0 0 calc(var(--u) * 3);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
   color: var(--dust);
   font-weight: normal;
   text-transform: uppercase;
 }
 
-/* Buttons (ui-spec 6.2). Focus is a kept-gold frame, never colour alone: the frame thickens. */
+/* Buttons (ui-spec 6.2). Focus: kept-gold frame doubled inward, never colour alone. */
 .sf-ui .btn {
   font: inherit;
   color: var(--bone);
-  background: var(--panel-bg);
-  border: var(--u) solid var(--frame);
   padding: calc(var(--u) * 2) calc(var(--u) * 6);
   cursor: pointer;
   text-align: left;
   outline: none;
+  transition:
+    transform 80ms ease-out,
+    color 80ms;
 }
 
 .sf-ui .btn.is-focus {
-  border-color: var(--kept-gold);
-  box-shadow: 0 0 0 var(--u) var(--kept-gold);
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
 }
 
 .sf-ui .btn.primary {
@@ -158,13 +291,15 @@
 }
 
 .sf-ui .btn:disabled,
-.sf-ui .btn.is-locked {
-  color: rgb(163 154 140 / 50%);
+.sf-ui .btn.is-locked,
+.sf-ui .btn.is-idle {
+  color: var(--dust);
 }
 
 .sf-ui .key-hint {
   margin-left: calc(var(--u) * 3);
   color: var(--dust);
+  font-size: calc(var(--fs) * 9);
 }
 
 .sf-ui .menu {
@@ -186,11 +321,18 @@
 .sf-ui .title-safe {
   align-items: center;
   justify-content: center;
+  gap: calc(var(--u) * 10);
 }
 
 .sf-ui .title-head .heading {
-  font-size: calc(var(--f) * 24);
+  font-size: calc(var(--f) * 27);
   line-height: calc(var(--f) * 27);
+  color: var(--kept-white);
+}
+
+.sf-ui .title-notice {
+  color: var(--kept-gold);
+  text-align: center;
 }
 
 .sf-ui .version-label {
@@ -198,6 +340,8 @@
   right: calc(var(--u) * 8);
   bottom: calc(var(--u) * 6);
   color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
 }
 
 /* Class select */
@@ -226,13 +370,16 @@
 
 .sf-ui .class-name {
   margin: 0;
-  font-size: calc(var(--f) * 12);
-  line-height: calc(var(--f) * 14);
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  font-weight: normal;
+  color: var(--kept-white);
 }
 
 .sf-ui .label {
   margin-top: calc(var(--u) * 3);
   text-transform: uppercase;
+  font-size: calc(var(--fs) * 9);
 }
 
 .sf-ui .item-name {
@@ -244,41 +391,37 @@
   white-space: pre-line;
 }
 
-/* Row card (ui-spec 6.1): icon left, name, 2 effect lines, flavor, tags and price right. */
+/* Row card (ui-spec 6.1): hotkey and pips, big icon, name and 2 effect lines, tags and price.
+   Flavor sits under the effect in the body column and may wrap once (BUG-003). */
 .sf-ui .card {
   position: relative;
   display: grid;
-  grid-template-columns: calc(var(--u) * 10) calc(var(--u) * 32) 1fr auto;
-  gap: calc(var(--u) * 4);
-  align-items: center;
+  grid-template-columns: calc(var(--u) * 8) calc(var(--u) * 34) minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 4);
+  align-items: start;
   width: calc(var(--u) * 344);
-  min-height: calc(var(--u) * 40);
+  min-height: calc(var(--u) * 44);
   padding: calc(var(--u) * 4);
-  transition: transform 80ms ease-out;
+  animation: sf-rise 160ms ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
 }
 
 .sf-ui .card.rarity-0 {
-  border-color: var(--rarity-0);
+  --edge: var(--rarity-0);
 }
 .sf-ui .card.rarity-1 {
-  border-color: var(--rarity-1);
+  --edge: var(--rarity-1);
 }
 .sf-ui .card.rarity-2 {
-  border-color: var(--rarity-2);
+  --edge: var(--rarity-2);
 }
 .sf-ui .card.rarity-3 {
-  border-color: var(--rarity-3);
+  --edge: var(--rarity-3);
 }
 
 .sf-ui .card.is-focus {
-  border-color: var(--kept-gold);
+  --edge: var(--kept-gold);
   transform: translateY(calc(var(--u) * -2));
-}
-
-.sf-ui.reduce-effects .card,
-.sf-ui.reduce-effects .card.is-focus {
-  transform: none;
-  transition: none;
 }
 
 .sf-ui .card.is-locked {
@@ -286,17 +429,19 @@
 }
 
 .sf-ui .card-empty {
+  display: flex;
+  align-items: center;
   justify-content: center;
   color: var(--dust);
   border-style: dotted;
+  animation: none;
 }
 
 .sf-ui .card-corner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  align-self: start;
-  gap: var(--u);
+  gap: calc(var(--u) * 2);
 }
 
 .sf-ui .card-hotkey {
@@ -312,7 +457,13 @@
 
 .sf-ui .card-head {
   display: flex;
-  gap: calc(var(--u) * 3);
+  gap: calc(var(--u) * 4);
+  align-items: baseline;
+}
+
+.sf-ui .card-name {
+  color: var(--kept-white);
+  white-space: nowrap;
 }
 
 .sf-ui .card-tier {
@@ -329,64 +480,185 @@
 }
 
 .sf-ui .card-flavor {
-  white-space: nowrap;
+  margin-top: var(--u);
+  color: var(--dust);
+  white-space: normal;
+  max-height: calc(var(--f) * 18);
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .sf-ui .card-side {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: calc(var(--u) * 2);
 }
 
+.sf-ui .card-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+}
+
 .sf-ui .card.is-unaffordable .card-name {
   color: var(--dust);
 }
 
+/* Rarity pips: three slots, filled per rarity step (never colour alone). */
 .sf-ui .pips {
   display: flex;
   flex-direction: column;
   gap: var(--u);
 }
 
+.sf-ui .pips.is-row {
+  flex-direction: row;
+}
+
 .sf-ui .pip {
   display: block;
   width: calc(var(--u) * 2);
   height: calc(var(--u) * 2);
-  background: var(--bone);
+  background: var(--shadow);
 }
 
+.sf-ui .pip.is-on {
+  background: var(--edge, var(--bone));
+}
+
+.sf-ui .rarity-1 .pip.is-on {
+  background: var(--rarity-1);
+}
+.sf-ui .rarity-2 .pip.is-on {
+  background: var(--rarity-2);
+}
+.sf-ui .rarity-3 .pip.is-on {
+  background: var(--rarity-3);
+}
+
+/* Icons: AD art at an integer scale, or a monogram in the tag colour with the tag's shape. */
 .sf-ui .icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--shadow);
-  border: var(--u) solid var(--frame);
+  flex: none;
   color: var(--kept-cyan);
+  background-color: rgb(62 58 70 / 85%);
 }
 
 .sf-ui .icon-big {
-  width: calc(var(--u) * 32);
-  height: calc(var(--u) * 32);
+  width: calc(var(--u) * 34);
+  height: calc(var(--u) * 34);
+}
+
+.sf-ui .icon-small {
+  width: calc(var(--u) * 18);
+  height: calc(var(--u) * 18);
+  font-size: calc(var(--fs) * 9);
+}
+
+.sf-ui .icon.has-art {
+  background-color: rgb(20 18 28 / 70%);
+}
+
+.sf-ui .px-art {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.sf-ui .icon-mono {
+  position: relative;
+}
+
+.sf-ui .icon-small .icon-mono {
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .icon-big .icon-mono {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .icon .tag-shape {
+  position: absolute;
+  right: calc(var(--u) * 2);
+  bottom: calc(var(--u) * 2);
+}
+
+.sf-ui .tag-flame {
+  color: var(--tag-flame);
+}
+.sf-ui .tag-shard {
+  color: var(--tag-shard);
+}
+.sf-ui .tag-edge {
+  color: var(--tag-edge);
+}
+.sf-ui .tag-echo {
+  color: var(--tag-echo);
+}
+.sf-ui .tag-ward {
+  color: var(--tag-ward);
+}
+.sf-ui .tag-trade {
+  color: var(--tag-trade);
+}
+
+/* Per-tag shapes (ui-spec 6.2: every tag has a different shape, not only a colour). */
+.sf-ui .tag-shape {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 5);
+  background: currentcolor;
+}
+.sf-ui .tag-flame .tag-shape {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sf-ui .tag-shard .tag-shape {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.sf-ui .tag-edge .tag-shape {
+  clip-path: polygon(60% 0, 100% 0, 40% 100%, 0 100%);
+}
+.sf-ui .tag-echo .tag-shape {
+  clip-path: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
+}
+.sf-ui .tag-ward .tag-shape {
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
+}
+.sf-ui .tag-trade .tag-shape {
+  clip-path: polygon(0 20%, 100% 20%, 100% 80%, 0 80%);
 }
 
 .sf-ui .tag-chips {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: calc(var(--u) * 2);
 }
 
 .sf-ui .tag-chip {
-  padding: 0 var(--u);
-  border: var(--u) solid var(--frame);
-  color: var(--kept-cyan);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  padding: 0 calc(var(--u) * 2);
+  background-color: rgb(20 18 28 / 70%);
+}
+
+.sf-ui .tag-abbr {
+  color: var(--bone);
 }
 
 .sf-ui .badge {
   color: var(--kept-gold);
-  border: var(--u) solid var(--kept-gold);
+  --edge: var(--kept-gold);
   padding: 0 calc(var(--u) * 2);
+  white-space: nowrap;
 }
 
 .sf-ui .glint-amount {
@@ -403,21 +675,29 @@
 
 .sf-ui .glint-icon {
   display: inline-block;
-  width: calc(var(--u) * 6);
-  height: calc(var(--u) * 6);
+  flex: none;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 7);
   background: var(--glint);
-  outline: var(--u) solid var(--ink);
-  transform: rotate(45deg);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.sf-ui .glint-art {
+  display: inline-flex;
+  flex: none;
+}
+
+.sf-ui .is-poor .glint-art {
+  filter: grayscale(1) brightness(0.8);
 }
 
 .sf-ui .is-poor .glint-icon {
-  background: var(--dust);
-  background-image: linear-gradient(
+  background: linear-gradient(
     135deg,
-    transparent 40%,
+    var(--dust) 40%,
     var(--ink) 40%,
     var(--ink) 60%,
-    transparent 60%
+    var(--dust) 60%
   );
 }
 
@@ -432,7 +712,11 @@
 }
 
 .sf-ui .lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: calc(var(--u) * 2);
+  width: calc(var(--u) * 14);
   color: var(--dust);
 }
 
@@ -452,6 +736,37 @@
   gap: calc(var(--u) * 6);
 }
 
+.sf-ui .queue-chip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--u) * 4);
+  margin-top: calc(var(--u) * 2);
+  color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .queue-pips {
+  display: flex;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .qpip {
+  width: calc(var(--u) * 4);
+  height: calc(var(--u) * 4);
+  border: var(--u) solid var(--dust);
+}
+
+.sf-ui .qpip.is-done {
+  background: var(--dust);
+}
+
+.sf-ui .qpip.is-now {
+  border-color: var(--kept-gold);
+  background: var(--kept-gold);
+}
+
 /* Glazier (ui-spec S05, wireframe 05) */
 .sf-ui .glazier-safe {
   padding: calc(var(--u) * 6);
@@ -465,13 +780,18 @@
 }
 
 .sf-ui .shop-top .heading {
-  font-size: calc(var(--f) * 12);
-  line-height: calc(var(--f) * 14);
+  color: var(--kept-white);
 }
 
 .sf-ui .shop-glint {
   margin-left: auto;
-  font-size: calc(var(--f) * 12);
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .shop-glint .glint-icon {
+  width: calc(var(--u) * 11);
+  height: calc(var(--u) * 11);
 }
 
 .sf-ui .shop-next,
@@ -486,28 +806,92 @@
   min-height: 0;
 }
 
+.sf-ui .shop-left {
+  width: calc(var(--u) * 132);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+  min-height: 0;
+}
+
+.sf-ui .glazier-card {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  align-items: flex-start;
+}
+
+.sf-ui .portrait {
+  flex: none;
+  width: calc(var(--u) * 52);
+  height: calc(var(--u) * 52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(20 18 28 / 80%);
+}
+
+/* Fallback mask: a cut-glass pane with two eye slits, team-made CSS until AD's portrait. */
+.sf-ui .portrait-mask {
+  position: relative;
+  width: calc(var(--u) * 30);
+  height: calc(var(--u) * 38);
+  background:
+    linear-gradient(var(--ink), var(--ink)) calc(var(--u) * 7) calc(var(--u) * 15) /
+      calc(var(--u) * 6) calc(var(--u) * 2) no-repeat,
+    linear-gradient(var(--ink), var(--ink)) calc(var(--u) * 17) calc(var(--u) * 15) /
+      calc(var(--u) * 6) calc(var(--u) * 2) no-repeat,
+    linear-gradient(var(--kept-cyan), var(--kept-cyan)) calc(var(--u) * 14) calc(var(--u) * 4) /
+      var(--u) calc(var(--u) * 30) no-repeat,
+    linear-gradient(160deg, var(--bone) 0%, var(--stone) 55%, var(--shadow) 100%);
+  clip-path: polygon(50% 0, 100% 18%, 92% 72%, 50% 100%, 8% 72%, 0 18%);
+}
+
+.sf-ui .glazier-say {
+  flex: 1;
+  min-width: 0;
+}
+
+.sf-ui .glazier-line {
+  color: var(--bone);
+  white-space: normal;
+}
+
+.sf-ui .glazier-card.is-silent .glazier-say {
+  display: none;
+}
+
 .sf-ui .shop-tags {
-  width: calc(var(--u) * 120);
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .sf-ui .tag-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: calc(var(--u) * 2);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 3);
+  row-gap: var(--u);
   align-items: center;
-  margin-bottom: calc(var(--u) * 2);
+  margin-bottom: calc(var(--u) * 3);
+  padding: var(--u);
 }
 
 .sf-ui .tag-row .tag-pips {
-  grid-column: 2;
+  grid-column: 2 / 4;
   display: flex;
-  gap: var(--u);
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .tag-name {
+  color: var(--bone);
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .sf-ui .tag-pip {
-  width: calc(var(--u) * 3);
-  height: calc(var(--u) * 3);
+  width: calc(var(--u) * 4);
+  height: calc(var(--u) * 4);
   border: var(--u) solid var(--dust);
 }
 
@@ -525,8 +909,12 @@
   color: var(--kept-gold);
 }
 
+.sf-ui .tag-new {
+  grid-column: 2 / 4;
+}
+
 .sf-ui .tag-row.is-unlock {
-  outline: var(--u) solid var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
 }
 
 .sf-ui .shop-offers {
@@ -542,29 +930,32 @@
 }
 
 .sf-ui .shop-offers .card {
-  width: calc(var(--u) * 344);
   min-height: calc(var(--u) * 46);
 }
 
 .sf-ui .shop-right {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
 }
 
 .sf-ui .slot-grid {
   display: grid;
-  grid-template-columns: repeat(3, calc(var(--u) * 28));
+  grid-template-columns: repeat(3, calc(var(--u) * 30));
   gap: calc(var(--u) * 3);
+  margin-bottom: calc(var(--u) * 6);
 }
 
 .sf-ui .slot {
-  width: calc(var(--u) * 28);
-  height: calc(var(--u) * 28);
+  position: relative;
+  width: calc(var(--u) * 30);
+  height: calc(var(--u) * 32);
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--u);
 }
 
 .sf-ui .slot.is-empty {
@@ -572,36 +963,70 @@
 }
 
 .sf-ui .slot.rarity-1 {
-  border-color: var(--rarity-1);
+  --edge: var(--rarity-1);
 }
 .sf-ui .slot.rarity-2 {
-  border-color: var(--rarity-2);
+  --edge: var(--rarity-2);
 }
 .sf-ui .slot.rarity-3 {
-  border-color: var(--rarity-3);
+  --edge: var(--rarity-3);
 }
 
 .sf-ui .slot.is-focus,
-.sf-ui .slot.is-fuse-target {
-  border-color: var(--kept-gold);
+.sf-ui .slot.is-fuse-target,
+.sf-ui .slot.is-selected {
+  --edge: var(--kept-gold);
+}
+
+.sf-ui .slot.is-selected {
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
 }
 
 .sf-ui .slot.can-fuse::after {
   content: '+';
-  color: var(--kept-gold);
   position: absolute;
+  right: calc(var(--u) * 2);
+  top: 0;
+  color: var(--kept-gold);
 }
 
-.sf-ui .slot-abbr {
-  color: var(--kept-cyan);
+.sf-ui .slot .icon-small {
+  border: none;
+  background: none;
 }
 
 .sf-ui .slot-tier {
   color: var(--kept-gold);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
 }
 
+.sf-ui .memento-list,
+.sf-ui .build-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+/* Build rows (pause, run end) and Memento rows: fixed icon and pip columns (BUG-005). */
 .sf-ui .memento-row,
-.sf-ui .build-row,
+.sf-ui .build-row {
+  display: grid;
+  grid-template-columns: calc(var(--u) * 18) calc(var(--u) * 8) minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 3);
+  align-items: center;
+}
+
+.sf-ui .build-name,
+.sf-ui .memento-name {
+  min-width: 0;
+  white-space: normal;
+}
+
+.sf-ui .build-trail {
+  color: var(--kept-gold);
+}
+
 .sf-ui .stat-row {
   display: flex;
   gap: calc(var(--u) * 3);
@@ -610,10 +1035,6 @@
 
 .sf-ui .stat-row .num {
   margin-left: auto;
-}
-
-.sf-ui .memento-row .pips {
-  flex-direction: row;
 }
 
 .sf-ui .shop-bar {
@@ -626,6 +1047,7 @@
 
 .sf-ui .info-line {
   flex: 1;
+  min-width: 0;
   color: var(--kept-gold);
   white-space: nowrap;
   overflow: hidden;
@@ -645,6 +1067,17 @@
 .sf-ui .pause-build {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .pause-build .col-title {
+  margin-top: calc(var(--u) * 3);
+}
+
+.sf-ui .pause-cols .menu {
+  align-self: flex-start;
 }
 
 .sf-ui .dialog-safe {
@@ -657,6 +1090,7 @@
   flex-direction: column;
   gap: calc(var(--u) * 8);
   align-items: center;
+  padding: calc(var(--u) * 12);
 }
 
 .sf-ui .dialog-buttons {
@@ -673,6 +1107,7 @@
 
 .sf-ui .tab.is-active {
   color: var(--kept-gold);
+  --edge: var(--kept-gold);
 }
 
 .sf-ui .settings-body {
@@ -690,30 +1125,100 @@
   width: 100%;
 }
 
-.sf-ui .setting-row.is-static {
-  padding: 0 calc(var(--u) * 6);
-}
-
 .sf-ui .setting-value {
   display: flex;
   gap: calc(var(--u) * 4);
   align-items: center;
 }
 
+.sf-ui .arrow {
+  color: var(--dust);
+  padding: 0 calc(var(--u) * 2);
+  cursor: pointer;
+}
+
+.sf-ui .setting-row.is-focus .arrow {
+  color: var(--kept-gold);
+}
+
+.sf-ui .choice-text {
+  min-width: calc(var(--f) * 48);
+  text-align: center;
+}
+
 .sf-ui .slider {
   display: flex;
   gap: var(--u);
+  padding: calc(var(--u) * 2) 0;
+  cursor: pointer;
+  touch-action: none;
 }
 
 .sf-ui .notch {
-  width: calc(var(--u) * 3);
-  height: calc(var(--u) * 6);
+  width: calc(var(--u) * 4);
+  height: calc(var(--u) * 7);
   border: var(--u) solid var(--dust);
 }
 
 .sf-ui .notch.is-on {
   background: var(--kept-gold);
   border-color: var(--kept-gold);
+}
+
+.sf-ui .slider-num {
+  min-width: calc(var(--u) * 18);
+  text-align: right;
+}
+
+.sf-ui .remap-cols {
+  display: flex;
+  gap: calc(var(--u) * 12);
+}
+
+.sf-ui .remap-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .remap-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--f) * 72) calc(var(--f) * 72);
+  gap: calc(var(--u) * 3);
+  align-items: center;
+}
+
+.sf-ui .bind {
+  text-align: center;
+  padding: var(--u) calc(var(--u) * 2);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sf-ui .bind.is-empty .btn-label::before {
+  content: '';
+  display: inline-block;
+  width: calc(var(--u) * 12);
+  height: var(--u);
+  background: var(--shadow);
+  vertical-align: middle;
+}
+
+.sf-ui .bind.is-recording {
+  color: var(--kept-gold);
+  --edge: var(--kept-gold);
+  animation: sf-blink 700ms steps(2, jump-none) infinite;
+}
+
+.sf-ui .settings-note {
+  flex: 1;
+  color: var(--kept-gold);
+  text-align: right;
+}
+
+.sf-ui .btn.is-armed {
+  color: var(--kept-gold);
 }
 
 /* Run end */
@@ -753,7 +1258,7 @@
   top: calc(var(--u) * 8);
   display: flex;
   flex-direction: column;
-  gap: calc(var(--u) * 2);
+  gap: calc(var(--u) * 3);
 }
 
 .sf-ui .hud-tc {
@@ -764,6 +1269,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--u);
 }
 
 .sf-ui .hud-tr {
@@ -773,8 +1279,14 @@
   display: flex;
   align-items: center;
   gap: calc(var(--u) * 3);
-  font-size: calc(var(--f) * 12);
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
   color: var(--glint);
+}
+
+.sf-ui .hud-tr .glint-icon {
+  width: calc(var(--u) * 11);
+  height: calc(var(--u) * 11);
 }
 
 .sf-ui .hud-bc {
@@ -790,8 +1302,6 @@
 
 .sf-ui .bar {
   position: relative;
-  background: var(--panel-bg);
-  border: var(--u) solid var(--frame);
   overflow: hidden;
 }
 
@@ -802,12 +1312,12 @@
 }
 
 .sf-ui .bar-hp {
-  width: calc(var(--u) * 120);
-  height: calc(var(--u) * 10);
+  width: calc(var(--u) * 124);
+  height: calc(var(--f) * 9 + var(--u) * 4);
 }
 
 .sf-ui .bar-hp .bar-fill {
-  background: var(--kept-blue);
+  background: linear-gradient(var(--kept-blue) 60%, var(--kept-blue-deep) 60%);
 }
 
 .sf-ui .bar-text {
@@ -816,7 +1326,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(var(--f) * 7);
+  color: var(--kept-white);
 }
 
 .sf-ui .hud-lv {
@@ -825,9 +1335,13 @@
   gap: calc(var(--u) * 3);
 }
 
+.sf-ui .lv-text {
+  color: var(--kept-gold);
+}
+
 .sf-ui .bar-xp {
   width: calc(var(--u) * 96);
-  height: calc(var(--u) * 4);
+  height: calc(var(--u) * 5);
 }
 
 .sf-ui .bar-xp .bar-fill {
@@ -836,7 +1350,7 @@
 
 /* Low HP: danger-red frame plus a crack mark (shape, not only colour). */
 .sf-ui .screen-hud.is-low .bar-hp {
-  border-color: var(--danger-red);
+  --edge: var(--danger-red);
   animation: sf-pulse 600ms ease-in-out infinite alternate;
 }
 
@@ -847,7 +1361,7 @@
 .sf-ui .screen-hud.is-low .hp-crack {
   display: block;
   position: absolute;
-  right: calc(var(--u) * 2);
+  right: calc(var(--u) * 4);
   top: 0;
   bottom: 0;
   width: calc(var(--u) * 2);
@@ -855,36 +1369,28 @@
   transform: skewX(-20deg);
 }
 
-.sf-ui.reduce-effects .screen-hud.is-low .bar-hp {
-  animation: none;
-}
-
-@keyframes sf-pulse {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.6;
-  }
-}
-
 .sf-ui .pulse-label {
   color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
 }
 
 .sf-ui .timer {
-  font-size: calc(var(--f) * 16);
+  font-size: calc(var(--f) * 18);
   line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
 }
 
 .sf-ui .screen-hud.is-final .timer {
   color: var(--kept-gold);
+  animation: sf-tick 1s steps(1, end) infinite;
 }
 
 .sf-ui .foe {
   display: none;
   flex-direction: column;
   align-items: center;
+  gap: var(--u);
 }
 
 .sf-ui .screen-hud.mode-boss .timer,
@@ -906,6 +1412,10 @@
   color: var(--kept-gold);
 }
 
+.sf-ui .foe-name {
+  color: var(--bone);
+}
+
 .sf-ui .foe-row {
   display: flex;
   align-items: center;
@@ -913,18 +1423,24 @@
 }
 
 .sf-ui .bar-foe {
-  width: calc(var(--u) * 160);
-  height: calc(var(--u) * 6);
+  width: calc(var(--u) * 180);
+  height: calc(var(--u) * 8);
+  --edge: var(--danger-violet);
 }
 
 .sf-ui .bar-foe .bar-fill {
   background: var(--danger-violet);
+  transition: transform 600ms ease-out;
+}
+
+.sf-ui .screen-hud.is-pending .bar-foe {
+  --edge: var(--frame);
 }
 
 .sf-ui .foe-enraged {
   display: none;
-  width: calc(var(--u) * 5);
-  height: calc(var(--u) * 5);
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 6);
   background: var(--danger-red);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
@@ -933,36 +1449,118 @@
   display: block;
 }
 
+/* Banner under the timer slot: Warden or boss arrival, "Pulse {n} Held", "Pulse {n}". */
+.sf-ui .hud-banner {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--u) * 3) calc(var(--u) * 10);
+  margin-top: calc(var(--u) * 4);
+  animation: sf-enter 160ms ease-out backwards;
+}
+
+.sf-ui .hud-banner.is-pulse,
+.sf-ui .hud-banner.is-foe {
+  display: flex;
+}
+
+.sf-ui .hud-banner.is-foe {
+  --edge: var(--danger-violet);
+}
+
+.sf-ui .banner-main {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+}
+
+.sf-ui .banner-sub {
+  color: var(--dust);
+}
+
+.sf-ui .banner-sub:empty {
+  display: none;
+}
+
+/* Control hint in Pulse 1 (ui-spec S03): above the Rite slot, fades away. */
+.sf-ui .hud-hint {
+  display: flex;
+  gap: calc(var(--u) * 10);
+  color: var(--bone);
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.sf-ui .screen-hud.has-hint .hud-hint {
+  opacity: 1;
+}
+
+.sf-ui .hint-item {
+  padding: var(--u) calc(var(--u) * 4);
+  background: rgb(20 18 28 / 75%);
+}
+
 .sf-ui .rite {
   position: relative;
-  width: calc(var(--u) * 32);
-  height: calc(var(--u) * 32);
-  background: var(--panel-bg);
-  border: var(--u) solid var(--frame);
+  width: calc(var(--u) * 38);
+  height: calc(var(--u) * 38);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
+.sf-ui .rite-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-ui .rite-icon .icon {
+  border: none;
+  background: none;
+  clip-path: none;
+}
+
 .sf-ui .rite-fill {
   position: absolute;
   inset: 0;
-  background: rgb(62 58 70 / 85%);
+  background: rgb(20 18 28 / 72%);
   transform-origin: center top;
 }
 
 .sf-ui .rite-secs {
   position: relative;
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+}
+
+.sf-ui .rite-charges {
+  position: absolute;
+  right: calc(var(--u) * 2);
+  top: calc(var(--u) * 1);
+  color: var(--kept-gold);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
 }
 
 .sf-ui .rite.is-ready {
-  border-color: var(--kept-gold);
-  box-shadow: 0 0 0 var(--u) var(--kept-gold);
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+  animation: sf-ready 250ms ease-out;
+}
+
+.sf-ui .rite.is-denied {
+  animation: sf-shake 250ms steps(4, end);
 }
 
 .sf-ui .rite-key {
   color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
 }
 
 /* Live region: visually hidden, read by screen readers. */
@@ -994,9 +1592,9 @@
   display: none;
   position: absolute;
   left: 50%;
-  top: calc(var(--u) * 8 + var(--f) * 12);
+  top: calc(var(--u) * 8 + var(--fs) * 9);
   transform: translateX(-50%);
-  font-size: calc(var(--f) * 16);
+  font-size: calc(var(--f) * 18);
   line-height: calc(var(--f) * 18);
   color: var(--kept-gold);
   pointer-events: none;
@@ -1009,4 +1607,166 @@
 .sf-ui.is-counting .screen-hud .timer,
 .sf-ui.is-counting .screen-hud .foe {
   visibility: hidden;
+}
+
+/* Text size variants (ui-spec 7.3). Large and Largest: cards fill the width, the left column
+   becomes a tag strip in the top bar; Largest also drops shop flavor and moves the inventory into
+   the offers' place behind Stats (T). Settings may scroll at large sizes. */
+.sf-ui .tag-strip {
+  display: none;
+  gap: calc(var(--u) * 4);
+  align-items: center;
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .tag-mini {
+  display: inline-flex;
+  gap: calc(var(--u) * 2);
+  align-items: center;
+}
+
+.sf-ui .tag-mini.is-preview .tag-count {
+  color: var(--kept-gold);
+}
+
+.sf-ui[data-text-scale='1'] .tag-strip,
+.sf-ui[data-text-scale='2'] .tag-strip {
+  display: inline-flex;
+}
+
+.sf-ui[data-text-scale='1'] .shop-left,
+.sf-ui[data-text-scale='2'] .shop-left,
+.sf-ui[data-text-scale='2'] .shop-offers .card-flavor,
+.sf-ui[data-text-scale='1'] .shop-next,
+.sf-ui[data-text-scale='2'] .shop-next {
+  display: none;
+}
+
+.sf-ui[data-text-scale='1'] .card,
+.sf-ui[data-text-scale='2'] .card,
+.sf-ui[data-text-scale='1'] .choice-safe .card-list,
+.sf-ui[data-text-scale='2'] .choice-safe .card-list {
+  width: 100%;
+}
+
+.sf-ui[data-text-scale='1'] .shop-offers,
+.sf-ui[data-text-scale='2'] .shop-offers {
+  flex: 1;
+  min-width: 0;
+}
+
+.sf-ui[data-text-scale='1'] .shop-right {
+  flex: none;
+  width: calc(var(--u) * 112);
+}
+
+.sf-ui .shop-right.is-side {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-auto-flow: column;
+  grid-template-rows: auto auto auto auto;
+  column-gap: calc(var(--u) * 16);
+  align-content: start;
+}
+
+.sf-ui .shop-right.is-side .side-stats {
+  grid-column: 2;
+  grid-row: 1 / 5;
+}
+
+.sf-ui .pause-build .stat-list {
+  columns: 2;
+  column-gap: calc(var(--u) * 16);
+}
+
+.sf-ui .stat-list .stat-row {
+  break-inside: avoid;
+}
+
+.sf-ui[data-text-scale='2'] .pause-build .stat-list {
+  columns: 3;
+}
+
+.sf-ui[data-text-scale='1'] .settings-body,
+.sf-ui[data-text-scale='2'] .settings-body {
+  overflow-y: auto;
+}
+
+.sf-ui[data-text-scale='2'] .remap-cols {
+  flex-direction: column;
+  gap: calc(var(--u) * 6);
+}
+
+/* Motion (ui-spec 10). Reduce effects turns every move off; state changes stay instant. */
+@keyframes sf-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 4));
+  }
+}
+
+@keyframes sf-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 4));
+  }
+}
+
+@keyframes sf-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes sf-ready {
+  from {
+    box-shadow: inset 0 0 0 calc(var(--u) * 4) var(--kept-gold);
+  }
+}
+
+@keyframes sf-shake {
+  25% {
+    transform: translateX(calc(var(--u) * -2));
+  }
+  75% {
+    transform: translateX(calc(var(--u) * 2));
+  }
+}
+
+@keyframes sf-tick {
+  0% {
+    transform: translateY(calc(var(--u) * -1));
+  }
+  15% {
+    transform: none;
+  }
+}
+
+@keyframes sf-blink {
+  50% {
+    color: var(--bone);
+  }
+}
+
+.sf-ui.reduce-effects *,
+.sf-ui.reduce-effects *::before {
+  animation: none !important;
+  transition: none !important;
+}
+
+.sf-ui.reduce-effects .card.is-focus {
+  transform: none;
+}
+
+.sf-ui[data-text-scale='2'] .shop-offers {
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui[data-text-scale='2'] .shop-offers .tag-chips {
+  flex-direction: row;
 }

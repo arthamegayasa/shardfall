@@ -1,8 +1,10 @@
 # Shardfall: Game Design Document
 
-Pemilik: Game Designer (GD). Status: versi 2, 2026-11-17 (perbaikan review M0 CD dan LP, jawaban `docs/specs/gd-answers-m0.md`). Reviewer: CD (rasa, pilar), LP (kelayakan).
+Pemilik: Game Designer (GD). Status: versi 3, 2026-11-17 (versi 2: perbaikan review M0 CD dan LP, jawaban `docs/specs/gd-answers-m0.md`; versi 3: tuning vertical slice M2-01 dengan bot, `docs/balance-report.md`). Reviewer: CD (rasa, pilar), LP (kelayakan).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md` (versi 1.1), keputusan di `docs/tasks.md`. Teknis (satuan, kontrak, format data): `docs/tech/architecture.md` versi 2.
 Dokumen pendamping: `docs/systems/effect-primitives.md` (bahasa efek), `docs/systems/data-schema.md` (kolom CSV), `docs/specs/gd-answers-m0.md` (aturan rinci untuk GP).
+
+Perubahan versi 3 (M2-01): kepadatan Pulse naik dengan baris pembuka dan lonjakan (3.2, 3.4), kurva HP dan damage Unlit lebih curam (5.5), harga dan XP x1.3 (4.3, 11.1), Glint melesat dengan percepatan dan radius tarik 2.0 u (4.2), Lampmoth lebih cepat, Hawker lebih sering menembak (14.2), Warden dan boss disetel ulang (15.1, 16.1), target balance diperbarui (19). Arena slice `arena_market`.
 
 Perubahan versi 2: Keepsake menjadi Memento; arena 32 x 20 u final; durasi Pulse dari data; aturan spawn, kontak, Burn, merge, jual, gabung Glint, dan urutan akhir Pulse ditetapkan; urutan komposisi stat (5.6); profil M1 `run_a_m1`; HUD Warden saat Pulse ditahan; istilah UI Fuse, Temper, Crack, Vitrine Steady, Light Kept.
 
@@ -104,7 +106,7 @@ Durasi tiap Pulse ditulis langsung di kolom `duration_s` di `waves.csv` (sumber 
 
 ### 3.2 Kurva kepadatan di dalam Pulse
 
-Spawner membagi jumlah musuh per Pulse ke sepanjang waktu dengan bobot `w(τ)` (τ = detik sejak Pulse mulai, D = durasi):
+Rasa yang dituju (bobot `w(τ)`, τ = detik sejak Pulse mulai, D = durasi):
 
 | Rentang τ | Bobot w | Rasa |
 |---|---|---|
@@ -112,6 +114,13 @@ Spawner membagi jumlah musuh per Pulse ke sepanjang waktu dengan bobot `w(τ)` (
 | 3 s sampai D minus 6 s | naik linier 0.6 ke 1.3 | Tekanan naik |
 | D minus 6 s sampai D minus 2 s | 1.6 | Lonjakan akhir, sama dengan riser musik |
 | D minus 2 s sampai D | 0 | Tidak ada spawn baru, pemain bersiap untuk kilatan kaca |
+
+**Cara data membentuk kurva (M2-01).** Spawner menaruh grup secara seragam di dalam jendela tiap baris, jadi kurva dibangun dari beberapa baris swarmer per Pulse berwaktu (dihasilkan `tools/balance/model.py`):
+- Baris pembuka: satu grup swarmer (4 di t1 sampai 3, 5 di t4 sampai 6, 6 di t7+) ditandai di τ = 0, jadi Unlit pertama keluar di 0.8 s (CD M1 4.1).
+- Baris dasar: jumlah per jenis di tabel 3.4, jendela per jenis (aturan spawn di model).
+- Baris lonjakan: swarmer sebanyak `swarmer dasar x min(1.25, 0.4 + 0.1 x t)` (Pulse Warden x 0.5) di 55% sampai 100% durasi, grup 4 sampai 7. Ngengat tertarik ke cahaya yang akan padam: lonjakan selaras riser musik dan 5 detik timer emas.
+
+Hasil bot baik (median, `docs/balance-report.md`): puncak Unlit hidup sekitar 26 di Pulse 4, 24 di Pulse 5 (Warden), 44 di Pulse 8 (40 di 6 detik terakhir), 50 di Pulse 9. Semua di bawah `alive_cap` (90) dan anggaran performa 120.
 
 Setiap baris di `wave_spawns.csv` boleh membatasi jendela waktunya sendiri (`start_frac`, `end_frac`), misalnya tank baru masuk setelah 30% Pulse, dan arah datangnya (`sectors`). Jadwal spawn dihitung di awal Pulse dari aliran RNG `spawn`, sehingga deterministik.
 
@@ -123,9 +132,9 @@ Algoritma jadwal:
 
 Aturan spawn:
 - Titik spawn di pita tepi arena (8 sektor, data LD). Tidak pernah dalam `spawn.playerSafeRadius` (4 u, JSON arena) dari pemain.
-- Setiap spawn didahului tanda retak di lantai selama 0.8 s (`spawn_mark_s`). Tanda ini tidak memberi damage dan Unlit tidak bisa dilukai selama tanda. Diameter tanda: kecil 1.0, sedang 1.5, besar 2.0, Warden 3.0 u; grup 3 ekor atau lebih minimal sedang.
+- Setiap spawn didahului tanda retak di lantai selama 0.8 s (`spawn_mark_s`). Tanda ini tidak memberi damage dan Unlit tidak bisa dilukai selama tanda. Diameter tanda: kecil 1.0, sedang 1.5, besar 2.0, Warden 3.0 u; grup 3 ekor atau lebih (`spawn_mark_medium_group_min`) minimal sedang.
 - Setelah keluar, Unlit punya masa tenggang 0.3 s (`spawn_grace_s`): tanpa damage kontak dan tanpa memulai serangan, tetapi bisa dilukai.
-- Swarmer datang dalam kelompok 3 sampai 6 di satu titik; jenis lain sendiri atau berdua.
+- Swarmer datang dalam kelompok 3 sampai 6 di satu titik (lonjakan 4 sampai 7); jenis lain sendiri atau berdua.
 - Batas Unlit hidup (`alive_cap` per Pulse di `waves.csv`): 70 (t1 sampai 5), 90 (t6 sampai 10), 110 (t11 sampai 15), 120 (t16 sampai 20). Unlit hidup ditambah tanda spawn aktif dihitung; mote dihitung. Warden, boss, swarmer tetesan boss, dan swarmer Moth Call tidak dihitung.
 - Bila penuh, spawn mengantre FIFO dan mulai tandanya saat ada tempat. Spawn yang belum bisa mulai sebelum D minus 2 s dibuang, agar dua detik tenang sebelum akhir Pulse terjaga.
 - Unlit tidak dikompensasi gerak vertikal (CD K7 butir 4); ditinjau setelah playtest M1 bila kabur vertikal terlalu mudah.
@@ -150,18 +159,20 @@ Kode jenis: s = swarmer, c = charger, h = shooter, k = tank, x = exploder, u = s
 
 **Tingkat A (profil `run_a`)**
 
+Kolom s = swarmer dasar + pembuka + lonjakan.
+
 | Pulse | Jenis | t | Durasi (s) | s | c | h | k | Total | Laju (/s) | Glint mentah | Glint diharapkan | Kumulatif | Level akhir |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | normal | 1 | 20 | 26 | | | | 26 | 1.3 | 26 | 24 | 24 | 1 |
-| 2 | normal | 2 | 23 | 32 | 4 | | | 36 | 1.6 | 40 | 37 | 61 | 3 |
-| 3 | normal | 3 | 26 | 36 | 6 | 4 | | 46 | 1.8 | 56 | 52 | 113 | 4 |
-| 4 | normal | 4 | 29 | 40 | 8 | 6 | 2 | 56 | 1.9 | 78 | 72 | 185 | 5 |
-| 5 | warden | 5 | 32 | 36 | 8 | 6 | 3 | 53 + W | 1.7 | 104 | 96 | 281 | 6 |
-| 6 | normal | 6 | 35 | 50 | 10 | 10 | 4 | 74 | 2.1 | 110 | 102 | 383 | 7 |
-| 7 | normal | 7 | 38 | 56 | 12 | 12 | 6 | 86 | 2.3 | 134 | 124 | 507 | 9 |
-| 8 | normal | 8 | 40 | 62 | 14 | 14 | 8 | 98 | 2.5 | 158 | 146 | 653 | 10 |
-| 9 | normal | 9 | 40 | 70 | 16 | 16 | 10 | 112 | 2.8 | 184 | 170 | 823 | 11 |
-| 10 | boss | 10 | bebas | 30 (tetesan) | | | | 30 + B | | 30 | 28 | 851 | 12 |
+| 1 | normal | 1 | 20 | 18 + 4 + 9 | | | | 31 | 1.6 | 31 | 29 | 29 | 1 |
+| 2 | normal | 2 | 23 | 24 + 4 + 14 | 4 | | | 46 | 2.0 | 50 | 46 | 75 | 2 |
+| 3 | normal | 3 | 26 | 28 + 4 + 20 | 6 | 4 | | 62 | 2.4 | 72 | 67 | 142 | 4 |
+| 4 | normal | 4 | 29 | 28 + 5 + 22 | 8 | 6 | 2 | 71 | 2.4 | 93 | 86 | 228 | 5 |
+| 5 | warden | 5 | 32 | 30 + 5 + 14 | 8 | 4 | 2 | 63 + W | 2.0 | 108 | 100 | 327 | 6 |
+| 6 | normal | 6 | 35 | 40 + 5 + 40 | 12 | 12 | 4 | 113 | 3.2 | 153 | 142 | 469 | 7 |
+| 7 | normal | 7 | 38 | 46 + 6 + 51 | 14 | 14 | 6 | 137 | 3.6 | 189 | 175 | 644 | 9 |
+| 8 | normal | 8 | 40 | 52 + 6 + 62 | 16 | 17 | 8 | 161 | 4.0 | 226 | 209 | 853 | 10 |
+| 9 | normal | 9 | 40 | 58 + 6 + 72 | 18 | 20 | 10 | 184 | 4.6 | 262 | 242 | 1095 | 12 |
+| 10 | boss | 10 | bebas | 30 (tetesan) | | | | 30 + B | | 30 | 30 | 1125 | 12 |
 
 **Tingkat C (profil `run_c`)**
 
@@ -188,11 +199,13 @@ Kode jenis: s = swarmer, c = charger, h = shooter, k = tank, x = exploder, u = s
 | 19 | vineyard | normal | 19 | 40 | 90 | 20 | 18 | 14 | 20 | 6 | 12 | 180 | 310 | 2568 | 21 |
 | 20 | vineyard | boss | 20 | bebas | 30 (tetesan) | | | | | | | 30 + B | 30 | 2596 | 21 |
 
+Tabel C menulis jumlah dasar. Sejak M2-01 setiap Pulse berwaktu B dan C juga mendapat baris pembuka dan lonjakan dengan rumus 3.2; angka Glint dan level C di tabel ini dihitung sebelum M2-01 dan dihitung ulang di M3 (`python tools/balance/model.py report`).
+
 Glint mentah di baris Warden sudah termasuk 25 Glint Warden. Baris boss non-final termasuk 40 Glint boss. Mote dari summoner tidak menjatuhkan Glint dan tidak dihitung di kolom Total.
 
 ### 3.5 Hitungan waktu run
 
-- Tingkat A: Pulse berwaktu 283 s, boss sekitar 75 s, toko 9 x sekitar 20 s = sekitar 9 menit. Prototipe M1 (`run_a_m1`): Pulse berwaktu 328 s, tanpa boss.
+- Tingkat A: Pulse berwaktu 283 s, waktu tambahan Warden 0 sampai 10 s, boss sekitar 65 s, toko 9 x sekitar 20 s, Temper 10 x sekitar 4 s = sekitar 9,5 menit (bot baik: median 9,6 menit). Prototipe M1 (`run_a_m1`): Pulse berwaktu 328 s, tanpa boss.
 - Tingkat C: Pulse berwaktu 582 s, 3 boss sekitar 225 s, toko 19 x sekitar 20 s = sekitar 20 menit. Bila playtest menunjukkan lebih dari 20 menit, potong Pulse 15 sampai 19 menjadi 36 s.
 
 ### 3.6 Urutan dalam satu tick
@@ -228,7 +241,7 @@ Satu Unlit menjatuhkan satu butir bernilai kolom `glint` (tank = 1 butir bernila
 
 ### 4.2 Memungut
 
-- Radius pungut dasar 1.6 u. Glint di dalam radius tertarik dan terbang ke pemain dengan kecepatan 12 u/s; butir yang sudah tertarik tetap terbang sampai terpungut, pada jarak radius pemain + 0.2 u.
+- Radius tarik dasar 2.0 u (`pickup_radius_base`, naik dari 1.6 karena Pulse lebih padat menyebar Glint lebih luas). Glint di dalam radius tertarik dan melesat ke pemain: mulai 3 u/s (`glint_fly_speed_start`), dipercepat 60 u/s^2 (`glint_fly_accel`) sampai 20 u/s (`glint_fly_speed`). Dari tepi radius butir tiba dalam sekitar 0,3 s. Butir yang sudah tertarik tetap terbang sampai terpungut, pada jarak radius pemain + 0.2 u. Nada pungut naik beruntun (AU, `GlintCollected.b`).
 - Glint bertahan di lantai sampai akhir Pulse. Posisi jatuh dijepit minimal 0.5 u di dalam batas arena.
 - **Batas butir (menjaga nilai):** bila butir di lantai (yang belum tertarik) akan melebihi `glint_floor_cap` (150), atau pool pickup penuh, nilai Glint baru ditambahkan ke butir lantai terdekat dari titik jatuhnya (seri: slot terkecil). Tidak ada nilai yang hilang dan tidak ada entitas baru. Butir bernilai 5 atau lebih boleh tampil lebih besar (AD).
 - Akhir Pulse: 50% nilai sisa dipungut otomatis (Crack 5: 25%).
@@ -239,12 +252,12 @@ Satu Unlit menjatuhkan satu butir bernilai kolom `glint` (tank = 1 butir bernila
 
 | Jenis | Plain / Tier I | Fine / Tier II | Rare / Tier III | Fabled / Tier IV |
 |---|---|---|---|---|
-| Memento | 14 | 28 | 50 | 85 |
-| Senjata | 16 | 34 | 70 | 130 |
+| Memento | 18 | 36 | 65 | 110 |
+| Senjata | 21 | 44 | 90 | 170 |
 
-Contoh harga Memento Plain/Fine/Rare/Fabled: t1 14/28/50/85, t5 18/37/66/112, t10 24/48/86/146, t19 34/68/122/207.
+M2-01: harga dasar x1.3 karena Glint per run naik sekitar 34% dengan Pulse yang lebih padat. Contoh harga Memento Plain/Fine/Rare/Fabled: t1 18/36/65/110, t5 24/48/86/145, t10 31/62/112/189.
 
-Contoh daya beli (dari model GD): setelah Pulse 1 sekitar 24 Glint (1 Memento Plain atau 1 senjata Tier I). Setelah Pulse 9 sekitar 170 Glint (1 Rare plus 1 Fine plus 2 reroll). Rata-rata 2 sampai 3 pembelian per toko.
+Contoh daya beli (model GD): setelah Pulse 1 sekitar 29 Glint (1 Memento Plain atau 1 senjata Tier I). Setelah Pulse 9 sekitar 240 Glint. Rata-rata sekitar 2 pembelian per toko; bot baik median 18 pembelian per run.
 
 ### 4.4 Reroll, kunci, jual, gabung
 
@@ -356,7 +369,9 @@ Status hanya diberikan pemain ke Unlit. Unlit tidak memberi status ke pemain kec
 
 ### 5.5 Skala musuh
 
-`hp(t) = 1 + 0.12 x (t - 1) + 0.006 x (t - 1)^2` (t1 = 1.00, t5 = 1.58, t10 = 2.57, t15 = 3.86, t20 = 5.45).
+`hp(t) = 1 + 0.18 x (t - 1) + 0.015 x (t - 1)^2` (t1 = 1.00, t5 = 1.96, t6 = 2.28, t10 = 3.84, t15 = 6.46, t20 = 9.84). `dm(t) = 1 + 0.1 x (t - 1)` (t5 = 1.4, t10 = 1.9).
+
+Alasan M2-01: daya pemain naik sekitar 10 kali dalam satu run, sedangkan HP Unlit dulu hanya 2,6 kali. Bot menunjukkan Unlit akhir mati sebelum sampai ke pemain (layar sepi, tanpa ancaman). Kurva baru tetap menjaga 1 tembakan Lantern Bolt membunuh swarmer sampai t6.
 Damage musuh memakai `dm(t)`. Kecepatan musuh tidak diskalakan threat (keterbacaan); hanya Crack 4 yang menambah kecepatan.
 
 ### 5.6 Komposisi stat
@@ -505,7 +520,7 @@ Aturan:
 | 2 | `kindling_jar` | Kindling Jar | Flame | Fine | 1 | A | Unlit terbakar menerima +20% damage | on_hit, target_has_status burn: hit_mod vuln +0.2 | |
 | 3 | `torch_glove` | Torch Glove | Flame, Edge | Fine | 1 | A | Hit senjata Edge selalu Burn | on_hit, source_tag edge: apply_status burn | |
 | 4 | `ashen_crown` | Ashen Crown (nama kerja, kata terlarang; nama final WR) | Flame | Fabled | 1 | A | Burn menumpuk sampai 3 | passive: stat_mod burn_max_stacks +2 | |
-| 5 | `smolder_boots` | Smolder Boots | Flame | Plain | 1 | A | Tiap 3 u berjalan, jatuhkan bara (1 u, 2 s) yang membakar | on_distance 3: spawn_zone burn | |
+| 5 | `smolder_boots` | Smolder Boots | Flame | Plain | 1 | A | Tiap 3 u berjalan, jatuhkan bara (1 u, 2 s) yang membakar; maksimal 4 bara sekaligus (M2-01) | on_distance 3: spawn_zone burn | |
 | 6 | `glass_marble` | Glass Marble | Shard | Plain | 2 | A | Proyektil pierce +1 | passive: stat_mod pierce +1 | Ya |
 | 7 | `prism_lens` | Prism Lens | Shard | Rare | 1 | A | Tiap proyektil ke-5 pecah jadi 3 saat kena (40%) | on_hit, source_kind projectile, every_nth 5: spawn_projectile split 3 | |
 | 8 | `shard_pouch` | Shard Pouch | Shard | Fabled | 1 | A | Senjata proyektil +1 proyektil | passive: stat_mod projectiles +1 | Ya |
@@ -562,7 +577,7 @@ Aturan rantai (effect-primitives 6.2): setiap hit dan kill membawa kedalaman. Hi
 
 ### 11.1 Kurva XP
 
-XP untuk naik dari level L ke L+1: `15 + 10 x L` (25, 35, 45, ...). Total XP ke level 10: 585. Target: sekitar 1 level per Pulse (tabel 3.4: level 12 di akhir Tingkat A, level 21 di akhir Tingkat C).
+XP untuk naik dari level L ke L+1: `20 + 13 x L` (33, 46, 59, ...). Total XP ke level 10: 765. M2-01: x1.3 bersama Glint per run. Target: sekitar 1 level per Pulse (tabel 3.4: level 12 di akhir Tingkat A, level 21 di akhir Tingkat C).
 
 ### 11.2 Kartu
 
@@ -660,16 +675,16 @@ Angka HP dan damage pada threat 1 (dikali `hp(t)` dan `dm(t)`).
 
 | id | Peran | Tk | HP | Gerak (u/s) | Kontak | Serangan | Glint | Guard | Tahan knockback | Perilaku dan telegraf |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `swarmer` | Perenang massal | A | 6 | 2.6 | 3 | | 1 | 0 | 0 | Mengejar lurus dengan sedikit liuk, saling menjaga jarak. Datang berkelompok 3 sampai 6 |
-| `charger` | Penerjang | A | 16 | 2.0 | 3 | Terjang 6 | 2 | 0 | 0.2 | Dalam 6 u: ancang-ancang 0.6 s (kedip merah plus garis arah), terjang 10 u/s selama 0.45 s (4.5 u), pulih 0.8 s, jeda 3 s |
-| `shooter` | Penembak | A | 10 | 1.7 | 2 | Proyektil 4 | 2 | 0 | 0 | Menjaga jarak 5 sampai 7 u. Ancang-ancang 0.4 s (inti menyala), 1 proyektil 5.5 u/s ke posisi pemain, umur 2.5 s, jeda 2.8 s |
+| `swarmer` | Perenang massal | A | 6 | 3.4 | 4 | | 1 | 0 | 0 | Mengejar lurus dengan sedikit liuk, saling menjaga jarak. Datang berkelompok 3 sampai 6 |
+| `charger` | Penerjang | A | 16 | 2.2 | 3 | Terjang 7 | 2 | 0 | 0.2 | Dalam 6 u: ancang-ancang 0.6 s (kedip merah plus garis arah), terjang 10 u/s selama 0.45 s (4.5 u), pulih 0.8 s, jeda 2.5 s |
+| `shooter` | Penembak | A | 10 | 1.7 | 2 | Proyektil 5 | 2 | 0 | 0 | Menjaga jarak 5 sampai 7 u. Ancang-ancang 0.4 s (inti menyala), 1 proyektil 6 u/s ke posisi pemain, umur 2.5 s, jeda 2.2 s |
 | `tank` | Tank | A | 60 | 1.2 | 7 | | 5 | 2 | 0.8 | Mengejar pelan, menjadi tembok yang memecah jalur. Tanpa serangan khusus |
 | `exploder` | Peledak | B | 8 | 3.0 | 0 | Ledakan 10 | 1 | 0 | 0 | Dalam 1.6 u: sumbu 0.8 s (kedip makin cepat, lingkaran merah tumbuh ke 1.8 u, gerak 50%). Meledak lalu mati. Ledakan juga melukai Unlit lain 20 dmg. Bila dibunuh sebelum sumbu habis: tidak meledak |
 | `summoner` | Pemanggil | B | 26 | 1.4 | 2 | | 3 | 0 | 0.3 | Menjaga jarak 6 sampai 8 u. Tiap 5 s: 3 lingkaran ungu kecil 0.8 s di sekitarnya, lalu 3 mote muncul. Maks 6 mote hidup per summoner |
 | `mote` | Panggilan | B | 3 | 3.3 | 2 | | 0 | 0 | 0 | Hanya dari summoner, affix `brood`, dan boss. Mengejar cepat |
 | `lobber` | Artileri zona | C | 14 | 1.3 | 2 | Lemparan 7 | 3 | 0 | 0.2 | Menjaga jarak 6 sampai 9 u. Tiap 3.5 s: lingkaran 1.6 u di posisi pemain terisi selama 1.0 s, lalu mendarat |
 
-Tingkat A: swarmer, charger, shooter, tank (satu untuk tiap sumbu: massa, ledakan arah, jarak jauh, ketahanan). Tingkat B: +exploder, summoner (6 jenis tempur + mote). Tingkat C: +lobber.
+Tingkat A: swarmer, charger, shooter, tank (satu untuk tiap sumbu: massa, ledakan arah, jarak jauh, ketahanan). M2-01: Lampmoth 2.6 ke 3.4 u/s (75% kecepatan pemain) agar kerumunan bisa memotong jalur kabur, kontak 3 ke 4; Hawker adalah sumber damage utama di Pulse biasa dan kini menembak tiap 2.2 s. Tingkat B: +exploder, summoner (6 jenis tempur + mote). Tingkat C: +lobber.
 
 Bioma 2 dan 3 memakai set Unlit yang sama dengan palet berbeda (keputusan Producer). Statistik tidak berubah per bioma; threat yang membuatnya lebih keras.
 
@@ -701,9 +716,11 @@ Warden adalah versi besar dari peran dasar dengan pola sendiri dan affix tetap. 
 
 | id | Tk | Dasar | HP (t1) | Gerak | Kontak | Pola | Affix tetap | Posisi |
 |---|---|---|---|---|---|---|---|---|
-| `warden_hound` | A | charger | 380 | 2.4 | 6 | 3 terjang beruntun (masing-masing ancang-ancang 0.6 s, jeda 0.4 s, dmg 10), lalu istirahat 2.5 s | `volley` | A: Pulse 5 (t5, HP sekitar 600). C: Pulse 4 (t4, sekitar 535) |
+| `warden_hound` | A | charger | 360 | 2.4 | 6 | 3 terjang beruntun (masing-masing ancang-ancang 0.6 s, jeda 0.4 s, dmg 8), lalu istirahat 2.5 s | `volley` | A: Pulse 5 (t5, HP sekitar 706). C: Pulse 4 (t4, sekitar 603) |
 | `warden_choir` | B | shooter | 520 | 1.6 | 4 | Kipas 5 proyektil (ancang-ancang 0.4 s, dmg 5) tiap 2.4 s | `blinking`, `veiled` | B: Pulse 10 (t10, sekitar 1335). C: Pulse 11 (t11, sekitar 1455) |
 | `warden_bulwark` | C | tank | 750 | 1.3 | 9 | Hantaman tiap 4 s (lingkaran 2.5 u, 0.9 s, dmg 12) | `brood`, `tar_trail` | C: Pulse 17 (t17, sekitar 3345) |
+
+M2-01: terjang hound 10 ke 8 (satu terjang dulu sekitar 45% HP pemain di Pulse 5; bot baik mati 22% di Pulse 5). Waktu bunuh bot baik median 21 s (target 15 sampai 25 s).
 
 Guard Warden: hound 0, choir 0, bulwark 5. Tahan knockback semua Warden 0.9.
 
@@ -734,16 +751,16 @@ Transisi fase: HP boss tidak bisa turun di bawah ambang fase sampai pola yang se
 
 ### 16.1 `boss_lantern` (bioma 1, Tk A)
 
-HP dasar 2000 (C t7 sekitar 3880, A t10 sekitar 5140, B t15 sekitar 7720; naik dari 1600 oleh model M1-02 karena pertarungan A terlalu singkat, `docs/balance-report.md`). Guard 2. Gerak 1.0 u/s, kontak 10. Ukuran besar: Unlit lentera yang menyerap cahaya.
+HP dasar 2500 (A t10 sekitar 9590, C t7 sekitar 6550, B t15 sekitar 16150 [Asumsi, M3]). Riwayat: 1600, 2000 (M1-02), 2500 (M2-01, bot baik median 66 s, target 45 sampai 90 s). Guard 2. Gerak 1.0 u/s, kontak 10. Ukuran besar: Unlit lentera yang menyerap cahaya.
 
 | Pola | Telegraf | Efek |
 |---|---|---|
-| Ember Rain | 5 lingkaran 1.5 u terisi 1.0 s: lingkaran pertama tepat di posisi pemain, sisanya acak dalam 3 u tanpa tumpang tindih | Tiap lingkaran dmg 10 |
-| Snuff Ring | Garis cincin plus celah 60 derajat ditandai 1.0 s | Cincin tebal 0.6 u melebar 5 u/s dari boss sampai 19 u (menutup seluruh arena 32 x 20 u), dmg 9. Arah celah acak seragam (aliran `ai`). Aman hanya di celah |
+| Ember Rain | 5 lingkaran 1.5 u terisi 1.0 s: lingkaran pertama tepat di posisi pemain, sisanya acak dalam 3 u tanpa tumpang tindih | Tiap lingkaran dmg 9 |
+| Snuff Ring | Garis cincin plus celah 90 derajat ditandai 1.2 s | Cincin tebal 0.6 u melebar 4 u/s dari boss sampai 19 u (menutup seluruh arena 32 x 20 u), dmg 8. Arah celah acak seragam (aliran `ai`). Aman hanya di celah. M2-01: dengan celah 60 derajat dan 5 u/s, celah hanya terjangkau dari sekitar 2 u dari boss (tidak adil, P2); kini sekitar 4 u. Pola ini tetap pembunuh utama di bot |
 | Moth Call | Tanda spawn biasa 0.8 s | 6 swarmer dari sektor tepi acak (tidak dihitung ke batas hidup) |
 
 Fase 1 (HP di atas 50%): Ember Rain, Snuff Ring, Ember Rain, Moth Call; jeda 2.0 s.
-Fase 2 (50% ke bawah): jeda 1.4 s; Ember Rain 8 lingkaran; Snuff Ring dua kali beruntun berjeda 0.8 s dengan celah berbeda minimal 90 derajat; tambah **Lantern Lanes**: 3 jalur horizontal lebar 1.2 u di posisi y lantai acak antara -9 dan 9 (jarak antar jalur minimal 3 u) ditandai 1.0 s, lalu deret proyektil berjarak 0.6 u, 8 u/s, dari sisi acak per jalur menyusuri jalur (dmg 6).
+Fase 2 (50% ke bawah): jeda 1.4 s; Ember Rain 8 lingkaran; Snuff Ring dua kali beruntun berjeda 1.0 s dengan celah berbeda minimal 90 derajat; tambah **Lantern Lanes**: 3 jalur horizontal lebar 1.2 u di posisi y lantai acak antara -9 dan 9 (jarak antar jalur minimal 3 u) ditandai 1.0 s, lalu deret proyektil berjarak 0.6 u, 8 u/s, dari sisi acak per jalur menyusuri jalur (dmg 6).
 
 ### 16.2 `boss_bell` (bioma 2, Tk C)
 
@@ -828,12 +845,15 @@ Tidak ada Crack yang memendekkan telegraf (14.1).
 | Metrik | Target |
 |---|---|
 | Mati di Pulse 1 sampai 2 (bot wajar) | Di bawah 5% |
-| Menang Tingkat A, Crack 0, bot wajar | 50 sampai 65% |
+| Menang Tingkat A, Crack 0, bot baik (`tools/balance/bot`) | 30 sampai 60% (M2-01; bot naif 0%) |
 | Menang run pertama manusia (A) | 25 sampai 40% |
 | Waktu bunuh swarmer oleh senjata awal | 1 hit sampai t6 |
-| Waktu bunuh Warden | 8 sampai 15 s |
+| Waktu bunuh Warden | 15 sampai 25 s (M2-01, dari 8 sampai 15) |
 | Durasi pertarungan boss | 45 sampai 90 s |
-| Pembelian per run A | 12 sampai 18 |
+| Pembelian per run A | 16 sampai 22 (M2-01, selaras 4.3: sekitar 2 per toko) |
+| Durasi run A (termasuk toko 20 s dan Temper 4 s) | 8 sampai 10 menit |
+| Unlit hidup puncak (bot baik, median) | sekitar 20 sampai 30 di Pulse 4 sampai 5; 40 atau lebih di 6 detik terakhir Pulse 8 sampai 9 |
+| Glint terpungut selama Pulse (bot baik) | 70% atau lebih |
 | Tag dominan di run bot (P1-c) | Tidak ada tag di atas 40% run |
 | Item stat datar di pool toko (P1-a) | Maksimal 30% |
 

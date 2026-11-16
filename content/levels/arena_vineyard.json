@@ -1,0 +1,553 @@
+{
+  "schemaVersion": 1,
+  "id": "arena_vineyard",
+  "arena": {
+    "boundary": [
+      [-13, -10],
+      [13, -10],
+      [16, -7],
+      [16, 7],
+      [13, 10],
+      [-13, 10],
+      [-16, 7],
+      [-16, -7]
+    ],
+    "lip": 1,
+    "rim": {
+      "height": 0.25,
+      "colorToken": "dust",
+      "opacity": 0.5
+    },
+    "projectileMargin": 3,
+    "floor": {
+      "baseToken": "floor-mid",
+      "altToken": "floor-lit",
+      "tileId": "tile-floor"
+    }
+  },
+  "playerStart": {
+    "default": [0, 0],
+    "boss": [0, 5]
+  },
+  "pulseOrigin": [0, 0],
+  "safeZones": [
+    {
+      "id": "start",
+      "shape": {
+        "type": "circle",
+        "center": [0, 0],
+        "radius": 6
+      },
+      "blocks": ["obstacle", "spawn", "decor"]
+    },
+    {
+      "id": "boss_stage",
+      "shape": {
+        "type": "circle",
+        "center": [0, -3],
+        "radius": 4
+      },
+      "blocks": ["obstacle", "decor"]
+    }
+  ],
+  "spawn": {
+    "playerSafeRadius": 4,
+    "interiorMinPlayerDist": 2,
+    "zones": [
+      {
+        "id": "n",
+        "shape": {
+          "type": "rect",
+          "min": [-12, -9],
+          "max": [12, -7.5]
+        }
+      },
+      {
+        "id": "s",
+        "shape": {
+          "type": "rect",
+          "min": [-12, 7.5],
+          "max": [12, 9]
+        }
+      },
+      {
+        "id": "e",
+        "shape": {
+          "type": "rect",
+          "min": [13.5, -6],
+          "max": [15, 6]
+        }
+      },
+      {
+        "id": "w",
+        "shape": {
+          "type": "rect",
+          "min": [-15, -6],
+          "max": [-13.5, 6]
+        }
+      },
+      {
+        "id": "ne",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12.5, -9],
+            [15, -6.5],
+            [13.5, -6],
+            [12, -7.5]
+          ]
+        }
+      },
+      {
+        "id": "se",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12, 7.5],
+            [13.5, 6],
+            [15, 6.5],
+            [12.5, 9]
+          ]
+        }
+      },
+      {
+        "id": "sw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-12.5, 9],
+            [-15, 6.5],
+            [-13.5, 6],
+            [-12, 7.5]
+          ]
+        }
+      },
+      {
+        "id": "nw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-15, -6.5],
+            [-12.5, -9],
+            [-12, -7.5],
+            [-13.5, -6]
+          ]
+        }
+      }
+    ]
+  },
+  "bossStage": {
+    "shape": {
+      "type": "circle",
+      "center": [0, -3],
+      "radius": 4
+    },
+    "landmarkId": "burnt-press-house",
+    "floorRingContrastMax": 1.15
+  },
+  "lighting": {
+    "edgeFade": {
+      "startOutside": 3,
+      "endOutside": 10
+    },
+    "points": [
+      {
+        "id": "back_l",
+        "pos": [-12.5, 2.6, -12.75],
+        "intensityMul": 1,
+        "flicker": 0.25
+      },
+      {
+        "id": "back_r",
+        "pos": [12.5, 2.6, -12.75],
+        "intensityMul": 1,
+        "flicker": 0.25
+      },
+      {
+        "id": "side_l",
+        "pos": [-18.5, 1.8, -4],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "side_r",
+        "pos": [18.5, 1.8, -4],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "press",
+        "pos": [0, 3.8, -14],
+        "intensityMul": 1.4,
+        "flicker": 0.1
+      },
+      {
+        "id": "front_l",
+        "pos": [-10, 0.3, 11.75],
+        "intensityMul": 0.5
+      },
+      {
+        "id": "front_r",
+        "pos": [10, 0.3, 11.75],
+        "intensityMul": 0.5
+      }
+    ]
+  },
+  "obstacles": [
+    {
+      "id": "barrel_1",
+      "kind": "tipped-barrel",
+      "shape": {
+        "type": "rect",
+        "min": [-10, -5.5],
+        "max": [-8, -4.5]
+      },
+      "height": 0.4,
+      "blocks": ["move"]
+    },
+    {
+      "id": "stump_1",
+      "kind": "vine-stump",
+      "shape": {
+        "type": "circle",
+        "center": [8.5, -4.5],
+        "radius": 1
+      },
+      "height": 0.35,
+      "blocks": ["move"]
+    },
+    {
+      "id": "wall_1",
+      "kind": "low-stone-wall",
+      "shape": {
+        "type": "rect",
+        "min": [-8.5, 4.5],
+        "max": [-5.5, 5.5]
+      },
+      "height": 0.4,
+      "blocks": ["move"]
+    },
+    {
+      "id": "barrel_2",
+      "kind": "tipped-barrel",
+      "shape": {
+        "type": "rect",
+        "min": [8, 3],
+        "max": [9, 5]
+      },
+      "height": 0.4,
+      "blocks": ["move"]
+    }
+  ],
+  "decor": [
+    {
+      "id": "press",
+      "kind": "burnt-press-house",
+      "zone": "back",
+      "pos": [0, -14],
+      "rotYDeg": 0,
+      "height": 7.5,
+      "footprintHalf": [3, 1.5],
+      "lightId": "press"
+    },
+    {
+      "id": "trellis_bl",
+      "kind": "vine-trellis",
+      "zone": "back",
+      "pos": [-8.5, -12],
+      "rotYDeg": 0,
+      "height": 2.4,
+      "footprintHalf": [3.5, 0.3],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "trellis_br",
+      "kind": "vine-trellis",
+      "zone": "back",
+      "pos": [8.5, -12],
+      "rotYDeg": 0,
+      "height": 2.4,
+      "footprintHalf": [3.5, 0.3],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "brazier_bl",
+      "kind": "ember-post",
+      "zone": "back",
+      "pos": [-12.5, -12.75],
+      "rotYDeg": 0,
+      "height": 2.8,
+      "footprintHalf": [0.3, 0.3],
+      "lightId": "back_l"
+    },
+    {
+      "id": "brazier_br",
+      "kind": "ember-post",
+      "zone": "back",
+      "pos": [12.5, -12.75],
+      "rotYDeg": 0,
+      "height": 2.8,
+      "footprintHalf": [0.3, 0.3],
+      "lightId": "back_r"
+    },
+    {
+      "id": "barrels_bl",
+      "kind": "barrel-row",
+      "zone": "back",
+      "pos": [-14.5, -12],
+      "rotYDeg": 0,
+      "height": 1.4,
+      "footprintHalf": [1.5, 0.6]
+    },
+    {
+      "id": "barrels_br",
+      "kind": "barrel-row",
+      "zone": "back",
+      "pos": [14.5, -12],
+      "rotYDeg": 0,
+      "height": 1.4,
+      "footprintHalf": [1.5, 0.6]
+    },
+    {
+      "id": "smoke_bl",
+      "kind": "smoke-column",
+      "zone": "back",
+      "pos": [-6, -16],
+      "rotYDeg": 0,
+      "height": 9,
+      "footprintHalf": [1, 1],
+      "anim": "smoke-rise"
+    },
+    {
+      "id": "smoke_br",
+      "kind": "smoke-column",
+      "zone": "back",
+      "pos": [7, -17],
+      "rotYDeg": 0,
+      "height": 9,
+      "footprintHalf": [1, 1],
+      "anim": "smoke-rise"
+    },
+    {
+      "id": "terrace_bl",
+      "kind": "vine-terrace",
+      "zone": "back",
+      "pos": [-10, -15.5],
+      "rotYDeg": 0,
+      "height": 4.5,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "terrace_br",
+      "kind": "vine-terrace",
+      "zone": "back",
+      "pos": [10, -15.5],
+      "rotYDeg": 0,
+      "height": 4.5,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "terrace_bfl",
+      "kind": "vine-terrace",
+      "zone": "back",
+      "pos": [-21, -13],
+      "rotYDeg": 0,
+      "height": 4.5,
+      "footprintHalf": [3, 1]
+    },
+    {
+      "id": "terrace_bfr",
+      "kind": "vine-terrace",
+      "zone": "back",
+      "pos": [21, -13],
+      "rotYDeg": 0,
+      "height": 4.5,
+      "footprintHalf": [3, 1]
+    },
+    {
+      "id": "cart_sl",
+      "kind": "burnt-cart",
+      "zone": "side",
+      "pos": [-19, -7.5],
+      "rotYDeg": 0,
+      "height": 2,
+      "footprintHalf": [1.25, 1]
+    },
+    {
+      "id": "cart_sr",
+      "kind": "burnt-cart",
+      "zone": "side",
+      "pos": [19, -7.5],
+      "rotYDeg": 0,
+      "height": 2,
+      "footprintHalf": [1.25, 1]
+    },
+    {
+      "id": "post_sl",
+      "kind": "ember-post",
+      "zone": "side",
+      "pos": [-18.5, -4],
+      "rotYDeg": 0,
+      "height": 2,
+      "footprintHalf": [0.3, 0.3],
+      "lightId": "side_l"
+    },
+    {
+      "id": "post_sr",
+      "kind": "ember-post",
+      "zone": "side",
+      "pos": [18.5, -4],
+      "rotYDeg": 0,
+      "height": 2,
+      "footprintHalf": [0.3, 0.3],
+      "lightId": "side_r"
+    },
+    {
+      "id": "trellis_sl",
+      "kind": "vine-trellis-side",
+      "zone": "side",
+      "pos": [-17.75, -1],
+      "rotYDeg": 90,
+      "height": 1.8,
+      "footprintHalf": [1.5, 0.25],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "trellis_sr",
+      "kind": "vine-trellis-side",
+      "zone": "side",
+      "pos": [17.75, -1],
+      "rotYDeg": 90,
+      "height": 1.8,
+      "footprintHalf": [1.5, 0.25],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "baskets_sl",
+      "kind": "grape-baskets",
+      "zone": "side",
+      "pos": [-18.25, 3.5],
+      "rotYDeg": 0,
+      "height": 0.8,
+      "footprintHalf": [0.75, 0.5]
+    },
+    {
+      "id": "baskets_sr",
+      "kind": "grape-baskets",
+      "zone": "side",
+      "pos": [18.25, 3.5],
+      "rotYDeg": 0,
+      "height": 0.8,
+      "footprintHalf": [0.75, 0.5]
+    },
+    {
+      "id": "stumps_sl",
+      "kind": "vine-stumps-low",
+      "zone": "side",
+      "pos": [-18.5, 7.5],
+      "rotYDeg": 0,
+      "height": 0.6,
+      "footprintHalf": [1, 1.25]
+    },
+    {
+      "id": "stumps_sr",
+      "kind": "vine-stumps-low",
+      "zone": "side",
+      "pos": [18.5, 7.5],
+      "rotYDeg": 0,
+      "height": 0.6,
+      "footprintHalf": [1, 1.25]
+    },
+    {
+      "id": "embers_fl",
+      "kind": "ember-pile",
+      "zone": "front",
+      "pos": [-10, 11.75],
+      "rotYDeg": 0,
+      "height": 0.3,
+      "footprintHalf": [0.4, 0.4],
+      "lightId": "front_l"
+    },
+    {
+      "id": "embers_fr",
+      "kind": "ember-pile",
+      "zone": "front",
+      "pos": [10, 11.75],
+      "rotYDeg": 0,
+      "height": 0.3,
+      "footprintHalf": [0.4, 0.4],
+      "lightId": "front_r"
+    },
+    {
+      "id": "ash_f1",
+      "kind": "ash-drift",
+      "zone": "front",
+      "pos": [-4, 12.5],
+      "rotYDeg": 0,
+      "height": 0.05,
+      "footprintHalf": [2.5, 0.75]
+    },
+    {
+      "id": "ash_f2",
+      "kind": "ash-drift",
+      "zone": "front",
+      "pos": [4.5, 12.25],
+      "rotYDeg": 0,
+      "height": 0.05,
+      "footprintHalf": [2, 0.75]
+    },
+    {
+      "id": "stumps_fl",
+      "kind": "vine-stumps-low",
+      "zone": "front",
+      "pos": [-14.5, 12.5],
+      "rotYDeg": 0,
+      "height": 0.5,
+      "footprintHalf": [1, 0.75]
+    },
+    {
+      "id": "stumps_fr",
+      "kind": "vine-stumps-low",
+      "zone": "front",
+      "pos": [14.5, 12.5],
+      "rotYDeg": 0,
+      "height": 0.5,
+      "footprintHalf": [1, 0.75]
+    },
+    {
+      "id": "shards_f",
+      "kind": "glass-shards",
+      "zone": "front",
+      "pos": [0.5, 13.5],
+      "rotYDeg": 0,
+      "height": 0.1,
+      "footprintHalf": [1, 0.5]
+    }
+  ],
+  "ambient": {
+    "particles": [
+      {
+        "kind": "glass-dust",
+        "area": "arena",
+        "max": 40,
+        "colorToken": "bone",
+        "opacity": 0.2,
+        "sizePx": 1
+      },
+      {
+        "kind": "frozen-ember",
+        "area": "decor",
+        "max": 20,
+        "colorToken": "b3.ember",
+        "opacity": 0.7,
+        "sizePx": 1
+      },
+      {
+        "kind": "ash-flake",
+        "area": "decor",
+        "max": 16,
+        "colorToken": "b3.ash",
+        "opacity": 0.4,
+        "sizePx": 1
+      }
+    ]
+  }
+}

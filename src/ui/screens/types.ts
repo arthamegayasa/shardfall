@@ -3,12 +3,17 @@
 import type { AppScreen, ScreenId, UiDeps } from '../../core/dom.ts';
 import type { ActionId, Settings, SimEventReader, WorldView } from '../../core/index.ts';
 import type { FocusList } from '../focus.ts';
+import type { IconArt } from '../icons.ts';
 import type { TranslateFn } from '../strings.ts';
 
 export interface UiContext {
   readonly doc: Document;
   readonly deps: UiDeps;
   readonly t: TranslateFn;
+  /** True when the string table has the key (optional lines such as epithets and Glazier lines). */
+  readonly has: (key: string) => boolean;
+  /** AD icons and portraits from UiDeps.art, rasterized once. */
+  readonly icons: IconArt;
   /** UI cue id from docs/audio-list.md 9 (ui-spec 8.5). ui.focus is throttled. */
   sound(cueId: string): void;
   /** Screen reader announcement (live region, ui-spec 9). */
@@ -33,6 +38,15 @@ export interface UiContext {
   applySettings(s: Settings): void;
   /** Abandon dialog state on the pause screen (activeScreenId 'confirm'). */
   setConfirmOpen(open: boolean): void;
+  /** What happened between the last Pulse and this Glazier visit (picks the Glazier line). */
+  visit(): VisitFlags;
+}
+
+export interface VisitFlags {
+  /** A Warden or boss reward was shown since the last Pulse. */
+  readonly sawReward: boolean;
+  /** A Temper choice was shown since the last Pulse. */
+  readonly sawTemper: boolean;
 }
 
 export interface Screen {

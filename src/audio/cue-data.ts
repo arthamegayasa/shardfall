@@ -12,6 +12,14 @@ export type CuePan = 'center' | 'worldX' | number;
 /** Priority value of the ui bus ("U" in audio-list): own voice pool, never competes with sim SFX. */
 export const PRIORITY_UI = 7;
 
+/** Live cue renders are cached per length rounded to 50 ms (audio-list 2). */
+export const LIVE_STEP_MS = 50;
+
+/** Live cue length key: durSec rounded to 50 ms, at least 50 ms. */
+export function liveLengthMs(durSec: number): number {
+  return Math.max(LIVE_STEP_MS, Math.round((durSec * 1000) / LIVE_STEP_MS) * LIVE_STEP_MS);
+}
+
 /** Default render rate of SFX buffers: cues are lowpassed or short, so 24 kHz keeps memory low. */
 export const DEFAULT_CUE_SAMPLE_RATE = 24000;
 
@@ -267,11 +275,22 @@ export function parseInstruments(json: unknown): ReadonlyMap<string, InstrumentD
       if (typeof n === 'string' && isNoteName(n)) refNotes.push(noteToMidi(n));
       else errors.push(`${where}: bad ref note ${JSON.stringify(n)}`);
     }
+    const lengthMs = r.num('lengthMs', null, 10, 10000);
+    const lp = raw['loop'];
+    let loop: InstrumentDef['loop'] = null;
+    if (lp !== undefined) {
+      if (!isObj(lp)) errors.push(`${where}: loop must be an object`);
+      else {
+        const lr = reader(`${where} loop`, lp, errors);
+        loop = { startMs: lr.num('startMs', null, 1, lengthMs - 100), xfadeMs: lr.num('xfadeMs', 60, 1, 1000) };
+      }
+    }
     out.set(id, {
       id,
+      loop,
       sampleRate: r.num('sampleRate', null, 8000, 96000),
       refNotes,
-      lengthMs: r.num('lengthMs', null, 10, 10000),
+      lengthMs,
       releaseMs: r.num('releaseMs', 80, 1, 5000),
       peakDb: r.num('peakDb', -3, -40, -1),
       highpassHz: r.optNum('highpassHz'),
@@ -281,4 +300,15 @@ export function parseInstruments(json: unknown): ReadonlyMap<string, InstrumentD
   }
   if (errors.length > 0) throw new Error(`Invalid instruments.json:\n${errors.join('\n')}`);
   return out;
+}
+
+function busRank(c: CueDef): number {
+  return c.bus === 'ui' ? 0 : c.bus === 'sfx' ? 1 : 2;
+}
+
+/** Buffer-mode cues in boot render order: UI first (title clicks), then sim SFX by priority. */
+export function bootRenderOrder(table: CueTable): CueDef[] {
+  return table.cues
+    .filter((c) => c.mode === 'buffer' && !c.deprecated)
+    .sort((a, b) => busRank(a) - busRank(b) || a.priority - b.priority);
 }

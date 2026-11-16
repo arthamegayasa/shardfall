@@ -1,0 +1,37 @@
+{
+  "id": "icon-stat-crit-chance",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Crit Chance: a cyan four-point star with a white heart. Key: sharp plus-shaped star.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "......w......",
+          "......w......",
+          ".....wcb.....",
+          ".....wcb.....",
+          "....wccbb....",
+          "..wwwcwcbbb..",
+          "wwcccwwwcccbb",
+          "..ccccwcbbb..",
+          "....ccccb....",
+          ".....ccb.....",
+          ".....cbb.....",
+          "......b......",
+          "......b......"
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "id": "fx-star",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan"
+  ],
+  "status": "final",
+  "note": "Memento acquired: four-point white and cyan star bursting around the player (distinct from level-up gold).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 5,
+      "loop": true,
+      "frames": [
+        [
+          "...w...",
+          "...c...",
+          "..wcw..",
+          "wcwwwcw",
+          "..wcw..",
+          "...c...",
+          "...w..."
+        ],
+        [
+          ".w.",
+          "wcw",
+          ".w."
+        ],
+        [
+          "..w..",
+          "..c..",
+          "wcwcw",
+          "..c..",
+          "..w.."
+        ]
+      ]
+    }
+  }
+}

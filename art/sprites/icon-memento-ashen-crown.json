@@ -1,0 +1,35 @@
+{
+  "id": "icon-memento-ashen-crown",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Candle Crown: a gold crown band carrying three lit candles. Key: three flame-topped prongs on a wide band.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".y....y....y..",
+          "yw...yw...yw..",
+          "gy...gy...gy..",
+          "ed...ed...ed..",
+          "ed...ed...ed..",
+          "ed...ed...ed..",
+          "ywg.gwyg.gwyg.",
+          "ywggggggggggd.",
+          "ygcgggggggcgd.",
+          "yggggggggggd..",
+          "gddddddddddt.."
+        ]
+      ]
+    }
+  }
+}

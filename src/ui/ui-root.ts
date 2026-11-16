@@ -6,11 +6,13 @@ import { OfferKind, RejectReason, SimEventType } from '../core/index.ts';
 import type { ActionId, Settings, SimEventReader, WorldView } from '../core/index.ts';
 import { h } from './dom.ts';
 import { createFocusList } from './focus.ts';
+import { createIconArt } from './icons.ts';
 import { Dir } from './focus-nav.ts';
 import { keyLabel } from './format.ts';
 import { isBound, menuIntent, pausesRun } from './menu-keys.ts';
 import { mementoInfo, tierKey, weaponInfo } from './presenters/content.ts';
 import { resolveScreenId } from './presenters/phase.ts';
+import { loadPixelFont } from './pixel-font.ts';
 import { computeUiScale } from './scale.ts';
 import { createChoiceScreen } from './screens/choice.ts';
 import { createClassSelectScreen } from './screens/class-select.ts';
@@ -28,6 +30,16 @@ import { Cue } from './cues.ts';
 
 /** ui.focus at most once per 40 ms (ui-spec 8.5). */
 const FOCUS_SOUND_GAP_MS = 40;
+
+/**
+ * CommandRejected reasons that stay silent: no announcement (AU routes.json silentReasons). The
+ * denied sound itself comes from AU's event map, so the UI never plays it for this event.
+ */
+const SILENT_REJECTS: ReadonlySet<number> = new Set([
+  RejectReason.WrongPhase,
+  RejectReason.UnknownId,
+  RejectReason.DebugDisabled,
+]);
 
 export interface CreateUiOptions {
   /** Dev builds show [[key]] for missing strings (architecture 9.7). */
@@ -66,6 +78,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     let pausedFrom = '';
     let lastFocusSound = -Infinity;
     let appliedSettings: Settings | null = null;
+    let sawReward = false;
+    let sawTemper = false;
+    const icons = createIconArt(deps.art);
 
     const now = (): number => (win === null ? 0 : win.performance.now());
 
@@ -114,6 +129,7 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       );
       layer.style.setProperty('--u', `${sc.unitCss}px`);
       layer.style.setProperty('--f', `${sc.fontCss}px`);
+      layer.style.setProperty('--fs', `${sc.smallFontCss}px`);
       layer.classList.toggle('is-too-small', sc.tooSmall);
       layer.dataset['textScale'] = String(s.access.textScale);
     };
@@ -122,6 +138,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       doc,
       deps,
       t,
+      has: (key) => translator.has(key),
+      icons,
+      visit: () => ({ sawReward, sawTemper }),
       sound,
       announce,
       go(screen) {
@@ -217,6 +236,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       current = next;
       next.el.dataset['screen'] = id;
       screenLayer.appendChild(next.el);
+      if (id === 'pulse') sawReward = sawTemper = false;
+      else if (id === 'warden-reward') sawReward = true;
+      else if (id === 'level-up') sawTemper = true;
       const fromMenu = fromId === 'pause' || fromId === 'confirm' || fromId === 'settings';
       if (!fromMenu && (id === 'pause' || id === 'settings')) pausedFrom = fromId;
       returningFromMenu = fromMenu && id === pausedFrom;
@@ -255,8 +277,8 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       for (let i = 0; i < events.count; i++) {
         const type = events.type[i];
         if (type === SimEventType.CommandRejected) {
-          sound(Cue.Denied);
-          const reason = events.a[i];
+          const reason = events.a[i] ?? 0;
+          if (SILENT_REJECTS.has(reason)) continue;
           if (reason === RejectReason.NotEnoughGlint) announce(t('ui.shop.no_glint'));
           else if (reason === RejectReason.SlotsFull) announce(t('ui.shop.slots_full'));
           else announce(t('ui.common.denied'));
@@ -341,6 +363,11 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     syncSettings(true);
     applyScale();
     route();
+    let disposed = false;
+    // Team pixel font: text switches over once the browser accepted it (monospace until then).
+    void loadPixelFont(doc).then((ok) => {
+      if (ok && !disposed) layer.classList.add('has-pixel-font');
+    });
 
     return {
       setScreen,
@@ -360,6 +387,7 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
         return activeId;
       },
       dispose() {
+        disposed = true;
         win?.removeEventListener('keydown', onKeyDown);
         win?.removeEventListener('keyup', onKeyUp);
         win?.removeEventListener('resize', onResize);

@@ -9,13 +9,15 @@ import {
   TelegraphKind,
   atan2Turns,
   cosTurns,
+  packDamageFlags,
   sinTurns,
 } from '../../core/index.ts';
-import { PLAYER_ZONE_SOFT_CAP } from '../capacity.ts';
+import { HIT_FLASH_TICKS, PLAYER_ZONE_SOFT_CAP } from '../capacity.ts';
 import { DangerMode } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
 import {
+  absorbShell,
   applyBurn,
   applyHit,
   applySlow,
@@ -23,8 +25,33 @@ import {
   canDamage,
   damagePlayer,
   endHit,
+  impactTier,
+  killEnemy,
 } from './combat.ts';
 import { spawnEnemyShot } from './enemy-shots.ts';
+
+/** Telegraph minimum categories (GDD 14.1, config telegraph_min_*). */
+export const TeleMin = { None: 0, Projectile: 1, Charge: 2, Area: 3, Boss: 4 } as const;
+export type TeleMin = (typeof TeleMin)[keyof typeof TeleMin];
+
+/**
+ * Telegraph ticks never below the GD minimum of its category (P2-e: threat, Crack, and affixes never
+ * shorten reading time). Data below the minimum is raised to it; the minimum itself is data.
+ */
+export function teleTicks(ctx: SimCtx, cat: TeleMin, ticks: number): number {
+  const c = ctx.cfg;
+  const min =
+    cat === TeleMin.Projectile
+      ? c.telegraphMinProjectileTicks
+      : cat === TeleMin.Charge
+        ? c.telegraphMinChargeTicks
+        : cat === TeleMin.Area
+          ? c.telegraphMinAreaTicks
+          : cat === TeleMin.Boss
+            ? c.telegraphMinBossTicks
+            : 0;
+  return Math.max(1, ticks, Number.isFinite(min) ? min : 0);
+}
 
 /** Spawn a danger area and raise TelegraphStarted. Returns the slot or -1 when the pool is full. */
 export function spawnDanger(
@@ -39,6 +66,7 @@ export function spawnDanger(
   dmg: number,
   sourceRef: number,
   owner: number,
+  silent = false,
 ): number {
   const da = ctx.world.dangerAreas;
   const i = allocSlot(da);
@@ -68,10 +96,15 @@ export function spawnDanger(
   da.ownerSerial[i] = owner >= 0 ? ctx.world.enemies.serial[owner]! : 0;
   da.speed[i] = 0;
   da.maxRadius[i] = 0;
+  da.tickEvery[i] = 0;
+  da.slowPct[i] = 0;
+  da.burnDps[i] = 0;
+  da.procDepth[i] = 0;
+  da.tagMask[i] = 0;
   da.done[i] = 0;
   // Spawn tick: the countdown starts on the next tick so the telegraph lasts exactly `ticks`.
   da.tickTimer[i] = ctx.world.tick;
-  ctx.events.push(SimEventType.TelegraphStarted, x, y, kind, t, sourceRef);
+  if (!silent) ctx.events.push(SimEventType.TelegraphStarted, x, y, kind, t, sourceRef);
   return i;
 }
 
@@ -249,6 +282,94 @@ function launchLane(ctx: SimCtx, i: number): void {
   ctx.events.push(SimEventType.EnemyProjectileFired, ax, ay, da.p2[i]!, n + 1, da.sourceRef[i]!);
 }
 
+/** Slow the player for the next tick (enemy zones). */
+export function slowPlayer(ctx: SimCtx, pct: number): void {
+  const run = ctx.run;
+  if (pct <= 0) return;
+  if (pct >= run.playerSlowPct || run.playerSlowTicks <= 0) run.playerSlowPct = pct;
+  run.playerSlowTicks = 2;
+}
+
+/**
+ * Fan of enemy shots toward (x2, y2): maxRadius = count, p0 = half spread (turns), speed (u/tick),
+ * tickEvery = life (ticks), p2 = EnemyTypeIndex for the event (boss cone, Warden choir).
+ */
+function launchFan(ctx: SimCtx, i: number): void {
+  const da = ctx.world.dangerAreas;
+  const n = Math.floor(da.maxRadius[i]!);
+  const sp = da.speed[i]!;
+  const life = da.tickEvery[i]!;
+  if (n <= 0 || sp <= 0 || life <= 0) return;
+  const x = da.x[i]!;
+  const y = da.y[i]!;
+  const aim = atan2Turns(da.y2[i]! - y, da.x2[i]! - x);
+  const half = da.p0[i]!;
+  for (let k = 0; k < n; k++) {
+    const a = n > 1 ? aim - half + (2 * half * k) / (n - 1) : aim;
+    spawnEnemyShot(
+      ctx,
+      x,
+      y,
+      cosTurns(a) * sp,
+      sinTurns(a) * sp,
+      da.dmg[i]!,
+      life,
+      da.sourceRef[i]!,
+    );
+  }
+  ctx.events.push(SimEventType.EnemyProjectileFired, x, y, da.p2[i]!, n, da.sourceRef[i]!);
+}
+
+/**
+ * Exploder blast (GDD 14.2): hits the player inside the circle, deals p1 (enemy_dmg) to other Unlit
+ * inside (they drop Glint, no on_kill), then the exploder is gone without a kill or drop [Asumsi].
+ */
+function blast(ctx: SimCtx, i: number): void {
+  const da = ctx.world.dangerAreas;
+  const e = ctx.world.enemies;
+  const x = da.x[i]!;
+  const y = da.y[i]!;
+  const r = da.radius[i]!;
+  const src = da.sourceRef[i]!;
+  if (playerInDanger(ctx, i)) damagePlayer(ctx, da.dmg[i]!, src);
+  const owner = da.owner[i]!;
+  const enemyDmg = da.p1[i]!;
+  if (enemyDmg > 0) {
+    for (let s = 0; s < e.highWater; s++) {
+      if (s === owner || !canDamage(ctx, s)) continue;
+      const dx = e.x[s]! - x;
+      const dy = e.y[s]! - y;
+      const rr = r + e.radius[s]!;
+      if (dx * dx + dy * dy > rr * rr) continue;
+      const before = e.hp[s]!;
+      let hp = before - absorbShell(ctx, s, enemyDmg);
+      if (e.rank[s] === 2 && ctx.run.bossHpFloor > 0 && hp < ctx.run.bossHpFloor)
+        hp = ctx.run.bossHpFloor;
+      e.hp[s] = hp;
+      e.hitFlashTicks[s] = HIT_FLASH_TICKS;
+      ctx.events.push(
+        SimEventType.EnemyDamaged,
+        e.x[s]!,
+        e.y[s]!,
+        before - hp,
+        packDamageFlags(
+          false,
+          false,
+          e.rank[s]!,
+          HitKind.Area,
+          impactTier(before - hp, e.maxHp[s]!),
+        ),
+        src,
+      );
+      if (hp <= 0) killEnemy(ctx, s, src, false);
+    }
+  }
+  if (owner >= 0 && e.alive[owner] === 1 && e.serial[owner] === da.ownerSerial[i]) {
+    ctx.events.push(SimEventType.EnemyExploded, x, y, e.typeIndex[owner]!, r, src);
+    freeSlot(e, owner);
+  }
+}
+
 export function updateDangerAreas(ctx: SimCtx): void {
   const da = ctx.world.dangerAreas;
   const e = ctx.world.enemies;
@@ -263,10 +384,23 @@ export function updateDangerAreas(ctx: SimCtx): void {
         freeSlot(da, i);
         continue;
       }
-      if (da.mode[i] === DangerMode.Visual && da.kind[i] !== TelegraphKind.Charge) {
+      // Areas centred on their owner follow it (shooter windup, slam, pulse, exploder fuse); a
+      // charge or fan direction stays locked (GDD 14.3).
+      if (
+        da.kind[i] !== TelegraphKind.Charge &&
+        da.mode[i] !== DangerMode.Fan &&
+        da.shape[i] !== AreaShape.Line
+      ) {
         da.x[i] = e.x[owner]!;
         da.y[i] = e.y[owner]!;
       }
+    }
+    if (da.mode[i] === DangerMode.Tar) {
+      // Lingering puddle (affix tar_trail): Slow on the player while inside, strongest wins.
+      if (playerInDanger(ctx, i)) slowPlayer(ctx, da.slowPct[i]! / 100);
+      da.ticksLeft[i] = da.ticksLeft[i]! - 1;
+      if (da.ticksLeft[i]! <= 0) freeSlot(da, i);
+      continue;
     }
     if (da.mode[i] === DangerMode.ExpandingRing && da.done[i]! >= 1) {
       // Expanding stage: band of thickness (radius - p0) moves outward, one hit per ring.
@@ -334,6 +468,16 @@ export function updateDangerAreas(ctx: SimCtx): void {
       }
       case DangerMode.Lane:
         launchLane(ctx, i);
+        resolve(ctx, i);
+        freeSlot(da, i);
+        break;
+      case DangerMode.Fan:
+        launchFan(ctx, i);
+        resolve(ctx, i);
+        freeSlot(da, i);
+        break;
+      case DangerMode.Blast:
+        blast(ctx, i);
         resolve(ctx, i);
         freeSlot(da, i);
         break;

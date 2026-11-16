@@ -1,8 +1,8 @@
 browser webkit-fallback 27.2
-1 title in 687 ms, webgl2 true
-3 KeyD moved 2.33 u
+1 title in 1379 ms, webgl2 true
+3 KeyD moved 2.40 u
 9 fps over 5 s of Pulse 1: 64.7 (324 frames)
-4 after Pulse 1: phase shop, glint 8, hp 30
+4 after Pulse 1: phase shop, glint 13, hp 30
 4 bought one item with Digit1, Pulse 2 started with B
 8 D-5 vs Node: identical (20 checkpoints)
 problems: []

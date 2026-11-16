@@ -13,21 +13,40 @@
       [-16, -7]
     ],
     "lip": 1,
-    "rim": { "height": 0.25, "colorToken": "dust", "opacity": 0.5 },
+    "rim": {
+      "height": 0.25,
+      "colorToken": "dust",
+      "opacity": 0.5
+    },
     "projectileMargin": 3,
-    "floor": { "baseToken": "floor-mid", "altToken": "floor-lit", "tileId": "tile-floor" }
+    "floor": {
+      "baseToken": "floor-mid",
+      "altToken": "floor-lit",
+      "tileId": "tile-floor"
+    }
   },
-  "playerStart": { "default": [0, 0], "boss": [0, 5] },
+  "playerStart": {
+    "default": [0, 0],
+    "boss": [0, 5]
+  },
   "pulseOrigin": [0, 0],
   "safeZones": [
     {
       "id": "start",
-      "shape": { "type": "circle", "center": [0, 0], "radius": 6 },
+      "shape": {
+        "type": "circle",
+        "center": [0, 0],
+        "radius": 6
+      },
       "blocks": ["obstacle", "spawn", "decor"]
     },
     {
       "id": "boss_stage",
-      "shape": { "type": "circle", "center": [0, -3], "radius": 4 },
+      "shape": {
+        "type": "circle",
+        "center": [0, -3],
+        "radius": 4
+      },
       "blocks": ["obstacle", "decor"]
     }
   ],
@@ -35,10 +54,38 @@
     "playerSafeRadius": 4,
     "interiorMinPlayerDist": 2,
     "zones": [
-      { "id": "n", "shape": { "type": "rect", "min": [-12, -9], "max": [12, -7.5] } },
-      { "id": "s", "shape": { "type": "rect", "min": [-12, 7.5], "max": [12, 9] } },
-      { "id": "e", "shape": { "type": "rect", "min": [13.5, -6], "max": [15, 6] } },
-      { "id": "w", "shape": { "type": "rect", "min": [-15, -6], "max": [-13.5, 6] } },
+      {
+        "id": "n",
+        "shape": {
+          "type": "rect",
+          "min": [-12, -9],
+          "max": [12, -7.5]
+        }
+      },
+      {
+        "id": "s",
+        "shape": {
+          "type": "rect",
+          "min": [-12, 7.5],
+          "max": [12, 9]
+        }
+      },
+      {
+        "id": "e",
+        "shape": {
+          "type": "rect",
+          "min": [13.5, -6],
+          "max": [15, 6]
+        }
+      },
+      {
+        "id": "w",
+        "shape": {
+          "type": "rect",
+          "min": [-15, -6],
+          "max": [-13.5, 6]
+        }
+      },
       {
         "id": "ne",
         "shape": {
@@ -90,41 +137,91 @@
     ]
   },
   "bossStage": {
-    "shape": { "type": "circle", "center": [0, -3], "radius": 4 },
+    "shape": {
+      "type": "circle",
+      "center": [0, -3],
+      "radius": 4
+    },
     "landmarkId": "lantern-gate",
     "floorRingContrastMax": 1.15
   },
   "lighting": {
-    "edgeFade": { "startOutside": 3, "endOutside": 10 },
+    "edgeFade": {
+      "startOutside": 3,
+      "endOutside": 10
+    },
     "points": [
-      { "id": "back_l", "pos": [-10, 2.5, -12], "intensityMul": 1.0 },
-      { "id": "back_r", "pos": [10, 2.5, -12], "intensityMul": 1.0 },
-      { "id": "side_l", "pos": [-18, 2.2, -2], "intensityMul": 0.9 },
-      { "id": "side_r", "pos": [18, 2.2, -2], "intensityMul": 0.9 },
-      { "id": "gate", "pos": [0, 3.5, -12.5], "intensityMul": 1.5, "flicker": 0.06 },
-      { "id": "front_l", "pos": [-9, 0.4, 11.5], "intensityMul": 0.6, "flicker": 0.15 },
-      { "id": "front_r", "pos": [9, 0.4, 11.5], "intensityMul": 0.6, "flicker": 0.15 }
+      {
+        "id": "back_l",
+        "pos": [-10, 2.5, -12],
+        "intensityMul": 1
+      },
+      {
+        "id": "back_r",
+        "pos": [10, 2.5, -12],
+        "intensityMul": 1
+      },
+      {
+        "id": "side_l",
+        "pos": [-18, 2.2, -2],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "side_r",
+        "pos": [18, 2.2, -2],
+        "intensityMul": 0.9
+      },
+      {
+        "id": "gate",
+        "pos": [0, 3.5, -12.5],
+        "intensityMul": 1.5,
+        "flicker": 0.06
+      },
+      {
+        "id": "front_l",
+        "pos": [-9, 0.4, 11.5],
+        "intensityMul": 0.6,
+        "flicker": 0.15
+      },
+      {
+        "id": "front_r",
+        "pos": [9, 0.4, 11.5],
+        "intensityMul": 0.6,
+        "flicker": 0.15
+      }
     ]
   },
   "obstacles": [
     {
       "id": "stall_table_1",
       "kind": "tipped-stall-table",
-      "shape": { "type": "rect", "min": [-9.5, -5.75], "max": [-6.5, -4.25] },
+      "shape": {
+        "type": "rect",
+        "min": [-9.5, -5.75],
+        "max": [-6.5, -4.25]
+      },
       "height": 0.4,
       "blocks": ["move"]
     },
     {
       "id": "well_1",
       "kind": "covered-well",
-      "shape": { "type": "circle", "center": [9, 4], "radius": 1 },
+      "shape": {
+        "type": "circle",
+        "center": [9, 4],
+        "radius": 1
+      },
       "height": 0.4,
       "blocks": ["move"]
     },
     {
       "id": "sacks_1",
       "kind": "sack-pile",
-      "shape": { "type": "rect", "min": [-7, 4.25], "max": [-5, 5.75] },
+      "shape": {
+        "type": "rect",
+        "min": [-7, 4.25],
+        "max": [-5, 5.75]
+      },
       "height": 0.35,
       "blocks": ["move"]
     }
@@ -147,8 +244,7 @@
       "pos": [-12, -12.5],
       "rotYDeg": 0,
       "height": 2.8,
-      "footprintHalf": [2, 1],
-      "anim": "cloth-sway"
+      "footprintHalf": [2, 1]
     },
     {
       "id": "stall_b2",
@@ -157,8 +253,7 @@
       "pos": [-6, -12.2],
       "rotYDeg": 0,
       "height": 2.8,
-      "footprintHalf": [2, 1],
-      "anim": "cloth-sway"
+      "footprintHalf": [2, 1]
     },
     {
       "id": "stall_b3",
@@ -167,8 +262,7 @@
       "pos": [6, -12.2],
       "rotYDeg": 0,
       "height": 2.8,
-      "footprintHalf": [2, 1],
-      "anim": "cloth-sway"
+      "footprintHalf": [2, 1]
     },
     {
       "id": "stall_b4",
@@ -177,8 +271,7 @@
       "pos": [12, -12.5],
       "rotYDeg": 0,
       "height": 2.8,
-      "footprintHalf": [2, 1],
-      "anim": "cloth-sway"
+      "footprintHalf": [2, 1]
     },
     {
       "id": "pole_bl",
@@ -186,7 +279,7 @@
       "zone": "back",
       "pos": [-10, -12],
       "rotYDeg": 0,
-      "height": 3.0,
+      "height": 2.6,
       "footprintHalf": [0.25, 0.25],
       "lightId": "back_l"
     },
@@ -196,7 +289,7 @@
       "zone": "back",
       "pos": [10, -12],
       "rotYDeg": 0,
-      "height": 3.0,
+      "height": 2.6,
       "footprintHalf": [0.25, 0.25],
       "lightId": "back_r"
     },
@@ -221,6 +314,24 @@
       "anim": "lantern-sway"
     },
     {
+      "id": "baskets_bc",
+      "kind": "basket-stack",
+      "zone": "back",
+      "pos": [-3.3, -11.7],
+      "rotYDeg": 0,
+      "height": 0.9,
+      "footprintHalf": [0.5, 0.5]
+    },
+    {
+      "id": "crate_bc",
+      "kind": "crate-low",
+      "zone": "back",
+      "pos": [3.3, -11.7],
+      "rotYDeg": 0,
+      "height": 0.8,
+      "footprintHalf": [0.6, 0.5]
+    },
+    {
       "id": "crates_bl",
       "kind": "crate-stack",
       "zone": "back",
@@ -237,6 +348,62 @@
       "rotYDeg": 0,
       "height": 1.5,
       "footprintHalf": [1, 0.75]
+    },
+    {
+      "id": "floating_l",
+      "kind": "floating-lanterns",
+      "zone": "back",
+      "pos": [-8.5, -13.8],
+      "rotYDeg": 0,
+      "height": 4.8,
+      "footprintHalf": [1.5, 0.5],
+      "anim": "lantern-sway"
+    },
+    {
+      "id": "floating_r",
+      "kind": "floating-lanterns",
+      "zone": "back",
+      "pos": [8, -14],
+      "rotYDeg": 0,
+      "height": 4.8,
+      "footprintHalf": [1.5, 0.5],
+      "anim": "lantern-sway"
+    },
+    {
+      "id": "roof_bl",
+      "kind": "market-roofline",
+      "zone": "back",
+      "pos": [-9, -15],
+      "rotYDeg": 0,
+      "height": 6,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "roof_br",
+      "kind": "market-roofline",
+      "zone": "back",
+      "pos": [9, -15],
+      "rotYDeg": 0,
+      "height": 6,
+      "footprintHalf": [5, 1]
+    },
+    {
+      "id": "tent_bl",
+      "kind": "festival-tent",
+      "zone": "back",
+      "pos": [-16.5, -15],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [1.5, 1.5]
+    },
+    {
+      "id": "tent_br",
+      "kind": "festival-tent",
+      "zone": "back",
+      "pos": [16.5, -15],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [1.5, 1.5]
     },
     {
       "id": "stall_bfl",
@@ -257,22 +424,23 @@
       "footprintHalf": [2, 1]
     },
     {
-      "id": "roof_bl",
-      "kind": "market-roofline",
-      "zone": "back",
-      "pos": [-9, -15],
+      "id": "cart_sl",
+      "kind": "vendor-cart",
+      "zone": "side",
+      "pos": [-18.75, -9.5],
       "rotYDeg": 0,
-      "height": 6.0,
-      "footprintHalf": [5, 1]
+      "height": 1.8,
+      "footprintHalf": [1.25, 0.75]
     },
     {
-      "id": "roof_br",
-      "kind": "market-roofline",
-      "zone": "back",
-      "pos": [9, -15],
+      "id": "floating_sl",
+      "kind": "floating-lanterns",
+      "zone": "side",
+      "pos": [-19, -7.5],
       "rotYDeg": 0,
-      "height": 6.0,
-      "footprintHalf": [5, 1]
+      "height": 4.8,
+      "footprintHalf": [1.5, 0.5],
+      "anim": "lantern-sway"
     },
     {
       "id": "stall_sl",
@@ -280,18 +448,18 @@
       "zone": "side",
       "pos": [-19, -5],
       "rotYDeg": 90,
-      "height": 3.0,
+      "height": 3,
       "footprintHalf": [1.5, 1.5],
       "anim": "cloth-sway"
     },
     {
-      "id": "stall_sr",
-      "kind": "side-stall",
+      "id": "garland_sl",
+      "kind": "paper-garland",
       "zone": "side",
-      "pos": [19, -5],
-      "rotYDeg": 270,
-      "height": 3.0,
-      "footprintHalf": [1.5, 1.5],
+      "pos": [-17.6, -3.5],
+      "rotYDeg": 90,
+      "height": 2.6,
+      "footprintHalf": [1.6, 0.1],
       "anim": "cloth-sway"
     },
     {
@@ -305,32 +473,22 @@
       "lightId": "side_l"
     },
     {
-      "id": "pole_sr",
-      "kind": "lantern-pole",
-      "zone": "side",
-      "pos": [18, -2],
-      "rotYDeg": 0,
-      "height": 2.6,
-      "footprintHalf": [0.25, 0.25],
-      "lightId": "side_r"
-    },
-    {
       "id": "cloth_rolls_sl",
       "kind": "cloth-rolls",
       "zone": "side",
       "pos": [-18.5, 0.5],
       "rotYDeg": 0,
-      "height": 1.0,
+      "height": 1,
       "footprintHalf": [0.75, 0.5]
     },
     {
-      "id": "cloth_rolls_sr",
-      "kind": "cloth-rolls",
+      "id": "baskets_sl",
+      "kind": "basket-stack",
       "zone": "side",
-      "pos": [18.5, 0.5],
+      "pos": [-17.75, 3],
       "rotYDeg": 0,
-      "height": 1.0,
-      "footprintHalf": [0.75, 0.5]
+      "height": 0.9,
+      "footprintHalf": [0.5, 0.5]
     },
     {
       "id": "barrels_sl",
@@ -342,13 +500,13 @@
       "footprintHalf": [1, 1]
     },
     {
-      "id": "barrels_sr",
-      "kind": "barrel-cluster",
+      "id": "lamp_sl",
+      "kind": "ground-lantern",
       "zone": "side",
-      "pos": [18.5, 5],
+      "pos": [-17.5, 7],
       "rotYDeg": 0,
-      "height": 1.2,
-      "footprintHalf": [1, 1]
+      "height": 0.4,
+      "footprintHalf": [0.25, 0.25]
     },
     {
       "id": "sacks_sl",
@@ -360,13 +518,22 @@
       "footprintHalf": [0.75, 0.75]
     },
     {
-      "id": "sacks_sr",
-      "kind": "sack-pile-low",
+      "id": "crate_sl",
+      "kind": "crate-low",
       "zone": "side",
-      "pos": [18, 8.5],
+      "pos": [-19, 10.75],
       "rotYDeg": 0,
       "height": 0.8,
-      "footprintHalf": [0.75, 0.75]
+      "footprintHalf": [0.6, 0.5]
+    },
+    {
+      "id": "tent_sfl",
+      "kind": "festival-tent",
+      "zone": "side",
+      "pos": [-23.5, -10],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [1.5, 1.5]
     },
     {
       "id": "stall_sfl",
@@ -374,17 +541,17 @@
       "zone": "side",
       "pos": [-24, -4],
       "rotYDeg": 90,
-      "height": 3.0,
+      "height": 3,
       "footprintHalf": [1.5, 1.5]
     },
     {
-      "id": "stall_sfr",
-      "kind": "side-stall",
+      "id": "rack_sfl",
+      "kind": "lantern-rack",
       "zone": "side",
-      "pos": [24, -4],
-      "rotYDeg": 270,
-      "height": 3.0,
-      "footprintHalf": [1.5, 1.5]
+      "pos": [-21.5, 1],
+      "rotYDeg": 0,
+      "height": 2.4,
+      "footprintHalf": [0.75, 0.5]
     },
     {
       "id": "barrels_sfl",
@@ -394,6 +561,136 @@
       "rotYDeg": 0,
       "height": 1.2,
       "footprintHalf": [1, 1]
+    },
+    {
+      "id": "rack_sr",
+      "kind": "lantern-rack",
+      "zone": "side",
+      "pos": [18.5, -9.25],
+      "rotYDeg": 0,
+      "height": 2.4,
+      "footprintHalf": [0.75, 0.5]
+    },
+    {
+      "id": "floating_sr",
+      "kind": "floating-lanterns",
+      "zone": "side",
+      "pos": [19, -7.75],
+      "rotYDeg": 0,
+      "height": 4.8,
+      "footprintHalf": [1.5, 0.5],
+      "anim": "lantern-sway"
+    },
+    {
+      "id": "stall_sr",
+      "kind": "side-stall",
+      "zone": "side",
+      "pos": [19, -5],
+      "rotYDeg": 270,
+      "height": 3,
+      "footprintHalf": [1.5, 1.5],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "garland_sr",
+      "kind": "paper-garland",
+      "zone": "side",
+      "pos": [17.6, -3.5],
+      "rotYDeg": 90,
+      "height": 2.6,
+      "footprintHalf": [1.6, 0.1],
+      "anim": "cloth-sway"
+    },
+    {
+      "id": "pole_sr",
+      "kind": "lantern-pole",
+      "zone": "side",
+      "pos": [18, -2],
+      "rotYDeg": 0,
+      "height": 2.6,
+      "footprintHalf": [0.25, 0.25],
+      "lightId": "side_r"
+    },
+    {
+      "id": "cloth_rolls_sr",
+      "kind": "cloth-rolls",
+      "zone": "side",
+      "pos": [18.5, 0.5],
+      "rotYDeg": 0,
+      "height": 1,
+      "footprintHalf": [0.75, 0.5]
+    },
+    {
+      "id": "baskets_sr",
+      "kind": "basket-stack",
+      "zone": "side",
+      "pos": [17.75, 2.75],
+      "rotYDeg": 0,
+      "height": 0.9,
+      "footprintHalf": [0.5, 0.5]
+    },
+    {
+      "id": "barrels_sr",
+      "kind": "barrel-cluster",
+      "zone": "side",
+      "pos": [18.5, 5],
+      "rotYDeg": 0,
+      "height": 1.2,
+      "footprintHalf": [1, 1]
+    },
+    {
+      "id": "lamp_sr",
+      "kind": "ground-lantern",
+      "zone": "side",
+      "pos": [17.5, 7],
+      "rotYDeg": 0,
+      "height": 0.4,
+      "footprintHalf": [0.25, 0.25]
+    },
+    {
+      "id": "sacks_sr",
+      "kind": "sack-pile-low",
+      "zone": "side",
+      "pos": [18, 8.5],
+      "rotYDeg": 0,
+      "height": 0.8,
+      "footprintHalf": [0.75, 0.75]
+    },
+    {
+      "id": "crate_sr",
+      "kind": "crate-low",
+      "zone": "side",
+      "pos": [19, 10.75],
+      "rotYDeg": 0,
+      "height": 0.8,
+      "footprintHalf": [0.6, 0.5]
+    },
+    {
+      "id": "tent_sfr",
+      "kind": "festival-tent",
+      "zone": "side",
+      "pos": [23.5, -10],
+      "rotYDeg": 0,
+      "height": 4,
+      "footprintHalf": [1.5, 1.5]
+    },
+    {
+      "id": "stall_sfr",
+      "kind": "side-stall",
+      "zone": "side",
+      "pos": [24, -4],
+      "rotYDeg": 270,
+      "height": 3,
+      "footprintHalf": [1.5, 1.5]
+    },
+    {
+      "id": "cart_sfr",
+      "kind": "vendor-cart",
+      "zone": "side",
+      "pos": [21.75, 1],
+      "rotYDeg": 0,
+      "height": 1.8,
+      "footprintHalf": [1.25, 0.75]
     },
     {
       "id": "barrels_sfr",
@@ -425,13 +722,22 @@
       "lightId": "front_r"
     },
     {
+      "id": "lamp_fc",
+      "kind": "ground-lantern",
+      "zone": "front",
+      "pos": [-0.5, 13.25],
+      "rotYDeg": 0,
+      "height": 0.4,
+      "footprintHalf": [0.25, 0.25]
+    },
+    {
       "id": "paper_f1",
       "kind": "frozen-paper",
       "zone": "front",
       "pos": [-3, 12],
       "rotYDeg": 0,
       "height": 0.05,
-      "footprintHalf": [2, 0.5],
+      "footprintHalf": [1.5, 0.5],
       "anim": "paper-drift"
     },
     {
@@ -443,6 +749,33 @@
       "height": 0.05,
       "footprintHalf": [1.5, 0.5],
       "anim": "paper-drift"
+    },
+    {
+      "id": "fallen_lantern_f1",
+      "kind": "fallen-lantern",
+      "zone": "front",
+      "pos": [-12, 11.9],
+      "rotYDeg": 0,
+      "height": 0.35,
+      "footprintHalf": [0.4, 0.3]
+    },
+    {
+      "id": "fallen_lantern_f2",
+      "kind": "fallen-lantern",
+      "zone": "front",
+      "pos": [2.5, 11.8],
+      "rotYDeg": 0,
+      "height": 0.35,
+      "footprintHalf": [0.4, 0.3]
+    },
+    {
+      "id": "mat_f1",
+      "kind": "woven-mat",
+      "zone": "front",
+      "pos": [11, 12.9],
+      "rotYDeg": 0,
+      "height": 0.05,
+      "footprintHalf": [1.25, 0.6]
     },
     {
       "id": "shards_fl",
@@ -479,6 +812,14 @@
         "max": 16,
         "colorToken": "dust",
         "opacity": 0.6,
+        "sizePx": 2
+      },
+      {
+        "kind": "paper-scrap",
+        "area": "decor",
+        "max": 8,
+        "colorToken": "b1.paper",
+        "opacity": 0.7,
         "sizePx": 2
       }
     ]

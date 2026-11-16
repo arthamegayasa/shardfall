@@ -1,0 +1,41 @@
+{
+  "id": "fx-glass-shard",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white"
+  ],
+  "status": "final",
+  "note": "Player death glass shard: blue and cyan glass tumbling outward (art-direction 8.2).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 3,
+      "loop": true,
+      "frames": [
+        [
+          "Bw",
+          "cB"
+        ],
+        [
+          "Bcw"
+        ],
+        [
+          "w",
+          "c",
+          "B"
+        ],
+        [
+          "cB",
+          "wc"
+        ]
+      ]
+    }
+  }
+}

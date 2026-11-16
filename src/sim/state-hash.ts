@@ -57,6 +57,39 @@ function hashHitMemory(
   }
 }
 
+/**
+ * every_nth per_target counters (LP review M1). The stored serials are enemy serials, which are not
+ * reset or saved, so only counters that still name a living enemy are hashed, with their value.
+ */
+function hashTargetCounters(h: Hasher, ctx: SimCtx): void {
+  const run = ctx.run;
+  const e = ctx.world.enemies;
+  const cap = e.capacity;
+  const slots = run.targetCounter.length / cap;
+  for (let k = 0; k < slots; k++) {
+    for (let s = 0; s < e.highWater; s++) {
+      const i = k * cap + s;
+      const live = e.alive[s] === 1 && run.targetCounterSerial[i] === e.serial[s];
+      h.u32(live ? (run.targetCounter[i] ?? 0) : 0);
+    }
+  }
+}
+
+/** Owner links that store a serial: hash whether the link still names its living owner. */
+function hashOwnerLinks(
+  h: Hasher,
+  p: PoolCore,
+  owner: ArrayLike<number>,
+  ownerSerial: ArrayLike<number>,
+  enemies: SimCtx['world']['enemies'],
+): void {
+  for (let i = 0; i < p.highWater; i++) {
+    if (p.alive[i] === 0) continue;
+    const o = owner[i] ?? -1;
+    h.u32(o >= 0 && enemies.alive[o] === 1 && enemies.serial[o] === ownerSerial[i] ? 1 : 0);
+  }
+}
+
 export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   const { world: w, run } = ctx;
   h.reset();
@@ -168,7 +201,26 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   h.u32(run.bossTrickleTicks);
   h.u32(run.bossPatternIndex + 1);
   h.u32(run.bossPatternTicks);
+  h.u32(run.bossPatternStep);
+  h.u32(run.bossPatternTotal);
+  h.f64(run.bossPatX);
+  h.f64(run.bossPatY);
+  h.f64(run.bossPatDirX);
+  h.f64(run.bossPatDirY);
+  h.f64(run.bossPatAngle);
+  h.bool(run.bossPatHit);
+  h.bool(run.bossKilled);
   h.f64(run.bossHpFloor);
+  // Choice queue state (LP review M1: these drove phases but were not hashed).
+  h.bool(run.rewardPending);
+  h.u32(run.rewardSourceType + 1);
+  h.u32(run.levelsThisPulse);
+  h.bool(run.wardenKilled);
+  h.f64(run.playerSlowPct);
+  h.u32(run.playerSlowTicks);
+  hashArray(h, run.coinGlint);
+  hashArray(h, run.lungeTimer);
+  hashArray(h, run.lungeTicks);
   h.bool(run.unhurtThisPulse);
   h.u32(run.lastHurtTick);
   h.u32(run.critForcedHits);
@@ -188,6 +240,7 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   hashArray(h, run.buffTicks);
   hashArray(h, run.healWindowTick);
   hashArray(h, run.healAmount);
+  hashTargetCounters(h, ctx);
   // Spawn schedule (remaining entries and queue).
   h.u32(run.scheduleCount);
   h.u32(run.scheduleNext);
@@ -235,9 +288,17 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
       e.counted,
       e.chargeHit,
       e.affixMask,
+      e.blinkX,
+      e.blinkY,
+      e.blinkTicks,
+      e.shellRegrow,
+      e.summonOwner,
+      e.guardAdd,
+      e.kbImmune,
     ],
-    [e.burnDps, e.orbitTimer],
+    [e.burnDps, e.orbitTimer, e.affixTimer],
   );
+  hashOwnerLinks(h, e, e.summonOwner, e.summonOwnerSerial, e);
   const es = w.enemyShots;
   hashPool(h, es, [es.sourceRef, es.vx, es.vy, es.dmg, es.lifeTicks], []);
   const ps = w.playerShots;
@@ -273,6 +334,7 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
       ps.zoneTicks,
       ps.zoneSlow,
       ps.zoneTick,
+      ps.bounceLeft,
     ],
     [ps.hitSlots],
   );
@@ -280,7 +342,7 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   // other raw values. Hash whether each remembered hit still names the living enemy instead.
   hashHitMemory(h, ps, w.enemies.serial);
   const pk = w.pickups;
-  hashPool(h, pk, [pk.kind, pk.amount, pk.magnetized, pk.dropTick], []);
+  hashPool(h, pk, [pk.kind, pk.amount, pk.magnetized, pk.dropTick, pk.flyTicks, pk.flySpeed], []);
   for (const a of [w.dangerAreas, w.playerZones]) {
     hashPool(
       h,
@@ -313,7 +375,13 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
     );
   }
   const sm = w.spawnMarks;
-  hashPool(h, sm, [sm.typeIndex, sm.ticksLeft, sm.ticksTotal, sm.members, sm.counted], []);
+  hashPool(
+    h,
+    sm,
+    [sm.typeIndex, sm.ticksLeft, sm.ticksTotal, sm.members, sm.counted, sm.owner],
+    [],
+  );
+  hashOwnerLinks(h, sm, sm.owner, sm.ownerSerial, w.enemies);
   const pd = ctx.pending;
   hashPool(
     h,

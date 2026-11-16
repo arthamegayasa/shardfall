@@ -1,0 +1,28 @@
+{
+  "id": "icon-silt",
+  "class": "icon",
+  "faction": "neutral",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Silt meta currency: a small heap of grey dust. Key: low mound wider than tall.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..ee..",
+          ".eddt.",
+          "eddtth",
+          "dttthh"
+        ]
+      ]
+    }
+  }
+}

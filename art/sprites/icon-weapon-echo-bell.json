@@ -1,0 +1,35 @@
+{
+  "id": "icon-weapon-echo-bell",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Echo Bell: a brass handbell with two cyan sound arcs to the right. Key: flared bell with handle, ) ) arcs.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "...wd.........",
+          "...dt.....c...",
+          "..wggt.....c..",
+          ".wyggt..c..c..",
+          ".wyggt...c..c.",
+          ".yggggt..c..c.",
+          "wyggggt..c..c.",
+          "yggggggt.c..c.",
+          "ggggggdt...c..",
+          "tdddddddt.c...",
+          "...dt........."
+        ]
+      ]
+    }
+  }
+}

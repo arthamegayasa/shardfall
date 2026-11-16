@@ -9,8 +9,8 @@
     "y": 7
   },
   "outline": "ink",
-  "status": "placeholder",
-  "note": "Damage number glyphs 0-9 (frame index = digit), 3 x 5 px plus ink outline, advance 4 px. normal bone, crit kept-gold.",
+  "status": "final",
+  "note": "Damage digits: normal 3x5 bone, crit 4x6 kept-cyan (CD K4: never gold), auto ink outline. Frame index = digit.",
   "animations": {
     "normal": {
       "ticksPerFrame": 0,
@@ -93,76 +93,89 @@
       "loop": false,
       "frames": [
         [
-          "ggg",
-          "g.g",
-          "g.g",
-          "g.g",
-          "ggg"
+          ".cc.",
+          "c..c",
+          "c..c",
+          "c..c",
+          "c..c",
+          ".cc."
         ],
         [
-          ".g.",
-          "gg.",
-          ".g.",
-          ".g.",
-          "ggg"
+          ".cc.",
+          "ccc.",
+          ".cc.",
+          ".cc.",
+          ".cc.",
+          "cccc"
         ],
         [
-          "ggg",
-          "..g",
-          "ggg",
-          "g..",
-          "ggg"
+          "ccc.",
+          "...c",
+          "..c.",
+          ".c..",
+          "c...",
+          "cccc"
         ],
         [
-          "ggg",
-          "..g",
-          ".gg",
-          "..g",
-          "ggg"
+          "ccc.",
+          "...c",
+          ".cc.",
+          "...c",
+          "...c",
+          "ccc."
         ],
         [
-          "g.g",
-          "g.g",
-          "ggg",
-          "..g",
-          "..g"
+          "c..c",
+          "c..c",
+          "cccc",
+          "...c",
+          "...c",
+          "...c"
         ],
         [
-          "ggg",
-          "g..",
-          "ggg",
-          "..g",
-          "ggg"
+          "cccc",
+          "c...",
+          "ccc.",
+          "...c",
+          "...c",
+          "ccc."
         ],
         [
-          "ggg",
-          "g..",
-          "ggg",
-          "g.g",
-          "ggg"
+          ".cc.",
+          "c...",
+          "ccc.",
+          "c..c",
+          "c..c",
+          ".cc."
         ],
         [
-          "ggg",
-          "..g",
-          "..g",
-          ".g.",
-          ".g."
+          "cccc",
+          "...c",
+          "..c.",
+          ".c..",
+          ".c..",
+          ".c.."
         ],
         [
-          "ggg",
-          "g.g",
-          "ggg",
-          "g.g",
-          "ggg"
+          ".cc.",
+          "c..c",
+          ".cc.",
+          "c..c",
+          "c..c",
+          ".cc."
         ],
         [
-          "ggg",
-          "g.g",
-          "ggg",
-          "..g",
-          "ggg"
+          ".cc.",
+          "c..c",
+          "c..c",
+          ".ccc",
+          "...c",
+          ".cc."
         ]
       ]
     }
-  }
+  },
+  "emissive": [
+    "kept-cyan"
+  ]
 }

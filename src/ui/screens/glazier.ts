@@ -1,14 +1,21 @@
-// S05 The Glazier (ui-spec 5, wireframe 05): one screen, no scroll. Offers with buy, lock, Fuse
-// preview; Tag panel with synergy preview; 6 weapon slots with Sell and Fuse; Memento list; Stats
-// toggle; Reroll and Begin Pulse. The sim validates every command (UI reads, sim decides).
+// S05 The Glazier (ui-spec 5, wireframe 05): one screen, no scroll. Left: the Glazier's portrait and
+// one spoken line, then the Tag panel with synergy preview. Centre: offers with buy, lock, Fuse
+// preview. Right: 6 weapon slots with Sell and Fuse, Mementos, Stats toggle. Bottom: Reroll and
+// Begin Pulse. The sim validates every command (UI reads, sim decides).
 
-import type { WorldView } from '../../core/index.ts';
-import { button, h, put, withHint } from '../dom.ts';
+import type { SimEventReader, WorldView } from '../../core/index.ts';
+import { button, h, put, setText, withHint } from '../dom.ts';
 import { formatInt, formatStatValue } from '../format.ts';
-import { tagAbbrKey, tagNameKey } from '../presenters/content.ts';
-import { buildShopModel, initialOfferFocus, tagPreview } from '../presenters/shop.ts';
+import { openingTrigger, pickLine, reactionTrigger } from '../presenters/glazier-line.ts';
+import { tagNameKey } from '../presenters/content.ts';
+import {
+  buildShopModel,
+  focusedSlotIndex,
+  initialOfferFocus,
+  tagPreview,
+} from '../presenters/shop.ts';
 import type { OfferCard, ShopModel, TagPreview } from '../presenters/shop.ts';
-import { glintAmount, panel, rarityPips, rowCard } from './components.ts';
+import { glintAmount, iconBox, panel, rarityPips, rowCard, tagChip } from './components.ts';
 import { CHOICE_LOCK_MS } from './types.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
@@ -16,6 +23,8 @@ import { Cue } from '../cues.ts';
 const GROUP_OFFERS = 0;
 const GROUP_SLOTS = 1;
 const GROUP_BAR = 2;
+/** Portrait box in UI units (style guide 1.4: 48 x 48 sprite px). */
+const PORTRAIT_UNITS = 48;
 
 export function createGlazierScreen(ctx: UiContext): Screen {
   const { doc, t, deps } = ctx;
@@ -25,9 +34,31 @@ export function createGlazierScreen(ctx: UiContext): Screen {
   let revision = -1;
   let glint = NaN;
   let showStats = false;
+  /** Inventory slot that the Sell and Fuse bar buttons act on (last focused slot), -1 none. */
   let selectedSlot = -1;
+  let visitPulse = -1;
+  let lineKey: string | null = null;
 
+  // Left column: portrait, line, tags. Built once; tags re-render per focus.
+  const left = h(doc, 'div', 'shop-left');
+  const glazier = panel(ctx, 'glazier-card', true);
+  const portrait = h(doc, 'span', 'portrait');
+  const art = ctx.icons.portrait(doc, 'glazier', PORTRAIT_UNITS);
+  if (art !== null) {
+    portrait.classList.add('has-art');
+    portrait.appendChild(art);
+  } else {
+    // Fallback mask until AD's portrait lands: a framed pane with a cut-glass mask (CSS only).
+    portrait.appendChild(h(doc, 'span', 'portrait-mask'));
+  }
+  portrait.setAttribute('aria-hidden', 'true');
+  const lineEl = h(doc, 'p', 'glazier-line');
+  put(glazier, portrait, put(h(doc, 'div', 'glazier-say'), lineEl));
   const tagPanel = panel(ctx, 'shop-tags');
+  put(left, glazier, tagPanel);
+  /** Compact tag strip in the top bar for Large and Largest text (ui-spec 7.3). */
+  const tagStrip = h(doc, 'span', 'tag-strip');
+
   /** data-ui of the focused control inside this screen, '' when none. */
   const focusedUi = (): string => {
     const a = doc.activeElement;
@@ -36,6 +67,12 @@ export function createGlazierScreen(ctx: UiContext): Screen {
   const infoLine = h(doc, 'p', 'info-line');
 
   const send = ctx.deps.commands;
+
+  const say = (key: string | null): void => {
+    lineKey = key;
+    setText(lineEl, key === null ? '' : t(key));
+    glazier.classList.toggle('is-silent', key === null);
+  };
 
   const denied = (key: string): void => {
     ctx.sound(Cue.Denied);
@@ -116,6 +153,7 @@ export function createGlazierScreen(ctx: UiContext): Screen {
   const renderTags = (preview: readonly TagPreview[]): void => {
     if (model === null) return;
     tagPanel.textContent = '';
+    tagStrip.textContent = '';
     tagPanel.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.tags')));
     const rows = model.tags.map((r) => ({ tag: r.tag, count: r.count, thresholds: r.thresholds }));
     for (const p of preview) {
@@ -139,19 +177,41 @@ export function createGlazierScreen(ctx: UiContext): Screen {
       }
       put(
         row,
-        h(doc, 'span', `tag-chip tag-${r.tag}`, t(tagAbbrKey(r.tag))),
+        tagChip(ctx, r.tag),
         h(doc, 'span', 'tag-name', t(tagNameKey(r.tag))),
-        pips,
         h(doc, 'span', 'tag-count', next > 0 ? `${String(shown)}/${String(next)}` : String(shown)),
+        pips,
       );
       if (p !== undefined && p.isNewTag)
         row.appendChild(h(doc, 'span', 'tag-new', t('ui.shop.tag_new')));
       tagPanel.appendChild(row);
+      const mini = h(doc, 'span', `tag-mini${add > 0 ? ' is-preview' : ''}`);
+      put(
+        mini,
+        tagChip(ctx, r.tag),
+        h(doc, 'span', 'tag-count', next > 0 ? `${String(shown)}/${String(next)}` : String(shown)),
+      );
+      tagStrip.appendChild(mini);
     }
+  };
+
+  const markSelected = (slot: number): void => {
+    selectedSlot = slot;
+    el.querySelectorAll('.slot.is-selected').forEach((n) => {
+      n.classList.remove('is-selected');
+    });
+    if (slot >= 0)
+      el.querySelector(`[data-ui="shop-slot-${String(slot + 1)}"]`)?.classList.add('is-selected');
+    const s = slot >= 0 ? model?.inventory[slot] : undefined;
+    const has = s !== undefined && !s.empty;
+    el.querySelector('[data-ui="shop-sell"]')?.classList.toggle('is-idle', !has);
+    el.querySelector('[data-ui="shop-fuse"]')?.classList.toggle('is-idle', s?.canFuse !== true);
   };
 
   const focusOffer = (o: OfferCard): void => {
     if (model === null) return;
+    // Sell and Fuse never act on a slot while an offer has focus (review M1 LP).
+    markSelected(-1);
     const preview = tagPreview(model, deps.data, o);
     renderTags(preview);
     const unlock = preview.find((p) => p.unlockDescKey !== null);
@@ -170,8 +230,11 @@ export function createGlazierScreen(ctx: UiContext): Screen {
   };
 
   const focusSlot = (slot: number): void => {
-    selectedSlot = slot;
+    markSelected(slot);
     renderTags([]);
+    el.querySelectorAll('.slot.is-fuse-target').forEach((n) => {
+      n.classList.remove('is-fuse-target');
+    });
     const s = model?.inventory[slot];
     if (s === undefined || s.item === null) {
       infoLine.textContent = '';
@@ -180,24 +243,28 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     infoLine.textContent = `${t(s.item.nameKey)} ${ctx.tier(s.tier)}  ${t('ui.shop.sell_for', { n: s.sellPrice })}`;
   };
 
-  const rightColumn = (m: ShopModel, view: WorldView): HTMLElement => {
-    const col = panel(ctx, 'shop-right');
-    if (showStats) {
-      col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.stats')));
-      const list = h(doc, 'div', 'stat-list');
-      deps.data.stats.forEach((s, i) => {
-        if (!s.showInUi) return;
-        const v = view.player.stats[i] ?? s.base;
+  const statsList = (col: HTMLElement, view: WorldView): void => {
+    col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.stats')));
+    const list = h(doc, 'div', 'stat-list');
+    deps.data.stats.forEach((s, i) => {
+      if (!s.showInUi) return;
+      const v = view.player.stats[i] ?? s.base;
+      put(
+        list,
         put(
-          list,
-          put(
-            h(doc, 'div', 'stat-row'),
-            h(doc, 'span', '', t(s.displayKey)),
-            h(doc, 'span', 'num', formatStatValue(v)),
-          ),
-        );
-      });
-      col.appendChild(list);
+          h(doc, 'div', 'stat-row'),
+          h(doc, 'span', '', t(s.displayKey)),
+          h(doc, 'span', 'num', formatStatValue(v)),
+        ),
+      );
+    });
+    col.appendChild(list);
+  };
+
+  const rightColumn = (m: ShopModel, view: WorldView, side: boolean): HTMLElement => {
+    const col = panel(ctx, side ? 'shop-right is-side' : 'shop-right');
+    if (showStats && !side) {
+      statsList(col, view);
       return col;
     }
     col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
@@ -212,12 +279,13 @@ export function createGlazierScreen(ctx: UiContext): Screen {
       b.textContent = '';
       if (s.empty || s.item === null) b.classList.add('is-empty');
       else {
+        const name = t(s.item.nameKey);
         put(
           b,
-          h(doc, 'span', 'slot-abbr', t(tagAbbrKey(s.item.tags[0] ?? ''))),
+          iconBox(ctx, { kind: 'weapon', id: s.item.id }, name, s.item.tags, 'small'),
           h(doc, 'span', 'slot-tier', ctx.tier(s.tier)),
         );
-        b.setAttribute('aria-label', `${t(s.item.nameKey)} ${ctx.tier(s.tier)}`);
+        b.setAttribute('aria-label', `${name} ${ctx.tier(s.tier)}`);
         if (s.canFuse) b.classList.add('can-fuse');
       }
       grid.appendChild(b);
@@ -238,17 +306,30 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     const list = h(doc, 'div', 'memento-list');
     for (const mc of m.mementos) {
       if (mc.item === null) continue;
+      const name = t(mc.item.nameKey);
       const row = h(doc, 'div', `memento-row rarity-${String(mc.rarityOrder)}`);
-      put(row, rarityPips(ctx, mc.rarityOrder), h(doc, 'span', 'memento-name', t(mc.item.nameKey)));
+      put(
+        row,
+        iconBox(ctx, { kind: 'memento', id: mc.item.id }, name, mc.item.tags, 'small'),
+        rarityPips(ctx, mc.rarityOrder, true),
+        h(doc, 'span', 'memento-name', name),
+      );
       if (mc.count > 1) row.appendChild(h(doc, 'span', 'num', `x${String(mc.count)}`));
       list.appendChild(row);
     }
     col.appendChild(list);
+    if (side) {
+      // Largest text: the inventory replaces the offers, so Stats share this view.
+      const stats = h(doc, 'div', 'side-stats');
+      statsList(stats, view);
+      col.appendChild(stats);
+    }
     return col;
   };
 
   const build = (view: WorldView): void => {
     const prevUi = focusedUi();
+    const prevSlot = selectedSlot;
     const m = buildShopModel(view, deps.data);
     model = m;
     revision = m.revision;
@@ -263,12 +344,16 @@ export function createGlazierScreen(ctx: UiContext): Screen {
       h(doc, 'h1', 'heading', t('ui.shop.title')),
       h(doc, 'span', 'shop-next', t('ui.shop.next', { n: m.nextPulse })),
       h(doc, 'span', 'shop-hp', t('ui.hud.hp', { hp: formatInt(m.hp), max: formatInt(m.maxHp) })),
-      put(h(doc, 'span', 'shop-glint'), glintAmount(ctx, m.glint)),
+      tagStrip,
+      put(h(doc, 'span', 'shop-glint'), glintAmount(ctx, m.glint, true, 16)),
     );
+    // Largest text (ui-spec 7.3): offers use the whole width; T swaps them for the inventory.
+    const largest = deps.settings().access.textScale === 2;
+    const sideView = largest && showStats;
 
     const offers = h(doc, 'div', 'shop-offers');
     let firstIndex = -1;
-    m.offers.forEach((o) => {
+    (sideView ? [] : m.offers).forEach((o) => {
       const row = h(doc, 'div', 'offer-row');
       let card: HTMLButtonElement;
       if (o.item === null) {
@@ -290,12 +375,14 @@ export function createGlazierScreen(ctx: UiContext): Screen {
           flavorKey: o.item.flavorKey,
           tags: o.item.tags,
           rarityOrder: o.rarityOrder,
+          icon: { kind: o.isWeapon ? 'weapon' : 'memento', id: o.item.id },
           tierText: o.isWeapon ? ctx.tier(o.tier) : '',
           hotkey: o.slot + 1,
           price: o.price,
           affordable: o.affordable,
           badge,
           locked: o.locked,
+          order: o.slot,
         });
         if (!o.buyable) card.classList.add('is-unaffordable');
       }
@@ -335,7 +422,7 @@ export function createGlazierScreen(ctx: UiContext): Screen {
       if (firstIndex < 0 && o.slot === initialOfferFocus(m)) firstIndex = ci;
     });
 
-    const right = rightColumn(m, view);
+    const right = largest && !showStats ? null : rightColumn(m, view, sideView);
 
     const bar = h(doc, 'div', 'bottom-bar shop-bar');
     const rerollBtn = button(doc, 'shop-reroll', t('ui.shop.reroll'));
@@ -386,7 +473,10 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     });
     const beginIndex = focus.add({ el: beginBtn, group: GROUP_BAR, activate: begin });
 
-    put(el, put(safe, top, put(h(doc, 'div', 'shop-cols'), tagPanel, offers, right), bar));
+    put(
+      el,
+      put(safe, top, put(h(doc, 'div', 'shop-cols'), left, sideView ? null : offers, right), bar),
+    );
 
     // Keep focus on the same control across rebuilds (a bought card stays in place as Taken).
     const prevEl = prevUi === '' ? null : el.querySelector<HTMLElement>(`[data-ui="${prevUi}"]`);
@@ -395,6 +485,13 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     infoLine.textContent = '';
     renderTags([]);
     focus.focus(start, true);
+    // Focus on a slot or an offer already set the selection; on the bar the last slot stays
+    // selected while it still holds a weapon (Sell or Fuse clicked from the bar).
+    const fu = focusedUi();
+    if (focusedSlotIndex(fu) < 0 && !/^shop-(?:offer|lock)-/.test(fu)) {
+      const s = m.inventory[prevSlot];
+      markSelected(s !== undefined && !s.empty ? prevSlot : -1);
+    }
   };
 
   const toggleStats = (): void => {
@@ -410,6 +507,23 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     return m?.[1] === undefined ? null : (model.offers[Number(m[1]) - 1] ?? null);
   };
 
+  /** Hotkeys X and M act on the focused slot only; elsewhere they explain why not. */
+  const slotHotkey = (run: (slot: number) => void): void => {
+    const slot = focusedSlotIndex(focusedUi());
+    if (slot < 0) {
+      denied('ui.common.denied');
+      return;
+    }
+    run(slot);
+  };
+
+  const react = (view: WorldView, events: SimEventReader): void => {
+    for (let i = 0; i < events.count; i++) {
+      const trig = reactionTrigger(events.type[i] ?? 0, events.a[i] ?? 0);
+      if (trig !== null) say(pickLine(trig, view.shop.revision, ctx.has));
+    }
+  };
+
   return {
     el,
     focus,
@@ -418,10 +532,29 @@ export function createGlazierScreen(ctx: UiContext): Screen {
       revision = -1;
       selectedSlot = -1;
       const v = ctx.view();
-      if (v !== null) build(v);
+      if (v !== null) {
+        // A new visit picks the opening line; returning from pause keeps the current line.
+        if (v.pulse.index !== visitPulse || lineKey === null) {
+          visitPulse = v.pulse.index;
+          const flags = ctx.visit();
+          say(
+            pickLine(
+              openingTrigger({
+                pulseIndex: v.pulse.index,
+                sawReward: flags.sawReward,
+                sawTemper: flags.sawTemper,
+              }),
+              v.pulse.index,
+              ctx.has,
+            ),
+          );
+        }
+        build(v);
+      }
       ctx.lockInput(CHOICE_LOCK_MS);
     },
-    update(view) {
+    update(view, events) {
+      react(view, events);
       if (view.shop.revision !== revision || view.player.glint !== glint) build(view);
     },
     key(e) {
@@ -453,11 +586,11 @@ export function createGlazierScreen(ctx: UiContext): Screen {
         return true;
       }
       if (ctx.matches('sell', e)) {
-        sell(selectedSlot);
+        slotHotkey(sell);
         return true;
       }
       if (ctx.matches('merge', e)) {
-        fuse(selectedSlot);
+        slotHotkey(fuse);
         return true;
       }
       return false;

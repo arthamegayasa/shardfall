@@ -2,17 +2,15 @@
 // never at import time. Buffers come from the pure DSP in ./synth.
 
 import type { CueDef, CueTable } from './cue-data.ts';
-import { PRIORITY_UI } from './cue-data.ts';
+import { PRIORITY_UI, liveLengthMs } from './cue-data.ts';
 import { DUCK_TARGET_COUNT, DuckTarget, duckGroupOf } from './ducking.ts';
-import { renderCue } from './synth/index.ts';
 import { createVoicePool } from './voices.ts';
 import type { VoicePool } from './voices.ts';
 
 /** Ramp time constant for every gain change (audio-direction 2.4: at least 5 ms). */
 const RAMP_TAU = 0.012;
 const STEAL_FADE_SEC = 0.01;
-/** Live cue renders are cached per length rounded to 50 ms (audio-list 2). */
-const LIVE_STEP_MS = 50;
+/** Least recently used live renders are evicted one by one beyond this count. */
 const LIVE_CACHE_MAX = 48;
 
 export interface Graph {
@@ -118,26 +116,28 @@ interface VoiceNodes {
   src: AudioBufferSourceNode | null;
   gain: GainNode | null;
   token: number;
+  cue: number;
 }
 
-/** One play request after mapping, coalescing, and jitter (all values final). */
+/** One play request after mapping, coalescing, and jitter (all values final). Reused by callers. */
 export interface PlayRequest {
-  readonly whenSec: number;
-  readonly rate: number;
-  readonly gain: number;
-  readonly pan: number;
+  whenSec: number;
+  rate: number;
+  gain: number;
+  pan: number;
   /** Live cue length in seconds, 0 = recipe length. */
-  readonly durSec: number;
+  durSec: number;
   /** Start offset into the buffer (riser joined late). */
-  readonly offsetSec: number;
+  offsetSec: number;
 }
 
 export interface SfxPlayer {
-  /** Renders buffer-mode cues in slices so boot never freezes. Resolves when all are ready. */
-  renderAll(yieldEvery: () => Promise<void>): Promise<void>;
+  /** Stores the rendered buffer of a buffer-mode cue (boot rendering happens outside). */
+  setBuffer(cue: number, data: Float32Array): void;
+  /** Stores a live render of a cue at lengthMs (see liveLengthMs). */
+  addLive(cue: number, lengthMs: number, data: Float32Array): void;
+  hasLive(cue: number, lengthMs: number): boolean;
   isReady(cue: number): boolean;
-  /** Renders a live cue at durSec into the cache ahead of time. */
-  prewarm(cue: number, durSec: number): void;
   /** Starts a cue respecting voice limits. Returns false when dropped. */
   play(cue: CueDef, req: PlayRequest, maxVoices: number): boolean;
   /** Stops every instance of a cue (riser cut when a Warden appears). */
@@ -145,36 +145,70 @@ export interface SfxPlayer {
   activeVoices(now: number): number;
 }
 
-function busRank(c: CueDef): number {
-  return c.bus === 'ui' ? 0 : c.bus === 'sfx' ? 1 : 2;
-}
+const BUSES = ['sfx', 'ui', 'music'] as const;
+const LIVE_KEY = 100000;
 
-export function createSfxPlayer(graph: Graph, table: CueTable): SfxPlayer {
+/**
+ * requestLive is called on a live-cache miss: the caller renders off the main thread and calls
+ * addLive. Until then the nearest cached length plays, aligned so its end (the telegraph peak)
+ * still lands on the hit (audio-direction 10.6).
+ */
+export function createSfxPlayer(
+  graph: Graph,
+  table: CueTable,
+  requestLive: (cue: number, lengthMs: number) => void,
+): SfxPlayer {
   const { ctx } = graph;
   const cues = table.cues;
   const buffers: (AudioBuffer | null)[] = cues.map(() => null);
-  const liveCache = new Map<string, AudioBuffer>();
+  /** Insertion order is the LRU order: a hit re-inserts the key. */
+  const liveCache = new Map<number, AudioBuffer>();
+  const liveByCue: number[][] = cues.map(() => []);
   const pools: Record<'sfx' | 'ui' | 'music', VoicePool> = {
     sfx: createVoicePool({ capacity: 24, reserved: 4, reservedMaxPriority: 2, cueCount: cues.length }),
     ui: createVoicePool({ capacity: 6, reserved: 0, reservedMaxPriority: 0, cueCount: cues.length }),
     music: createVoicePool({ capacity: 6, reserved: 0, reservedMaxPriority: 0, cueCount: cues.length }),
   };
   const nodes: Record<'sfx' | 'ui' | 'music', VoiceNodes[]> = {
-    sfx: Array.from({ length: 24 }, () => ({ src: null, gain: null, token: 0 })),
-    ui: Array.from({ length: 6 }, () => ({ src: null, gain: null, token: 0 })),
-    music: Array.from({ length: 6 }, () => ({ src: null, gain: null, token: 0 })),
+    sfx: Array.from({ length: 24 }, () => ({ src: null, gain: null, token: 0, cue: -1 })),
+    ui: Array.from({ length: 6 }, () => ({ src: null, gain: null, token: 0, cue: -1 })),
+    music: Array.from({ length: 6 }, () => ({ src: null, gain: null, token: 0, cue: -1 })),
   };
+  const keyOf = (cue: number, ms: number): number => cue * LIVE_KEY + ms;
 
-  function liveBuffer(cue: CueDef, durSec: number): AudioBuffer {
-    const ms = Math.max(LIVE_STEP_MS, Math.round((durSec * 1000) / LIVE_STEP_MS) * LIVE_STEP_MS);
-    const key = `${cue.index}:${ms}`;
-    let buf = liveCache.get(key);
-    if (buf === undefined) {
-      if (liveCache.size >= LIVE_CACHE_MAX) liveCache.clear();
-      buf = toAudioBuffer(ctx, renderCue(cue, cue.sampleRate, ms), cue.sampleRate);
-      liveCache.set(key, buf);
+  /** Result of liveBuffer, reused: the buffer and how to align its end with the wanted length. */
+  const pick: { buf: AudioBuffer | null; offsetSec: number; delaySec: number } = {
+    buf: null,
+    offsetSec: 0,
+    delaySec: 0,
+  };
+  function liveBuffer(cue: CueDef, durSec: number): void {
+    const ms = liveLengthMs(durSec);
+    const key = keyOf(cue.index, ms);
+    pick.offsetSec = 0;
+    pick.delaySec = 0;
+    const hit = liveCache.get(key);
+    if (hit !== undefined) {
+      liveCache.delete(key);
+      liveCache.set(key, hit);
+      pick.buf = hit;
+      return;
     }
-    return buf;
+    requestLive(cue.index, ms);
+    // Prefer the shortest longer render (start inside it), else the longest shorter one.
+    let best = -1;
+    for (const m of liveByCue[cue.index] ?? []) {
+      if (best < 0) best = m;
+      else if (m >= ms) {
+        if (best < ms || m < best) best = m;
+      } else if (best < ms && m > best) best = m;
+    }
+    const near = best < 0 ? undefined : liveCache.get(keyOf(cue.index, best));
+    pick.buf = near ?? null;
+    if (near === undefined) return;
+    const want = ms / 1000;
+    if (near.duration >= want) pick.offsetSec = near.duration - want;
+    else pick.delaySec = want - near.duration;
   }
 
   function destFor(cue: CueDef): AudioNode {
@@ -193,40 +227,60 @@ export function createSfxPlayer(graph: Graph, table: CueTable): SfxPlayer {
     }
     v.src = null;
     v.gain = null;
+    v.cue = -1;
   }
 
   return {
-    async renderAll(yieldEvery) {
-      // UI first (title screen clicks), then sim SFX by priority, music-bus stingers last.
-      const order = [...cues].sort((a, b) => busRank(a) - busRank(b) || a.priority - b.priority);
-      for (const cue of order) {
-        if (cue.mode === 'buffer' && !cue.deprecated) {
-          buffers[cue.index] = toAudioBuffer(ctx, renderCue(cue, cue.sampleRate), cue.sampleRate);
-        }
-        await yieldEvery();
+    setBuffer(i, data) {
+      const cue = cues[i];
+      if (cue !== undefined) buffers[i] = toAudioBuffer(ctx, data, cue.sampleRate);
+    },
+    addLive(i, ms, data) {
+      const cue = cues[i];
+      if (cue === undefined) return;
+      const key = keyOf(i, ms);
+      if (!liveCache.has(key)) liveByCue[i]?.push(ms);
+      liveCache.delete(key);
+      liveCache.set(key, toAudioBuffer(ctx, data, cue.sampleRate));
+      while (liveCache.size > LIVE_CACHE_MAX) {
+        const oldest = liveCache.keys().next().value;
+        if (oldest === undefined) break;
+        liveCache.delete(oldest);
+        const c = Math.floor(oldest / LIVE_KEY);
+        const list = liveByCue[c];
+        const k = list?.indexOf(oldest - c * LIVE_KEY) ?? -1;
+        if (list !== undefined && k >= 0) list.splice(k, 1);
       }
     },
-    prewarm(i, durSec) {
-      const cue = cues[i];
-      if (cue?.mode === 'live') liveBuffer(cue, durSec);
+    hasLive(i, ms) {
+      return liveCache.has(keyOf(i, ms));
     },
     isReady(i) {
       const cue = cues[i];
-      return cue !== undefined && (cue.mode === 'live' || buffers[i] !== null);
+      if (cue === undefined) return false;
+      return cue.mode === 'live' ? (liveByCue[i]?.length ?? 0) > 0 : buffers[i] !== null;
     },
     play(cue, req, maxVoices) {
-      const buf = cue.mode === 'live' ? liveBuffer(cue, req.durSec > 0 ? req.durSec : cue.durationMs / 1000) : buffers[cue.index];
+      let buf: AudioBuffer | null | undefined;
+      let offset = req.offsetSec;
+      let when = req.whenSec;
+      if (cue.mode === 'live') {
+        liveBuffer(cue, req.durSec > 0 ? req.durSec : cue.durationMs / 1000);
+        buf = pick.buf;
+        offset += pick.offsetSec;
+        when += pick.delaySec;
+      } else buf = buffers[cue.index];
       if (buf === null || buf === undefined) return false;
       const bus = cue.bus;
       const pool = pools[bus];
-      const durSec = Math.max(0.001, (buf.duration - req.offsetSec) / req.rate);
+      const durSec = Math.max(0.001, (buf.duration - offset) / req.rate);
       const prio = bus === 'sfx' ? cue.priority : PRIORITY_UI;
-      const slot = pool.request(cue.index, prio, maxVoices, cue.minIntervalMs / 1000, req.whenSec, durSec);
+      const slot = pool.request(cue.index, prio, maxVoices, cue.minIntervalMs / 1000, when, durSec);
       if (slot < 0) return false;
       const vs = nodes[bus];
       if (pool.lastStolen >= 0) {
         const victim = vs[pool.lastStolen];
-        if (victim !== undefined && victim.token === pool.lastStolenToken) fadeOut(victim, req.whenSec);
+        if (victim !== undefined && victim.token === pool.lastStolenToken) fadeOut(victim, when);
       }
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -252,16 +306,18 @@ export function createSfxPlayer(graph: Graph, table: CueTable): SfxPlayer {
         s.gain.value = cue.sendHall;
         tail.connect(s).connect(graph.hallSend);
       }
-      src.start(req.whenSec, req.offsetSec);
+      src.start(when, offset);
       const v = vs[slot];
       if (v !== undefined) {
         v.src = src;
         v.gain = g;
+        v.cue = cue.index;
         v.token = pool.tokenOf(slot);
         src.onended = () => {
           if (v.src === src) {
             v.src = null;
             v.gain = null;
+            v.cue = -1;
           }
           tail.disconnect();
         };
@@ -269,9 +325,11 @@ export function createSfxPlayer(graph: Graph, table: CueTable): SfxPlayer {
       return true;
     },
     stopCue(i, now) {
-      for (const bus of ['sfx', 'ui', 'music'] as const) {
-        for (const v of nodes[bus]) {
-          if (v.src !== null && v.src.buffer !== null && buffers[i] === v.src.buffer) fadeOut(v, now);
+      for (const bus of BUSES) {
+        const list = nodes[bus];
+        for (let k = 0; k < list.length; k++) {
+          const v = list[k];
+          if (v !== undefined && v.src !== null && v.cue === i) fadeOut(v, now);
         }
       }
     },

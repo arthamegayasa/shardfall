@@ -7,7 +7,7 @@ import { button, h, put } from '../dom.ts';
 import { formatInt } from '../format.ts';
 import { buildRunEndModel } from '../presenters/run-end.ts';
 import type { RunEndModel } from '../presenters/run-end.ts';
-import { panel, rarityPips, titleBlock } from './components.ts';
+import { buildRow, panel, titleBlock } from './components.ts';
 import { RUN_END_LOCK_MS } from './types.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
@@ -43,7 +43,7 @@ export function createRunEndScreen(ctx: UiContext): Screen {
     if (m.killerKey !== null) {
       title.appendChild(h(doc, 'p', 'felled-by', t('ui.end.felled_by', { name: t(m.killerKey) })));
     }
-    const stats = panel(ctx, 'end-stats');
+    const stats = panel(ctx, 'end-stats', true);
     put(
       stats,
       h(
@@ -61,27 +61,35 @@ export function createRunEndScreen(ctx: UiContext): Screen {
 
     const buildCol = panel(ctx, 'end-build');
     buildCol.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
+    const wl = h(doc, 'div', 'build-list');
     for (const w of m.build.weapons) {
-      put(
-        buildCol,
-        put(
-          h(doc, 'div', `build-row rarity-${String(w.rarityOrder)}`),
-          h(doc, 'span', '', t(w.item.nameKey)),
-          h(doc, 'span', 'card-tier', ctx.tier(w.level)),
+      wl.appendChild(
+        buildRow(
+          ctx,
+          { kind: 'weapon', id: w.item.id },
+          w.item.nameKey,
+          w.item.tags,
+          w.rarityOrder,
+          ctx.tier(w.level),
         ),
       );
     }
+    buildCol.appendChild(wl);
     buildCol.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.mementos')));
+    const ml = h(doc, 'div', 'build-list');
     for (const mm of m.build.mementos) {
-      put(
-        buildCol,
-        put(
-          h(doc, 'div', `build-row rarity-${String(mm.rarityOrder)}`),
-          rarityPips(ctx, mm.rarityOrder),
-          h(doc, 'span', '', t(mm.item.nameKey)),
+      ml.appendChild(
+        buildRow(
+          ctx,
+          { kind: 'memento', id: mm.item.id },
+          mm.item.nameKey,
+          mm.item.tags,
+          mm.rarityOrder,
+          mm.level > 1 ? `x${String(mm.level)}` : '',
         ),
       );
     }
+    buildCol.appendChild(ml);
 
     const bar = h(doc, 'div', 'bottom-bar end-bar');
     const again = button(doc, 'end-again', t('ui.end.again'), 'primary');

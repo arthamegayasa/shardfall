@@ -1,0 +1,33 @@
+{
+  "id": "fx-glint-trail",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "glint",
+    "kept-gold"
+  ],
+  "status": "final",
+  "note": "Glint pickup trail dot while the Glint flies to the player.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "yy",
+          "yy"
+        ],
+        [
+          "g"
+        ]
+      ]
+    }
+  }
+}

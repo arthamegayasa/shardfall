@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   IR_HALL,
   IR_ROOM,
+  loopPointsOf,
   dbToGain,
   mixNote,
   noteToMidi,
@@ -134,5 +135,34 @@ describe('mixNote', () => {
     expect(l[10]).toBeCloseTo(r[10] ?? 0, 6);
     expect(l[10]).toBeCloseTo(Math.SQRT1_2, 5);
     expect(l[80]).toBe(0);
+  });
+});
+
+describe('looped instrument samples (buffer memory, audio-direction 2.2)', () => {
+  it('sustain past their sample length without a click at the loop seam', () => {
+    const insts = parseInstruments(instrumentsJson);
+    const looped = [...insts.values()].filter((d) => d.loop !== null);
+    expect(looped.map((d) => d.id).sort()).toEqual(
+      ['brass', 'brass_low', 'chip_lead', 'choir', 'string_pad', 'sub_bass', 'unlit_drone'].sort(),
+    );
+    const sr = 48000;
+    for (const def of looped) {
+      const ref = def.refNotes[0] ?? null;
+      const sample = renderInstrumentSample(def, ref);
+      const lp = loopPointsOf(def, sample.length);
+      expect(lp, def.id).not.toBeNull();
+      expect(sample.length / def.sampleRate, def.id).toBeLessThan(2.6);
+      const l = new Float32Array(sr * 6);
+      const r = new Float32Array(sr * 6);
+      const loopStart = Math.round((lp?.startSec ?? 0) * def.sampleRate);
+      mixNote(l, r, sr, { sample, sampleRate: def.sampleRate, rate: 1, startSec: 0, holdSec: 5.5, releaseSec: 0.3, gain: 1, pan: 0, loopStart });
+      // Held for 5.5 s: still sounding at 5 s, long after the sample ended.
+      expect(Math.abs(l[sr * 5] ?? 0) + Math.abs(l[sr * 5 + 7] ?? 0), def.id).toBeGreaterThan(0);
+      const steps: number[] = [];
+      for (let i = sr; i < sr * 5; i++) steps.push(Math.abs((l[i] ?? 0) - (l[i - 1] ?? 0)));
+      steps.sort((a, b) => a - b);
+      const p999 = steps[Math.floor(steps.length * 0.999)] ?? 1;
+      expect((steps.at(-1) ?? 0) / p999, def.id).toBeLessThan(1.6);
+    }
   });
 });

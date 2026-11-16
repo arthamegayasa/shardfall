@@ -3,6 +3,7 @@
 import { defineConfig } from 'vitest/config';
 import type { Plugin } from 'vite';
 import { buildDataToDisk } from './tools/data/lib/pipeline.ts';
+import { minifyGlslTemplates } from './tools/build/glsl-minify.ts';
 
 /** Rebuilds content/generated/ when CSV, level, or string files change during `npm run dev`. */
 function dataWatch(): Plugin {
@@ -31,6 +32,20 @@ function dataWatch(): Plugin {
   };
 }
 
+/** Production and e2e builds: strip comments and indentation from GLSL templates (bundle budget). */
+function glslMinify(): Plugin {
+  return {
+    name: 'shardfall-glsl-minify',
+    apply: 'build',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!id.replaceAll('\\', '/').includes('/src/render/shaders/')) return null;
+      if (!code.includes('/* glsl */')) return null;
+      return { code: minifyGlslTemplates(code), map: null };
+    },
+  };
+}
+
 export default defineConfig(({ command, mode }) => {
   const isE2e = mode === 'e2e';
   return {
@@ -42,7 +57,7 @@ export default defineConfig(({ command, mode }) => {
       __DEV_TOOLS__: JSON.stringify(command === 'serve' || isE2e),
     },
     // Not under Vitest: tests must never rewrite content/generated (data:check compares it).
-    plugins: mode === 'test' ? [] : [dataWatch()],
+    plugins: mode === 'test' ? [] : [dataWatch(), glslMinify()],
     build: {
       outDir: isE2e ? 'dist-e2e' : 'dist',
       target: 'es2022',

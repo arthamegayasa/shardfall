@@ -16,7 +16,12 @@ export const configTable = defineKvTable({
     player_vertical_screen_ratio: col.float({ min: 0.5, max: 1 }),
     player_radius: dist(),
     pickup_radius_base: dist(),
+    /** Top speed of a magnetized Glint piece. */
     glint_fly_speed: col.uPerSec({ min: 0 }),
+    /** Speed of a piece the tick it is magnetized (GD M2-01). */
+    glint_fly_speed_start: col.uPerSec({ min: 0, default: 12 }),
+    /** u/s^2 in data and GameData (no tick conversion): divide by TICK_RATE^2 for u/tick^2 (GD M2-01). */
+    glint_fly_accel: col.float({ min: 0, default: 0 }),
     glint_collect_dist_add: dist(),
     glint_floor_cap: col.int({ min: 1 }),
     pulse_end_collect_frac: frac(),
@@ -46,6 +51,8 @@ export const configTable = defineKvTable({
     spawn_mark_diam_medium: dist(),
     spawn_mark_diam_large: dist(),
     spawn_mark_diam_warden: dist(),
+    /** Groups of this size or more use at least the medium spawn mark (GDD 3.2, GD M2-01). */
+    spawn_mark_medium_group_min: col.int({ min: 1, default: 3 }),
     spawn_quiet_end_s: sec(),
     enemy_radius_small: dist(),
     enemy_radius_medium: dist(),
@@ -69,6 +76,8 @@ export const configTable = defineKvTable({
     boss_trickle_count: col.int({ min: 0 }),
     boss_trickle_max_alive: col.int({ min: 0 }),
     death_slowmo_s: sec(),
+    /** PlayerHpLowChanged threshold as a fraction of max HP (ui-spec S03, GD M2-01). */
+    low_hp_frac: col.float({ min: 0, max: 1, default: 0.3 }),
     victory_delay_s: sec(),
   },
 });

@@ -1,0 +1,38 @@
+{
+  "id": "icon-weapon-splinter-shot",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Sky Splinter: a long glass shard dart flying up-right with a bound tail and blue fletching. Key: thick diagonal blade.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".............w",
+          "............wc",
+          "...........wcB",
+          "..........wccB",
+          ".........wccBb",
+          "........wccBBb",
+          ".......wccBBb.",
+          "......wccBBb..",
+          ".....wcBBb....",
+          "....wcBb......",
+          "...edh........",
+          ".cBdh.........",
+          "cBBh..........",
+          ".Bb..........."
+        ]
+      ]
+    }
+  }
+}

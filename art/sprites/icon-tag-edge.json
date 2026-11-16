@@ -1,0 +1,30 @@
+{
+  "id": "icon-tag-edge",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Edge tag: a short blade slanting up-right with a gold guard. Key: the only diagonal tag silhouette.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....wc",
+          "...wcb",
+          ".gwcb.",
+          "..gb..",
+          ".dgg..",
+          "dd...."
+        ]
+      ]
+    }
+  }
+}

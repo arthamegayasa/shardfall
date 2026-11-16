@@ -12,6 +12,9 @@ import { CHOICE_LOCK_MS } from './types.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
 
+/** Queue pips shown above "1 of 12"; longer queues show the counter text only. */
+const QUEUE_PIP_MAX = 8;
+
 export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): Screen {
   const { doc, t, deps } = ctx;
   const el = h(
@@ -45,11 +48,29 @@ export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): 
     if (mode === 'levelUp') {
       const m = buildLevelUpModel(view, deps.data);
       revision = m.revision;
-      const sub =
-        m.queueTotal > 1
-          ? `${t('ui.levelup.level', { n: m.level })}  ${t('ui.levelup.queue', { i: m.queueIndex, total: m.queueTotal })}`
-          : t('ui.levelup.level', { n: m.level });
-      title = titleBlock(ctx, t('ui.levelup.title'), sub);
+      // "Lv 2" stays the big subtitle; the queue is a small separate counter (CD M1 4, LP M1).
+      title = titleBlock(ctx, t('ui.levelup.title'), t('ui.levelup.level', { n: m.level }));
+      if (m.queueTotal > 1) {
+        const q = h(doc, 'p', 'queue-chip');
+        const pips = h(doc, 'span', 'queue-pips');
+        const shownPips = m.queueTotal <= QUEUE_PIP_MAX ? m.queueTotal : 0;
+        for (let i = 0; i < shownPips; i++) {
+          const done = i < m.queueIndex - 1;
+          const now = i === m.queueIndex - 1;
+          pips.appendChild(h(doc, 'span', done ? 'qpip is-done' : now ? 'qpip is-now' : 'qpip'));
+        }
+        put(
+          q,
+          pips,
+          h(
+            doc,
+            'span',
+            'queue-text',
+            t('ui.levelup.queue', { i: m.queueIndex, total: m.queueTotal }),
+          ),
+        );
+        title.appendChild(q);
+      }
       cards = m.cards;
     } else {
       const m = buildRewardModel(view, deps.data);
@@ -78,8 +99,10 @@ export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): 
         flavorKey: c.flavorKey,
         tags: c.tags,
         rarityOrder: c.rarityOrder,
+        icon: c.icon,
         hotkey: c.choice + 1,
         note,
+        order: c.choice,
       });
       list.appendChild(card);
       focus.add({

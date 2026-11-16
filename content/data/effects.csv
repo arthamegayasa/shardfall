@@ -9,7 +9,7 @@ coal_locket_1,coal_locket,on_hit,,0.08,,,,chance,apply_status,status=burn;stacks
 kindling_jar_1,kindling_jar,on_hit,target_has_status:burn,,,,,none,hit_mod,mode=vuln;value=0.2,A
 torch_glove_1,torch_glove,on_hit,source_tag:edge,,,,,none,apply_status,status=burn;stacks=1;duration=3,A
 ashen_crown_1,ashen_crown,passive,,,,,,none,stat_mod,stat=burn_max_stacks;op=add;value=2,A
-smolder_boots_1,smolder_boots,on_distance,,,,,,none,spawn_zone,distance=3;radius=1;duration=2;tick=0.5;dmg=0;status=burn;origin=player;max_alive=6,A
+smolder_boots_1,smolder_boots,on_distance,,,,,,none,spawn_zone,distance=3;radius=1;duration=2;tick=0.5;dmg=0;status=burn;origin=player;max_alive=4,A
 glass_marble_1,glass_marble,passive,,,,,,value,stat_mod,stat=pierce;op=add;value=1,A
 prism_lens_1,prism_lens,on_hit,source_kind:projectile|every_nth:5@global,,,,,none,spawn_projectile,pattern=split;count=3;dmg_frac=0.4;speed=12;range=3;origin=target,A
 shard_pouch_1,shard_pouch,passive,,,,,,none,stat_mod,stat=projectiles;op=add;value=1,A

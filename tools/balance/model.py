@@ -36,24 +36,24 @@ DATA = ROOT / "content" / "data"
 ENEMY_ORDER = ["swarmer", "charger", "shooter", "tank", "exploder", "summoner", "lobber"]
 
 RUN_A = [
-    (1, "biome_market", "normal", 1, 20, 26, 0, 0, 0, 0, 0, 0),
-    (2, "biome_market", "normal", 2, 23, 32, 4, 0, 0, 0, 0, 0),
-    (3, "biome_market", "normal", 3, 26, 36, 6, 4, 0, 0, 0, 0),
-    (4, "biome_market", "normal", 4, 29, 40, 8, 6, 2, 0, 0, 0),
-    (5, "biome_market", "warden", 5, 32, 36, 8, 6, 3, 0, 0, 0),
-    (6, "biome_market", "normal", 6, 35, 50, 10, 10, 4, 0, 0, 0),
-    (7, "biome_market", "normal", 7, 38, 56, 12, 12, 6, 0, 0, 0),
-    (8, "biome_market", "normal", 8, 40, 62, 14, 14, 8, 0, 0, 0),
-    (9, "biome_market", "normal", 9, 40, 70, 16, 16, 10, 0, 0, 0),
+    (1, "biome_market", "normal", 1, 20, 18, 0, 0, 0, 0, 0, 0),
+    (2, "biome_market", "normal", 2, 23, 24, 4, 0, 0, 0, 0, 0),
+    (3, "biome_market", "normal", 3, 26, 28, 6, 4, 0, 0, 0, 0),
+    (4, "biome_market", "normal", 4, 29, 28, 8, 6, 2, 0, 0, 0),
+    (5, "biome_market", "warden", 5, 32, 30, 8, 4, 2, 0, 0, 0),
+    (6, "biome_market", "normal", 6, 35, 40, 12, 12, 4, 0, 0, 0),
+    (7, "biome_market", "normal", 7, 38, 46, 14, 14, 6, 0, 0, 0),
+    (8, "biome_market", "normal", 8, 40, 52, 16, 17, 8, 0, 0, 0),
+    (9, "biome_market", "normal", 9, 40, 58, 18, 20, 10, 0, 0, 0),
     (10, "biome_market", "boss", 10, None, 30, 0, 0, 0, 0, 0, 0),
 ]
 
 # run_a_m1 (GDD 2.4): Pulse 5 and 10 become normal Pulses (Warden and boss arrive in M2).
 RUN_A_M1 = [
     *RUN_A[:4],
-    (5, "biome_market", "normal", 5, 32, 40, 10, 8, 4, 0, 0, 0),
+    (5, "biome_market", "normal", 5, 32, 34, 10, 8, 4, 0, 0, 0),
     *RUN_A[5:9],
-    (10, "biome_market", "normal", 10, 45, 88, 20, 20, 13, 0, 0, 0),
+    (10, "biome_market", "normal", 10, 45, 66, 20, 20, 13, 0, 0, 0),
 ]
 
 RUN_C = [
@@ -137,6 +137,40 @@ SPAWN_RULES = {
 }
 SWARMER_EARLY_GROUP_MAX = 5  # t <= 3: smaller groups while the player has one weapon [Asumsi]
 
+# Density shape (GDD 3.2 w(tau), M2-01). The spawner places groups uniformly inside each row's
+# window, so the rising curve is built from extra swarmer rows on every timed Pulse:
+# - opening: one swarmer group marked at tau 0, so the first Unlit emerge after spawn_mark_s (CD M1 4.1);
+# - surge: Lampmoths drawn to the closing light in the last part of the Pulse (riser and rush).
+OPENING_WINDOW = (0.0, 0.0)
+SURGE_WINDOW = (0.55, 1.0)
+SURGE_GROUP = (4, 7)
+SURGE_RATIO_BASE = 0.4  # surge swarmers = base swarmers x min(cap, base + step x t)
+SURGE_RATIO_STEP = 0.1
+SURGE_RATIO_CAP = 1.25
+SURGE_WARDEN_MULT = 0.5  # Warden Pulses keep room for the Warden fight
+
+
+def opening_count(t: int) -> int:
+    return 4 if t <= 3 else 5 if t <= 6 else 6
+
+
+def surge_count(t: int, kind: str, swarmers: int) -> int:
+    r = min(SURGE_RATIO_CAP, SURGE_RATIO_BASE + SURGE_RATIO_STEP * t)
+    if kind == "warden":
+        r *= SURGE_WARDEN_MULT
+    return round(swarmers * r)
+
+
+def extra_swarmers(row) -> tuple[int, int]:
+    """(opening, surge) swarmer counts of a profile row; boss Pulses have neither."""
+    _p, _b, kind, t, _d = row[:5]
+    if kind == "boss":
+        return 0, 0
+    return opening_count(t), surge_count(t, kind, row[5])
+
+
+PERF_ALIVE_BUDGET = 120  # architecture 13 performance budget; pool capacity is 256
+
 
 def alive_cap(t: int) -> int:
     """GDD 3.2: 70 (t1-5), 90 (t6-10), 110 (t11-15), 120 (t16-20)."""
@@ -205,6 +239,17 @@ def gen_waves_text() -> tuple[str, str]:
                     gmax = SWARMER_EARLY_GROUP_MAX
                 spawns.write(
                     ",".join(fmt(x) for x in (profile, pulse, enemy, n, s, e, gmin, gmax, "", tier))
+                    + "\n"
+                )
+            opening, surge = extra_swarmers(r)
+            extra = []
+            if opening:
+                extra.append((opening, *OPENING_WINDOW, opening, opening))
+            if surge:
+                extra.append((surge, *SURGE_WINDOW, *SURGE_GROUP))
+            for n, s, e, gmin, gmax in extra:
+                spawns.write(
+                    ",".join(fmt(x) for x in (profile, pulse, "swarmer", n, s, e, gmin, gmax, "", tier))
                     + "\n"
                 )
     return waves.getvalue(), spawns.getvalue()
@@ -291,6 +336,7 @@ class Data:
     def glint_raw(self, profile: str, row) -> int:
         counts = row[5:]
         raw = sum(n * int(self.enemies[e]["glint"]) for e, n in zip(ENEMY_ORDER, counts))
+        raw += sum(extra_swarmers(row)) * int(self.enemies["swarmer"]["glint"])
         pulse, kind = row[0], row[2]
         if kind == "warden":
             raw += int(self.enemies[WARDENS[(profile, pulse)]]["glint"])
@@ -422,7 +468,7 @@ def simulate(d: Data, profile: str, class_id: str = "lantern") -> list[dict]:
         hp_max = float(cls["max_hp"]) + hp_bonus
         out.append(
             dict(
-                pulse=pulse, kind=kind, t=t, dur=dur, counts=r[5:], raw=raw, exp=exp_glint,
+                pulse=pulse, kind=kind, t=t, dur=dur, counts=r[5:], extra=extra_swarmers(r), raw=raw, exp=exp_glint,
                 xp=xp, level=level_end, buys=shop_buys, rerolls=rerolls, purchases=purchases,
                 budget_left=budget, dps=dps, bonus=bonus, hp_max=hp_max, mementos=mementos,
                 weapons=min(1 + weapon_copies, slots),
@@ -468,6 +514,11 @@ def data_checks(d: Data) -> list[str]:
                 errs.append(f"{profile} P{pulse}: warden Pulse without warden id")
             if kind == "boss" and (profile, pulse) not in BOSSES:
                 errs.append(f"{profile} P{pulse}: boss Pulse without boss id")
+    # Alive cap within the enemy pool (256) and the performance budget (120 Unlit, architecture 13).
+    for profile, rows, _tier in PROFILES:
+        for r in rows:
+            if alive_cap(r[3]) > PERF_ALIVE_BUDGET:
+                errs.append(f"{profile} P{r[0]}: alive_cap above {PERF_ALIVE_BUDGET}")
     # Telegraph minimums for enemies (P2-e; GDD 14.1). Contact-only roles need none.
     mins = {"charger": "telegraph_min_charge_s", "shooter": "telegraph_min_projectile_s",
             "exploder": "telegraph_min_area_s", "summoner": "telegraph_min_area_s",
@@ -493,12 +544,12 @@ def target_checks(d: Data) -> list[tuple[str, bool, str]]:
     last_t = max(t for t in range(1, 21) if sw * d.hp(t) <= one_shot)
     res.append(("Starter one-shots swarmer to t6", last_t >= 6, f"one-shot up to t{last_t}"))
     buys = sim_a[-1]["purchases"]
-    res.append(("Purchases per run A 12-18", 12 <= buys <= 18, f"{buys:.0f} (run_a)"))
+    res.append(("Purchases per run A 16-22", 16 <= buys <= 22, f"{buys:.0f} (run_a)"))
     buys_m1 = sim_m1[-1]["purchases"]
-    res.append(("Purchases per run M1 12-18", 12 <= buys_m1 <= 18, f"{buys_m1:.0f} (run_a_m1)"))
+    res.append(("Purchases per run M1 16-22", 16 <= buys_m1 <= 22, f"{buys_m1:.0f} (run_a_m1)"))
     p5 = sim_a[4]
     ttk = warden_ttk(d, "warden_hound", 5, p5["dps"])
-    res.append(("Warden kill 8-15 s", 8 <= ttk <= 15, f"{ttk:.1f} s at ref DPS {p5['dps']:.0f}"))
+    res.append(("Warden kill 15-25 s", 15 <= ttk <= 25, f"{ttk:.1f} s at ref DPS {p5['dps']:.0f}"))
     p10 = sim_a[9]
     fight = boss_fight_s(d, "boss_lantern", 10, p10["dps"], p10["bonus"])
     res.append(("Boss fight 45-90 s", 45 <= fight <= 90, f"{fight:.0f} s at ref DPS {p10['dps']:.0f}"))
@@ -527,7 +578,7 @@ def report(d: Data) -> str:
         sim = simulate(d, profile)
         rows = []
         for s in sim:
-            total = sum(s["counts"])
+            total = sum(s["counts"]) + sum(s["extra"])
             rate = f"{total / s['dur']:.1f}" if s["dur"] else ""
             rows.append([
                 s["pulse"], s["kind"], s["t"], s["dur"] or "boss", total, rate, s["raw"],

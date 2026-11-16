@@ -1,0 +1,37 @@
+{
+  "id": "icon-weapon-chain-spark",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Leaping Wick: a candle wick whose spark zigzags to two glowing nodes. Key: candle stub bottom-left, stepped bolt up-right.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..............",
+          "......wc......",
+          ".....ycby.....",
+          "..y.yy...yy...",
+          ".ywyy.....y...",
+          ".gw.......y...",
+          ".gg.......wc..",
+          ".h........cb..",
+          "eeet..........",
+          "eedt..........",
+          "eedt..........",
+          "eedt..........",
+          "thhh.........."
+        ]
+      ]
+    }
+  }
+}

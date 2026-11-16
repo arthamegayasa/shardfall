@@ -1,0 +1,37 @@
+{
+  "id": "icon-stat-luck",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Luck: a white lucky die in three-quarter view with blue pips and a gold glint pip. Key: cube with dots.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "....wwww....",
+          "..wwwwwwww..",
+          "wwwwwbbwwwww",
+          "eewwwwwwwwdd",
+          "eeeewwwwdddd",
+          "ebeeeeddddbd",
+          "eeeeeedddddd",
+          "eeebeeddbddd",
+          "eeeeeedddddd",
+          "eeeeebddddbd",
+          ".eeeeedddd..",
+          "...eeeddd...",
+          ".....ed....."
+        ]
+      ]
+    }
+  }
+}

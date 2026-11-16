@@ -1,0 +1,37 @@
+{
+  "id": "icon-stat-max-hp",
+  "class": "icon",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "ink",
+  "status": "final",
+  "note": "Max HP: a big blue heart with a gold plus. Key: heart, small cross top-right.",
+  "animations": {
+    "icon": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "..........yg.",
+          ".........yygg",
+          "..........gd.",
+          ".cwc...cBb...",
+          "cwwBB.cBBBb..",
+          "cwBBBBBBBBb..",
+          "cBBBBBBBBBb..",
+          "cBBBBBBBBBb..",
+          ".BBBBBBBBb...",
+          "..BBBBBBb....",
+          "...BBBBb.....",
+          "....BBb......",
+          ".....b......."
+        ]
+      ]
+    }
+  }
+}

@@ -121,6 +121,8 @@ export interface RunState {
   bossPatternIndex: number;
   bossPatternTicks: number;
   bossPatternStep: number;
+  /** Duration of the running boss pattern (ticks), for its timed steps. */
+  bossPatternTotal: number;
   /** Boss HP cannot drop below this while a phase transition is pending (GDD 16). 0 = none. */
   bossHpFloor: number;
   // Player and effect state.
@@ -186,6 +188,23 @@ export interface RunState {
   synergyMask: number;
   /** Silt from killed Wardens and bosses (enemies.csv silt column), content tiers B and C. */
   siltKills: number;
+  /** Per effect: per_target counter slot (assigned to active effects in order), -1 none (MAYOR M1-19). */
+  readonly targetSlotOf: Int32Array;
+  /** Per weapon slot: Glint dropped by coin kills this Pulse (tithe_coin cap, GDD 4.1). */
+  readonly coinGlint: Int32Array;
+  /** Per weapon slot: ticks until the next orbit lunge, and ticks left in the current lunge. */
+  readonly lungeTimer: Int32Array;
+  readonly lungeTicks: Int32Array;
+  // Boss pattern execution state (multi-step patterns: spiral, cone repeats, blink, charge, summon).
+  bossPatX: number;
+  bossPatY: number;
+  bossPatDirX: number;
+  bossPatDirY: number;
+  bossPatAngle: number;
+  bossPatHit: boolean;
+  /** Slow on the player from enemy zones (affix tar_trail, GDD 5.4), strongest wins. */
+  playerSlowPct: number;
+  playerSlowTicks: number;
 }
 
 export interface HitCtx {
@@ -212,6 +231,9 @@ export interface HitCtx {
   executed: boolean;
   x: number;
   y: number;
+  /** Event radius (on_area) and amount (on_pickup, on_hurt): trigger payloads kept per hit level. */
+  radius: number;
+  amount: number;
   knockback: number;
   /** Status to apply from the source itself (Lantern Bolt blast: burn), -1 none. */
   status: number;
@@ -258,6 +280,8 @@ export interface SimCtx {
   readonly shot: ShotSpec;
   /** Pool overflow counter (architecture 8.1, getPerf().poolOverflow is read by app). */
   poolOverflow: number;
+  /** Live proc projectiles, recounted at the start of each pulse tick and raised per proc spawn. */
+  procLive: number;
 }
 
 export function createHitCtx(): HitCtx {
@@ -284,6 +308,8 @@ export function createHitCtx(): HitCtx {
     executed: false,
     x: 0,
     y: 0,
+    radius: 0,
+    amount: 0,
     knockback: 0,
     status: -1,
     statusChance: 0,
@@ -356,6 +382,7 @@ export function createRunState(
     bossPatternIndex: -1,
     bossPatternTicks: 0,
     bossPatternStep: 0,
+    bossPatternTotal: 0,
     bossHpFloor: 0,
     unhurtThisPulse: true,
     lastHurtTick: 0,
@@ -406,6 +433,18 @@ export function createRunState(
     pendingSeq: 0,
     synergyMask: 0,
     siltKills: 0,
+    targetSlotOf: new Int32Array(effectCount).fill(-1),
+    coinGlint: new Int32Array(slots),
+    lungeTimer: new Int32Array(slots),
+    lungeTicks: new Int32Array(slots),
+    bossPatX: 0,
+    bossPatY: 0,
+    bossPatDirX: 0,
+    bossPatDirY: 0,
+    bossPatAngle: 0,
+    bossPatHit: false,
+    playerSlowPct: 0,
+    playerSlowTicks: 0,
   };
 }
 

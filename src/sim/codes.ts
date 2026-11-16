@@ -24,13 +24,18 @@ export const ARCHETYPE_CODES: Readonly<Record<string, Archetype>> = {
   coin: Archetype.Coin,
 };
 
-/** AI behaviors implemented in M1 (enemies.csv behavior). Unknown behaviors fall back to Chase. */
+/** AI behaviors (enemies.csv behavior). Unknown behaviors fall back to Chase. */
 export const Behavior = {
   Chase: 0,
   Charger: 1,
   Shooter: 2,
   WardenHound: 3,
   Boss: 4,
+  Exploder: 5,
+  Summoner: 6,
+  WardenChoir: 7,
+  Lobber: 8,
+  WardenBulwark: 9,
 } as const;
 export type Behavior = (typeof Behavior)[keyof typeof Behavior];
 
@@ -41,6 +46,11 @@ export const BEHAVIOR_CODES: Readonly<Record<string, Behavior>> = {
   charger: Behavior.Charger,
   shooter: Behavior.Shooter,
   warden_hound: Behavior.WardenHound,
+  exploder: Behavior.Exploder,
+  summoner: Behavior.Summoner,
+  warden_choir: Behavior.WardenChoir,
+  lobber: Behavior.Lobber,
+  warden_bulwark: Behavior.WardenBulwark,
   boss_lantern: Behavior.Boss,
   boss_bell: Behavior.Boss,
   boss_vine: Behavior.Boss,
@@ -182,6 +192,9 @@ export type StackMode = (typeof StackMode)[keyof typeof StackMode];
 /** Status ids as used by effects (apply_status status=...). */
 export const Status = { Burn: 0, Slow: 1, Mark: 2, Knockback: 3 } as const;
 export type Status = (typeof Status)[keyof typeof Status];
+/** SourceRef index of leech heals (SourceKind.Status, outside the Status codes; LP review M1). */
+export const SOURCE_INDEX_LEECH = 100;
+
 export const STATUS_CODES: Readonly<Record<string, Status>> = {
   burn: Status.Burn,
   slow: Status.Slow,
@@ -226,6 +239,12 @@ export const DangerMode = {
   Lane: 3,
   /** Burst: when filled, fires a ring of enemy shots from its centre (affix volley). */
   Burst: 4,
+  /** Lingering enemy zone that slows the player while inside (affix tar_trail). No damage. */
+  Tar: 5,
+  /** Exploder blast: Strike on the player plus enemy_dmg (p1) to other Unlit inside (GDD 14.2). */
+  Blast: 6,
+  /** Fan: when filled, fires a fan of enemy shots toward (x2, y2) (boss cone, Warden choir). */
+  Fan: 7,
 } as const;
 export type DangerMode = (typeof DangerMode)[keyof typeof DangerMode];
 

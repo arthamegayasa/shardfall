@@ -1,7 +1,13 @@
 id,boss_id,archetype,telegraph_s,dmg,params
-ember_rain_5,boss_lantern,target_circles,1,10,count=5;radius=1.5;spread=3
+ember_rain_5,boss_lantern,target_circles,1,10,count=5;radius=1.5;spread=3;first_on_player=1
 ember_rain_8,boss_lantern,target_circles,1,10,count=8;radius=1.5;spread=3
 snuff_ring,boss_lantern,ring_gap,1,9,rings=1;thickness=0.6;speed=5;max_radius=19;gap_deg=60
 snuff_ring_double,boss_lantern,ring_gap,1,9,rings=2;ring_gap_s=0.8;thickness=0.6;speed=5;max_radius=19;gap_deg=60;min_gap_diff_deg=90
 lantern_lanes,boss_lantern,lanes,1,6,count=3;width=1.2;y_min=-9;y_max=9;min_sep=3;spacing=0.6;speed=8
 moth_call,boss_lantern,summon,1,0,enemy_id=swarmer;count=6
+spiral_t,boss_vine,spiral,1,6,arms=2;duration=3;rate=10;speed=4
+blink_t,boss_vine,blink_slam,1,14,radius=2.5
+lines_t,boss_vine,lines,1,12,count=3;width=1
+cone_t,boss_vine,cone,0.6,7,count=9;fan_deg=60;speed=6;repeats=2;repeat_gap_s=0.5
+charge_t,boss_vine,charge_lane,1,14,width=2;speed=12
+combo_t,boss_vine,lines,1,12,count=5;width=1;fan_count=9;fan_deg=60;fan_dmg=7;fan_speed=6
