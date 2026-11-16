@@ -30,7 +30,7 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5, S02.
 |                                                                                                  |
 |                                                                                                  |
 |                                                                                                  |
-|                                    Depth  < 0 >     (hanya bila sudah terbuka, Tingkat C)       |
+|                                    Crack  < 0 >     (hanya bila sudah terbuka, Tingkat C)       |
 |                                                                                                  |
 |  [ Back  Esc ]                                                          [ Begin  Enter ]         |
 |                                                                                                  |
@@ -40,15 +40,15 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5, S02.
 Nama kelas, senjata, dan teks di atas adalah contoh tata letak, bukan konten (milik GD dan WR).
 
 ## Kelas terkunci difokus
-Panel kanan menampilkan siluet potret, nama "??????" atau nama asli (keputusan WR), biaya Silt, dan tombol `[ Unlock in the Archive ]` menggantikan Begin. Senjata dan Rite tetap ditampilkan agar pemain tahu yang akan dibuka.
+Panel kanan menampilkan siluet potret, nama "??????" atau nama asli (keputusan WR), biaya Silt, dan tombol `[ Unlock in The Keeping ]` menggantikan Begin. Senjata dan Rite tetap ditampilkan agar pemain tahu yang akan dibuka.
 
 ## Grup fokus
-1. Daftar kelas (atas/bawah). 2. Depth (kiri/kanan, bila ada). 3. Tombol bawah (kiri/kanan).
+1. Daftar kelas (atas/bawah). 2. Crack (kiri/kanan, bila ada). 3. Tombol bawah (kiri/kanan).
 
 ## Interaksi
 | Input | Hasil |
 |---|---|
 | Atas/bawah, W/S, hover | Pilih kelas, panel kanan langsung berubah |
 | Enter pada daftar kelas atau tombol Begin | Mulai run (`AppActions.startRun`) |
-| Kiri/kanan saat fokus di Depth | Ubah tingkat kesulitan |
+| Kiri/kanan saat fokus di Crack | Ubah tingkat kesulitan |
 | Esc | Kembali ke Judul |

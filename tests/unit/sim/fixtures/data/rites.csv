@@ -1,0 +1,3 @@
+id,name_key,desc_key,content_tier,archetype,cooldown,dmg,radius,params
+flare_lantern,rite.flare_lantern.name,rite.flare_lantern.desc,A,throw_zone,12,20,3,max_range=6;flight_s=0.35;zone_radius=3;zone_s=4;zone_tick=0.5;slow=30;status=burn
+glass_step,rite.glass_step.name,rite.glass_step.desc,B,dash,5,15,0.6,dash_dist=4.5;dash_s=0.18;iframes_s=0.35;crit_hits=3;crit_window_s=2.5

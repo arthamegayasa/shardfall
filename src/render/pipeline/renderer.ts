@@ -1,5 +1,6 @@
 // Renderer: world to a virtual-resolution target, then an integer nearest upscale to the canvas
-// (architecture.md 4, 7.3, 7.5). LP. M1 scope: camera, floor, player sprite, upscale.
+// (architecture.md 4, 7.3, 7.5). LP. M1 scope: camera, floor, entity layers (AD, M1-05), upscale.
+// The danger scene (L4) is drawn after the main scene; once post-processing lands it moves to dangerRT.
 // TODO(LP + AD, M2): bloom, tilt-shift DoF band, danger pass (L4 after post), lights, quality levels.
 
 import {
@@ -20,23 +21,18 @@ import {
   REF_ORIGIN_Y,
   PX_PER_U,
   DEPTH_PX_PER_U,
-  TICK_RATE,
   virtualFrameFor,
 } from '../../core/index.ts';
 import type { ArenaDef, Settings, VirtualFrame } from '../../core/index.ts';
 import type { CreateRenderer, Projector, RenderFrame, Renderer } from '../../core/dom.ts';
 import { createWorldCamera, fitWorldCamera } from '../camera.ts';
 import { createFloorMesh, createFloorTexture, DEFAULT_ARENA_BOUNDARY } from '../env/floor.ts';
-import { createActorSprite } from '../sprites/actor-sprite.ts';
-import type { ActorSprite } from '../sprites/actor-sprite.ts';
 import { createSpriteAtlas } from '../sprites/atlas-texture.ts';
-import { spriteIdForClass } from '../sprites/sprite-ids.ts';
+import { createEntityLayers } from '../sprites/entity-layers.ts';
 
 /** Palette token used for the void around the stage until AD's biome fog lands. */
 const VOID_TOKEN = 'night';
 const FLOOR_FALLBACK_TOKEN = 'floor-mid';
-/** Sprite used when the class has no sprite yet (placeholder declared by AD). */
-const FALLBACK_PLAYER_SPRITE = 'kept-lantern';
 
 export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer => {
   const gl = new WebGLRenderer({
@@ -62,19 +58,11 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
   let floor: Mesh = createFloorMesh(DEFAULT_ARENA_BOUNDARY, floorTexture, floorFallback);
   scene.add(floor);
 
-  let playerSprite: ActorSprite | null = null;
-  let playerClassIndex = -1;
-  const ensurePlayerSprite = (classIndex: number): void => {
-    if (classIndex === playerClassIndex && playerSprite !== null) return;
-    playerClassIndex = classIndex;
-    if (playerSprite !== null) scene.remove(playerSprite.mesh);
-    const cls = data.classes[classIndex];
-    const id = cls !== undefined ? spriteIdForClass(cls.id) : FALLBACK_PLAYER_SPRITE;
-    playerSprite =
-      createActorSprite(atlas.texture, atlas.manifest, id) ??
-      createActorSprite(atlas.texture, atlas.manifest, FALLBACK_PLAYER_SPRITE);
-    if (playerSprite !== null) scene.add(playerSprite.mesh);
-  };
+  // Entities (AD, M1-05): L1 to L3 in the main scene, L4 danger in its own scene drawn last.
+  const entities = createEntityLayers(atlas.texture, atlas.manifest, assets.palette, data);
+  for (const o of entities.sceneObjects) scene.add(o);
+  const dangerScene = new Scene();
+  for (const o of entities.dangerObjects) dangerScene.add(o);
 
   // Upscale pass: nearest, integer scale, centred letterbox.
   const target = new WebGLRenderTarget(1, 1, {
@@ -117,8 +105,6 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
     },
   };
 
-  ensurePlayerSprite(0);
-
   return {
     projector,
     resize(w, h) {
@@ -132,8 +118,10 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
       gl.setSize(physicalW, physicalH, false);
       target.setSize(frame.width, frame.height);
       fitWorldCamera(camera, frame);
+      entities.resize(frame);
     },
-    applySettings(_s: Settings) {
+    applySettings(s: Settings) {
+      entities.applySettings(s);
       // TODO(LP, M2): quality levels, reduce effects, screen shake, colour vision LUT.
     },
     setArena(arena: ArenaDef, _biomeId: string) {
@@ -143,19 +131,14 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
       // TODO(AD, M1-05): biome palette, lip, rim, decor, lights from arena + art/palette.json.
     },
     render(f: RenderFrame) {
-      const p = f.view.player;
-      ensurePlayerSprite(p.classIndex);
-      if (playerSprite !== null) {
-        playerSprite.setPosition(
-          p.prevX + (p.x - p.prevX) * f.alpha,
-          p.prevY + (p.y - p.prevY) * f.alpha,
-        );
-        playerSprite.setFacing(p.facing);
-        playerSprite.setFrame('idle', Math.floor(f.timeSec * TICK_RATE));
-      }
+      entities.update(f);
       gl.setRenderTarget(target);
       gl.setViewport(0, 0, frame.width, frame.height);
       gl.render(scene, camera);
+      // L4 on top of the finished scene, without clearing it.
+      gl.autoClear = false;
+      gl.render(dangerScene, camera);
+      gl.autoClear = true;
       gl.setRenderTarget(null);
       gl.setViewport(0, 0, physicalW, physicalH);
       gl.clear();
@@ -172,6 +155,7 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
     },
     dispose() {
       target.dispose();
+      entities.dispose();
       atlas.texture.dispose();
       floorTexture?.dispose();
       gl.dispose();

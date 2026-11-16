@@ -1,0 +1,16 @@
+key,value,notes
+# Shop rules (data-schema 3.13, GDD 12). Lock is always free.
+slots,4,offers (5 with Trade 4)
+weapon_chance,0.35,per offer
+class_tag_weight,1.5,
+owned_tag_weight,1.25,
+merge_push_chance,0.15,
+sell_frac,0.4,
+reroll_base_add,1,reroll cost = reroll_base_add + ceil(t / reroll_t_div) + reroll_step x n
+reroll_t_div,2,
+reroll_step,1,
+bad_luck_shops,3,
+bad_luck_min_t,6,
+warden_chest_choices,3,
+warden_chest_min_rarity,fine,
+boss_chest_min_rarity,rare,

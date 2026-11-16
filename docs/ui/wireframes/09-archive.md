@@ -1,14 +1,14 @@
-# Wireframe S09: Arsip (meta dan unlock)
+# Wireframe S09: The Keeping (meta dan unlock, identifier layar `archive`)
 
 Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S09).
 
-## Tab Keepsakes
+## Tab Mementos
 
 ```
 +--------------------------------------------------------------------------------------------------+
-|  Archive                                                                         (*) 386 Silt    |
+|  The Keeping                                                                     (*) 386 Silt    |
 |                                                                                                  |
-|  Q [ Kept ]  [*Keepsakes*]  E                                     12/30 found                    |
+|  Q [ Kept ]  [*Mementos*]  E                                     12/30 found                    |
 |  +-----------------------------------------------+  +------------------------------------------+ |
 |  |  [k] [k] [k] [k] [k] [k] [k] [k]              |  |  +------+   Ember Ring                    | |
 |  |                                               |  |  | ICON |   Fine                          | |
@@ -31,12 +31,12 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S09).
 
 - `[k]` = ditemukan (ikon penuh). `[?]` = belum ditemukan (siluet `shadow`, panel detail "Not yet found").
 - Flavor tampil penuh di Arsip (boleh wrap karena ruang cukup; batas 70 karakter tetap).
-- Keepsake yang bisa dibuka dengan Silt (aturan GD) menampilkan tombol `[ Unlock  120 Silt ]` di panel detail.
+- Memento yang bisa dibuka dengan Silt (aturan GD) menampilkan tombol `[ Unlock  120 Silt ]` di panel detail.
 
 ## Tab Kept
 
 ```
-|  Q [*Kept*]  [ Keepsakes ]  E                                                                    |
+|  Q [*Kept*]  [ Mementos ]  E                                                                    |
 |  +-----------------------------+  +-------------------------------------------------------------+ |
 |  | [pp] Lantern       Owned    |  |  (panel detail kelas sama dengan S02)                       | |
 |  | [pp] Glasswright   Owned    |  |                                                             | |

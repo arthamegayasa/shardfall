@@ -73,9 +73,8 @@ export default tseslint.config(
       'test-results/',
       'tests/out/',
       'content/generated/',
-      // TODO(AD, M1-05): lint art/**/*.ts and tools/art once moved to .ts and src/core/math.
-      'art/',
-      'tools/art/',
+      // M0 concept renderer and its reference rasterizer stay plain .mjs (AD, M1-05).
+      'tools/art/**/*.mjs',
       'audio/',
     ],
   },
@@ -218,6 +217,37 @@ export default tseslint.config(
   { files: ['src/ui/**/*.ts'], rules: restrictImports('ui', [threeBan]) },
   { files: ['src/audio/**/*.ts'], rules: restrictImports('audio', [threeBan, domBan]) },
   { files: ['src/app/**/*.ts'], rules: restrictImports('app') },
+  // AD sprite generators: default export is the format (architecture 10), deterministic math only.
+  {
+    files: ['art/**/*.ts'],
+    rules: {
+      'no-restricted-exports': 'off',
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Sprite generators must be deterministic (10).',
+        },
+        ...SIM_MATH.map((property) => ({
+          object: 'Math',
+          property,
+          message: `Math.${property} differs across engines. Use src/core/math (architecture 10).`,
+        })),
+      ],
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: String.raw`^(?!.*(core/contracts/sprite\.ts|core/math/index\.ts|\./sprite-types\.ts)$)`,
+              message: 'Generators import only src/core/contracts/sprite.ts and src/core/math (5).',
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Tests and tools run in Node.
   {
     files: ['tests/**/*.ts', 'tools/**/*.ts', '*.config.ts'],

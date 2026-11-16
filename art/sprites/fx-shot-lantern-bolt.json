@@ -1,0 +1,40 @@
+{
+  "id": "fx-shot-lantern-bolt",
+  "class": "projectile-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan"
+  ],
+  "status": "placeholder",
+  "note": "Weapon lantern_bolt. Round cyan flame with white core and blue base, flickers. Explosion is a runtime zone.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 6,
+      "loop": true,
+      "frames": [
+        [
+          "..c..",
+          ".cwc.",
+          "cwwwc",
+          "cwwwc",
+          ".BcB."
+        ],
+        [
+          "...c.",
+          ".cwc.",
+          "cwwwc",
+          "cwwwc",
+          ".BcB."
+        ]
+      ]
+    }
+  }
+}

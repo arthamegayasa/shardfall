@@ -1,0 +1,6 @@
+id,duration,tick,params,notes
+# Status rules (data-schema 3.14, GDD 5.4, effect-primitives 6.6).
+burn,3,0.5,dps_frac=0.3;ignores_guard=1;can_crit=0,non-hit DPS from config burn_dps_nonhit
+slow,2,0,,default duration when a source gives none; strongest wins
+mark,4,0,vuln=0.2,
+knockback,0.1,0,,same as config knockback_s

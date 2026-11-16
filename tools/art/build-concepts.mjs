@@ -81,7 +81,7 @@ function paletteSvg() {
     const lights = [
       ['key', b.key, `az ${b.key.azimuthDeg} el ${b.key.elevationDeg} I ${b.key.intensity}`],
       ['fill', b.fill, `az ${b.fill.azimuthDeg} el ${b.fill.elevationDeg} I ${b.fill.intensity}`],
-      ['point', b.point, `r ${b.point.radiusPx}px I ${b.point.intensity} flicker ${b.point.flicker}`],
+      ['point', b.point, `range ${b.point.rangeU} u I ${b.point.intensity} flicker ${b.point.flicker}`],
     ];
     for (const [name, L, desc] of lights) {
       sw(x0 + 4, yy, 44, 34, L.color, CORE.shadow);

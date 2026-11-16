@@ -1,0 +1,5 @@
+id,name_key,desc_key,content_tier,accent,tag,start_weapon,rite_id,max_hp,stat_mods,unlock_silt,sort
+# Classes (data-schema 3.3, GDD 7). Passives live in effects.csv with owner = class id.
+lantern,class.lantern.name,class.lantern.desc,A,gold,flame,lantern_bolt,flare_lantern,30,area_pct=10,0,1
+bell,class.bell.name,class.bell.desc,B,blue,echo,echo_bell,great_toll,32,armor=1;rite_haste=10,60,2
+blade,class.blade.name,class.blade.desc,B,cyan,edge,arc_blade,glass_step,38,armor=2;move_speed=5;range_pct=-15,40,3

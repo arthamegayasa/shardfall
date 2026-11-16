@@ -1,34 +1,16 @@
 // Public API of src/audio (Audio Director). Other modules import only from here (architecture.md 5).
-// STUB from LP (M1-01): silent AudioSystem with the frozen contract.
-// TODO(AU, M1-06): engine (bus graph per audio-direction 8.1), synth/ (pure DSP, Node-testable),
-// cues/cues.json, music/<cue-id>.json, event-map.ts (SimEventType + GameData ids to cues).
-// Rules: no AudioContext before unlock(); hash of the sim must not change with audio on or off.
+// No AudioContext before unlock(); the sim hash never depends on audio (AU A-8).
 
-import type { AudioSystem, CreateAudio } from '../core/index.ts';
+import type { CreateAudio } from '../core/index.ts';
+import { createAudioSystem } from './audio-system.ts';
+import cues from './cues/cues.json';
+import routes from './cues/routes.json';
+import instruments from './music/instruments.json';
+import songPulse from './music/mus.biome1.pulse.json';
+import songShop from './music/mus.shop.json';
 
-export const createAudio: CreateAudio = (_data): AudioSystem => ({
-  unlock() {
-    return Promise.resolve();
-  },
-  update() {
-    // Listener only: reads view and events, never writes.
-  },
-  playUi() {
-    // TODO(AU, M1-06): UI cues.
-  },
-  applySettings() {
-    // TODO(AU, M1-06): bus gains (v / 100) ^ 2, mono, reduce repeats.
-  },
-  setArena() {
-    // TODO(AU, M1-06): worldX panning bounds from arena.boundary.
-  },
-  setPaused() {
-    // TODO(AU, M1-06): pause lowpass.
-  },
-  setHidden() {
-    // TODO(AU, M1-06): suspend when muteWhenUnfocused.
-  },
-  dispose() {
-    // Nothing allocated yet.
-  },
-});
+export const createAudio: CreateAudio = (data) =>
+  createAudioSystem(data, { cues, routes, instruments, songs: [songPulse, songShop] });
+
+export { createAudioSystem } from './audio-system.ts';
+export type { AudioData } from './audio-system.ts';

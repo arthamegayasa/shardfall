@@ -1,0 +1,174 @@
+{
+  "simple": {
+    "PulseStarted": ["sfx.pulse.start_wave", "mus.stinger.pulse_start"],
+    "PulseEnded": ["sfx.pulse.end_flash", "mus.stinger.pulse_end"],
+    "PlayerDamaged": ["sfx.player.hit"],
+    "PlayerHealed": ["sfx.player.heal"],
+    "PlayerDied": ["sfx.player.death"],
+    "DamageBlocked": ["sfx.player.block"],
+    "PlayerLeveledUp": ["sfx.levelup"],
+    "MementoAcquired": ["sfx.memento.gain"],
+    "BuffMaxed": ["sfx.proc.rush_full"],
+    "SpawnMarked": ["sfx.enemy.spawn"],
+    "WardenSpawned": ["sfx.warden.arrive", "mus.stinger.warden"],
+    "WardenKilled": ["sfx.warden.death"],
+    "BossSpawned": ["sfx.boss.intro"],
+    "BossPhaseChanged": ["sfx.boss.phase"],
+    "BossEnraged": ["sfx.boss.enrage"],
+    "BossSummoned": ["sfx.boss.summon"],
+    "BossKilled": ["sfx.boss.death"],
+    "GlintSwept": ["sfx.glint.sweep"],
+    "MementoOfferSpawned": ["sfx.reward.drop"],
+    "LevelUpCardsShown": ["ui.card.reveal"],
+    "LevelUpCardChosen": ["ui.card.pick"],
+    "ItemBought": ["ui.shop.buy"],
+    "ItemSold": ["ui.shop.sell"],
+    "ShopRerolled": ["ui.shop.reroll"],
+    "RewardShown": ["ui.reward.reveal"],
+    "RiteRejected": ["ui.rite.denied"]
+  },
+  "silent": [
+    "PlayerDodged",
+    "BarrierGained",
+    "EnemySpawned",
+    "GlintDropped",
+    "RewardChosen"
+  ],
+  "weapons": {
+    "fireByArchetype": {
+      "bolt_explode": "sfx.weapon.fire.lob",
+      "projectile": "sfx.weapon.fire.bolt",
+      "arc": "sfx.weapon.fire.arc",
+      "orbit": null,
+      "chain": "sfx.weapon.fire.chain",
+      "boomerang": "sfx.weapon.fire.glaive",
+      "ring_echo": "sfx.weapon.fire.ring",
+      "coin": "sfx.weapon.fire.bolt"
+    },
+    "fireById": {
+      "lantern_bolt": { "cue": "sfx.weapon.fire.lob" },
+      "splinter_shot": { "cue": "sfx.weapon.fire.bolt", "semis": 3 },
+      "arc_blade": { "cue": "sfx.weapon.fire.arc" },
+      "orbit_shards": { "cue": null },
+      "chain_spark": { "cue": "sfx.weapon.fire.chain" },
+      "returning_glaive": { "cue": "sfx.weapon.fire.glaive" },
+      "echo_bell": { "cue": "sfx.weapon.fire.ring" },
+      "tithe_coin": { "cue": "sfx.weapon.fire.bolt", "semis": 7 }
+    },
+    "impactByArchetype": {
+      "bolt_explode": "sfx.weapon.impact.burst",
+      "orbit": "sfx.weapon.orbit.contact"
+    },
+    "hit": "sfx.weapon.hit",
+    "hitCrit": "sfx.weapon.hit_crit"
+  },
+  "enemies": {
+    "deathBySize": {
+      "small": "sfx.enemy.death.small",
+      "medium": "sfx.enemy.death.medium",
+      "large": "sfx.enemy.death.large",
+      "warden": null,
+      "boss": null
+    },
+    "deathById": {},
+    "hurtWarden": "sfx.warden.hurt",
+    "hurtBoss": "sfx.boss.hurt"
+  },
+  "rites": {
+    "byArchetype": {
+      "throw_zone": {
+        "cast": "sfx.rite.cast.lantern",
+        "impact": "sfx.rite.impact.lantern",
+        "impactDelayMs": 350
+      },
+      "ring": { "cast": "sfx.rite.cast.lantern", "impact": null },
+      "dash": { "cast": "sfx.rite.cast.lantern", "impact": null }
+    },
+    "ready": "sfx.rite.ready",
+    "readySuppressAfterPulseStartMs": 1500
+  },
+  "procs": {
+    "byOwner": {
+      "syn_flame_4": "sfx.proc.flame_burst",
+      "syn_flame_6": "sfx.proc.flame_nova",
+      "syn_shard_2": "sfx.proc.shard_split",
+      "syn_shard_4": "sfx.proc.shard_split",
+      "syn_shard_6": "sfx.proc.glass_lance",
+      "syn_edge_4": "sfx.proc.edge_wave"
+    },
+    "byAction": {
+      "stat_mod": null,
+      "buff": null,
+      "hit_mod": null,
+      "apply_status": null,
+      "status_rule": null,
+      "spawn_projectile": "sfx.proc.shard_split",
+      "spawn_area": "sfx.proc.flame_burst",
+      "spawn_zone": null,
+      "execute": "sfx.weapon.hit_crit",
+      "heal": "sfx.player.heal",
+      "gain_barrier": "sfx.player.block",
+      "gain_glint": null,
+      "repeat": null,
+      "trigger_weapons": null,
+      "shop_mod": null,
+      "convert": null
+    }
+  },
+  "telegraphs": {
+    "byKind": {
+      "Projectile": { "start": "sfx.enemy.shooter.windup", "resolve": null },
+      "Charge": { "start": "sfx.enemy.charger.windup", "resolve": "sfx.enemy.charger.dash" },
+      "Area": { "start": "sfx.telegraph.area", "resolve": "sfx.telegraph.area_impact" },
+      "BossArea": { "start": "sfx.telegraph.area", "resolve": "sfx.telegraph.area_impact" },
+      "Ring": { "start": "sfx.boss.snuff_ring.windup", "resolve": "sfx.boss.snuff_ring.wave" },
+      "Lane": { "start": "sfx.boss.lanes.windup", "resolve": "sfx.boss.lanes.fire" },
+      "Cone": { "start": "sfx.telegraph.area", "resolve": "sfx.telegraph.area_impact" }
+    },
+    "wardenCharge": { "start": "sfx.warden.charge.windup", "resolve": "sfx.warden.charge.dash" },
+    "wardenChargeStepSemis": 2,
+    "bossPatternByArchetype": {
+      "target_circles": {
+        "start": "sfx.boss.ember_rain.windup",
+        "resolve": "sfx.boss.ember_rain.impact"
+      },
+      "ring_gap": { "start": "sfx.boss.snuff_ring.windup", "resolve": "sfx.boss.snuff_ring.wave" },
+      "lanes": { "start": "sfx.boss.lanes.windup", "resolve": "sfx.boss.lanes.fire" },
+      "summon": { "start": null, "resolve": null }
+    },
+    "affixById": {
+      "volley": { "start": "sfx.warden.volley.windup", "resolve": "sfx.warden.volley.fire" }
+    }
+  },
+  "affixApplied": {
+    "hasted": "sfx.warden.hasted"
+  },
+  "enemyShots": {
+    "default": "sfx.enemy.shooter.fire",
+    "fromAffix": null
+  },
+  "glint": "sfx.glint.pickup",
+  "synergy": {
+    "cue": "sfx.synergy.activate",
+    "semisByThreshold": { "2": 0, "4": 5, "6": 12 }
+  },
+  "merge": {
+    "cue": "ui.shop.merge",
+    "semisByTier": { "2": 0, "3": 7, "4": 12 }
+  },
+  "lock": {
+    "cue": "ui.shop.lock",
+    "unlockSemis": -4
+  },
+  "rejected": {
+    "cue": "ui.denied",
+    "silentReasons": ["WrongPhase", "UnknownId", "DebugDisabled"]
+  },
+  "phaseEnter": {
+    "shop": "ui.glazier.arrive"
+  },
+  "runEnded": {
+    "Victory": "mus.stinger.victory",
+    "Defeat": "mus.stinger.defeat"
+  }
+}

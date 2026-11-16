@@ -734,7 +734,7 @@ Transisi fase: HP boss tidak bisa turun di bawah ambang fase sampai pola yang se
 
 ### 16.1 `boss_lantern` (bioma 1, Tk A)
 
-HP dasar 1600 (C t7 sekitar 3100, A t10 sekitar 4110, B t15 sekitar 6180). Guard 2. Gerak 1.0 u/s, kontak 10. Ukuran besar: Unlit lentera yang menyerap cahaya.
+HP dasar 2000 (C t7 sekitar 3880, A t10 sekitar 5140, B t15 sekitar 7720; naik dari 1600 oleh model M1-02 karena pertarungan A terlalu singkat, `docs/balance-report.md`). Guard 2. Gerak 1.0 u/s, kontak 10. Ukuran besar: Unlit lentera yang menyerap cahaya.
 
 | Pola | Telegraf | Efek |
 |---|---|---|

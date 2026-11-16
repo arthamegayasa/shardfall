@@ -12,7 +12,7 @@
   "emissive": [
     "danger-magenta"
   ],
-  "status": "concept",
+  "status": "placeholder",
   "note": "warden_hound (charger based, biome 1). Huge hound, spiked spine, legs with extra knees. Wrong: three magenta eyes. Violet aura is a runtime VFX ring. Faces right, runtime flips.",
   "animations": {
     "idle": {
@@ -50,6 +50,76 @@
           "....uu....uu.............uu....uu.........",
           "....uu....uu.............uu....uu.........",
           "...RuuR..RuuR...........RuuR..RuuR........"
+        ]
+      ]
+    },
+    "walk": {
+      "ticksPerFrame": 10,
+      "loop": true,
+      "frames": [
+        [
+          "................................u...u.....",
+          "................................uu..uu....",
+          "........u...u...u...u...u......uuuuuuuuu..",
+          "u.......uu..uu..uu..uu..uu.....uuuuuuuuu..",
+          "uu.....uuu.uuu.uuu.uuu.uuu.uuuuuuumuumuu..",
+          ".uu.....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+          "..uu.uuuuuuuuuuuuuuuuuuuuuuuuuuuuuumuuuuuu",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu....",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuu.........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuu...........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuu...........",
+          "......uu...uuuuuuuuuuuuuuu...uu...........",
+          "......uu....uu.........uu....uu...........",
+          "......uu....uu.........uu....uu...........",
+          "......uu....uu.........uu....uu...........",
+          "....uuuu..uuuu.........uuuu..uuuu.........",
+          "....uu....uu.............uu....uu.........",
+          "....uu....uu.............uu....uu.........",
+          "....uu....uu.............uu....uu.........",
+          "....uuuu..uuuu.........uuuu..uuuu.........",
+          "......uu....uu.........uu....uu...........",
+          "......uu....uu.........uu....uu...........",
+          "......uu....uu.........uu....uu...........",
+          "....uuuu..uuuu.........uuuu..uuuu.........",
+          "....uu....uu.............uu....uu.........",
+          "....uu....uu.............uu....uu.........",
+          "...RuuR..RuuR...........RuuR..RuuR........"
+        ],
+        [
+          "................................u...u.....",
+          "................................uu..uu....",
+          "........u...u...u...u...u......uuuuuuuuu..",
+          "u.......uu..uu..uu..uu..uu.....uuuuuuuuu..",
+          "uu.....uuu.uuu.uuu.uuu.uuu.uuuuuuumuumuu..",
+          ".uu.....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+          "..uu.uuuuuuuuuuuuuuuuuuuuuuuuuuuuuumuuuuuu",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu....",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu.",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuuuu.........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuu...........",
+          "....uuuuuuuuuuuuuuuuuuuuuuuuuuu...........",
+          ".......uu...uuuuuuuuuuuuu...uu............",
+          ".......uu....uu.......uu....uu............",
+          ".......uu....uu.......uu....uu............",
+          ".......uu....uu.......uu....uu............",
+          ".....uuuu..uuuu.......uuuu..uuuu..........",
+          ".....uu....uu...........uu....uu..........",
+          ".....uu....uu...........uu....uu..........",
+          ".....uu....uu...........uu....uu..........",
+          ".....uuuu..uuuu.......uuuu..uuuu..........",
+          ".......uu....uu.......uu....uu............",
+          ".......uu....uu.......uu....uu............",
+          ".......uu....uu.......uu....uu............",
+          ".....uuuu..uuuu.......uuuu..uuuu..........",
+          ".....uu....uu...........uu....uu..........",
+          ".....uu....uu...........uu....uu..........",
+          "....RuuR..RuuR.........RuuR..RuuR........."
         ]
       ]
     }

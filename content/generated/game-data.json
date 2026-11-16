@@ -1,55 +1,4412 @@
 {
- "arenas": [],
- "contentHash": "93ac6e5b",
+ "arenas": [
+  {
+   "ambient": {
+    "particles": [
+     {
+      "area": "arena",
+      "colorToken": "bone",
+      "kind": "glass-dust",
+      "max": 40,
+      "opacity": 0.2,
+      "sizePx": 1
+     },
+     {
+      "area": "decor",
+      "colorToken": "dust",
+      "kind": "moth",
+      "max": 16,
+      "opacity": 0.6,
+      "sizePx": 2
+     }
+    ]
+   },
+   "arena": {
+    "boundary": [
+     [
+      -13,
+      -10
+     ],
+     [
+      13,
+      -10
+     ],
+     [
+      16,
+      -7
+     ],
+     [
+      16,
+      7
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      -13,
+      10
+     ],
+     [
+      -16,
+      7
+     ],
+     [
+      -16,
+      -7
+     ]
+    ],
+    "floor": {
+     "altToken": "floor-lit",
+     "baseToken": "floor-mid",
+     "tileId": "tile-floor"
+    },
+    "lip": 1,
+    "projectileMargin": 3,
+    "rim": {
+     "colorToken": "dust",
+     "height": 0.25,
+     "opacity": 0.5
+    }
+   },
+   "bossStage": {
+    "floorRingContrastMax": 1.15,
+    "landmarkId": "lantern-gate",
+    "shape": {
+     "center": [
+      0,
+      -3
+     ],
+     "radius": 4,
+     "type": "circle"
+    }
+   },
+   "decor": [
+    {
+     "footprintHalf": [
+      2.5,
+      0.5
+     ],
+     "height": 5.5,
+     "id": "gate",
+     "kind": "lantern-gate",
+     "lightId": "gate",
+     "pos": [
+      0,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_b1",
+     "kind": "stall-awning",
+     "pos": [
+      -12,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_b2",
+     "kind": "stall-awning",
+     "pos": [
+      -6,
+      -12.2
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_b3",
+     "kind": "stall-awning",
+     "pos": [
+      6,
+      -12.2
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_b4",
+     "kind": "stall-awning",
+     "pos": [
+      12,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 3,
+     "id": "pole_bl",
+     "kind": "lantern-pole",
+     "lightId": "back_l",
+     "pos": [
+      -10,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 3,
+     "id": "pole_br",
+     "kind": "lantern-pole",
+     "lightId": "back_r",
+     "pos": [
+      10,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "lantern-sway",
+     "footprintHalf": [
+      4.5,
+      0.1
+     ],
+     "height": 3.2,
+     "id": "lantern_string_l",
+     "kind": "lantern-string",
+     "pos": [
+      -5.25,
+      -12.8
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "lantern-sway",
+     "footprintHalf": [
+      4.5,
+      0.1
+     ],
+     "height": 3.2,
+     "id": "lantern_string_r",
+     "kind": "lantern-string",
+     "pos": [
+      5.25,
+      -12.8
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.75
+     ],
+     "height": 1.5,
+     "id": "crates_bl",
+     "kind": "crate-stack",
+     "pos": [
+      -15,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.75
+     ],
+     "height": 1.5,
+     "id": "crates_br",
+     "kind": "crate-stack",
+     "pos": [
+      15,
+      -12
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_bfl",
+     "kind": "stall-awning",
+     "pos": [
+      -20,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      2,
+      1
+     ],
+     "height": 2.8,
+     "id": "stall_bfr",
+     "kind": "stall-awning",
+     "pos": [
+      20,
+      -12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6,
+     "id": "roof_bl",
+     "kind": "market-roofline",
+     "pos": [
+      -9,
+      -15
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "footprintHalf": [
+      5,
+      1
+     ],
+     "height": 6,
+     "id": "roof_br",
+     "kind": "market-roofline",
+     "pos": [
+      9,
+      -15
+     ],
+     "rotYDeg": 0,
+     "zone": "back"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sl",
+     "kind": "side-stall",
+     "pos": [
+      -19,
+      -5
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "anim": "cloth-sway",
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sr",
+     "kind": "side-stall",
+     "pos": [
+      19,
+      -5
+     ],
+     "rotYDeg": 270,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 2.6,
+     "id": "pole_sl",
+     "kind": "lantern-pole",
+     "lightId": "side_l",
+     "pos": [
+      -18,
+      -2
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 2.6,
+     "id": "pole_sr",
+     "kind": "lantern-pole",
+     "lightId": "side_r",
+     "pos": [
+      18,
+      -2
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 1,
+     "id": "cloth_rolls_sl",
+     "kind": "cloth-rolls",
+     "pos": [
+      -18.5,
+      0.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.5
+     ],
+     "height": 1,
+     "id": "cloth_rolls_sr",
+     "kind": "cloth-rolls",
+     "pos": [
+      18.5,
+      0.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sl",
+     "kind": "barrel-cluster",
+     "pos": [
+      -18.5,
+      5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sr",
+     "kind": "barrel-cluster",
+     "pos": [
+      18.5,
+      5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 0.8,
+     "id": "sacks_sl",
+     "kind": "sack-pile-low",
+     "pos": [
+      -18,
+      8.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.75,
+      0.75
+     ],
+     "height": 0.8,
+     "id": "sacks_sr",
+     "kind": "sack-pile-low",
+     "pos": [
+      18,
+      8.5
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sfl",
+     "kind": "side-stall",
+     "pos": [
+      -24,
+      -4
+     ],
+     "rotYDeg": 90,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1.5,
+      1.5
+     ],
+     "height": 3,
+     "id": "stall_sfr",
+     "kind": "side-stall",
+     "pos": [
+      24,
+      -4
+     ],
+     "rotYDeg": 270,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sfl",
+     "kind": "barrel-cluster",
+     "pos": [
+      -23,
+      6
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      1,
+      1
+     ],
+     "height": 1.2,
+     "id": "barrels_sfr",
+     "kind": "barrel-cluster",
+     "pos": [
+      23,
+      6
+     ],
+     "rotYDeg": 0,
+     "zone": "side"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "lamp_fl",
+     "kind": "ground-lantern",
+     "lightId": "front_l",
+     "pos": [
+      -9,
+      11.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      0.25,
+      0.25
+     ],
+     "height": 0.4,
+     "id": "lamp_fr",
+     "kind": "ground-lantern",
+     "lightId": "front_r",
+     "pos": [
+      9,
+      11.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "anim": "paper-drift",
+     "footprintHalf": [
+      2,
+      0.5
+     ],
+     "height": 0.05,
+     "id": "paper_f1",
+     "kind": "frozen-paper",
+     "pos": [
+      -3,
+      12
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "anim": "paper-drift",
+     "footprintHalf": [
+      1.5,
+      0.5
+     ],
+     "height": 0.05,
+     "id": "paper_f2",
+     "kind": "frozen-paper",
+     "pos": [
+      5,
+      12.5
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.5
+     ],
+     "height": 0.1,
+     "id": "shards_fl",
+     "kind": "glass-shards",
+     "pos": [
+      -14,
+      12
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    },
+    {
+     "footprintHalf": [
+      1,
+      0.5
+     ],
+     "height": 0.1,
+     "id": "shards_fr",
+     "kind": "glass-shards",
+     "pos": [
+      13.5,
+      11.8
+     ],
+     "rotYDeg": 0,
+     "zone": "front"
+    }
+   ],
+   "id": "arena_market",
+   "lighting": {
+    "edgeFade": {
+     "endOutside": 10,
+     "startOutside": 3
+    },
+    "points": [
+     {
+      "id": "back_l",
+      "intensityMul": 1,
+      "pos": [
+       -10,
+       2.5,
+       -12
+      ]
+     },
+     {
+      "id": "back_r",
+      "intensityMul": 1,
+      "pos": [
+       10,
+       2.5,
+       -12
+      ]
+     },
+     {
+      "id": "side_l",
+      "intensityMul": 0.9,
+      "pos": [
+       -18,
+       2.2,
+       -2
+      ]
+     },
+     {
+      "id": "side_r",
+      "intensityMul": 0.9,
+      "pos": [
+       18,
+       2.2,
+       -2
+      ]
+     },
+     {
+      "flicker": 0.06,
+      "id": "gate",
+      "intensityMul": 1.5,
+      "pos": [
+       0,
+       3.5,
+       -12.5
+      ]
+     },
+     {
+      "flicker": 0.15,
+      "id": "front_l",
+      "intensityMul": 0.6,
+      "pos": [
+       -9,
+       0.4,
+       11.5
+      ]
+     },
+     {
+      "flicker": 0.15,
+      "id": "front_r",
+      "intensityMul": 0.6,
+      "pos": [
+       9,
+       0.4,
+       11.5
+      ]
+     }
+    ]
+   },
+   "obstacles": [
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "stall_table_1",
+     "kind": "tipped-stall-table",
+     "shape": {
+      "max": [
+       -6.5,
+       -4.25
+      ],
+      "min": [
+       -9.5,
+       -5.75
+      ],
+      "type": "rect"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.4,
+     "id": "well_1",
+     "kind": "covered-well",
+     "shape": {
+      "center": [
+       9,
+       4
+      ],
+      "radius": 1,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "move"
+     ],
+     "height": 0.35,
+     "id": "sacks_1",
+     "kind": "sack-pile",
+     "shape": {
+      "max": [
+       -5,
+       5.75
+      ],
+      "min": [
+       -7,
+       4.25
+      ],
+      "type": "rect"
+     }
+    }
+   ],
+   "playerStart": {
+    "boss": [
+     0,
+     5
+    ],
+    "default": [
+     0,
+     0
+    ]
+   },
+   "pulseOrigin": [
+    0,
+    0
+   ],
+   "safeZones": [
+    {
+     "blocks": [
+      "obstacle",
+      "spawn",
+      "decor"
+     ],
+     "id": "start",
+     "shape": {
+      "center": [
+       0,
+       0
+      ],
+      "radius": 6,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "obstacle",
+      "decor"
+     ],
+     "id": "boss_stage",
+     "shape": {
+      "center": [
+       0,
+       -3
+      ],
+      "radius": 4,
+      "type": "circle"
+     }
+    }
+   ],
+   "schemaVersion": 1,
+   "spawn": {
+    "interiorMinPlayerDist": 2,
+    "playerSafeRadius": 4,
+    "zones": [
+     {
+      "id": "n",
+      "shape": {
+       "max": [
+        12,
+        -7.5
+       ],
+       "min": [
+        -12,
+        -9
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "s",
+      "shape": {
+       "max": [
+        12,
+        9
+       ],
+       "min": [
+        -12,
+        7.5
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "e",
+      "shape": {
+       "max": [
+        15,
+        6
+       ],
+       "min": [
+        13.5,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "w",
+      "shape": {
+       "max": [
+        -13.5,
+        6
+       ],
+       "min": [
+        -15,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "ne",
+      "shape": {
+       "points": [
+        [
+         12.5,
+         -9
+        ],
+        [
+         15,
+         -6.5
+        ],
+        [
+         13.5,
+         -6
+        ],
+        [
+         12,
+         -7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "se",
+      "shape": {
+       "points": [
+        [
+         12,
+         7.5
+        ],
+        [
+         13.5,
+         6
+        ],
+        [
+         15,
+         6.5
+        ],
+        [
+         12.5,
+         9
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "sw",
+      "shape": {
+       "points": [
+        [
+         -12.5,
+         9
+        ],
+        [
+         -15,
+         6.5
+        ],
+        [
+         -13.5,
+         6
+        ],
+        [
+         -12,
+         7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "nw",
+      "shape": {
+       "points": [
+        [
+         -15,
+         -6.5
+        ],
+        [
+         -12.5,
+         -9
+        ],
+        [
+         -12,
+         -7.5
+        ],
+        [
+         -13.5,
+         -6
+        ]
+       ],
+       "type": "polygon"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "ambient": {
+    "particles": []
+   },
+   "arena": {
+    "boundary": [
+     [
+      -13,
+      -10
+     ],
+     [
+      13,
+      -10
+     ],
+     [
+      16,
+      -7
+     ],
+     [
+      16,
+      7
+     ],
+     [
+      13,
+      10
+     ],
+     [
+      -13,
+      10
+     ],
+     [
+      -16,
+      7
+     ],
+     [
+      -16,
+      -7
+     ]
+    ],
+    "floor": {
+     "altToken": "floor-lit",
+     "baseToken": "floor-mid",
+     "tileId": "tile-floor"
+    },
+    "lip": 1,
+    "projectileMargin": 3,
+    "rim": {
+     "colorToken": "dust",
+     "height": 0.25,
+     "opacity": 0.5
+    }
+   },
+   "bossStage": {
+    "floorRingContrastMax": 1.15,
+    "landmarkId": "none",
+    "shape": {
+     "center": [
+      0,
+      -3
+     ],
+     "radius": 4,
+     "type": "circle"
+    }
+   },
+   "decor": [],
+   "id": "arena_proto",
+   "lighting": {
+    "edgeFade": {
+     "endOutside": 10,
+     "startOutside": 3
+    },
+    "points": []
+   },
+   "obstacles": [],
+   "playerStart": {
+    "boss": [
+     0,
+     5
+    ],
+    "default": [
+     0,
+     0
+    ]
+   },
+   "pulseOrigin": [
+    0,
+    0
+   ],
+   "safeZones": [
+    {
+     "blocks": [
+      "obstacle",
+      "spawn",
+      "decor"
+     ],
+     "id": "start",
+     "shape": {
+      "center": [
+       0,
+       0
+      ],
+      "radius": 6,
+      "type": "circle"
+     }
+    },
+    {
+     "blocks": [
+      "obstacle",
+      "decor"
+     ],
+     "id": "boss_stage",
+     "shape": {
+      "center": [
+       0,
+       -3
+      ],
+      "radius": 4,
+      "type": "circle"
+     }
+    }
+   ],
+   "schemaVersion": 1,
+   "spawn": {
+    "interiorMinPlayerDist": 2,
+    "playerSafeRadius": 4,
+    "zones": [
+     {
+      "id": "n",
+      "shape": {
+       "max": [
+        12,
+        -7.5
+       ],
+       "min": [
+        -12,
+        -9
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "s",
+      "shape": {
+       "max": [
+        12,
+        9
+       ],
+       "min": [
+        -12,
+        7.5
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "e",
+      "shape": {
+       "max": [
+        15,
+        6
+       ],
+       "min": [
+        13.5,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "w",
+      "shape": {
+       "max": [
+        -13.5,
+        6
+       ],
+       "min": [
+        -15,
+        -6
+       ],
+       "type": "rect"
+      }
+     },
+     {
+      "id": "ne",
+      "shape": {
+       "points": [
+        [
+         12.5,
+         -9
+        ],
+        [
+         15,
+         -6.5
+        ],
+        [
+         13.5,
+         -6
+        ],
+        [
+         12,
+         -7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "se",
+      "shape": {
+       "points": [
+        [
+         12,
+         7.5
+        ],
+        [
+         13.5,
+         6
+        ],
+        [
+         15,
+         6.5
+        ],
+        [
+         12.5,
+         9
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "sw",
+      "shape": {
+       "points": [
+        [
+         -12.5,
+         9
+        ],
+        [
+         -15,
+         6.5
+        ],
+        [
+         -13.5,
+         6
+        ],
+        [
+         -12,
+         7.5
+        ]
+       ],
+       "type": "polygon"
+      }
+     },
+     {
+      "id": "nw",
+      "shape": {
+       "points": [
+        [
+         -15,
+         -6.5
+        ],
+        [
+         -12.5,
+         -9
+        ],
+        [
+         -12,
+         -7.5
+        ],
+        [
+         -13.5,
+         -6
+        ]
+       ],
+       "type": "polygon"
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "contentHash": "6b395051",
  "contentTier": "A",
  "format": "shardfall-game-data",
- "missingTables": [
-  "affixes",
-  "biomes",
-  "boss_patterns",
-  "bosses",
-  "classes",
-  "config",
-  "difficulty",
-  "effects",
-  "enemies",
-  "levelup",
-  "mementos",
-  "meta_unlocks",
-  "rarity",
-  "rarity_weights",
-  "rites",
-  "shop",
-  "stats",
-  "statuses",
-  "synergies",
-  "wave_spawns",
-  "waves",
-  "weapon_tiers",
-  "weapons"
- ],
- "profiles": {},
+ "missingTables": [],
+ "profiles": {
+  "run_a": [
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 20,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 1,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 26,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0
+     }
+    ],
+    "threat": 1,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 23,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 2,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 32,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0.1
+     }
+    ],
+    "threat": 2,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 26,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 3,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 36,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.15
+     }
+    ],
+    "threat": 3,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 29,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 4,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 40,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 2,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 4,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 32,
+    "final": false,
+    "kind": "warden",
+    "profile": "run_a",
+    "pulse": 5,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 36,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 3,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 5,
+    "warden_id": "warden_hound"
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 35,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 6,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 50,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 6,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 38,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 7,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 56,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 12,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 12,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 7,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 40,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 8,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 62,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 8,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 40,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a",
+    "pulse": 9,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 70,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 16,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 16,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 9,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": "boss_lantern",
+    "content_tier": "A",
+    "duration_s": 0,
+    "final": true,
+    "kind": "boss",
+    "profile": "run_a",
+    "pulse": 10,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 30,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 2,
+      "group_min": 2,
+      "profile": "run_a",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0
+     }
+    ],
+    "threat": 10,
+    "warden_id": null
+   }
+  ],
+  "run_a_m1": [
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 20,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 1,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 26,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 1,
+      "sectors": [],
+      "start_frac": 0
+     }
+    ],
+    "threat": 1,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 23,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 2,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 32,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 2,
+      "sectors": [],
+      "start_frac": 0.1
+     }
+    ],
+    "threat": 2,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 26,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 3,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 36,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 5,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 3,
+      "sectors": [],
+      "start_frac": 0.15
+     }
+    ],
+    "threat": 3,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 29,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 4,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 40,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 2,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 4,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 4,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 70,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 32,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 5,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 40,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 5,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 5,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 35,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 6,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 50,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 4,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 6,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 6,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 38,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 7,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 56,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 12,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 12,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 6,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 7,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 7,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 40,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 8,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 62,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 14,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 8,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 8,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 8,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 40,
+    "final": false,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 9,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 70,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 16,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 16,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 10,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 9,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 9,
+    "warden_id": null
+   },
+   {
+    "alive_cap": 90,
+    "biome": "biome_market",
+    "boss_id": null,
+    "content_tier": "A",
+    "duration_s": 45,
+    "final": true,
+    "kind": "normal",
+    "profile": "run_a_m1",
+    "pulse": 10,
+    "spawns": [
+     {
+      "content_tier": "A",
+      "count": 88,
+      "end_frac": 1,
+      "enemy_id": "swarmer",
+      "group_max": 6,
+      "group_min": 3,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0
+     },
+     {
+      "content_tier": "A",
+      "count": 20,
+      "end_frac": 1,
+      "enemy_id": "charger",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0.1
+     },
+     {
+      "content_tier": "A",
+      "count": 20,
+      "end_frac": 1,
+      "enemy_id": "shooter",
+      "group_max": 2,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0.15
+     },
+     {
+      "content_tier": "A",
+      "count": 13,
+      "end_frac": 0.9,
+      "enemy_id": "tank",
+      "group_max": 1,
+      "group_min": 1,
+      "profile": "run_a_m1",
+      "pulse": 10,
+      "sectors": [],
+      "start_frac": 0.3
+     }
+    ],
+    "threat": 10,
+    "warden_id": null
+   }
+  ]
+ },
  "schemaVersion": 1,
  "tables": {
-  "affixes": [],
-  "biomes": [],
-  "boss_patterns": [],
-  "bosses": [],
-  "classes": [],
-  "config": {},
-  "difficulty": [],
-  "effects": [],
-  "enemies": [],
-  "levelup": [],
-  "mementos": [],
+  "affixes": [
+   {
+    "content_tier": "A",
+    "desc_key": "affix.hasted",
+    "id": "hasted",
+    "params": {
+     "move_pct": 35
+    },
+    "random_pool": false,
+    "telegraph_s": 0
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "affix.volley",
+    "id": "volley",
+    "params": {
+     "count": 8,
+     "dmg": 4,
+     "shot_life": 2.5,
+     "shot_speed": 5.5
+    },
+    "random_pool": true,
+    "telegraph_s": 0.6
+   }
+  ],
+  "biomes": [
+   {
+    "arena_id": "arena_proto",
+    "content_tier": "A",
+    "id": "biome_market",
+    "music_id": "music_market",
+    "name_key": "biome.biome_market.name"
+   }
+  ],
+  "boss_patterns": [
+   {
+    "archetype": "target_circles",
+    "boss_id": "boss_lantern",
+    "dmg": 10,
+    "id": "ember_rain_5",
+    "params": {
+     "count": 5,
+     "first_on_player": 1,
+     "radius": 1.5,
+     "spread": 3
+    },
+    "telegraph_s": 1
+   },
+   {
+    "archetype": "target_circles",
+    "boss_id": "boss_lantern",
+    "dmg": 10,
+    "id": "ember_rain_8",
+    "params": {
+     "count": 8,
+     "first_on_player": 1,
+     "radius": 1.5,
+     "spread": 3
+    },
+    "telegraph_s": 1
+   },
+   {
+    "archetype": "ring_gap",
+    "boss_id": "boss_lantern",
+    "dmg": 9,
+    "id": "snuff_ring",
+    "params": {
+     "gap_deg": 60,
+     "max_radius": 19,
+     "rings": 1,
+     "speed": 5,
+     "thickness": 0.6
+    },
+    "telegraph_s": 1
+   },
+   {
+    "archetype": "ring_gap",
+    "boss_id": "boss_lantern",
+    "dmg": 9,
+    "id": "snuff_ring_double",
+    "params": {
+     "gap_deg": 60,
+     "max_radius": 19,
+     "min_gap_diff_deg": 90,
+     "ring_gap_s": 0.8,
+     "rings": 2,
+     "speed": 5,
+     "thickness": 0.6
+    },
+    "telegraph_s": 1
+   },
+   {
+    "archetype": "lanes",
+    "boss_id": "boss_lantern",
+    "dmg": 6,
+    "id": "lantern_lanes",
+    "params": {
+     "count": 3,
+     "min_sep": 3,
+     "spacing": 0.6,
+     "speed": 8,
+     "width": 1.2,
+     "y_max": 9,
+     "y_min": -9
+    },
+    "telegraph_s": 1
+   },
+   {
+    "archetype": "summon",
+    "boss_id": "boss_lantern",
+    "dmg": 0,
+    "id": "moth_call",
+    "params": {
+     "count": 6,
+     "enemy_id": "swarmer"
+    },
+    "telegraph_s": 1
+   }
+  ],
+  "bosses": [
+   {
+    "boss_id": "boss_lantern",
+    "cycle": [
+     "ember_rain_5",
+     "snuff_ring",
+     "ember_rain_5",
+     "moth_call"
+    ],
+    "gap_s": 2,
+    "hp_below": 1,
+    "min_crack": 0,
+    "phase": 1,
+    "transition_s": 0
+   },
+   {
+    "boss_id": "boss_lantern",
+    "cycle": [
+     "ember_rain_8",
+     "snuff_ring_double",
+     "lantern_lanes",
+     "moth_call"
+    ],
+    "gap_s": 1.4,
+    "hp_below": 0.5,
+    "min_crack": 0,
+    "phase": 2,
+    "transition_s": 1.5
+   }
+  ],
+  "classes": [
+   {
+    "accent": "gold",
+    "content_tier": "A",
+    "desc_key": "class.lantern.desc",
+    "id": "lantern",
+    "max_hp": 30,
+    "name_key": "class.lantern.name",
+    "rite_id": "flare_lantern",
+    "sort": 1,
+    "start_weapon": "lantern_bolt",
+    "stat_mods": {
+     "area_pct": 10
+    },
+    "tag": "flame",
+    "unlock_silt": 0
+   }
+  ],
+  "config": {
+   "armor_k": 15,
+   "armor_max_reduction": 0.85,
+   "boss_enrage_gap_mult": 0.6,
+   "boss_enrage_s": 120,
+   "boss_entry_s": 2,
+   "boss_trickle_count": 2,
+   "boss_trickle_every_s": 4,
+   "boss_trickle_max_alive": 24,
+   "burn_dps_nonhit": 2,
+   "death_slowmo_s": 1,
+   "enemy_dmg_lin": 0.07,
+   "enemy_hp_lin": 0.12,
+   "enemy_hp_quad": 0.006,
+   "enemy_radius_boss": 1.6,
+   "enemy_radius_large": 0.6,
+   "enemy_radius_medium": 0.4,
+   "enemy_radius_small": 0.3,
+   "enemy_radius_warden": 0.9,
+   "enemy_shot_radius": 0.2,
+   "extra_projectile_spread_deg": 12,
+   "glint_collect_dist_add": 0.2,
+   "glint_floor_cap": 150,
+   "glint_fly_speed": 12,
+   "guard_min_frac": 0.25,
+   "iframes_block": 0.2,
+   "iframes_dodge": 0.2,
+   "iframes_hurt": 0.5,
+   "knockback_s": 0.1,
+   "leech_heal_cap_per_s": 6,
+   "music_pressure_frac": 0.6,
+   "music_pressure_release_frac": 0.5,
+   "pickup_radius_base": 1.6,
+   "player_base_speed": 4.5,
+   "player_radius": 0.35,
+   "player_shot_radius": 0.15,
+   "player_vertical_screen_ratio": 0.8,
+   "price_growth": 0.08,
+   "proc_growth": 0.2,
+   "pulse_clear_s": 1,
+   "pulse_end_collect_frac": 0.5,
+   "spawn_grace_s": 0.3,
+   "spawn_group_spread": 0.5,
+   "spawn_mark_diam_large": 2,
+   "spawn_mark_diam_medium": 1.5,
+   "spawn_mark_diam_small": 1,
+   "spawn_mark_diam_warden": 3,
+   "spawn_mark_s": 0.8,
+   "spawn_quiet_end_s": 2,
+   "telegraph_min_area_s": 0.8,
+   "telegraph_min_boss_s": 1,
+   "telegraph_min_charge_s": 0.6,
+   "telegraph_min_projectile_s": 0.4,
+   "victory_delay_s": 1.5,
+   "warden_overtime_haste_s": 20,
+   "warden_spawn_frac": 0.25,
+   "weapon_slots": 6,
+   "xp_base": 15,
+   "xp_per_level": 10
+  },
+  "difficulty": [
+   {
+    "boss_gap_mult": 1,
+    "boss_hp_mult": 1,
+    "enemy_dmg_mult": 1,
+    "enemy_hp_mult": 1,
+    "enemy_speed_mult": 1,
+    "level": 0,
+    "price_mult": 1,
+    "pulse_end_collect_frac": 0.5,
+    "pulse_heal_frac": 1,
+    "silt_mult": 1,
+    "spawn_mult": 1,
+    "warden_extra_affixes": 0
+   },
+   {
+    "boss_gap_mult": 1,
+    "boss_hp_mult": 1,
+    "enemy_dmg_mult": 1,
+    "enemy_hp_mult": 1.15,
+    "enemy_speed_mult": 1,
+    "level": 1,
+    "price_mult": 1,
+    "pulse_end_collect_frac": 0.5,
+    "pulse_heal_frac": 1,
+    "silt_mult": 1.25,
+    "spawn_mult": 1,
+    "warden_extra_affixes": 0
+   },
+   {
+    "boss_gap_mult": 1,
+    "boss_hp_mult": 1,
+    "enemy_dmg_mult": 1,
+    "enemy_hp_mult": 1.15,
+    "enemy_speed_mult": 1,
+    "level": 2,
+    "price_mult": 1.1,
+    "pulse_end_collect_frac": 0.5,
+    "pulse_heal_frac": 1,
+    "silt_mult": 1.5,
+    "spawn_mult": 1,
+    "warden_extra_affixes": 1
+   },
+   {
+    "boss_gap_mult": 1,
+    "boss_hp_mult": 1,
+    "enemy_dmg_mult": 1.2,
+    "enemy_hp_mult": 1.15,
+    "enemy_speed_mult": 1,
+    "level": 3,
+    "price_mult": 1.1,
+    "pulse_end_collect_frac": 0.5,
+    "pulse_heal_frac": 1,
+    "silt_mult": 1.75,
+    "spawn_mult": 1.15,
+    "warden_extra_affixes": 1
+   },
+   {
+    "boss_gap_mult": 0.8,
+    "boss_hp_mult": 1.25,
+    "enemy_dmg_mult": 1.2,
+    "enemy_hp_mult": 1.15,
+    "enemy_speed_mult": 1.1,
+    "level": 4,
+    "price_mult": 1.1,
+    "pulse_end_collect_frac": 0.5,
+    "pulse_heal_frac": 1,
+    "silt_mult": 2,
+    "spawn_mult": 1.15,
+    "warden_extra_affixes": 1
+   },
+   {
+    "boss_gap_mult": 0.8,
+    "boss_hp_mult": 1.25,
+    "enemy_dmg_mult": 1.2,
+    "enemy_hp_mult": 1.15,
+    "enemy_speed_mult": 1.1,
+    "level": 5,
+    "price_mult": 1.1,
+    "pulse_end_collect_frac": 0.25,
+    "pulse_heal_frac": 0.5,
+    "silt_mult": 2.25,
+    "spawn_mult": 1.15,
+    "warden_extra_affixes": 1
+   }
+  ],
+  "effects": [
+   {
+    "action": "status_rule",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "class_lantern_1",
+    "max_per_pulse": 0,
+    "owner": "lantern",
+    "params": {
+     "rule": "dmg_mult",
+     "status": "burn",
+     "value": 1.3
+    },
+    "stack_mode": "none",
+    "trigger": "passive"
+   },
+   {
+    "action": "apply_status",
+    "allow_proc": null,
+    "chance": 0.08,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "coal_locket_1",
+    "max_per_pulse": 0,
+    "owner": "coal_locket",
+    "params": {
+     "duration": 3,
+     "stacks": 1,
+     "status": "burn"
+    },
+    "stack_mode": "chance",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "hit_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_has_status",
+      "value": "burn"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "kindling_jar_1",
+    "max_per_pulse": 0,
+    "owner": "kindling_jar",
+    "params": {
+     "mode": "vuln",
+     "value": 0.2
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "apply_status",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "source_tag",
+      "value": "edge"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "torch_glove_1",
+    "max_per_pulse": 0,
+    "owner": "torch_glove",
+    "params": {
+     "duration": 3,
+     "stacks": 1,
+     "status": "burn"
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "stat_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "ashen_crown_1",
+    "max_per_pulse": 0,
+    "owner": "ashen_crown",
+    "params": {
+     "op": "add",
+     "stat": "burn_max_stacks",
+     "value": 2
+    },
+    "stack_mode": "none",
+    "trigger": "passive"
+   },
+   {
+    "action": "spawn_zone",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "smolder_boots_1",
+    "max_per_pulse": 0,
+    "owner": "smolder_boots",
+    "params": {
+     "distance": 3,
+     "dmg": 0,
+     "duration": 2,
+     "max_alive": 6,
+     "origin": "player",
+     "radius": 1,
+     "status": "burn",
+     "tick": 0.5
+    },
+    "stack_mode": "none",
+    "trigger": "on_distance"
+   },
+   {
+    "action": "stat_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "glass_marble_1",
+    "max_per_pulse": 0,
+    "owner": "glass_marble",
+    "params": {
+     "op": "add",
+     "stat": "pierce",
+     "value": 1
+    },
+    "stack_mode": "value",
+    "trigger": "passive"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "source_kind",
+      "value": "projectile"
+     },
+     {
+      "name": "every_nth",
+      "value": "5@global"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "prism_lens_1",
+    "max_per_pulse": 0,
+    "owner": "prism_lens",
+    "params": {
+     "count": 3,
+     "dmg_frac": 0.4,
+     "origin": "target",
+     "pattern": "split",
+     "range": 3,
+     "speed": 12
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "stat_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "shard_pouch_1",
+    "max_per_pulse": 0,
+    "owner": "shard_pouch",
+    "params": {
+     "op": "add",
+     "stat": "projectiles",
+     "value": 1
+    },
+    "stack_mode": "none",
+    "trigger": "passive"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "splinter_comb_1",
+    "max_per_pulse": 0,
+    "owner": "splinter_comb",
+    "params": {
+     "count": 1,
+     "dmg_frac": 0.5,
+     "origin": "target",
+     "pattern": "seek_other",
+     "range": 6,
+     "seek_range": 6,
+     "speed": 14,
+     "tags": "shard"
+    },
+    "stack_mode": "none",
+    "trigger": "on_crit"
+   },
+   {
+    "action": "stat_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "whetstone_1",
+    "max_per_pulse": 0,
+    "owner": "whetstone",
+    "params": {
+     "op": "add",
+     "stat": "crit_chance",
+     "value": 5
+    },
+    "stack_mode": "value",
+    "trigger": "passive"
+   },
+   {
+    "action": "hit_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_hp_full",
+      "value": "1"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "duelist_ribbon_1",
+    "max_per_pulse": 0,
+    "owner": "duelist_ribbon",
+    "params": {
+     "mode": "bonus",
+     "value": 0.5
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "execute",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_is",
+      "value": "normal"
+     },
+     {
+      "name": "target_hp_below",
+      "value": "0.12"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "headsman_hook_1",
+    "max_per_pulse": 0,
+    "owner": "headsman_hook",
+    "params": {},
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "apply_status",
+    "allow_proc": null,
+    "chance": 0.1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_flame_2",
+    "max_per_pulse": 0,
+    "owner": "syn_flame_2",
+    "params": {
+     "duration": 3,
+     "stacks": 1,
+     "status": "burn"
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "spawn_area",
+    "allow_proc": true,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_has_status",
+      "value": "burn"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_flame_4",
+    "max_per_pulse": 0,
+    "owner": "syn_flame_4",
+    "params": {
+     "dmg": 6,
+     "origin": "target",
+     "radius": 1.5,
+     "shape": "circle",
+     "status": "burn"
+    },
+    "stack_mode": "none",
+    "trigger": "on_kill"
+   },
+   {
+    "action": "status_rule",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_flame_6a",
+    "max_per_pulse": 0,
+    "owner": "syn_flame_6",
+    "params": {
+     "rule": "add_mark",
+     "status": "burn",
+     "value": 1
+    },
+    "stack_mode": "none",
+    "trigger": "passive"
+   },
+   {
+    "action": "spawn_area",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_flame_6b",
+    "max_per_pulse": 0,
+    "owner": "syn_flame_6",
+    "params": {
+     "dmg": 0,
+     "interval": 6,
+     "origin": "player",
+     "radius": 4,
+     "shape": "circle",
+     "status": "burn"
+    },
+    "stack_mode": "none",
+    "trigger": "periodic"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "source_kind",
+      "value": "projectile"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_shard_2",
+    "max_per_pulse": 0,
+    "owner": "syn_shard_2",
+    "params": {
+     "count": 2,
+     "dmg_frac": 0.4,
+     "origin": "target",
+     "pattern": "split",
+     "range": 3,
+     "seek_range": 4,
+     "speed": 12,
+     "tags": "shard"
+    },
+    "stack_mode": "none",
+    "trigger": "on_kill"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "source_tag",
+      "value": "shard"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_shard_4",
+    "max_per_pulse": 0,
+    "owner": "syn_shard_4",
+    "params": {
+     "count": 3,
+     "dmg_frac": 0.4,
+     "origin": "point",
+     "pattern": "split",
+     "range": 3,
+     "speed": 12
+    },
+    "stack_mode": "none",
+    "trigger": "on_projectile_end"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_shard_6",
+    "max_per_pulse": 0,
+    "owner": "syn_shard_6",
+    "params": {
+     "count": 1,
+     "dmg": 25,
+     "interval": 2,
+     "origin": "player",
+     "pattern": "toughest",
+     "pierce": 99,
+     "range": 40,
+     "speed": 20,
+     "tags": "shard"
+    },
+    "stack_mode": "none",
+    "trigger": "periodic"
+   },
+   {
+    "action": "hit_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_within",
+      "value": "2.5"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_edge_2a",
+    "max_per_pulse": 0,
+    "owner": "syn_edge_2",
+    "params": {
+     "mode": "bonus",
+     "value": 0.25
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "apply_status",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "target_within",
+      "value": "2.5"
+     }
+    ],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_edge_2b",
+    "max_per_pulse": 0,
+    "owner": "syn_edge_2",
+    "params": {
+     "status": "knockback",
+     "value": 0.5
+    },
+    "stack_mode": "none",
+    "trigger": "on_hit"
+   },
+   {
+    "action": "spawn_projectile",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_edge_4",
+    "max_per_pulse": 0,
+    "owner": "syn_edge_4",
+    "params": {
+     "count": 1,
+     "dmg_frac": 0.5,
+     "kind": "melee",
+     "origin": "player",
+     "pattern": "aimed",
+     "pierce": 99,
+     "range": 3,
+     "speed": 15,
+     "tags": "edge"
+    },
+    "stack_mode": "none",
+    "trigger": "on_crit"
+   },
+   {
+    "action": "buff",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [],
+    "content_tier": "A",
+    "icd": 0,
+    "id": "syn_edge_6",
+    "max_per_pulse": 0,
+    "owner": "syn_edge_6",
+    "params": {
+     "duration": 3,
+     "max_stacks": 10,
+     "refresh": 1,
+     "stats": "attack_speed_pct:5|move_speed:3"
+    },
+    "stack_mode": "none",
+    "trigger": "on_crit"
+   }
+  ],
+  "enemies": [
+   {
+    "affixes": [],
+    "attack_dmg": 0,
+    "behavior": "swarmer",
+    "contact_dmg": 3,
+    "content_tier": "A",
+    "glint": 1,
+    "guard": 0,
+    "hp": 6,
+    "id": "swarmer",
+    "kb_resist": 0,
+    "name_key": "unlit.swarmer",
+    "params": {
+     "weave_amp": 0.3,
+     "weave_hz": 0.8
+    },
+    "radius": null,
+    "role": "swarmer",
+    "silt": 0,
+    "size_class": "small",
+    "speed": 2.6,
+    "telegraph_s": 0
+   },
+   {
+    "affixes": [],
+    "attack_dmg": 6,
+    "behavior": "charger",
+    "contact_dmg": 3,
+    "content_tier": "A",
+    "glint": 2,
+    "guard": 0,
+    "hp": 16,
+    "id": "charger",
+    "kb_resist": 0.2,
+    "name_key": "unlit.charger",
+    "params": {
+     "charge_s": 0.45,
+     "charge_speed": 10,
+     "cooldown": 3,
+     "recover_s": 0.8,
+     "trigger_range": 6
+    },
+    "radius": null,
+    "role": "charger",
+    "silt": 0,
+    "size_class": "medium",
+    "speed": 2,
+    "telegraph_s": 0.6
+   },
+   {
+    "affixes": [],
+    "attack_dmg": 4,
+    "behavior": "shooter",
+    "contact_dmg": 2,
+    "content_tier": "A",
+    "glint": 2,
+    "guard": 0,
+    "hp": 10,
+    "id": "shooter",
+    "kb_resist": 0,
+    "name_key": "unlit.shooter",
+    "params": {
+     "cooldown": 2.8,
+     "keep_max": 7,
+     "keep_min": 5,
+     "shot_life": 2.5,
+     "shot_speed": 5.5
+    },
+    "radius": null,
+    "role": "shooter",
+    "silt": 0,
+    "size_class": "medium",
+    "speed": 1.7,
+    "telegraph_s": 0.4
+   },
+   {
+    "affixes": [],
+    "attack_dmg": 0,
+    "behavior": "tank",
+    "contact_dmg": 7,
+    "content_tier": "A",
+    "glint": 5,
+    "guard": 2,
+    "hp": 60,
+    "id": "tank",
+    "kb_resist": 0.8,
+    "name_key": "unlit.tank",
+    "params": {},
+    "radius": null,
+    "role": "tank",
+    "silt": 0,
+    "size_class": "large",
+    "speed": 1.2,
+    "telegraph_s": 0
+   },
+   {
+    "affixes": [
+     "volley"
+    ],
+    "attack_dmg": 10,
+    "behavior": "warden_hound",
+    "contact_dmg": 6,
+    "content_tier": "A",
+    "glint": 25,
+    "guard": 0,
+    "hp": 380,
+    "id": "warden_hound",
+    "kb_resist": 0.9,
+    "name_key": "unlit.warden_hound",
+    "params": {
+     "charge_gap_s": 0.4,
+     "charge_s": 0.45,
+     "charge_speed": 10,
+     "charges": 3,
+     "drop_count": 5,
+     "rest_s": 2.5,
+     "trigger_range": 8
+    },
+    "radius": null,
+    "role": "warden",
+    "silt": 4,
+    "size_class": "warden",
+    "speed": 2.4,
+    "telegraph_s": 0.6
+   },
+   {
+    "affixes": [],
+    "attack_dmg": 0,
+    "behavior": "boss_lantern",
+    "contact_dmg": 10,
+    "content_tier": "A",
+    "glint": 40,
+    "guard": 2,
+    "hp": 2000,
+    "id": "boss_lantern",
+    "kb_resist": 1,
+    "name_key": "unlit.boss_lantern",
+    "params": {
+     "drop_count": 8
+    },
+    "radius": null,
+    "role": "boss",
+    "silt": 8,
+    "size_class": "boss",
+    "speed": 1,
+    "telegraph_s": 1
+   }
+  ],
+  "levelup": [
+   {
+    "content_tier": "A",
+    "desc_key": "card.max_hp",
+    "fabled": 16,
+    "fine": 7,
+    "id": "card_max_hp",
+    "plain": 4,
+    "rare": 11,
+    "stat": "max_hp",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.hp_regen",
+    "fabled": 0.8,
+    "fine": 0.35,
+    "id": "card_hp_regen",
+    "plain": 0.2,
+    "rare": 0.55,
+    "stat": "hp_regen",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.armor",
+    "fabled": 5,
+    "fine": 2,
+    "id": "card_armor",
+    "plain": 1,
+    "rare": 3,
+    "stat": "armor",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.dodge",
+    "fabled": 9,
+    "fine": 4,
+    "id": "card_dodge",
+    "plain": 2,
+    "rare": 6,
+    "stat": "dodge",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.move_speed",
+    "fabled": 12,
+    "fine": 5,
+    "id": "card_move_speed",
+    "plain": 3,
+    "rare": 8,
+    "stat": "move_speed",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.damage",
+    "fabled": 18,
+    "fine": 8,
+    "id": "card_damage",
+    "plain": 5,
+    "rare": 12,
+    "stat": "damage_pct",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.attack_speed",
+    "fabled": 16,
+    "fine": 7,
+    "id": "card_attack_speed",
+    "plain": 4,
+    "rare": 11,
+    "stat": "attack_speed_pct",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.crit",
+    "fabled": 9,
+    "fine": 4,
+    "id": "card_crit_chance",
+    "plain": 2,
+    "rare": 6,
+    "stat": "crit_chance",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.area",
+    "fabled": 19,
+    "fine": 9,
+    "id": "card_area",
+    "plain": 5,
+    "rare": 13,
+    "stat": "area_pct",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.range",
+    "fabled": 19,
+    "fine": 9,
+    "id": "card_range",
+    "plain": 5,
+    "rare": 13,
+    "stat": "range_pct",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.pickup",
+    "fabled": 40,
+    "fine": 18,
+    "id": "card_pickup_radius",
+    "plain": 10,
+    "rare": 27,
+    "stat": "pickup_radius_pct",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.luck",
+    "fabled": 18,
+    "fine": 8,
+    "id": "card_luck",
+    "plain": 4,
+    "rare": 12,
+    "stat": "luck",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.leech",
+    "fabled": 5,
+    "fine": 2,
+    "id": "card_leech",
+    "plain": 1,
+    "rare": 3,
+    "stat": "leech",
+    "weight": 1
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "card.rite_haste",
+    "fabled": 14,
+    "fine": 7,
+    "id": "card_rite_haste",
+    "plain": 4,
+    "rare": 10,
+    "stat": "rite_haste",
+    "weight": 1
+   }
+  ],
+  "mementos": [
+   {
+    "content_tier": "A",
+    "desc_key": "memento.coal_locket.desc",
+    "flavor_key": "memento.coal_locket.flavor",
+    "id": "coal_locket",
+    "is_flat": false,
+    "max_stack": 3,
+    "name_key": "memento.coal_locket.name",
+    "price_override": null,
+    "rarity": "plain",
+    "sort": 1,
+    "tags": [
+     "flame"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.kindling_jar.desc",
+    "flavor_key": "memento.kindling_jar.flavor",
+    "id": "kindling_jar",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.kindling_jar.name",
+    "price_override": null,
+    "rarity": "fine",
+    "sort": 2,
+    "tags": [
+     "flame"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.torch_glove.desc",
+    "flavor_key": "memento.torch_glove.flavor",
+    "id": "torch_glove",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.torch_glove.name",
+    "price_override": null,
+    "rarity": "fine",
+    "sort": 3,
+    "tags": [
+     "flame",
+     "edge"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.ashen_crown.desc",
+    "flavor_key": "memento.ashen_crown.flavor",
+    "id": "ashen_crown",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.ashen_crown.name",
+    "price_override": null,
+    "rarity": "fabled",
+    "sort": 4,
+    "tags": [
+     "flame"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.smolder_boots.desc",
+    "flavor_key": "memento.smolder_boots.flavor",
+    "id": "smolder_boots",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.smolder_boots.name",
+    "price_override": null,
+    "rarity": "plain",
+    "sort": 5,
+    "tags": [
+     "flame"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.glass_marble.desc",
+    "flavor_key": "memento.glass_marble.flavor",
+    "id": "glass_marble",
+    "is_flat": true,
+    "max_stack": 2,
+    "name_key": "memento.glass_marble.name",
+    "price_override": null,
+    "rarity": "plain",
+    "sort": 6,
+    "tags": [
+     "shard"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.prism_lens.desc",
+    "flavor_key": "memento.prism_lens.flavor",
+    "id": "prism_lens",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.prism_lens.name",
+    "price_override": null,
+    "rarity": "rare",
+    "sort": 7,
+    "tags": [
+     "shard"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.shard_pouch.desc",
+    "flavor_key": "memento.shard_pouch.flavor",
+    "id": "shard_pouch",
+    "is_flat": true,
+    "max_stack": 1,
+    "name_key": "memento.shard_pouch.name",
+    "price_override": null,
+    "rarity": "fabled",
+    "sort": 8,
+    "tags": [
+     "shard"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.splinter_comb.desc",
+    "flavor_key": "memento.splinter_comb.flavor",
+    "id": "splinter_comb",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.splinter_comb.name",
+    "price_override": null,
+    "rarity": "fine",
+    "sort": 9,
+    "tags": [
+     "shard",
+     "edge"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.whetstone.desc",
+    "flavor_key": "memento.whetstone.flavor",
+    "id": "whetstone",
+    "is_flat": true,
+    "max_stack": 3,
+    "name_key": "memento.whetstone.name",
+    "price_override": null,
+    "rarity": "plain",
+    "sort": 10,
+    "tags": [
+     "edge"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.duelist_ribbon.desc",
+    "flavor_key": "memento.duelist_ribbon.flavor",
+    "id": "duelist_ribbon",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.duelist_ribbon.name",
+    "price_override": null,
+    "rarity": "fine",
+    "sort": 11,
+    "tags": [
+     "edge"
+    ],
+    "unlock": "default"
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "memento.headsman_hook.desc",
+    "flavor_key": "memento.headsman_hook.flavor",
+    "id": "headsman_hook",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.headsman_hook.name",
+    "price_override": null,
+    "rarity": "rare",
+    "sort": 12,
+    "tags": [
+     "edge"
+    ],
+    "unlock": "default"
+   }
+  ],
   "meta_unlocks": [],
-  "rarity": [],
-  "rarity_weights": [],
-  "rites": [],
-  "shop": {},
-  "stats": [],
-  "statuses": [],
-  "synergies": [],
-  "weapons": []
+  "rarity": [
+   {
+    "color_token": "rarity-plain",
+    "id": "plain",
+    "memento_price": 14,
+    "order": 0,
+    "weapon_cd_mult": 1,
+    "weapon_dmg_mult": 1,
+    "weapon_price": 16
+   },
+   {
+    "color_token": "rarity-fine",
+    "id": "fine",
+    "memento_price": 28,
+    "order": 1,
+    "weapon_cd_mult": 0.95,
+    "weapon_dmg_mult": 1.5,
+    "weapon_price": 34
+   },
+   {
+    "color_token": "rarity-rare",
+    "id": "rare",
+    "memento_price": 50,
+    "order": 2,
+    "weapon_cd_mult": 0.9,
+    "weapon_dmg_mult": 2.2,
+    "weapon_price": 70
+   },
+   {
+    "color_token": "rarity-fabled",
+    "id": "fabled",
+    "memento_price": 85,
+    "order": 3,
+    "weapon_cd_mult": 0.85,
+    "weapon_dmg_mult": 3.2,
+    "weapon_price": 130
+   }
+  ],
+  "rarity_weights": [
+   {
+    "fabled": 0,
+    "fine": 20,
+    "plain": 78,
+    "rare": 2,
+    "t_max": 3,
+    "t_min": 1
+   },
+   {
+    "fabled": 1,
+    "fine": 30,
+    "plain": 60,
+    "rare": 9,
+    "t_max": 6,
+    "t_min": 4
+   },
+   {
+    "fabled": 4,
+    "fine": 35,
+    "plain": 45,
+    "rare": 16,
+    "t_max": 10,
+    "t_min": 7
+   },
+   {
+    "fabled": 7,
+    "fine": 38,
+    "plain": 32,
+    "rare": 23,
+    "t_max": 14,
+    "t_min": 11
+   },
+   {
+    "fabled": 10,
+    "fine": 38,
+    "plain": 22,
+    "rare": 30,
+    "t_max": 20,
+    "t_min": 15
+   }
+  ],
+  "rites": [
+   {
+    "archetype": "throw_zone",
+    "content_tier": "A",
+    "cooldown": 12,
+    "desc_key": "rite.flare_lantern.desc",
+    "dmg": 20,
+    "id": "flare_lantern",
+    "name_key": "rite.flare_lantern.name",
+    "params": {
+     "flight_s": 0.35,
+     "max_range": 6,
+     "slow": 30,
+     "status": "burn",
+     "zone_radius": 3,
+     "zone_s": 4,
+     "zone_tick": 0.5
+    },
+    "radius": 3
+   }
+  ],
+  "shop": {
+   "bad_luck_min_t": 6,
+   "bad_luck_shops": 3,
+   "boss_chest_min_rarity": "rare",
+   "class_tag_weight": 1.5,
+   "merge_push_chance": 0.15,
+   "owned_tag_weight": 1.25,
+   "reroll_base_add": 1,
+   "reroll_step": 1,
+   "reroll_t_div": 2,
+   "sell_frac": 0.4,
+   "slots": 4,
+   "warden_chest_choices": 3,
+   "warden_chest_min_rarity": "fine",
+   "weapon_chance": 0.35
+  },
+  "stats": [
+   {
+    "base": 30,
+    "display_key": "stat.max_hp",
+    "id": "max_hp",
+    "max": null,
+    "min": 1,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.hp_regen",
+    "id": "hp_regen",
+    "max": null,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "per_s"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.armor",
+    "id": "armor",
+    "max": null,
+    "min": -10,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.dodge",
+    "id": "dodge",
+    "max": 60,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.move_speed",
+    "id": "move_speed",
+    "max": 80,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.damage_pct",
+    "id": "damage_pct",
+    "max": null,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.attack_speed_pct",
+    "id": "attack_speed_pct",
+    "max": null,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 5,
+    "display_key": "stat.crit_chance",
+    "id": "crit_chance",
+    "max": 100,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 1.5,
+    "display_key": "stat.crit_mult",
+    "id": "crit_mult",
+    "max": null,
+    "min": 1,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.area_pct",
+    "id": "area_pct",
+    "max": 100,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.range_pct",
+    "id": "range_pct",
+    "max": 100,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.projectiles",
+    "id": "projectiles",
+    "max": 4,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.pierce",
+    "id": "pierce",
+    "max": 5,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.pickup_radius_pct",
+    "id": "pickup_radius_pct",
+    "max": 200,
+    "min": -50,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.luck",
+    "id": "luck",
+    "max": null,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.leech",
+    "id": "leech",
+    "max": 30,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.rite_haste",
+    "id": "rite_haste",
+    "max": 50,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "pct"
+   },
+   {
+    "base": 1,
+    "display_key": "stat.burn_max_stacks",
+    "id": "burn_max_stacks",
+    "max": 5,
+    "min": 1,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.barrier_max",
+    "id": "barrier_max",
+    "max": 3,
+    "min": 0,
+    "show_in_ui": true,
+    "unit": "flat"
+   },
+   {
+    "base": 0,
+    "display_key": "stat.barrier_recharge",
+    "id": "barrier_recharge",
+    "max": null,
+    "min": 0,
+    "show_in_ui": false,
+    "unit": "s"
+   },
+   {
+    "base": 1,
+    "display_key": "stat.rite_charges",
+    "id": "rite_charges",
+    "max": 2,
+    "min": 1,
+    "show_in_ui": true,
+    "unit": "flat"
+   }
+  ],
+  "statuses": [
+   {
+    "duration": 3,
+    "id": "burn",
+    "params": {
+     "can_crit": 0,
+     "dps_frac": 0.3,
+     "ignores_guard": 1
+    },
+    "tick": 0.5
+   },
+   {
+    "duration": 2,
+    "id": "slow",
+    "params": {},
+    "tick": 0
+   },
+   {
+    "duration": 4,
+    "id": "mark",
+    "params": {
+     "vuln": 0.2
+    },
+    "tick": 0
+   },
+   {
+    "duration": 0.1,
+    "id": "knockback",
+    "params": {},
+    "tick": 0
+   }
+  ],
+  "synergies": [
+   {
+    "content_tier": "A",
+    "desc_key": "syn.flame.2",
+    "owner": "syn_flame_2",
+    "tag": "flame",
+    "threshold": 2
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.flame.4",
+    "owner": "syn_flame_4",
+    "tag": "flame",
+    "threshold": 4
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.flame.6",
+    "owner": "syn_flame_6",
+    "tag": "flame",
+    "threshold": 6
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.shard.2",
+    "owner": "syn_shard_2",
+    "tag": "shard",
+    "threshold": 2
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.shard.4",
+    "owner": "syn_shard_4",
+    "tag": "shard",
+    "threshold": 4
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.shard.6",
+    "owner": "syn_shard_6",
+    "tag": "shard",
+    "threshold": 6
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.edge.2",
+    "owner": "syn_edge_2",
+    "tag": "edge",
+    "threshold": 2
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.edge.4",
+    "owner": "syn_edge_4",
+    "tag": "edge",
+    "threshold": 4
+   },
+   {
+    "content_tier": "A",
+    "desc_key": "syn.edge.6",
+    "owner": "syn_edge_6",
+    "tag": "edge",
+    "threshold": 6
+   }
+  ],
+  "weapons": [
+   {
+    "archetype": "bolt_explode",
+    "content_tier": "A",
+    "cooldown": 1.3,
+    "count": 1,
+    "desc_key": "weapon.lantern_bolt.desc",
+    "dmg": 8,
+    "dmg2": 6,
+    "id": "lantern_bolt",
+    "kind": "projectile",
+    "knockback": 0,
+    "name_key": "weapon.lantern_bolt.name",
+    "params": {
+     "explode_status": "burn"
+    },
+    "pierce": 0,
+    "proj_radius": null,
+    "radius": 1.3,
+    "range": 6.5,
+    "speed": 8,
+    "tags": [
+     "flame"
+    ],
+    "targeting": "nearest",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {
+       "radius_add": 0.15
+      },
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "radius_add": 0.15
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "fire_zone_radius": 1.5,
+       "fire_zone_s": 2
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   },
+   {
+    "archetype": "projectile",
+    "content_tier": "A",
+    "cooldown": 0.7,
+    "count": 1,
+    "desc_key": "weapon.splinter_shot.desc",
+    "dmg": 6,
+    "dmg2": null,
+    "id": "splinter_shot",
+    "kind": "projectile",
+    "knockback": 0,
+    "name_key": "weapon.splinter_shot.name",
+    "params": {},
+    "pierce": 0,
+    "proj_radius": null,
+    "radius": null,
+    "range": 7,
+    "speed": 14,
+    "tags": [
+     "shard"
+    ],
+    "targeting": "nearest",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {},
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "pierce_add": 1
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "fan_count": 3,
+       "fan_every_n": 3
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   },
+   {
+    "archetype": "arc",
+    "content_tier": "A",
+    "cooldown": 1.15,
+    "count": 1,
+    "desc_key": "weapon.arc_blade.desc",
+    "dmg": 14,
+    "dmg2": null,
+    "id": "arc_blade",
+    "kind": "melee",
+    "knockback": 0.6,
+    "name_key": "weapon.arc_blade.name",
+    "params": {
+     "arc_deg": 120
+    },
+    "pierce": 0,
+    "proj_radius": null,
+    "radius": 2.2,
+    "range": 2.2,
+    "speed": 0,
+    "tags": [
+     "edge"
+    ],
+    "targeting": "nearest",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {},
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "arc_deg_add": 40
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "spin_every_n": 3
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   },
+   {
+    "archetype": "orbit",
+    "content_tier": "A",
+    "cooldown": 0.5,
+    "count": 2,
+    "desc_key": "weapon.orbit_shards.desc",
+    "dmg": 5,
+    "dmg2": null,
+    "id": "orbit_shards",
+    "kind": "melee",
+    "knockback": 0,
+    "name_key": "weapon.orbit_shards.name",
+    "params": {
+     "rev_s": 1.6
+    },
+    "pierce": 0,
+    "proj_radius": null,
+    "radius": 1.8,
+    "range": 0,
+    "speed": 0,
+    "tags": [
+     "shard",
+     "ward"
+    ],
+    "targeting": "self",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {
+       "count_add": 1
+      },
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "count_add": 1
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "lunge_dist": 4,
+       "lunge_every_s": 4
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   },
+   {
+    "archetype": "chain",
+    "content_tier": "A",
+    "cooldown": 1.3,
+    "count": 1,
+    "desc_key": "weapon.chain_spark.desc",
+    "dmg": 8,
+    "dmg2": null,
+    "id": "chain_spark",
+    "kind": "chain",
+    "knockback": 0,
+    "name_key": "weapon.chain_spark.name",
+    "params": {
+     "burn_chance": 0.2,
+     "jump_range": 2.8,
+     "jumps": 3
+    },
+    "pierce": 0,
+    "proj_radius": null,
+    "radius": null,
+    "range": 6,
+    "speed": 0,
+    "tags": [
+     "echo",
+     "flame"
+    ],
+    "targeting": "nearest",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {
+       "jumps_add": 1
+      },
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "jumps_add": 1
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "allow_return": 1,
+       "jumps_add": 2
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   },
+   {
+    "archetype": "boomerang",
+    "content_tier": "A",
+    "cooldown": 1.8,
+    "count": 1,
+    "desc_key": "weapon.returning_glaive.desc",
+    "dmg": 9,
+    "dmg2": null,
+    "id": "returning_glaive",
+    "kind": "projectile",
+    "knockback": 0,
+    "name_key": "weapon.returning_glaive.name",
+    "params": {
+     "hit_back": 1,
+     "hit_out": 1
+    },
+    "pierce": 99,
+    "proj_radius": null,
+    "radius": null,
+    "range": 6,
+    "speed": 9,
+    "tags": [
+     "edge",
+     "echo"
+    ],
+    "targeting": "nearest",
+    "tiers": [
+     {
+      "effects": [],
+      "params": {},
+      "tier": 1
+     },
+     {
+      "effects": [],
+      "params": {},
+      "tier": 2
+     },
+     {
+      "effects": [],
+      "params": {
+       "speed_pct_add": 20
+      },
+      "tier": 3
+     },
+     {
+      "effects": [],
+      "params": {
+       "blades": 2
+      },
+      "tier": 4
+     }
+    ],
+    "unlock_silt": 0
+   }
+  ]
  }
 }

@@ -1,0 +1,9 @@
+id,kind,targets,cost_silt,content_tier,cost_silt_b
+# Silt unlocks (data-schema 3.23, GDD 17.2). Crack is not bought.
+unlock_blade,class,blade,40,B,
+unlock_bell,class,bell,60,B,
+unlock_tithe,weapon,tithe_coin,20,B,
+pack_memento_1,memento_pack,dust_hourglass|lucky_button|haggler_seal,20,B,
+pack_memento_2,memento_pack,grinding_wheel|pyre_bell|wick_charm,25,B,10
+pack_memento_3,memento_pack,cracked_mirror|music_box|folded_letter,30,C,
+pack_memento_4,memento_pack,echo_shell|patched_cloak|ledger_page,40,C,

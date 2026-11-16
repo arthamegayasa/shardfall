@@ -6,27 +6,219 @@
  "padding": 1,
  "filter": "nearest",
  "sprites": {
-  "boss-lantern": {
-   "class": "boss",
-   "faction": "unlit",
-   "frameW": 128,
-   "frameH": 128,
+  "fx-burn": {
+   "class": "vfx-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
    "anchor": {
-    "x": 64,
-    "y": 127
+    "x": 4,
+    "y": 7
    },
    "animations": {
     "idle": {
-     "ticksPerFrame": 30,
+     "ticksPerFrame": 8,
      "loop": true,
      "frames": [
       {
-       "x": 1,
-       "y": 1,
-       "w": 68,
-       "h": 83,
-       "ox": 30,
-       "oy": 45
+       "x": 412,
+       "y": 85,
+       "w": 2,
+       "h": 3,
+       "ox": 3,
+       "oy": 5
+      },
+      {
+       "x": 415,
+       "y": 85,
+       "w": 2,
+       "h": 3,
+       "ox": 3,
+       "oy": 5
+      }
+     ]
+    }
+   }
+  },
+  "fx-digits": {
+   "class": "vfx-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "normal": {
+     "ticksPerFrame": 0,
+     "loop": false,
+     "frames": [
+      {
+       "x": 233,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 239,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 245,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 251,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 257,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 263,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 269,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 275,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 281,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 287,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      }
+     ]
+    },
+    "crit": {
+     "ticksPerFrame": 0,
+     "loop": false,
+     "frames": [
+      {
+       "x": 173,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 179,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 185,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 191,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 197,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 203,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 209,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 215,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 221,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
+      },
+      {
+       "x": 227,
+       "y": 85,
+       "w": 5,
+       "h": 7,
+       "ox": 1,
+       "oy": 1
       }
      ]
     }
@@ -47,16 +239,92 @@
      "loop": true,
      "frames": [
       {
-       "x": 316,
-       "y": 1,
+       "x": 323,
+       "y": 85,
        "w": 5,
        "h": 5,
        "ox": 1,
        "oy": 3
       },
       {
-       "x": 322,
-       "y": 1,
+       "x": 329,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-arc-blade": {
+   "class": "vfx-kept",
+   "faction": "kept",
+   "frameW": 16,
+   "frameH": 16,
+   "anchor": {
+    "x": 8,
+    "y": 15
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 4,
+     "loop": false,
+     "frames": [
+      {
+       "x": 293,
+       "y": 85,
+       "w": 7,
+       "h": 7,
+       "ox": 4,
+       "oy": 9
+      },
+      {
+       "x": 113,
+       "y": 85,
+       "w": 7,
+       "h": 13,
+       "ox": 4,
+       "oy": 3
+      },
+      {
+       "x": 121,
+       "y": 85,
+       "w": 7,
+       "h": 13,
+       "ox": 4,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-chain-spark": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 3,
+     "loop": true,
+     "frames": [
+      {
+       "x": 335,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 341,
+       "y": 85,
        "w": 5,
        "h": 5,
        "ox": 1,
@@ -81,8 +349,8 @@
      "loop": true,
      "frames": [
       {
-       "x": 308,
-       "y": 1,
+       "x": 301,
+       "y": 85,
        "w": 7,
        "h": 7,
        "ox": 0,
@@ -107,12 +375,214 @@
      "loop": true,
      "frames": [
       {
-       "x": 328,
-       "y": 1,
+       "x": 407,
+       "y": 85,
        "w": 4,
        "h": 4,
        "ox": 2,
        "oy": 4
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-lantern-bolt": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 6,
+     "loop": true,
+     "frames": [
+      {
+       "x": 347,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 353,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-orbit-shards": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 8,
+     "loop": true,
+     "frames": [
+      {
+       "x": 359,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 365,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-returning-glaive": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 4,
+     "loop": true,
+     "frames": [
+      {
+       "x": 371,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 377,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-splinter-shot": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "dir4": {
+     "ticksPerFrame": 0,
+     "loop": false,
+     "frames": [
+      {
+       "x": 424,
+       "y": 85,
+       "w": 5,
+       "h": 1,
+       "ox": 1,
+       "oy": 7
+      },
+      {
+       "x": 383,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 389,
+       "y": 85,
+       "w": 1,
+       "h": 5,
+       "ox": 3,
+       "oy": 3
+      },
+      {
+       "x": 391,
+       "y": 85,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-spawn-crack": {
+   "class": "vfx-danger",
+   "faction": "unlit",
+   "frameW": 24,
+   "frameH": 16,
+   "anchor": {
+    "x": 12,
+    "y": 11
+   },
+   "animations": {
+    "grow": {
+     "ticksPerFrame": 0,
+     "loop": false,
+     "frames": [
+      {
+       "x": 418,
+       "y": 85,
+       "w": 5,
+       "h": 3,
+       "ox": 9,
+       "oy": 13
+      },
+      {
+       "x": 397,
+       "y": 85,
+       "w": 9,
+       "h": 5,
+       "ox": 7,
+       "oy": 11
+      },
+      {
+       "x": 309,
+       "y": 85,
+       "w": 13,
+       "h": 7,
+       "ox": 5,
+       "oy": 9
+      },
+      {
+       "x": 157,
+       "y": 85,
+       "w": 15,
+       "h": 9,
+       "ox": 4,
+       "oy": 7
       }
      ]
     }
@@ -133,7 +603,7 @@
      "loop": true,
      "frames": [
       {
-       "x": 163,
+       "x": 398,
        "y": 1,
        "w": 14,
        "h": 20,
@@ -159,7 +629,7 @@
      "loop": true,
      "frames": [
       {
-       "x": 178,
+       "x": 413,
        "y": 1,
        "w": 18,
        "h": 20,
@@ -181,16 +651,62 @@
    },
    "animations": {
     "idle": {
-     "ticksPerFrame": 15,
+     "ticksPerFrame": 20,
      "loop": true,
      "frames": [
       {
-       "x": 197,
+       "x": 432,
        "y": 1,
        "w": 16,
        "h": 20,
        "ox": 4,
        "oy": 4
+      },
+      {
+       "x": 449,
+       "y": 1,
+       "w": 16,
+       "h": 20,
+       "ox": 4,
+       "oy": 4
+      }
+     ]
+    },
+    "walk": {
+     "ticksPerFrame": 8,
+     "loop": true,
+     "frames": [
+      {
+       "x": 466,
+       "y": 1,
+       "w": 16,
+       "h": 20,
+       "ox": 4,
+       "oy": 4
+      },
+      {
+       "x": 364,
+       "y": 1,
+       "w": 16,
+       "h": 21,
+       "ox": 4,
+       "oy": 3
+      },
+      {
+       "x": 483,
+       "y": 1,
+       "w": 16,
+       "h": 20,
+       "ox": 4,
+       "oy": 4
+      },
+      {
+       "x": 381,
+       "y": 1,
+       "w": 16,
+       "h": 21,
+       "ox": 4,
+       "oy": 3
       }
      ]
     }
@@ -211,8 +727,30 @@
      "loop": true,
      "frames": [
       {
-       "x": 243,
-       "y": 1,
+       "x": 30,
+       "y": 85,
+       "w": 22,
+       "h": 16,
+       "ox": 1,
+       "oy": 8
+      }
+     ]
+    },
+    "walk": {
+     "ticksPerFrame": 8,
+     "loop": true,
+     "frames": [
+      {
+       "x": 53,
+       "y": 85,
+       "w": 22,
+       "h": 16,
+       "ox": 1,
+       "oy": 8
+      },
+      {
+       "x": 76,
+       "y": 85,
        "w": 22,
        "h": 16,
        "ox": 1,
@@ -237,8 +775,8 @@
      "loop": true,
      "frames": [
       {
-       "x": 266,
-       "y": 1,
+       "x": 99,
+       "y": 85,
        "w": 13,
        "h": 15,
        "ox": 5,
@@ -259,16 +797,24 @@
    },
    "animations": {
     "idle": {
-     "ticksPerFrame": 15,
+     "ticksPerFrame": 18,
      "loop": true,
      "frames": [
       {
-       "x": 214,
+       "x": 500,
        "y": 1,
        "w": 9,
        "h": 18,
        "ox": 7,
        "oy": 6
+      },
+      {
+       "x": 1,
+       "y": 85,
+       "w": 9,
+       "h": 17,
+       "ox": 7,
+       "oy": 7
       }
      ]
     }
@@ -289,8 +835,8 @@
      "loop": true,
      "frames": [
       {
-       "x": 224,
-       "y": 1,
+       "x": 11,
+       "y": 85,
        "w": 18,
        "h": 17,
        "ox": 3,
@@ -315,16 +861,16 @@
      "loop": true,
      "frames": [
       {
-       "x": 280,
-       "y": 1,
+       "x": 129,
+       "y": 85,
        "w": 13,
        "h": 10,
        "ox": 1,
        "oy": 6
       },
       {
-       "x": 294,
-       "y": 1,
+       "x": 143,
+       "y": 85,
        "w": 13,
        "h": 10,
        "ox": 1,
@@ -349,12 +895,34 @@
      "loop": true,
      "frames": [
       {
-       "x": 142,
+       "x": 301,
        "y": 1,
        "w": 20,
        "h": 24,
        "ox": 6,
        "oy": 8
+      }
+     ]
+    },
+    "walk": {
+     "ticksPerFrame": 12,
+     "loop": true,
+     "frames": [
+      {
+       "x": 322,
+       "y": 1,
+       "w": 20,
+       "h": 24,
+       "ox": 6,
+       "oy": 8
+      },
+      {
+       "x": 343,
+       "y": 1,
+       "w": 20,
+       "h": 23,
+       "ox": 6,
+       "oy": 9
       }
      ]
     }
@@ -375,7 +943,7 @@
      "loop": true,
      "frames": [
       {
-       "x": 70,
+       "x": 139,
        "y": 1,
        "w": 26,
        "h": 34,
@@ -401,12 +969,68 @@
      "loop": true,
      "frames": [
       {
-       "x": 97,
+       "x": 166,
        "y": 1,
        "w": 44,
        "h": 32,
        "ox": 2,
        "oy": 16
+      }
+     ]
+    },
+    "walk": {
+     "ticksPerFrame": 10,
+     "loop": true,
+     "frames": [
+      {
+       "x": 211,
+       "y": 1,
+       "w": 44,
+       "h": 32,
+       "ox": 2,
+       "oy": 16
+      },
+      {
+       "x": 256,
+       "y": 1,
+       "w": 44,
+       "h": 32,
+       "ox": 2,
+       "oy": 16
+      }
+     ]
+    }
+   }
+  },
+  "boss-lantern": {
+   "class": "boss",
+   "faction": "unlit",
+   "frameW": 128,
+   "frameH": 128,
+   "anchor": {
+    "x": 64,
+    "y": 127
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 24,
+     "loop": true,
+     "frames": [
+      {
+       "x": 1,
+       "y": 1,
+       "w": 68,
+       "h": 83,
+       "ox": 30,
+       "oy": 45
+      },
+      {
+       "x": 70,
+       "y": 1,
+       "w": 68,
+       "h": 83,
+       "ox": 30,
+       "oy": 45
       }
      ]
     }

@@ -1,0 +1,60 @@
+key,value,notes
+# Global balance constants (data-schema 3.1). Owner GD. Technical constants live in src/core/constants.ts.
+player_base_speed,4.5,u/s horizontal (GDD 5.1)
+player_vertical_screen_ratio,0.8,screen vertical speed relative to horizontal; calibrate 0.75 to 0.85 (CD K7)
+player_radius,0.35,u
+pickup_radius_base,1.6,u
+glint_fly_speed,12,u/s
+glint_collect_dist_add,0.2,collected at player_radius + this
+glint_floor_cap,150,floor pickups before value merging (GDD 4.2)
+pulse_end_collect_frac,0.5,auto collect at Pulse end (Crack 0)
+pulse_clear_s,1.0,pulseClear phase
+iframes_hurt,0.5,s
+iframes_dodge,0.2,s
+iframes_block,0.2,s
+knockback_s,0.1,knockback spread time
+armor_k,15,armor formula constant
+armor_max_reduction,0.85,
+guard_min_frac,0.25,small hits keep 25%
+proc_growth,0.2,proc_scale(t) = 1 + 0.2 (t - 1)
+burn_dps_nonhit,2,Burn DPS per stack from non-hit sources x proc_scale
+enemy_hp_lin,0.12,hp(t)
+enemy_hp_quad,0.006,hp(t)
+enemy_dmg_lin,0.07,dm(t)
+price_growth,0.08,price x (1 + 0.08 (t - 1))
+xp_base,15,XP L to L+1 = 15 + 10 L
+xp_per_level,10,
+extra_projectile_spread_deg,12,
+weapon_slots,6,
+leech_heal_cap_per_s,6,
+spawn_mark_s,0.8,spawn telegraph
+spawn_grace_s,0.3,no contact or attacks after emerging
+spawn_group_spread,0.5,u
+spawn_mark_diam_small,1.0,u
+spawn_mark_diam_medium,1.5,u
+spawn_mark_diam_large,2.0,u
+spawn_mark_diam_warden,3.0,u
+spawn_quiet_end_s,2,no new spawn telegraphs in the last seconds
+enemy_radius_small,0.3,u
+enemy_radius_medium,0.4,u
+enemy_radius_large,0.6,u
+enemy_radius_warden,0.9,u
+enemy_radius_boss,1.6,u
+enemy_shot_radius,0.2,u
+player_shot_radius,0.15,u
+telegraph_min_projectile_s,0.4,P2-e
+telegraph_min_charge_s,0.6,P2-e
+telegraph_min_area_s,0.8,P2-e
+telegraph_min_boss_s,1.0,P2-e
+music_pressure_frac,0.6,fraction of alive_cap
+music_pressure_release_frac,0.5,
+warden_spawn_frac,0.25,
+warden_overtime_haste_s,20,
+boss_entry_s,2.0,boss stage telegraph
+boss_enrage_s,120,
+boss_enrage_gap_mult,0.6,
+boss_trickle_every_s,4,
+boss_trickle_count,2,
+boss_trickle_max_alive,24,
+death_slowmo_s,1.0,
+victory_delay_s,1.5,

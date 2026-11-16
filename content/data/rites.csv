@@ -1,0 +1,5 @@
+id,name_key,desc_key,content_tier,archetype,cooldown,dmg,radius,params,notes
+# Rites (data-schema 3.4, GDD 7.1). dmg is proc damage (x proc_scale).
+flare_lantern,rite.flare_lantern.name,rite.flare_lantern.desc,A,throw_zone,12,20,3,max_range=6;flight_s=0.35;zone_radius=3;zone_s=4;zone_tick=0.5;slow=30;status=burn,zone Burn uses burn_dps_nonhit
+great_toll,rite.great_toll.name,rite.great_toll.desc,B,ring,11,25,4.5,knockback=2.5;slow=50;slow_s=2,
+glass_step,rite.glass_step.name,rite.glass_step.desc,B,dash,5,15,0.6,dash_dist=4.5;dash_s=0.18;iframes_s=0.35;crit_hits=3;crit_window_s=2.5,radius = dash hit half-width [Asumsi]

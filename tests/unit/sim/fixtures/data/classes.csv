@@ -1,0 +1,3 @@
+id,name_key,desc_key,content_tier,accent,tag,start_weapon,rite_id,max_hp,stat_mods,unlock_silt,sort
+lantern,class.lantern.name,class.lantern.desc,A,gold,flame,lantern_bolt,flare_lantern,30,area_pct=10,0,1
+blade,class.blade.name,class.blade.desc,B,cyan,edge,arc_blade,glass_step,38,armor=2;move_speed=5;range_pct=-15,40,3

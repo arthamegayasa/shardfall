@@ -1,0 +1,5 @@
+id,duration,tick,params
+burn,3,0.5,dps_frac=0.3;ignores_guard=1;can_crit=0
+slow,2,0,
+mark,4,0,vuln=0.2
+knockback,0.1,0,

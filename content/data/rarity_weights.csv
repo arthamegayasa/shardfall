@@ -1,0 +1,7 @@
+t_min,t_max,plain,fine,rare,fabled
+# Rarity weights per threat (data-schema 3.8, GDD 13.1). Luck multiplies fine, rare, fabled by (1 + luck / 100).
+1,3,78,20,2,0
+4,6,60,30,9,1
+7,10,45,35,16,4
+11,14,32,38,23,7
+15,20,22,38,30,10

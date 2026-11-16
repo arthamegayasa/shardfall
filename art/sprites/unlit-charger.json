@@ -9,7 +9,7 @@
     "y": 23
   },
   "outline": "ink",
-  "status": "concept",
+  "status": "placeholder",
   "note": "Role charger. Long horizontal quadruped, head forward. Wrong: legs with extra knees. Faces right, runtime flips.",
   "animations": {
     "idle": {
@@ -31,6 +31,44 @@
           "..uu..uu....uu..uu..",
           "..u...u.....u...u...",
           ".uu..uu....uu..uu..."
+        ]
+      ]
+    },
+    "walk": {
+      "ticksPerFrame": 8,
+      "loop": true,
+      "frames": [
+        [
+          "...............u.u..",
+          "..............uuuu..",
+          ".............uuRuuuu",
+          ".uu.........uuuuuuu.",
+          "uuuuuuuuuuuuuuuuu...",
+          ".uuuuuuuuuuuuuuu....",
+          "..uuuuuuuuuuuuu.....",
+          "..uu.uu.....uu.uu...",
+          "..u...u.....u...u...",
+          "..uu..uu....uu..uu..",
+          "...u...u.....u...u..",
+          "..uu..uu....uu..uu..",
+          "..u...u.....u...u...",
+          ".uu..uu....uu..uu..."
+        ],
+        [
+          "...............u.u..",
+          "..............uuuu..",
+          ".............uuRuuuu",
+          ".uu.........uuuuuuu.",
+          "uuuuuuuuuuuuuuuuu...",
+          ".uuuuuuuuuuuuuuu....",
+          "..uuuuuuuuuuuuu.....",
+          "...uu.uu...uu.uu....",
+          "...u...u...u...u....",
+          "...uu..uu..uu..uu...",
+          "....u...u...u...u...",
+          "...uu..uu..uu..uu...",
+          "...u...u...u...u....",
+          "..uu..uu..uu..uu...."
         ]
       ]
     }

@@ -1,0 +1,53 @@
+{
+  "id": "fx-shot-splinter-shot",
+  "class": "projectile-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white"
+  ],
+  "status": "placeholder",
+  "note": "Weapon splinter_shot. Thin white shard with cyan tips. dir4 frames: horizontal, rising, vertical, falling (screen space).",
+  "animations": {
+    "dir4": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          ".....",
+          ".....",
+          "cwwwc",
+          ".....",
+          "....."
+        ],
+        [
+          "....c",
+          "...w.",
+          "..w..",
+          ".w...",
+          "c...."
+        ],
+        [
+          "..c..",
+          "..w..",
+          "..w..",
+          "..w..",
+          "..c.."
+        ],
+        [
+          "c....",
+          ".w...",
+          "..w..",
+          "...w.",
+          "....c"
+        ]
+      ]
+    }
+  }
+}

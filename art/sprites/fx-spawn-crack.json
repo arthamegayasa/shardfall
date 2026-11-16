@@ -1,0 +1,61 @@
+{
+  "id": "fx-spawn-crack",
+  "class": "vfx-danger",
+  "faction": "unlit",
+  "frameW": 24,
+  "frameH": 16,
+  "anchor": {
+    "x": 12,
+    "y": 11
+  },
+  "outline": "ink",
+  "emissive": [
+    "danger-core"
+  ],
+  "status": "placeholder",
+  "note": "Spawn telegraph crack (arena-design 5.3). Violet branches, danger-core centre, ink outline. Frame = telegraph progress. Anchor sits at the crack centre.",
+  "animations": {
+    "grow": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "...............",
+          "...............",
+          "...............",
+          "......ppp......",
+          "...............",
+          "...............",
+          "..............."
+        ],
+        [
+          "...............",
+          "...............",
+          ".....vvpvv.....",
+          "....vvpppvv....",
+          ".....vvpvv.....",
+          "...............",
+          "..............."
+        ],
+        [
+          "...............",
+          "....v..v..v....",
+          "..v..vvpvv..v..",
+          "...vvvpppvvv...",
+          "..v..vvpvv..v..",
+          "....v..v..v....",
+          "..............."
+        ],
+        [
+          "...v.......v...",
+          "....v..v..v....",
+          ".vv..vvpvv..vv.",
+          "...vvvpppvvv...",
+          ".vv..vvpvv..vv.",
+          "....v..v..v....",
+          "...v.......v..."
+        ]
+      ]
+    }
+  }
+}

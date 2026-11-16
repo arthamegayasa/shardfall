@@ -1,9 +1,9 @@
 {
-  // Node tools. TODO(AD, M1-05): add "art/**/*.ts" and tools/art once moved to .ts.
+  // Node tools, plus AD sprite generators that tools/art imports. tools/art/**/*.mjs (M0 concept renderer) stays untyped.
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "lib": ["ES2023"],
     "types": ["node"]
   },
-  "include": ["tools/**/*.ts"]
+  "include": ["tools/**/*.ts", "art/**/*.ts"]
 }

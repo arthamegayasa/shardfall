@@ -1,6 +1,6 @@
 # Shardfall: Pipeline Art
 
-Pemilik: Art Director (AD). Status: M0, versi 1 (2026-11-16). Reviewer: LP (teknis), CD (visual).
+Pemilik: Art Director (AD). Status: versi 1.1 (2026-11-17, M1-05). Reviewer: LP (teknis), CD (visual).
 Arah visual: `docs/art-direction.md`. Kontrak teknis: `docs/tech/architecture.md` bagian 7 dan 10 (LP).
 
 Tim tidak punya tool menggambar. Semua art dibuat dari data dan kode: sprite pixel art sebagai grid karakter, lingkungan 3D dari primitif three.js dengan tekstur piksel prosedural, VFX dari parameter. Semua bisa dibuat ulang dan diaudit otomatis.
@@ -11,7 +11,7 @@ Tim tidak punya tool menggambar. Semua art dibuat dari data dan kode: sprite pix
 
 ```
 art/palette.json ─┐
-art/sprites/*.json ┼─> validasi (tools/art/check-sprites.mjs) ─> rasterizer murni ─> atlas (shelf packer) + manifest
+art/sprites/*.json ┼─> validasi (tools/art/check-sprites.ts) ─> src/core/sprite ─> atlas (shelf packer) + manifest
 art/sprites/*.ts  ─┤                                            │                     │
 art/tiles/*.json  ─┘                                            │                     ├─> runtime: DataTexture saat boot (LP)
                                                                 │                     └─> tool: art/atlas/preview/atlas.png + atlas.json
@@ -19,8 +19,9 @@ art/tiles/*.json  ─┘                                            │         
 ```
 
 - **Runtime (keputusan LP):** saat boot, semua sprite dirasterisasi dan dipak ke satu atlas `DataTexture` (filter nearest, tanpa mipmap). Tidak ada PNG sprite di repo atau di bundle.
-- **Tool (AD):** rasterizer yang sama dipakai di Node untuk validasi, lembar preview, dan atlas review. Di M0 rasterizer prototipe ada di `tools/art/lib/sprite.mjs`. Di M1 LP memindahkannya ke `src/render/sprites/rasterize.ts` (fungsi murni, tanpa DOM) dan tool meng-import dari sana, sehingga hasil tool dan game identik.
-- Node 24 menjalankan `.mjs` dan `.ts` langsung (type stripping). Tanpa dependensi npm.
+- **Tool (AD):** `tools/art/check-sprites.ts` memakai rasterizer dan packer runtime `src/core/sprite/` (`compileSprite`, `packAtlas`, `frameToRgba`), jadi validasi, lembar preview, atlas review, dan game identik.
+- Pengecualian [Asumsi, port di M2]: perender konsep mood `tools/art/build-concepts.mjs` dan `lib/scene.mjs` tetap `.mjs` bersama rasterizer referensi M0 `lib/sprite.mjs` dan `lib/atlas.mjs`. Keduanya dipakai tes kesetaraan LP (`tests/unit/core/sprite.test.ts`) sebagai acuan, tidak dipakai pipeline produksi, dan dikecualikan dari lint.
+- Node 24 menjalankan `.ts` langsung (type stripping). Tanpa dependensi npm.
 
 ## 2. Lokasi file dan penamaan [Wajib]
 
@@ -29,18 +30,39 @@ art/tiles/*.json  ─┘                                            │         
 | `art/palette.json` | Token inti, token emisif, grup kubu, palet dan cahaya bioma | AD |
 | `art/sprites/<id>.json` | Sprite buatan tangan | AD |
 | `art/sprites/<id>.ts` | Sprite prosedural (generator). Default export berbentuk sama dengan JSON | AD |
-| `art/sprites/sprite-types.ts` | Tipe `SpriteSheetDef` (dasar LP plus ekstensi AD) | AD, LP review |
+| `art/sprites/sprite-types.ts` | Re-export tipe kanonik dari `src/core/contracts/sprite.ts` (LP) | AD, LP review |
 | `art/tiles/<id>.json` | Tile lantai dan tekstur lingkungan | AD |
 | `art/vfx/<id>.json` | Parameter VFX dan partikel (mulai M2) | AD |
 | `art/atlas/preview/` | Hasil tool: `sprites.png`, `atlas.png`, `atlas.json`. Dibuat ulang, boleh di-commit untuk review | Dibuat tool |
 | `art/concept/` | Konsep mood dan `measurements.json` | Dibuat tool |
-| `tools/art/` | Skrip pipeline | AD |
-| `src/render/shaders/`, `src/render/vfx/` | GLSL dan VFX runtime (M2) | AD, LP review |
+| `tools/art/` | Skrip pipeline (`check-sprites.ts`, `lib/*.ts`; konsep M0 `.mjs`) | AD |
+| `src/render/sprites/` | Batch sprite instanced, pemetaan id, pemilihan bingkai, lapisan entitas | LP + AD |
+| `src/render/shaders/`, `src/render/vfx/` | Shader sprite dan area, telegraf, angka damage | AD, LP review |
+| `tests/render/` | Tes logika pemetaan render, adegan palsu, preview Playwright (`npm run art:shot`) | AD |
 
 Penamaan:
 - Id sprite kebab-case dengan awalan grup: `kept-`, `unlit-`, `warden-`, `boss-`, `fx-`, `prop-`, `tile-`, `icon-`. Nama file = id.
 - Id sprite memetakan id data GD (snake_case) dengan aturan: `swarmer` menjadi `unlit-swarmer`, `warden_hound` menjadi `warden-hound`, `boss_lantern` menjadi `boss-lantern`, kelas `lantern` menjadi `kept-lantern`. Nama tampil tidak pernah dipakai di id.
-- Nama animasi standar: `idle`, `walk`, `attack`, `windup` (ancang-ancang atau telegraf pada sprite), `cast` (Rite), `variants` (khusus tile). Kilat kena hit, kematian, dan aura adalah efek runtime, bukan animasi sprite.
+- Id proyektil pemain: `fx-shot-<id senjata kebab>` (`splinter_shot` menjadi `fx-shot-splinter-shot`).
+- Nama animasi standar: `idle`, `walk`, `attack`, `windup` (ancang-ancang atau telegraf pada sprite), `cast` (Rite), `variants` (khusus tile). Khusus efek: `dir4` (4 orientasi garis di layar: datar, naik, tegak, turun), `grow` (bingkai menurut progres 0 sampai 1), `normal` dan `crit` (`fx-digits`, indeks bingkai = digit). Kilat kena hit, kematian, dan aura adalah efek runtime, bukan animasi sprite.
+
+### 2.1 Set sprite M1 [Wajib, dicek `art:check`]
+
+| Kebutuhan | Sprite | Animasi | Lapis |
+|---|---|---|---|
+| Pemain Lamplighter (`lantern`) | `kept-lantern` | `idle` 2, `walk` 4 | L2 |
+| Unlit Tingkat A | `unlit-swarmer`, `unlit-charger`, `unlit-shooter`, `unlit-tank` | `idle` 2 (swarmer, shooter) atau `idle` 1 plus `walk` 2 | L2 |
+| Warden dan boss | `warden-hound`, `boss-lantern` | `idle` 1 plus `walk` 2; boss `idle` 2 | L2 |
+| Proyektil pemain per senjata | `fx-shot-lantern-bolt`, `fx-shot-splinter-shot` (`dir4`), `fx-shot-arc-blade`, `fx-shot-orbit-shards`, `fx-shot-chain-spark`, `fx-shot-returning-glaive`, cadangan `fx-shot-kept` | 1 sampai 4 | L3 |
+| Proyektil musuh | `fx-shot-danger` | 1 | L4 |
+| Glint | `fx-glint` | 2 | L2 |
+| Burn pada Unlit | `fx-burn` | 2 | L3 |
+| Retakan spawn | `fx-spawn-crack` | `grow` 4, anchor di tengah retakan | L4 |
+| Angka damage | `fx-digits` | `normal` 10, `crit` 10 | L3 |
+| Telegraf lingkaran, cincin, garis, kerucut; zona pemain | shader `src/render/shaders/area.ts` | progres dari pool | L4 / L3 |
+| Lantai | `tile-floor` | `variants` 2 | L0 |
+
+Pemetaan id data ke sprite ada di `src/render/sprites/sprite-ids.ts` dengan urutan cadangan: id sendiri, lalu `behavior`, lalu `role`, lalu sprite per `size_class`. Kelas dan senjata tanpa sprite memakai `kept-lantern` dan `fx-shot-kept`. Tes `tests/render/sprite-ids.test.ts` memastikan semua id Tingkat A punya sprite sendiri (data GD asli juga sudah tercakup penuh).
 
 ## 3. Format sprite
 
@@ -114,7 +136,7 @@ Token bioma ditulis `b1.wood`, `b2.stone`, dan seterusnya, lewat `legend`. Tile 
 Dengan `mirror: 'odd'`, baris `".uRuuR"` menjadi `".uRuuRuuRu."` (11 px). Setelah outline: 13 x 10 px.
 
 ### 3.4 Sprite prosedural
-Untuk bentuk besar atau berulang (boss, tekstur organik), tulis generator TS yang menghitung grid dengan matematika sederhana dan deterministik (tanpa `Math.random`; pakai hash atau rumus). Contoh: `art/sprites/boss-lantern.ts` (elips sangkar, inti berlapis, sulur sinus). Keluaran tetap grid karakter yang divalidasi sama seperti JSON.
+Untuk bentuk besar atau berulang (boss, tekstur organik), tulis generator TS yang menghitung grid dengan matematika sederhana dan deterministik: tanpa `Math.random`, trigonometri hanya lewat `src/core/math` (`sinTurns`, `cosTurns`), jarak dengan `Math.sqrt` (bukan `Math.hypot`). Generator hanya boleh import `src/core/contracts/sprite.ts` (lewat `sprite-types.ts`) dan `src/core/math`; ESLint memaksa ini. Contoh: `art/sprites/boss-lantern.ts` (elips sangkar, inti berlapis, sulur sinus dua fase). Keluaran tetap grid karakter yang divalidasi sama seperti JSON. `art/**/*.ts` masuk `tsconfig.json`, `tsconfig.tools.json`, dan lint.
 
 ### 3.5 Animasi [Saran]
 | Animasi | Bingkai | `ticksPerFrame` |
@@ -142,7 +164,7 @@ Bingkai animasi disusun dari bingkai dasar dengan perubahan kecil (kaki bergeser
 - Shelf packer deterministik: bingkai diurutkan menurut tinggi menurun, lalu id, nama animasi, indeks. Lebar 512 px, naik ke 1024 bila tidak muat dalam tinggi 1024. Tinggi dibulatkan ke pangkat dua.
 - Padding 1 px transparan antar bingkai. Cukup karena filter nearest, tanpa mipmap, dan koordinat UV memakai piksel bulat.
 - Bingkai disimpan sebagai rect terpangkas plus offset di dalam bingkai (hemat ruang).
-- Implementasi tool: `tools/art/lib/atlas.mjs`. Runtime memakai algoritme yang sama.
+- Implementasi: `src/core/sprite/atlas-pack.ts`, dipakai runtime dan tool. Referensi M0 `tools/art/lib/atlas.mjs` hanya untuk tes kesetaraan.
 
 ### 5.2 Skema manifest
 
@@ -190,7 +212,7 @@ AD setuju usul LP (architecture 7.6): atlas R8 berisi indeks palet plus LUT pale
 
 ### 6.2 Tekstur piksel prosedural [Wajib]
 - Tile dan tekstur lingkungan adalah grid karakter seperti sprite (`art/tiles/`), dirasterisasi saat boot ke `DataTexture` nearest tanpa mipmap.
-- **Texel lantai selalu persegi di layar.** Dengan pitch kamera θ, satu texel menempati 1 unit di sumbu x dan `1 / sin θ` unit di sumbu kedalaman. Pada pitch LP asin(2/3): 1,5 unit (tile 16x16 texel = 16 x 24 unit dunia, tampil 16 x 16 px layar). Aturan ini tetap berlaku bila pitch akhir berubah (lihat pertanyaan terbuka).
+- **Texel lantai selalu persegi di layar: 1 texel = 1/16 u di x dan 1/10 u di kedalaman** (pitch final asin(0,625), architecture 7.2). Tile 16 x 16 texel menutupi 1 x 1,6 u; tile 16 x 10 texel menutupi tepat 1 x 1 u. Keputusan AD: `tile-floor` tetap 16 x 16 texel (1 x 1,6 u), karena pola batu persegi di layar lebih tenang dan ulangan tile lebih jarang terlihat.
 - Tile punya animasi `variants` (2 sampai 4 varian). Renderer memilih varian per sel dengan hash posisi sel, deterministik, agar pola tidak berulang terlihat.
 - Permukaan vertikal tampil x cos θ (sekitar 0,745). Kerapatannya tidak persis, jadi permukaan vertikal hanya di dekorasi di luar batas. Dekorasi yang harus tajam persis (lentera, lilin) dibuat sebagai billboard sprite faksi `env`.
 - Lantai area main: dua nada lantai saja, sambungan putus-putus, tanpa pola ramai.
@@ -205,7 +227,7 @@ AD setuju usul LP (architecture 7.6): atlas R8 berisi indeks palet plus LUT pale
 
 | Tekstur | Ukuran maksimal | Memori GPU | Saat ini |
 |---|---|---|---|
-| Atlas aktor dan efek (RGBA) | 1024 x 1024 | 4 MB (1 MB bila R8 berindeks di M2) | 512 x 128 untuk 15 sprite konsep |
+| Atlas aktor dan efek (RGBA) | 1024 x 1024 | 4 MB (1 MB bila R8 berindeks di M2) | 512 x 128 untuk 24 sprite (M1-05) |
 | Tile dan tekstur lingkungan per bioma | 512 x 512 | 1 MB | 1 tile 16x16 x 2 varian |
 | Atlas VFX dan partikel | 256 x 256 | 0,25 MB | belum |
 | Font bitmap dan ikon UI | 512 x 256 | 0,5 MB | belum (UI) |
@@ -217,26 +239,34 @@ Render target post-processing adalah anggaran LP. Unduhan: nol byte PNG untuk sp
 
 | Perintah | Hasil | Waktu |
 |---|---|---|
-| `node tools/art/check-sprites.mjs` | Validasi semua sprite dan tile, `art/atlas/preview/sprites.png` (warna, siluet, grayscale, semua bingkai, 4x), `atlas.png` dan `atlas.json`. Exit 1 bila ada pelanggaran | di bawah 1 detik |
-| `node tools/art/check-sprites.mjs --no-preview` | Validasi saja (untuk CI) | di bawah 1 detik |
-| `node tools/art/build-concepts.mjs` | Lima konsep mood di `art/concept/` plus `measurements.json` | sekitar 5 detik |
+| `npm run art:preview` | Validasi semua sprite dan tile, `art/atlas/preview/sprites.png` (warna, siluet, grayscale, semua bingkai, 4x), `atlas.png` dan `atlas.json`. Exit 1 bila ada pelanggaran | sekitar 1 detik |
+| `npm run art:check` | Validasi saja, termasuk set sprite M1 (2.1). Bagian dari `npm run check` | sekitar 1 detik |
+| `npm run art:concepts` | Lima konsep mood di `art/concept/` plus `measurements.json` | sekitar 5 detik |
+| `npm run art:shot` | Renderer asli pada dunia palsu (`tests/render/fake-scene.ts`) di Chromium headless, screenshot `tests/out/render-preview-1920x1080.png` dan `-1280x720.png`. Vite mode `test`, tidak menulis `content/generated` | sekitar 10 detik |
 
-Yang dicek validator: token tidak dikenal, baris tidak sama panjang, token di luar kubu (P2-d), tinggi di luar rentang kelas, bingkai tidak muat, sorotan pemain di bawah 15%, id bukan kebab-case, id ganda. Uji negatif sudah dijalankan (Unlit memakai cyan, Kept memakai merah, Unlit kecil terlalu tinggi, karakter tidak dikenal) dan semuanya tertangkap.
+Yang dicek validator: token tidak dikenal, baris tidak sama panjang, token di luar kubu (P2-d), tinggi di luar rentang kelas, bingkai tidak muat, sorotan pemain di bawah 15%, id bukan kebab-case, id ganda, nama file sama dengan id, sprite dan animasi wajib M1 (2.1). Uji negatif sudah dijalankan (Unlit memakai cyan, Kept memakai merah, Unlit kecil terlalu tinggi, karakter tidak dikenal) dan semuanya tertangkap.
 
-Usulan skrip npm untuk LP di M1 (package.json milik LP): `art:check` = `node tools/art/check-sprites.mjs --no-preview` (masuk CI), `art:preview` = `node tools/art/check-sprites.mjs`, `art:concepts` = `node tools/art/build-concepts.mjs`.
 
-Cara CD mereview: buka `art/atlas/preview/sprites.png` (baris 1 warna, baris 2 siluet datar, baris 3 grayscale) dan konsep di `art/concept/`. Mulai M2, screenshot game sungguhan dari Playwright menggantikan render konsep untuk uji P2 dan P3.
+Cara CD mereview: buka `art/atlas/preview/sprites.png` (baris 1 warna, baris 2 siluet datar, baris 3 grayscale), screenshot render `tests/out/render-preview-1920x1080.png` (buat ulang dengan `npm run art:shot`), dan konsep di `art/concept/`. Mulai M2, screenshot game sungguhan menggantikan render konsep untuk uji P2 dan P3.
 
 ## 9. Menambah atau mengubah sprite
 
 1. Tulis `art/sprites/<id>.json` (atau `.ts` untuk generator) mengikuti bagian 3 dan 4.
-2. Jalankan `node tools/art/check-sprites.mjs` sampai 0 failing.
+2. Jalankan `npm run art:preview` sampai 0 failing.
 3. Lihat `art/atlas/preview/sprites.png`: siluet terbaca, grayscale tiga lapis.
 4. Tambah baris di `docs/credits.md` (file, "Tim Shardfall (AD), data prosedural", lisensi proyek, catatan).
 5. Laporkan ke CD dengan path preview.
 
-## 10. Serah terima ke M1
+## 10. Render entitas M1 (M1-05)
 
-- LP: pindahkan logika `compileSprite` (mirror, rim, outline 4-tetangga, pangkas, validasi kubu) dari `tools/art/lib/sprite.mjs` ke `src/render/sprites/rasterize.ts`; tool lalu meng-import modul itu. Perilaku dan urutan packer di `tools/art/lib/atlas.mjs` menjadi acuan.
-- LP mengizinkan `art/**/*.ts` dan import JSON dari `art/` di tsconfig dan Vite.
-- AD di M1: placeholder berskala benar memakai sprite konsep ini (sudah dalam rentang ukuran), plus tile lantai.
+- `src/render/sprites/entity-layers.ts` membaca `WorldView` dan event frame, lalu mengisi lima batch instanced: zona pemain (area, L3 di lantai), aktor L2 (pemain, Unlit, Warden, boss, Glint; uji dan tulis depth dari kaki), efek pemain L3 (proyektil, Burn, angka damage), area bahaya L4 (telegraf dan cincin spawn), sprite bahaya L4 (retakan spawn, proyektil musuh). L4 ada di scene terpisah yang digambar terakhir; saat post-processing LP datang, scene ini pindah ke `dangerRT` tanpa perubahan art.
+- Sprite: `shaders/sprite.ts`, kaki diproyeksikan lalu dibulatkan ke piksel virtual, quad dibangun di piksel bulat (cermin TS: `frame-select.ts` `spriteQuad`, dites). Flip horizontal untuk hadap kiri. Kilat kena hit mengisi sprite dengan `kept-white` (pemain) atau `bone` (Unlit).
+- Area: `shaders/area.ts`, bentuk dihitung di ruang piksel layar, tepi tepat 1 px lewat `fwidth`, isian datar tanpa anti-aliasing.
+- Semua id sprite diselesaikan sekali saat dibuat; `update()` hanya membaca typed array dan menulis buffer instance (tanpa alokasi per frame). Kapasitas tetap; instance di atas kapasitas dibuang dan dihitung (`overflow()`).
+- Pemain menghadap arah gerak horizontal (sprite tidak simetris), `walk` saat bergerak, `idle` saat diam. Unlit memakai `facing` dari view.
+- Tes: `tests/render/` (pemilihan bingkai, orientasi `dir4` di ruang layar, hadap, penempatan quad, tata letak digit, cakupan id, isi tiap lapis dari dunia palsu).
+
+## 11. Sisa untuk M2
+
+- Port `build-concepts.mjs` dan `lib/scene.mjs` ke `.ts` (atau pensiunkan setelah screenshot game menggantikan konsep).
+- Cahaya sprite per instance (Kept minimal 70%), bayangan elips L1, cincin kaki pemain, jejak proyektil, aura Warden, kematian Unlit, animasi `windup` dari `aiState` setelah kode state AI GP stabil.

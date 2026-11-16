@@ -1,0 +1,16 @@
+id,stat,plain,fine,rare,fabled,content_tier,weight,desc_key
+# Temper cards (data-schema 3.12, GDD 11.2). pct stats in percentage points.
+card_max_hp,max_hp,4,7,11,16,A,1,card.max_hp
+card_hp_regen,hp_regen,0.2,0.35,0.55,0.8,A,1,card.hp_regen
+card_armor,armor,1,2,3,5,A,1,card.armor
+card_dodge,dodge,2,4,6,9,A,1,card.dodge
+card_move_speed,move_speed,3,5,8,12,A,1,card.move_speed
+card_damage,damage_pct,5,8,12,18,A,1,card.damage
+card_attack_speed,attack_speed_pct,4,7,11,16,A,1,card.attack_speed
+card_crit_chance,crit_chance,2,4,6,9,A,1,card.crit
+card_area,area_pct,5,9,13,19,A,1,card.area
+card_range,range_pct,5,9,13,19,A,1,card.range
+card_pickup_radius,pickup_radius_pct,10,18,27,40,A,1,card.pickup
+card_luck,luck,4,8,12,18,A,1,card.luck
+card_leech,leech,1,2,3,5,A,1,card.leech
+card_rite_haste,rite_haste,4,7,10,14,A,1,card.rite_haste

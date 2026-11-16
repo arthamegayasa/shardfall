@@ -1,0 +1,4168 @@
+{
+  "cues": [
+    {
+      "id": "sfx.weapon.fire.bolt",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 60,
+      "gainDb": -25,
+      "attackMs": 2,
+      "maxVoices": 4,
+      "minIntervalMs": 40,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 520,
+          "freqEnd": 380,
+          "glideMs": 40,
+          "attackMs": 2,
+          "decayMs": 50
+        },
+        {
+          "kind": "noise",
+          "durMs": 10,
+          "decayMs": 10,
+          "gainDb": -18,
+          "filter": {
+            "type": "hp",
+            "freq": 5000
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.fire.lob",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 80,
+      "gainDb": -24,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 5,
+          "decayMs": 70,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 260,
+          "freqEnd": 200,
+          "attackMs": 3,
+          "decayMs": 70,
+          "gainDb": -3
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.impact.burst",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 80,
+      "gainDb": -23,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 40,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 4,
+          "decayMs": 75,
+          "filter": {
+            "type": "lp",
+            "freq": 1200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 140,
+          "durMs": 60,
+          "decayMs": 60,
+          "attackMs": 2
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.fire.arc",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 75,
+      "gainDb": -24,
+      "attackMs": 2,
+      "maxVoices": 4,
+      "minIntervalMs": 50,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 10,
+          "env": "flat",
+          "releaseMs": 30,
+          "filter": {
+            "type": "bp",
+            "freq": 400,
+            "freqEnd": 900,
+            "q": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.orbit.contact",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 50,
+      "gainDb": -27,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 80,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 600,
+          "durMs": 30,
+          "decayMs": 30,
+          "attackMs": 2
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.fire.chain",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 80,
+      "gainDb": -24,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 6000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 12,
+          "decayMs": 12,
+          "attackMs": 1,
+          "filter": {
+            "type": "bp",
+            "freq": 700,
+            "q": 2
+          },
+          "repeat": {
+            "count": 3,
+            "everyMs": 15,
+            "semis": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.fire.glaive",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 80,
+      "gainDb": -24,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 450,
+          "attackMs": 6,
+          "env": "flat",
+          "releaseMs": 25,
+          "tremoloHz": 30,
+          "tremoloDepth": 0.7
+        },
+        {
+          "kind": "noise",
+          "attackMs": 6,
+          "decayMs": 70,
+          "gainDb": -14,
+          "filter": {
+            "type": "bp",
+            "freq": 1000,
+            "q": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.fire.ring",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 80,
+      "gainDb": -24,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 330,
+          "durMs": 50,
+          "decayMs": 50,
+          "attackMs": 2,
+          "repeat": {
+            "count": 2,
+            "everyMs": 30,
+            "gainDb": -8
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 495,
+          "durMs": 50,
+          "decayMs": 50,
+          "attackMs": 2,
+          "gainDb": -3,
+          "repeat": {
+            "count": 2,
+            "everyMs": 30,
+            "gainDb": -8
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.hit",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 50,
+      "gainDb": -27,
+      "attackMs": 2,
+      "maxVoices": 3,
+      "minIntervalMs": 50,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "lowpassHz": 7000,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 30,
+          "decayMs": 30,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 180,
+          "durMs": 40,
+          "decayMs": 40,
+          "attackMs": 2
+        }
+      ]
+    },
+    {
+      "id": "sfx.weapon.hit_crit",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 80,
+      "gainDb": -22,
+      "attackMs": 2,
+      "maxVoices": 2,
+      "minIntervalMs": 80,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 30,
+          "decayMs": 30,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 180,
+          "durMs": 40,
+          "decayMs": 40,
+          "attackMs": 2
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 4500,
+          "startMs": 5,
+          "durMs": 40,
+          "decayMs": 40,
+          "attackMs": 2,
+          "gainDb": -6
+        }
+      ]
+    },
+    {
+      "id": "sfx.player.hit",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 1,
+      "durationMs": 250,
+      "gainDb": -6,
+      "maxVoices": 1,
+      "minIntervalMs": 120,
+      "pitchJitter": 0.02,
+      "send": {
+        "room": 0.15
+      },
+      "duck": "player_hit",
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 40,
+          "decayMs": 40,
+          "attackMs": 1,
+          "filter": {
+            "type": "hp",
+            "freq": 2000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 900,
+          "freqEnd": 280,
+          "glideMs": 120,
+          "attackMs": 1,
+          "decayMs": 160
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 80,
+          "durMs": 90,
+          "decayMs": 90,
+          "attackMs": 2
+        },
+        {
+          "kind": "grains",
+          "count": 6,
+          "freqMin": 2000,
+          "freqMax": 6000,
+          "spreadMs": 40,
+          "grainMs": 15,
+          "grainMsMax": 40,
+          "gainDb": -8
+        }
+      ]
+    },
+    {
+      "id": "sfx.player.lowhp",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 300,
+      "gainDb": -24,
+      "maxVoices": 1,
+      "minIntervalMs": 500,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 60,
+          "durMs": 90,
+          "decayMs": 80,
+          "attackMs": 3
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 50,
+          "startMs": 160,
+          "durMs": 90,
+          "decayMs": 80,
+          "attackMs": 3,
+          "gainDb": -2
+        },
+        {
+          "kind": "noise",
+          "durMs": 70,
+          "decayMs": 70,
+          "attackMs": 5,
+          "gainDb": -16,
+          "filter": {
+            "type": "bp",
+            "freq": 4500,
+            "q": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.player.death",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 1,
+      "sampleRate": 16000,
+      "durationMs": 1800,
+      "gainDb": -6,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.3
+      },
+      "duck": "big_moment",
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 900,
+          "decayMs": 900,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 8000,
+            "freqEnd": 400
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 12,
+          "freqMin": 2000,
+          "freqMax": 6000,
+          "spreadMs": 500,
+          "grainMs": 300,
+          "grainMsMax": 900,
+          "drop": 2
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 220,
+          "freqEnd": 55,
+          "glideMs": 1200,
+          "attackMs": 2,
+          "decayMs": 1400,
+          "gainDb": -4
+        }
+      ]
+    },
+    {
+      "id": "sfx.player.heal",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 300,
+      "gainDb": -18,
+      "maxVoices": 1,
+      "minIntervalMs": 200,
+      "coalesce": {
+        "windowMs": 200,
+        "maxBoostDb": 2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "freqEnd": "D6",
+          "glideMs": 120,
+          "attackMs": 20,
+          "decayMs": 280
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 60,
+          "attackMs": 20,
+          "decayMs": 240,
+          "gainDb": -4
+        },
+        {
+          "kind": "grains",
+          "count": 4,
+          "freqMin": 4000,
+          "freqMax": 7000,
+          "spreadMs": 200,
+          "grainMs": 60,
+          "grainMsMax": 120,
+          "gainDb": -14
+        }
+      ]
+    },
+    {
+      "id": "sfx.player.block",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 180,
+      "gainDb": -14,
+      "maxVoices": 2,
+      "minIntervalMs": 80,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1200,
+          "attackMs": 2,
+          "decayMs": 160
+        },
+        {
+          "kind": "noise",
+          "durMs": 20,
+          "decayMs": 20,
+          "attackMs": 1,
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 4000,
+            "q": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.rite.ready",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 300,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "attackMs": 2,
+          "decayMs": 300,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A6",
+          "attackMs": 2,
+          "decayMs": 300,
+          "gainDb": -3,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.rite.cast.lantern",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 400,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.15
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 60,
+          "env": "flat",
+          "releaseMs": 120,
+          "filter": {
+            "type": "bp",
+            "freq": 400,
+            "freqEnd": 2000,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 80,
+          "attackMs": 2,
+          "decayMs": 300,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.rite.impact.lantern",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 700,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.25
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 3,
+          "decayMs": 600,
+          "filter": {
+            "type": "lp",
+            "freq": 2500,
+            "freqEnd": 400
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 70,
+          "attackMs": 2,
+          "decayMs": 300
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 600,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "attackMs": 2,
+          "decayMs": 500,
+          "gainDb": -8,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.spawn",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 250,
+      "gainDb": -26,
+      "maxVoices": 2,
+      "minIntervalMs": 150,
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 150,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 150,
+          "env": "flat",
+          "releaseMs": 90,
+          "filter": {
+            "type": "bp",
+            "freq": 400,
+            "freqEnd": 700,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.death.small",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 120,
+      "gainDb": -21,
+      "maxVoices": 4,
+      "minIntervalMs": 40,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 30,
+          "decayMs": 30,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 1500
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 220,
+          "freqEnd": 110,
+          "glideMs": 80,
+          "attackMs": 2,
+          "decayMs": 90
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.death.medium",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 180,
+      "gainDb": -20,
+      "maxVoices": 3,
+      "minIntervalMs": 50,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 40,
+          "decayMs": 40,
+          "attackMs": 1,
+          "filter": {
+            "type": "lp",
+            "freq": 1100
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 165,
+          "freqEnd": 82,
+          "glideMs": 100,
+          "attackMs": 2,
+          "decayMs": 130
+        },
+        {
+          "kind": "noise",
+          "startMs": 10,
+          "durMs": 50,
+          "decayMs": 50,
+          "attackMs": 2,
+          "gainDb": -4,
+          "filter": {
+            "type": "bp",
+            "freq": 800,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.death.large",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 300,
+      "gainDb": -17,
+      "maxVoices": 2,
+      "minIntervalMs": 80,
+      "pitchJitter": 0.04,
+      "gainJitterDb": 1,
+      "send": {
+        "room": 0.15
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 70,
+          "attackMs": 2,
+          "decayMs": 250
+        },
+        {
+          "kind": "noise",
+          "durMs": 120,
+          "decayMs": 120,
+          "attackMs": 2,
+          "gainDb": -3,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 110,
+          "freqEnd": 55,
+          "attackMs": 2,
+          "decayMs": 200,
+          "gainDb": -6
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.charger.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 600,
+      "gainDb": -12,
+      "maxVoices": 3,
+      "minIntervalMs": 100,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 700,
+          "freqEnd": 1600,
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 18,
+          "tremoloDepth": 0.6,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.charger.dash",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 200,
+      "gainDb": -16,
+      "maxVoices": 3,
+      "minIntervalMs": 80,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 10,
+          "decayMs": 190,
+          "filter": {
+            "type": "bp",
+            "freq": 500,
+            "freqEnd": 1500,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.shooter.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 400,
+      "gainDb": -13,
+      "maxVoices": 3,
+      "minIntervalMs": 120,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1250,
+          "freqEnd": 1575,
+          "env": "swell",
+          "releaseMs": 6
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1770,
+          "freqEnd": 2230,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -2
+        },
+        {
+          "kind": "noise",
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -16,
+          "filter": {
+            "type": "bp",
+            "freq": 2000,
+            "q": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.enemy.shooter.fire",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 100,
+      "gainDb": -13,
+      "maxVoices": 4,
+      "minIntervalMs": 60,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 1000,
+          "freqEnd": 1800,
+          "glideMs": 80,
+          "attackMs": 2,
+          "decayMs": 100,
+          "filter": {
+            "type": "bp",
+            "freq": 1400,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.telegraph.area",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 800,
+      "gainDb": -11,
+      "maxVoices": 4,
+      "minIntervalMs": 80,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D5",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2600,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#5",
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -2,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2600,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.telegraph.area_impact",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 350,
+      "gainDb": -10,
+      "maxVoices": 4,
+      "minIntervalMs": 60,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 70,
+          "attackMs": 2,
+          "decayMs": 300
+        },
+        {
+          "kind": "noise",
+          "durMs": 120,
+          "decayMs": 120,
+          "attackMs": 1,
+          "gainDb": -3,
+          "filter": {
+            "type": "bp",
+            "freq": 1200,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.arrive",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 1500,
+      "gainDb": -9,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.25
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 1200,
+          "filter": {
+            "type": "bp",
+            "freq": 4000,
+            "freqEnd": 800,
+            "q": 1
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 10,
+          "freqMin": 1500,
+          "freqMax": 5000,
+          "spreadMs": 600,
+          "grainMs": 100,
+          "grainMsMax": 400,
+          "drop": 5
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": 150,
+          "attackMs": 200,
+          "decayMs": 1400,
+          "vibratoHz": 6,
+          "vibratoCents": 30,
+          "gainDb": -4,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "q": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.charge.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 600,
+      "gainDb": -10,
+      "maxVoices": 2,
+      "minIntervalMs": 100,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 350,
+          "freqEnd": 800,
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 18,
+          "tremoloDepth": 0.6,
+          "filter": {
+            "type": "bp",
+            "freq": 1200,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": 110,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 500,
+            "q": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.charge.dash",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 250,
+      "gainDb": -11,
+      "maxVoices": 2,
+      "minIntervalMs": 80,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 10,
+          "decayMs": 240,
+          "filter": {
+            "type": "bp",
+            "freq": 300,
+            "freqEnd": 1200,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 80,
+          "attackMs": 2,
+          "decayMs": 200,
+          "gainDb": -4
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.volley.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 600,
+      "gainDb": -11,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "C#6",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 12,
+          "tremoloDepth": 0.5,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "env": "swell",
+          "releaseMs": 6,
+          "tremoloHz": 12,
+          "tremoloDepth": 0.5,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.volley.fire",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 200,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 1000,
+          "freqEnd": 1800,
+          "glideMs": 80,
+          "attackMs": 2,
+          "decayMs": 180,
+          "detuneCents": -20,
+          "filter": {
+            "type": "bp",
+            "freq": 1400,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 1000,
+          "freqEnd": 1800,
+          "glideMs": 80,
+          "attackMs": 2,
+          "decayMs": 180,
+          "filter": {
+            "type": "bp",
+            "freq": 1400,
+            "q": 1.5
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 1000,
+          "freqEnd": 1800,
+          "glideMs": 80,
+          "attackMs": 2,
+          "decayMs": 180,
+          "detuneCents": 25,
+          "filter": {
+            "type": "bp",
+            "freq": 1400,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.hasted",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 600,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": 120,
+          "freqEnd": 240,
+          "glideMs": 500,
+          "attackMs": 50,
+          "decayMs": 600,
+          "filter": {
+            "type": "bp",
+            "freq": 700,
+            "q": 3
+          }
+        },
+        {
+          "kind": "noise",
+          "durMs": 15,
+          "decayMs": 15,
+          "attackMs": 1,
+          "gainDb": -8,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "q": 4
+          },
+          "repeat": {
+            "count": 8,
+            "everyMs": 60,
+            "everyEndMs": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.hurt",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 80,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "minIntervalMs": 150,
+      "pitchJitter": 0.04,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 160,
+          "attackMs": 2,
+          "decayMs": 80
+        }
+      ]
+    },
+    {
+      "id": "sfx.warden.death",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 1600,
+      "gainDb": -9,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.3
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 800,
+          "filter": {
+            "type": "lp",
+            "freq": 1200,
+            "freqEnd": 200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 90,
+          "freqEnd": 40,
+          "attackMs": 2,
+          "decayMs": 700
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "startMs": 600,
+          "attackMs": 2,
+          "decayMs": 900,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 650,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -3,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.reward.drop",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 900,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.25
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "grains",
+          "count": 10,
+          "freqMin": 3000,
+          "freqMax": 7000,
+          "spreadMs": 600,
+          "grainMs": 200,
+          "grainMsMax": 500,
+          "gainDb": -6
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 300,
+          "attackMs": 2,
+          "decayMs": 600,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.intro",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 3000,
+      "gainDb": -8,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "duck": "big_moment",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D2",
+          "attackMs": 1500,
+          "env": "flat",
+          "releaseMs": 600,
+          "filter": {
+            "type": "lp",
+            "freq": 300
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#2",
+          "attackMs": 1500,
+          "env": "flat",
+          "releaseMs": 600,
+          "gainDb": -2,
+          "filter": {
+            "type": "lp",
+            "freq": 300
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D3",
+          "attackMs": 1000,
+          "env": "flat",
+          "releaseMs": 800,
+          "gainDb": -8,
+          "vibratoHz": 5,
+          "vibratoCents": 8,
+          "filter": {
+            "type": "bp",
+            "freq": 700,
+            "q": 3
+          }
+        },
+        {
+          "kind": "noise",
+          "attackMs": 1000,
+          "decayMs": 2500,
+          "gainDb": -10,
+          "filter": {
+            "type": "hp",
+            "freq": 6000,
+            "freqEnd": 1500
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D2",
+          "durMs": 120,
+          "decayMs": 110,
+          "attackMs": 3,
+          "gainDb": -6,
+          "repeat": {
+            "count": 16,
+            "everyMs": 125,
+            "gainDb": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.ember_rain.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D5",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2600,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#5",
+          "env": "swell",
+          "releaseMs": 6,
+          "detuneCents": 15,
+          "gainDb": -2,
+          "filter": {
+            "type": "bp",
+            "freq": 900,
+            "freqEnd": 2600,
+            "q": 2
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 30,
+          "freqMin": 2500,
+          "freqMax": 4000,
+          "spreadMs": 900,
+          "grainMs": 8,
+          "wave": "noise",
+          "gainDb": -8,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.ember_rain.impact",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 500,
+      "gainDb": -9,
+      "maxVoices": 1,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 80,
+          "durMs": 150,
+          "decayMs": 150,
+          "attackMs": 2,
+          "repeat": {
+            "count": 3,
+            "everyMs": 40
+          }
+        },
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 300,
+          "gainDb": -3,
+          "filter": {
+            "type": "bp",
+            "freq": 1200,
+            "q": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.snuff_ring.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -10,
+      "maxVoices": 2,
+      "minIntervalMs": 300,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D4",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "freqEnd": 2200,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#4",
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -2,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "freqEnd": 2200,
+            "q": 2
+          }
+        },
+        {
+          "kind": "noise",
+          "color": "pink",
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -10,
+          "filter": {
+            "type": "bp",
+            "freq": 800,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.snuff_ring.wave",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 800,
+      "gainDb": -10,
+      "maxVoices": 2,
+      "minIntervalMs": 300,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 20,
+          "decayMs": 780,
+          "filter": {
+            "type": "bp",
+            "freq": 2000,
+            "freqEnd": 400,
+            "q": 1.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.lanes.windup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "mode": "live",
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D5",
+          "env": "swell",
+          "releaseMs": 6,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#5",
+          "startMs": 200,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -2,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D6",
+          "startMs": 400,
+          "env": "swell",
+          "releaseMs": 6,
+          "gainDb": -4,
+          "filter": {
+            "type": "bp",
+            "freq": 1500,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.lanes.fire",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "durationMs": 1000,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "lowpassHz": 3000,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": 1000,
+          "freqEnd": 1800,
+          "glideMs": 70,
+          "durMs": 80,
+          "attackMs": 2,
+          "decayMs": 80,
+          "filter": {
+            "type": "bp",
+            "freq": 1400,
+            "q": 1.5
+          },
+          "repeat": {
+            "count": 12,
+            "everyMs": 83
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.summon",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 800,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "color": "pink",
+          "env": "swell",
+          "releaseMs": 20,
+          "filter": {
+            "type": "bp",
+            "freq": 300,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D4",
+          "durMs": 300,
+          "attackMs": 20,
+          "decayMs": 300,
+          "gainDb": -4,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "C#4",
+          "startMs": 300,
+          "durMs": 450,
+          "attackMs": 20,
+          "decayMs": 450,
+          "gainDb": -4,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.phase",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 1500,
+      "gainDb": -8,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.25
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 700,
+          "filter": {
+            "type": "bp",
+            "freq": 4000,
+            "freqEnd": 600,
+            "q": 1
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 14,
+          "freqMin": 1500,
+          "freqMax": 6000,
+          "spreadMs": 300,
+          "grainMs": 100,
+          "grainMsMax": 500
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D2",
+          "attackMs": 30,
+          "decayMs": 900,
+          "gainDb": -3,
+          "filter": {
+            "type": "lp",
+            "freq": 900
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D#3",
+          "attackMs": 30,
+          "decayMs": 700,
+          "gainDb": -6,
+          "filter": {
+            "type": "lp",
+            "freq": 1200
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.enrage",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 1000,
+      "gainDb": -9,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": 120,
+          "freqEnd": 260,
+          "attackMs": 100,
+          "decayMs": 1000,
+          "filter": {
+            "type": "bp",
+            "freq": 700,
+            "q": 3
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D3",
+          "attackMs": 50,
+          "decayMs": 900,
+          "gainDb": -4,
+          "filter": {
+            "type": "lp",
+            "freq": 1000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#3",
+          "attackMs": 50,
+          "decayMs": 900,
+          "gainDb": -5,
+          "filter": {
+            "type": "lp",
+            "freq": 1000
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.hurt",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 80,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "minIntervalMs": 200,
+      "pitchJitter": 0.04,
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 120,
+          "attackMs": 2,
+          "decayMs": 80
+        }
+      ]
+    },
+    {
+      "id": "sfx.boss.death",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 1,
+      "sampleRate": 16000,
+      "durationMs": 3500,
+      "gainDb": -6,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.3
+      },
+      "duck": "big_moment",
+      "layers": [
+        {
+          "kind": "grains",
+          "count": 30,
+          "freqMin": 2000,
+          "freqMax": 7000,
+          "spreadMs": 2500,
+          "grainMs": 200,
+          "grainMsMax": 700,
+          "drop": 3
+        },
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 3000,
+          "gainDb": -3,
+          "filter": {
+            "type": "lp",
+            "freq": 6000,
+            "freqEnd": 200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 60,
+          "attackMs": 2,
+          "decayMs": 900
+        }
+      ]
+    },
+    {
+      "id": "sfx.glint.pickup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 90,
+      "gainDb": -20,
+      "maxVoices": 4,
+      "minIntervalMs": 35,
+      "pitchJitter": 0.01,
+      "gainJitterDb": 1,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 2
+      },
+      "ladder": {
+        "source": "song",
+        "resetMs": 500,
+        "baseNote": "D6"
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "attackMs": 1,
+          "decayMs": 85,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.glint.sweep",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 4,
+      "durationMs": 800,
+      "gainDb": -18,
+      "maxVoices": 1,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 0,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 40,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G6",
+          "startMs": 80,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A6",
+          "startMs": 120,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "B6",
+          "startMs": 160,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D7",
+          "startMs": 200,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E7",
+          "startMs": 240,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G7",
+          "startMs": 280,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A7",
+          "startMs": 320,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "B7",
+          "startMs": 360,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D8",
+          "startMs": 400,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E8",
+          "startMs": 440,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 110,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.levelup",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 700,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "minIntervalMs": 300,
+      "send": {
+        "room": 0.2
+      },
+      "duck": "reward",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "pulse25",
+          "freq": "D5",
+          "durMs": 60,
+          "attackMs": 2,
+          "decayMs": 80,
+          "filter": {
+            "type": "lp",
+            "freq": 5000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "pulse25",
+          "freq": "G5",
+          "startMs": 50,
+          "durMs": 60,
+          "attackMs": 2,
+          "decayMs": 80,
+          "filter": {
+            "type": "lp",
+            "freq": 5000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "pulse25",
+          "freq": "A5",
+          "startMs": 100,
+          "durMs": 60,
+          "attackMs": 2,
+          "decayMs": 80,
+          "filter": {
+            "type": "lp",
+            "freq": 5000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "pulse25",
+          "freq": "D6",
+          "startMs": 150,
+          "durMs": 400,
+          "attackMs": 2,
+          "decayMs": 400,
+          "filter": {
+            "type": "lp",
+            "freq": 5000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 150,
+          "attackMs": 2,
+          "decayMs": 500,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 8,
+          "freqMin": 3000,
+          "freqMax": 7000,
+          "spreadMs": 400,
+          "grainMs": 200,
+          "grainMsMax": 400,
+          "startMs": 150,
+          "gainDb": -10
+        }
+      ]
+    },
+    {
+      "id": "sfx.memento.gain",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 1100,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.3
+      },
+      "duck": "reward",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D4",
+          "attackMs": 10,
+          "decayMs": 900,
+          "fm": {
+            "ratio": 3.5,
+            "index": 3,
+            "indexEnd": 0.5,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A4",
+          "startMs": 120,
+          "attackMs": 10,
+          "decayMs": 900,
+          "gainDb": -2,
+          "fm": {
+            "ratio": 3.5,
+            "index": 3,
+            "indexEnd": 0.5,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "noise",
+          "startMs": 300,
+          "durMs": 500,
+          "env": "swell",
+          "releaseMs": 10,
+          "gainDb": -14,
+          "filter": {
+            "type": "hp",
+            "freq": 4000
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 400,
+          "startMs": 820,
+          "durMs": 25,
+          "attackMs": 1,
+          "decayMs": 20,
+          "gainDb": -6
+        }
+      ]
+    },
+    {
+      "id": "sfx.synergy.activate",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 900,
+      "gainDb": -11,
+      "maxVoices": 1,
+      "minIntervalMs": 500,
+      "send": {
+        "room": 0.25
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 60,
+          "attackMs": 2,
+          "decayMs": 750,
+          "gainDb": -2,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 120,
+          "attackMs": 2,
+          "decayMs": 700,
+          "gainDb": -4,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 6,
+          "freqMin": 4000,
+          "freqMax": 7000,
+          "spreadMs": 400,
+          "grainMs": 150,
+          "grainMsMax": 300,
+          "gainDb": -12
+        }
+      ]
+    },
+    {
+      "id": "sfx.pulse.start_wave",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 900,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 90,
+          "freqEnd": 220,
+          "glideMs": 600,
+          "attackMs": 150,
+          "decayMs": 800
+        },
+        {
+          "kind": "noise",
+          "attackMs": 300,
+          "decayMs": 700,
+          "gainDb": -10,
+          "filter": {
+            "type": "lp",
+            "freq": 500,
+            "freqEnd": 2000
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.pulse.end_flash",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 1200,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 300,
+          "env": "swell",
+          "releaseMs": 5,
+          "filter": {
+            "type": "hp",
+            "freq": 2000
+          }
+        },
+        {
+          "kind": "noise",
+          "startMs": 300,
+          "durMs": 60,
+          "attackMs": 1,
+          "decayMs": 60,
+          "filter": {
+            "type": "hp",
+            "freq": 3000
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 20,
+          "freqMin": 300,
+          "freqMax": 1200,
+          "spreadMs": 600,
+          "grainMs": 30,
+          "grainMsMax": 70,
+          "startMs": 360,
+          "wave": "noise",
+          "gainDb": -4,
+          "filter": {
+            "type": "bp",
+            "freq": 800,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.flame_burst",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 120,
+      "gainDb": -21,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 40,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 100,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 120,
+          "attackMs": 2,
+          "decayMs": 80
+        },
+        {
+          "kind": "grains",
+          "count": 4,
+          "freqMin": 2000,
+          "freqMax": 4000,
+          "spreadMs": 80,
+          "grainMs": 6,
+          "wave": "noise",
+          "gainDb": -8,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "q": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.flame_nova",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 600,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 100,
+          "decayMs": 550,
+          "filter": {
+            "type": "lp",
+            "freq": 300,
+            "freqEnd": 3000,
+            "sweepMs": 300
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 80,
+          "attackMs": 5,
+          "decayMs": 300,
+          "gainDb": -6
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.shard_split",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 6,
+      "durationMs": 50,
+      "gainDb": -27,
+      "maxVoices": 3,
+      "minIntervalMs": 60,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 5000,
+          "durMs": 20,
+          "attackMs": 1,
+          "decayMs": 20
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.glass_lance",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 300,
+      "gainDb": -15,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.15
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 700,
+          "freqEnd": 1000,
+          "attackMs": 3,
+          "decayMs": 280,
+          "fm": {
+            "ratio": 2,
+            "index": 0.8
+          }
+        },
+        {
+          "kind": "noise",
+          "durMs": 60,
+          "decayMs": 60,
+          "attackMs": 1,
+          "gainDb": -8,
+          "filter": {
+            "type": "hp",
+            "freq": 6000
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.edge_wave",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 5,
+      "durationMs": 100,
+      "gainDb": -22,
+      "maxVoices": 3,
+      "minIntervalMs": 80,
+      "pitchJitter": 0.06,
+      "gainJitterDb": 2,
+      "send": {
+        "room": 0
+      },
+      "pan": "worldX",
+      "coalesce": {
+        "windowMs": 30,
+        "maxBoostDb": 3
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 5,
+          "decayMs": 95,
+          "filter": {
+            "type": "bp",
+            "freq": 500,
+            "freqEnd": 1200,
+            "q": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.proc.rush_full",
+      "tier": "A",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 500,
+      "gainDb": -15,
+      "maxVoices": 1,
+      "minIntervalMs": 2000,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "grains",
+          "count": 10,
+          "freqMin": 3000,
+          "freqMax": 7000,
+          "spreadMs": 300,
+          "grainMs": 150,
+          "grainMsMax": 350
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A6",
+          "attackMs": 2,
+          "decayMs": 450,
+          "gainDb": -4,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.focus",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 30,
+      "gainDb": -30,
+      "maxVoices": 2,
+      "minIntervalMs": 40,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 1800,
+          "durMs": 15,
+          "attackMs": 1,
+          "decayMs": 15
+        }
+      ]
+    },
+    {
+      "id": "ui.confirm",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 120,
+      "gainDb": -20,
+      "maxVoices": 2,
+      "minIntervalMs": 60,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": "E5",
+          "durMs": 55,
+          "attackMs": 2,
+          "decayMs": 70
+        },
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": "A5",
+          "startMs": 55,
+          "durMs": 65,
+          "attackMs": 2,
+          "decayMs": 65
+        }
+      ]
+    },
+    {
+      "id": "ui.back",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 100,
+      "gainDb": -22,
+      "maxVoices": 2,
+      "minIntervalMs": 60,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": "A5",
+          "durMs": 50,
+          "attackMs": 2,
+          "decayMs": 60
+        },
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": "E5",
+          "startMs": 50,
+          "durMs": 50,
+          "attackMs": 2,
+          "decayMs": 50
+        }
+      ]
+    },
+    {
+      "id": "ui.denied",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 140,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "minIntervalMs": 150,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 180,
+          "durMs": 50,
+          "attackMs": 2,
+          "decayMs": 50,
+          "repeat": {
+            "count": 2,
+            "everyMs": 70
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.glazier.arrive",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "sampleRate": 16000,
+      "durationMs": 1200,
+      "gainDb": -16,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "attackMs": 2,
+          "decayMs": 400,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "B5",
+          "startMs": 125,
+          "attackMs": 2,
+          "decayMs": 600,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "F2",
+          "startMs": 250,
+          "durMs": 950,
+          "attackMs": 150,
+          "env": "flat",
+          "releaseMs": 300,
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 280,
+            "q": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.reward.reveal",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 600,
+      "gainDb": -16,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "grains",
+          "count": 8,
+          "freqMin": 3000,
+          "freqMax": 7000,
+          "spreadMs": 400,
+          "grainMs": 150,
+          "grainMsMax": 300,
+          "gainDb": -8
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 400,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 100,
+          "attackMs": 2,
+          "decayMs": 400,
+          "gainDb": -2,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 200,
+          "attackMs": 2,
+          "decayMs": 400,
+          "gainDb": -3,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.shop.buy",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 350,
+      "gainDb": -16,
+      "maxVoices": 2,
+      "minIntervalMs": 80,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A6",
+          "attackMs": 2,
+          "decayMs": 200,
+          "fm": {
+            "ratio": 3.5,
+            "index": 0.8,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G6",
+          "startMs": 80,
+          "durMs": 90,
+          "attackMs": 1,
+          "decayMs": 90,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 140,
+          "durMs": 90,
+          "attackMs": 1,
+          "decayMs": 90,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 200,
+          "durMs": 120,
+          "attackMs": 1,
+          "decayMs": 120,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.shop.reroll",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 300,
+      "gainDb": -18,
+      "maxVoices": 2,
+      "minIntervalMs": 120,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "durMs": 20,
+          "decayMs": 20,
+          "attackMs": 1,
+          "filter": {
+            "type": "bp",
+            "freq": 3000,
+            "q": 3
+          },
+          "repeat": {
+            "count": 4,
+            "everyMs": 45
+          }
+        },
+        {
+          "kind": "noise",
+          "startMs": 180,
+          "durMs": 120,
+          "attackMs": 20,
+          "decayMs": 100,
+          "gainDb": -6,
+          "filter": {
+            "type": "bp",
+            "freq": 800,
+            "freqEnd": 2500,
+            "q": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.shop.merge",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 700,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "minIntervalMs": 200,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 880,
+          "durMs": 300,
+          "attackMs": 20,
+          "env": "flat",
+          "releaseMs": 40
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 900,
+          "freqEnd": 890,
+          "glideMs": 300,
+          "durMs": 300,
+          "attackMs": 20,
+          "env": "flat",
+          "releaseMs": 40
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 300,
+          "attackMs": 2,
+          "decayMs": 400,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.shop.lock",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 120,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "minIntervalMs": 80,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 2200,
+          "attackMs": 1,
+          "decayMs": 80,
+          "fm": {
+            "ratio": 1.41,
+            "index": 2,
+            "indexEnd": 0,
+            "indexDecayMs": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.shop.sell",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 250,
+      "gainDb": -18,
+      "maxVoices": 1,
+      "minIntervalMs": 80,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "startMs": 0,
+          "durMs": 100,
+          "attackMs": 1,
+          "decayMs": 100,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 60,
+          "durMs": 100,
+          "attackMs": 1,
+          "decayMs": 100,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G6",
+          "startMs": 120,
+          "durMs": 100,
+          "attackMs": 1,
+          "decayMs": 100,
+          "fm": {
+            "ratio": 2,
+            "index": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.card.reveal",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 400,
+      "gainDb": -18,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 300,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G5",
+          "startMs": 80,
+          "attackMs": 2,
+          "decayMs": 300,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 160,
+          "attackMs": 2,
+          "decayMs": 240,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.card.pick",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 400,
+      "gainDb": -15,
+      "maxVoices": 1,
+      "minIntervalMs": 150,
+      "send": {
+        "room": 0.2
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "attackMs": 2,
+          "decayMs": 380,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 5,
+          "freqMin": 4000,
+          "freqMax": 7000,
+          "spreadMs": 200,
+          "grainMs": 100,
+          "grainMsMax": 250,
+          "gainDb": -10
+        }
+      ]
+    },
+    {
+      "id": "ui.pulse.begin",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 200,
+      "gainDb": -18,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 300,
+          "freqEnd": 700,
+          "attackMs": 100,
+          "env": "flat",
+          "releaseMs": 40
+        },
+        {
+          "kind": "noise",
+          "env": "swell",
+          "releaseMs": 10,
+          "gainDb": -12,
+          "filter": {
+            "type": "lp",
+            "freq": 2000
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.pause.open",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 150,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "freqEnd": "A4",
+          "glideMs": 120,
+          "attackMs": 5,
+          "decayMs": 150
+        }
+      ]
+    },
+    {
+      "id": "ui.pause.close",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 150,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.1
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A4",
+          "freqEnd": "D5",
+          "glideMs": 120,
+          "attackMs": 5,
+          "decayMs": 150
+        }
+      ]
+    },
+    {
+      "id": "ui.slider.tick",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 60,
+      "gainDb": -20,
+      "maxVoices": 1,
+      "minIntervalMs": 60,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "attackMs": 2,
+          "decayMs": 60,
+          "fm": {
+            "ratio": 3.5,
+            "index": 0.6,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "ui.toggle",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 60,
+      "gainDb": -24,
+      "maxVoices": 1,
+      "minIntervalMs": 60,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 900,
+          "durMs": 30,
+          "attackMs": 1,
+          "decayMs": 30
+        }
+      ]
+    },
+    {
+      "id": "ui.rite.denied",
+      "tier": "A",
+      "bus": "ui",
+      "priority": "U",
+      "durationMs": 90,
+      "gainDb": -22,
+      "maxVoices": 1,
+      "minIntervalMs": 150,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "freq": 220,
+          "durMs": 60,
+          "attackMs": 2,
+          "decayMs": 60
+        }
+      ]
+    },
+    {
+      "id": "mus.stinger.pulse_start",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 2500,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.5
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D2",
+          "attackMs": 2,
+          "decayMs": 2200,
+          "fm": {
+            "ratio": 3.5,
+            "index": 3,
+            "indexEnd": 0.4,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D3",
+          "attackMs": 2,
+          "decayMs": 2200,
+          "fm": {
+            "ratio": 3.5,
+            "index": 3,
+            "indexEnd": 0.4,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A3",
+          "startMs": 250,
+          "attackMs": 2,
+          "decayMs": 2000,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D2",
+          "attackMs": 3,
+          "decayMs": 1000,
+          "gainDb": -6
+        },
+        {
+          "kind": "noise",
+          "durMs": 100,
+          "decayMs": 100,
+          "attackMs": 2,
+          "gainDb": -14,
+          "filter": {
+            "type": "lp",
+            "freq": 400
+          }
+        }
+      ]
+    },
+    {
+      "id": "mus.stinger.pulse_end",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 2500,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.5
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D4",
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A4",
+          "startMs": 60,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "startMs": 120,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "F#5",
+          "startMs": 180,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A5",
+          "startMs": 240,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 10,
+          "freqMin": 3000,
+          "freqMax": 7000,
+          "spreadMs": 1200,
+          "grainMs": 300,
+          "grainMsMax": 800,
+          "startMs": 200,
+          "gainDb": -10
+        }
+      ]
+    },
+    {
+      "id": "mus.stinger.warden",
+      "tier": "A",
+      "bus": "music",
+      "priority": 2,
+      "sampleRate": 16000,
+      "durationMs": 2000,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.4
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D2",
+          "attackMs": 1200,
+          "env": "flat",
+          "releaseMs": 300,
+          "filter": {
+            "type": "lp",
+            "freq": 700
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "G#2",
+          "attackMs": 1200,
+          "env": "flat",
+          "releaseMs": 300,
+          "gainDb": -2,
+          "filter": {
+            "type": "lp",
+            "freq": 700
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "C#6",
+          "attackMs": 2,
+          "decayMs": 1500,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D6",
+          "attackMs": 2,
+          "decayMs": 1500,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "mus.stinger.victory",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 6200,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.5
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "D5",
+          "startMs": 0,
+          "durMs": 834,
+          "attackMs": 25,
+          "decayMs": 2142,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "A4",
+          "startMs": 714,
+          "durMs": 834,
+          "attackMs": 25,
+          "decayMs": 2142,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A4",
+          "startMs": 714,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "G4",
+          "startMs": 1429,
+          "durMs": 477,
+          "attackMs": 25,
+          "decayMs": 1071,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G4",
+          "startMs": 1429,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "F#4",
+          "startMs": 1786,
+          "durMs": 477,
+          "attackMs": 25,
+          "decayMs": 1071,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "F#4",
+          "startMs": 1786,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "G4",
+          "startMs": 2143,
+          "durMs": 834,
+          "attackMs": 25,
+          "decayMs": 2142,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G4",
+          "startMs": 2143,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "freq": "D5",
+          "startMs": 2857,
+          "durMs": 2620,
+          "attackMs": 25,
+          "decayMs": 7500,
+          "releaseMs": 120,
+          "detuneCents": 4,
+          "filter": {
+            "type": "lp",
+            "freq": 1800
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "startMs": 2857,
+          "attackMs": 2,
+          "decayMs": 900,
+          "gainDb": -6,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D3",
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 800,
+          "gainDb": -10,
+          "filter": {
+            "type": "lp",
+            "freq": 1200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "F#3",
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 800,
+          "gainDb": -10,
+          "filter": {
+            "type": "lp",
+            "freq": 1200
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "A3",
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 800,
+          "gainDb": -10,
+          "filter": {
+            "type": "lp",
+            "freq": 1200
+          },
+          "detuneCents": 7
+        }
+      ]
+    },
+    {
+      "id": "mus.stinger.defeat",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 4600,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.6
+      },
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D5",
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A4",
+          "startMs": 1667,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "G4",
+          "startMs": 2500,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D4",
+          "startMs": 3333,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1.5,
+            "indexEnd": 0.2,
+            "indexDecayMs": 250
+          }
+        }
+      ]
+    },
+    {
+      "id": "mus.riser.pulse_end",
+      "tier": "A",
+      "bus": "music",
+      "priority": 3,
+      "sampleRate": 16000,
+      "durationMs": 6000,
+      "gainDb": -14,
+      "maxVoices": 1,
+      "send": {
+        "hall": 0.2
+      },
+      "layers": [
+        {
+          "kind": "noise",
+          "color": "pink",
+          "env": "swell",
+          "releaseMs": 5,
+          "filter": {
+            "type": "bp",
+            "freq": 300,
+            "freqEnd": 4000,
+            "q": 4
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "freq": "D3",
+          "freqEnd": "D4",
+          "env": "swell",
+          "releaseMs": 5,
+          "gainDb": -8,
+          "filter": {
+            "type": "lp",
+            "freq": 2500
+          }
+        }
+      ]
+    }
+  ]
+}

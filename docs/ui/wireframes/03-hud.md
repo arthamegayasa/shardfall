@@ -67,12 +67,19 @@ Timer normal   0:24  (bone)
 Timer <= 5 s   0:04  (kept-gold, membesar 1 satuan tiap detik; tidak merah)
 ```
 
-## Varian Pulse boss tanpa batas waktu [Asumsi]
+## Varian Pulse boss tanpa batas waktu (disetujui CD K3)
 ```
 |                              The Lantern-Eater                                                   |
-|                         [vvvvvvvvvvvvvvvvvvvvvv--------]   bingkai danger-violet                  |
+|                         [vvvvvvvvvvvvvvvvvvvvvv--------]   isian danger-violet, tanpa angka besar |
 ```
-Slot timer diganti bar HP boss. Jumlah elemen tetap lima.
+Slot timer diganti bar HP boss (`PulseView.boss`). Jumlah elemen tetap lima.
+
+## Varian Warden menahan Pulse (CD K3)
+```
+|                                 Held   Brass Collar                                              |
+|                         [vvvvvvvvvv--------------------]  ^   ^ = ikon mengamuk bila hasted       |
+```
+Waktu habis tapi Warden masih hidup (`pulse.overtime` dan `pulse.wardenAlive`): slot timer menjadi bar HP Warden (`PulseView.warden`) dengan label "Held" (`ui.hud.held`, kept-gold) dan nama Warden. Komponen sama dengan bar boss. Pulse berakhir saat Warden jatuh.
 
 ## Elemen sesaat (tanpa input)
 ```

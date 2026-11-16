@@ -1,0 +1,990 @@
+/* Shardfall UI (ui-spec 2, 6, 7; style guide 1.2 and 2). Display-case label panels.
+   Every size is a multiple of --u (CSS px per UI unit, from physical pixels) or --f (font pixel). */
+
+.sf-ui {
+  /* Palette tokens, style guide 1.2. Colour vision modes swap these later (AD, M4). */
+  --ink: #14121c;
+  --night: #1c1926;
+  --shadow: #3e3a46;
+  --stone: #8a817a;
+  --dust: #a39a8c;
+  --bone: #ede6d8;
+  --kept-blue: #3d7dff;
+  --kept-cyan: #4fe3f0;
+  --kept-white: #f2fbff;
+  --kept-gold: #ffc94a;
+  --glint: #ffd966;
+  --danger-red: #ff3b4e;
+  --danger-violet: #b44cff;
+  --rarity-0: #c9c2b6;
+  --rarity-1: #6fd08c;
+  --rarity-2: #3d7dff;
+  --rarity-3: #ffc94a;
+  --panel-bg: rgb(28 25 38 / 90%);
+  --frame: rgb(237 230 216 / 60%);
+  --u: 2px;
+  --f: 2px;
+
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  color: var(--bone);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  font-size: calc(var(--f) * 8);
+  line-height: calc(var(--f) * 9);
+  font-variant-numeric: tabular-nums;
+}
+
+.sf-ui.solid-panels {
+  --panel-bg: var(--night);
+}
+
+.sf-ui * {
+  box-sizing: border-box;
+}
+
+.sf-ui .screen-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.sf-ui .screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.sf-ui .screen-pause,
+.sf-ui .screen-title,
+.sf-ui .screen-class,
+.sf-ui .screen-settings,
+.sf-ui .screen-run-end,
+.sf-ui .screen-archive,
+.sf-ui .screen-credits {
+  background: rgb(20 18 28 / 60%);
+}
+
+.sf-ui .screen-choice,
+.sf-ui .screen-glazier {
+  background: rgb(20 18 28 / 45%);
+}
+
+/* Menu safe area: 640 x 360 UI units, centred (ui-spec 7.1). */
+.sf-ui .safe {
+  position: relative;
+  width: calc(var(--u) * 640);
+  height: calc(var(--u) * 360);
+  padding: calc(var(--u) * 12);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 6);
+  overflow: hidden;
+}
+
+/* Panel: night 90%, 1 unit bone frame at 60%, 2 unit cut corners (style guide 2.1). */
+.sf-ui .panel {
+  background: var(--panel-bg);
+  border: var(--u) solid var(--frame);
+  padding: calc(var(--u) * 6);
+  clip-path: polygon(
+    calc(var(--u) * 2) 0,
+    calc(100% - var(--u) * 2) 0,
+    100% calc(var(--u) * 2),
+    100% calc(100% - var(--u) * 2),
+    calc(100% - var(--u) * 2) 100%,
+    calc(var(--u) * 2) 100%,
+    0 calc(100% - var(--u) * 2),
+    0 calc(var(--u) * 2)
+  );
+}
+
+.sf-ui .title-block {
+  text-align: center;
+}
+
+.sf-ui .heading {
+  margin: 0;
+  font-size: calc(var(--f) * 16);
+  line-height: calc(var(--f) * 18);
+  font-weight: bold;
+  letter-spacing: calc(var(--f) * 1);
+}
+
+.sf-ui .screen-sub,
+.sf-ui .dim,
+.sf-ui .label,
+.sf-ui .card-flavor {
+  color: var(--dust);
+}
+
+.sf-ui .screen-sub {
+  margin: calc(var(--u) * 2) 0 0;
+}
+
+.sf-ui p {
+  margin: 0;
+}
+
+.sf-ui .col-title {
+  margin: calc(var(--u) * 2) 0;
+  font-size: calc(var(--f) * 8);
+  color: var(--dust);
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+/* Buttons (ui-spec 6.2). Focus is a kept-gold frame, never colour alone: the frame thickens. */
+.sf-ui .btn {
+  font: inherit;
+  color: var(--bone);
+  background: var(--panel-bg);
+  border: var(--u) solid var(--frame);
+  padding: calc(var(--u) * 2) calc(var(--u) * 6);
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+}
+
+.sf-ui .btn.is-focus {
+  border-color: var(--kept-gold);
+  box-shadow: 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .btn.primary {
+  color: var(--kept-gold);
+}
+
+.sf-ui .btn:disabled,
+.sf-ui .btn.is-locked {
+  color: rgb(163 154 140 / 50%);
+}
+
+.sf-ui .key-hint {
+  margin-left: calc(var(--u) * 3);
+  color: var(--dust);
+}
+
+.sf-ui .menu {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 3);
+  min-width: calc(var(--u) * 140);
+}
+
+.sf-ui .bottom-bar {
+  margin-top: auto;
+  display: flex;
+  gap: calc(var(--u) * 4);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Title */
+.sf-ui .title-safe {
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-ui .title-head .heading {
+  font-size: calc(var(--f) * 24);
+  line-height: calc(var(--f) * 27);
+}
+
+.sf-ui .version-label {
+  position: absolute;
+  right: calc(var(--u) * 8);
+  bottom: calc(var(--u) * 6);
+  color: var(--dust);
+}
+
+/* Class select */
+.sf-ui .class-cols,
+.sf-ui .pause-cols,
+.sf-ui .end-cols {
+  display: flex;
+  gap: calc(var(--u) * 8);
+  flex: 1;
+  min-height: 0;
+}
+
+.sf-ui .class-list {
+  width: calc(var(--u) * 160);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .class-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .class-name {
+  margin: 0;
+  font-size: calc(var(--f) * 12);
+  line-height: calc(var(--f) * 14);
+}
+
+.sf-ui .label {
+  margin-top: calc(var(--u) * 3);
+  text-transform: uppercase;
+}
+
+.sf-ui .item-name {
+  color: var(--kept-gold);
+}
+
+.sf-ui .item-effect,
+.sf-ui .card-effect {
+  white-space: pre-line;
+}
+
+/* Row card (ui-spec 6.1): icon left, name, 2 effect lines, flavor, tags and price right. */
+.sf-ui .card {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(var(--u) * 10) calc(var(--u) * 32) 1fr auto;
+  gap: calc(var(--u) * 4);
+  align-items: center;
+  width: calc(var(--u) * 344);
+  min-height: calc(var(--u) * 40);
+  padding: calc(var(--u) * 4);
+  transition: transform 80ms ease-out;
+}
+
+.sf-ui .card.rarity-0 {
+  border-color: var(--rarity-0);
+}
+.sf-ui .card.rarity-1 {
+  border-color: var(--rarity-1);
+}
+.sf-ui .card.rarity-2 {
+  border-color: var(--rarity-2);
+}
+.sf-ui .card.rarity-3 {
+  border-color: var(--rarity-3);
+}
+
+.sf-ui .card.is-focus {
+  border-color: var(--kept-gold);
+  transform: translateY(calc(var(--u) * -2));
+}
+
+.sf-ui.reduce-effects .card,
+.sf-ui.reduce-effects .card.is-focus {
+  transform: none;
+  transition: none;
+}
+
+.sf-ui .card.is-locked {
+  border-style: dashed;
+}
+
+.sf-ui .card-empty {
+  justify-content: center;
+  color: var(--dust);
+  border-style: dotted;
+}
+
+.sf-ui .card-corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: start;
+  gap: var(--u);
+}
+
+.sf-ui .card-hotkey {
+  color: var(--dust);
+}
+
+.sf-ui .card-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sf-ui .card-head {
+  display: flex;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .card-tier {
+  color: var(--kept-gold);
+}
+
+.sf-ui .card-effect {
+  max-height: calc(var(--f) * 18);
+  overflow: hidden;
+}
+
+.sf-ui .card-note {
+  color: var(--kept-gold);
+}
+
+.sf-ui .card-flavor {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-ui .card-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .card.is-unaffordable .card-name {
+  color: var(--dust);
+}
+
+.sf-ui .pips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--u);
+}
+
+.sf-ui .pip {
+  display: block;
+  width: calc(var(--u) * 2);
+  height: calc(var(--u) * 2);
+  background: var(--bone);
+}
+
+.sf-ui .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--shadow);
+  border: var(--u) solid var(--frame);
+  color: var(--kept-cyan);
+}
+
+.sf-ui .icon-big {
+  width: calc(var(--u) * 32);
+  height: calc(var(--u) * 32);
+}
+
+.sf-ui .tag-chips {
+  display: flex;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .tag-chip {
+  padding: 0 var(--u);
+  border: var(--u) solid var(--frame);
+  color: var(--kept-cyan);
+}
+
+.sf-ui .badge {
+  color: var(--kept-gold);
+  border: var(--u) solid var(--kept-gold);
+  padding: 0 calc(var(--u) * 2);
+}
+
+.sf-ui .glint-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  color: var(--glint);
+}
+
+/* Not enough Glint: grey with a struck Glint icon, never red (style guide 1.3). */
+.sf-ui .glint-amount.is-poor {
+  color: var(--dust);
+}
+
+.sf-ui .glint-icon {
+  display: inline-block;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 6);
+  background: var(--glint);
+  outline: var(--u) solid var(--ink);
+  transform: rotate(45deg);
+}
+
+.sf-ui .is-poor .glint-icon {
+  background: var(--dust);
+  background-image: linear-gradient(
+    135deg,
+    transparent 40%,
+    var(--ink) 40%,
+    var(--ink) 60%,
+    transparent 60%
+  );
+}
+
+.sf-ui .lock-mark.is-closed::before,
+.sf-ui .lock-btn::before {
+  content: '';
+  display: inline-block;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 5);
+  border: var(--u) solid currentcolor;
+  border-top-width: calc(var(--u) * 3);
+}
+
+.sf-ui .lock-btn {
+  padding: calc(var(--u) * 2);
+  color: var(--dust);
+}
+
+.sf-ui .lock-btn.is-closed,
+.sf-ui .lock-mark {
+  color: var(--kept-gold);
+}
+
+/* Temper and reward */
+.sf-ui .choice-safe {
+  align-items: center;
+}
+
+.sf-ui .card-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 6);
+}
+
+/* Glazier (ui-spec S05, wireframe 05) */
+.sf-ui .glazier-safe {
+  padding: calc(var(--u) * 6);
+  gap: calc(var(--u) * 4);
+}
+
+.sf-ui .shop-top {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 8);
+}
+
+.sf-ui .shop-top .heading {
+  font-size: calc(var(--f) * 12);
+  line-height: calc(var(--f) * 14);
+}
+
+.sf-ui .shop-glint {
+  margin-left: auto;
+  font-size: calc(var(--f) * 12);
+}
+
+.sf-ui .shop-next,
+.sf-ui .shop-hp {
+  color: var(--dust);
+}
+
+.sf-ui .shop-cols {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  flex: 1;
+  min-height: 0;
+}
+
+.sf-ui .shop-tags {
+  width: calc(var(--u) * 120);
+  overflow: hidden;
+}
+
+.sf-ui .tag-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: calc(var(--u) * 2);
+  align-items: center;
+  margin-bottom: calc(var(--u) * 2);
+}
+
+.sf-ui .tag-row .tag-pips {
+  grid-column: 2;
+  display: flex;
+  gap: var(--u);
+}
+
+.sf-ui .tag-pip {
+  width: calc(var(--u) * 3);
+  height: calc(var(--u) * 3);
+  border: var(--u) solid var(--dust);
+}
+
+.sf-ui .tag-pip.is-full {
+  background: var(--kept-gold);
+  border-color: var(--kept-gold);
+}
+
+.sf-ui .tag-pip.is-ghost {
+  border-color: var(--kept-gold);
+}
+
+.sf-ui .tag-row.is-preview .tag-count,
+.sf-ui .tag-new {
+  color: var(--kept-gold);
+}
+
+.sf-ui .tag-row.is-unlock {
+  outline: var(--u) solid var(--kept-gold);
+}
+
+.sf-ui .shop-offers {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+}
+
+.sf-ui .offer-row {
+  display: flex;
+  gap: calc(var(--u) * 2);
+  align-items: stretch;
+}
+
+.sf-ui .shop-offers .card {
+  width: calc(var(--u) * 344);
+  min-height: calc(var(--u) * 46);
+}
+
+.sf-ui .shop-right {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sf-ui .slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, calc(var(--u) * 28));
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .slot {
+  width: calc(var(--u) * 28);
+  height: calc(var(--u) * 28);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-ui .slot.is-empty {
+  border-style: dotted;
+}
+
+.sf-ui .slot.rarity-1 {
+  border-color: var(--rarity-1);
+}
+.sf-ui .slot.rarity-2 {
+  border-color: var(--rarity-2);
+}
+.sf-ui .slot.rarity-3 {
+  border-color: var(--rarity-3);
+}
+
+.sf-ui .slot.is-focus,
+.sf-ui .slot.is-fuse-target {
+  border-color: var(--kept-gold);
+}
+
+.sf-ui .slot.can-fuse::after {
+  content: '+';
+  color: var(--kept-gold);
+  position: absolute;
+}
+
+.sf-ui .slot-abbr {
+  color: var(--kept-cyan);
+}
+
+.sf-ui .slot-tier {
+  color: var(--kept-gold);
+}
+
+.sf-ui .memento-row,
+.sf-ui .build-row,
+.sf-ui .stat-row {
+  display: flex;
+  gap: calc(var(--u) * 3);
+  align-items: center;
+}
+
+.sf-ui .stat-row .num {
+  margin-left: auto;
+}
+
+.sf-ui .memento-row .pips {
+  flex-direction: row;
+}
+
+.sf-ui .shop-bar {
+  justify-content: flex-start;
+}
+
+.sf-ui .shop-bar .primary {
+  margin-left: auto;
+}
+
+.sf-ui .info-line {
+  flex: 1;
+  color: var(--kept-gold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-ui .free {
+  margin-left: calc(var(--u) * 3);
+  color: var(--kept-gold);
+}
+
+.sf-ui .btn .glint-amount {
+  margin-left: calc(var(--u) * 3);
+}
+
+/* Pause and dialog */
+.sf-ui .pause-build {
+  flex: 1;
+  overflow: hidden;
+}
+
+.sf-ui .dialog-safe {
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-ui .dialog {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 8);
+  align-items: center;
+}
+
+.sf-ui .dialog-buttons {
+  display: flex;
+  gap: calc(var(--u) * 6);
+}
+
+/* Settings */
+.sf-ui .tabs {
+  display: flex;
+  gap: calc(var(--u) * 3);
+  justify-content: center;
+}
+
+.sf-ui .tab.is-active {
+  color: var(--kept-gold);
+}
+
+.sf-ui .settings-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+  overflow: hidden;
+}
+
+.sf-ui .setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.sf-ui .setting-row.is-static {
+  padding: 0 calc(var(--u) * 6);
+}
+
+.sf-ui .setting-value {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  align-items: center;
+}
+
+.sf-ui .slider {
+  display: flex;
+  gap: var(--u);
+}
+
+.sf-ui .notch {
+  width: calc(var(--u) * 3);
+  height: calc(var(--u) * 6);
+  border: var(--u) solid var(--dust);
+}
+
+.sf-ui .notch.is-on {
+  background: var(--kept-gold);
+  border-color: var(--kept-gold);
+}
+
+/* Run end */
+.sf-ui .felled-by {
+  margin-top: calc(var(--u) * 4);
+}
+
+.sf-ui .end-stats,
+.sf-ui .end-build {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .end-bar {
+  justify-content: center;
+}
+
+.sf-ui .screen-run-end.is-won .heading {
+  color: var(--kept-gold);
+}
+
+.sf-ui .info-body {
+  flex: 1;
+}
+
+/* HUD (ui-spec S03): edges only, 8 unit margins, never in the centre. */
+.sf-ui .screen-hud {
+  pointer-events: none;
+  display: block;
+}
+
+.sf-ui .hud-tl {
+  position: absolute;
+  left: calc(var(--u) * 8);
+  top: calc(var(--u) * 8);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .hud-tc {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * 8);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sf-ui .hud-tr {
+  position: absolute;
+  right: calc(var(--u) * 8);
+  top: calc(var(--u) * 8);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  font-size: calc(var(--f) * 12);
+  color: var(--glint);
+}
+
+.sf-ui .hud-bc {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * 8);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .bar {
+  position: relative;
+  background: var(--panel-bg);
+  border: var(--u) solid var(--frame);
+  overflow: hidden;
+}
+
+.sf-ui .bar-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+
+.sf-ui .bar-hp {
+  width: calc(var(--u) * 120);
+  height: calc(var(--u) * 10);
+}
+
+.sf-ui .bar-hp .bar-fill {
+  background: var(--kept-blue);
+}
+
+.sf-ui .bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--f) * 7);
+}
+
+.sf-ui .hud-lv {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .bar-xp {
+  width: calc(var(--u) * 96);
+  height: calc(var(--u) * 4);
+}
+
+.sf-ui .bar-xp .bar-fill {
+  background: var(--kept-gold);
+}
+
+/* Low HP: danger-red frame plus a crack mark (shape, not only colour). */
+.sf-ui .screen-hud.is-low .bar-hp {
+  border-color: var(--danger-red);
+  animation: sf-pulse 600ms ease-in-out infinite alternate;
+}
+
+.sf-ui .hp-crack {
+  display: none;
+}
+
+.sf-ui .screen-hud.is-low .hp-crack {
+  display: block;
+  position: absolute;
+  right: calc(var(--u) * 2);
+  top: 0;
+  bottom: 0;
+  width: calc(var(--u) * 2);
+  background: var(--danger-red);
+  transform: skewX(-20deg);
+}
+
+.sf-ui.reduce-effects .screen-hud.is-low .bar-hp {
+  animation: none;
+}
+
+@keyframes sf-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+.sf-ui .pulse-label {
+  color: var(--dust);
+}
+
+.sf-ui .timer {
+  font-size: calc(var(--f) * 16);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .screen-hud.is-final .timer {
+  color: var(--kept-gold);
+}
+
+.sf-ui .foe {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sf-ui .screen-hud.mode-boss .timer,
+.sf-ui .screen-hud.mode-held .timer {
+  display: none;
+}
+
+.sf-ui .screen-hud.mode-boss .foe,
+.sf-ui .screen-hud.mode-held .foe {
+  display: flex;
+}
+
+.sf-ui .foe-head {
+  display: flex;
+  gap: calc(var(--u) * 4);
+}
+
+.sf-ui .foe-label {
+  color: var(--kept-gold);
+}
+
+.sf-ui .foe-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .bar-foe {
+  width: calc(var(--u) * 160);
+  height: calc(var(--u) * 6);
+}
+
+.sf-ui .bar-foe .bar-fill {
+  background: var(--danger-violet);
+}
+
+.sf-ui .foe-enraged {
+  display: none;
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 5);
+  background: var(--danger-red);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.sf-ui .screen-hud.is-enraged .foe-enraged {
+  display: block;
+}
+
+.sf-ui .rite {
+  position: relative;
+  width: calc(var(--u) * 32);
+  height: calc(var(--u) * 32);
+  background: var(--panel-bg);
+  border: var(--u) solid var(--frame);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sf-ui .rite-fill {
+  position: absolute;
+  inset: 0;
+  background: rgb(62 58 70 / 85%);
+  transform-origin: center top;
+}
+
+.sf-ui .rite-secs {
+  position: relative;
+}
+
+.sf-ui .rite.is-ready {
+  border-color: var(--kept-gold);
+  box-shadow: 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .rite-key {
+  color: var(--dust);
+}
+
+/* Live region: visually hidden, read by screen readers. */
+.sf-ui .live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.sf-ui .small-window {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  color: var(--dust);
+  background: var(--night);
+}
+
+.sf-ui.is-too-small .small-window {
+  display: block;
+}

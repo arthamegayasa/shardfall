@@ -1,0 +1,70 @@
+{
+  "id": "fx-shot-arc-blade",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white"
+  ],
+  "status": "placeholder",
+  "note": "Weapon arc_blade. Crescent sweep facing right (runtime flips), grows then fades. Used when the sim spawns the arc as a shot.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 4,
+      "loop": false,
+      "frames": [
+        [
+          "ww.....",
+          ".cww...",
+          "..ccw..",
+          "...ccw.",
+          "....cw.",
+          "....ccw",
+          "....ccw",
+          ".......",
+          ".......",
+          ".......",
+          ".......",
+          ".......",
+          "......."
+        ],
+        [
+          "ww.....",
+          ".cww...",
+          "..ccw..",
+          "...ccw.",
+          "....cw.",
+          "....ccw",
+          "....ccw",
+          "....ccw",
+          "....cw.",
+          "...ccw.",
+          "..ccw..",
+          ".cww...",
+          "ww....."
+        ],
+        [
+          "ww.....",
+          ".Bww...",
+          "..ccw..",
+          "...BBw.",
+          "....cw.",
+          "....BBw",
+          "....ccw",
+          "....BBw",
+          "....cw.",
+          "...BBw.",
+          "..ccw..",
+          ".Bww...",
+          "ww....."
+        ]
+      ]
+    }
+  }
+}

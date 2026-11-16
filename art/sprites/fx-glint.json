@@ -14,7 +14,7 @@
     "kept-gold",
     "kept-white"
   ],
-  "status": "concept",
+  "status": "placeholder",
   "note": "Glint pickup. Gold diamond, two-frame sparkle.",
   "animations": {
     "idle": {

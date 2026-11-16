@@ -1,10 +1,10 @@
 # Shardfall: Premis Lore
 
-Pemilik: Writer (WR). Reviewer: Creative Director (CD). Status: draf M0 (versi 1, 2026-11-16).
+Pemilik: Writer (WR). Reviewer: Creative Director (CD). Status: versi 1.1 (2026-11-17). Review M0 CD: SETUJU; perubahan 1.1 hanya Keepsake menjadi Memento dan status istilah yang sudah disetujui CD.
 Dasar: `docs/vision.md` bagian 5 dan 6, `docs/style-guide.md` bagian 4, HANDOFF 2.7.
 Pasangan dokumen: `docs/narrative/glossary.md`.
 
-Semua nama baru di dokumen ini adalah **usulan** yang menunggu persetujuan CD. Istilah inti dari vision.md tetap dipakai apa adanya. Efek mekanik milik GD; alasan cerita di bawah sengaja tidak mengikat angka atau aturan.
+Nama yang sudah disetujui CD (review M0, K1 dan K2): Memento, Temper, Fuse, The Keeping, Vitrine Steady, Light Kept, Crack, tiga bioma, tiga kelas. Nama lain di dokumen ini masih **usulan**; status terkini ada di `docs/narrative/glossary.md`. Istilah inti dari vision.md tetap dipakai apa adanya. Efek mekanik milik GD; alasan cerita di bawah sengaja tidak mengikat angka atau aturan.
 
 ---
 
@@ -38,10 +38,10 @@ Bagian ini menjaga konsistensi. Pemain hanya boleh menebaknya dari nama dan satu
 | **Vitrine** | Petak tanah yang dibekukan sebuah keping. Bercahaya dari dalam seperti lemari pajangan | Arena dan bioma. Alasan diegetik tilt-shift dan kilau kaca |
 | **Kept** | Penyintas yang disimpan keping karena sedang memegang cahaya | Pemain. Kelas = jenis Kept |
 | **the Glazier** | Pedagang bertopeng yang masuk lewat retakan di jeda antar denyut | Fase toko, potret di UI toko |
-| **Keepsake** | Benda yang ikut tersegel di kaca bersama pemiliknya yang sudah tiada | Relic. Deskripsinya adalah lore utama |
+| **Memento** | Benda yang ikut tersegel di kaca bersama pemiliknya yang sudah tiada | Relic. Deskripsinya adalah lore utama |
 | **Silt** | Cahaya yang mengendap ke dasar kaca saat seorang Kept pecah atau sebuah Vitrine tenang | Mata uang meta |
 | **Glint** | Debu kaca langit yang dikunyah the Unlit dan tumpah saat mereka hancur | Mata uang run sekaligus XP |
-| **Warden** | Unlit yang menelan begitu banyak benda tersegel sampai ia mulai memakai salah satunya sebagai nama | Elite bernama, hadiah pilihan Keepsake |
+| **Warden** | Unlit yang menelan begitu banyak benda tersegel sampai ia mulai memakai salah satunya sebagai nama | Elite bernama, hadiah pilihan Memento |
 | **Rite** | Gerak yang dulu dilakukan Kept saat memegang cahayanya, kini diingat oleh keping | Skill aktif ber-cooldown |
 | **Pulse** | Satu denyut cahaya keping, dari gelombang terang sampai kilatan penutup | Satu gelombang |
 
@@ -55,11 +55,11 @@ Bagian ini menjaga konsistensi. Pemain hanya boleh menebaknya dari nama dan satu
 
 **Glint sebagai XP sekaligus uang.** Saat dipungut, cahaya di dalam Glint masuk ke tubuh Kept (XP). Butir kacanya tetap tinggal di tangan sebagai alat tukar (uang). Karena itu membelanjakan Glint tidak membuat Kept redup lagi.
 
-**Level-up.** Cahaya yang terserap mengendap dan menguatkan kaca di tubuh Kept, seperti kaca yang ditempa panas. Di awal fase toko, cahaya itu "mengeras" menjadi satu pilihan per level. Usulan istilah di game: **Temper** (lihat glosarium).
+**Level-up.** Cahaya yang terserap mengendap dan menguatkan kaca di tubuh Kept, seperti kaca yang ditempa panas. Di awal fase toko, cahaya itu "mengeras" menjadi satu pilihan per level. Istilah di game: **Temper** (disetujui CD).
 
 **Toko (the Glazier).** Di jeda antar denyut, retakan cukup tenang untuk dilewati sesuatu yang bukan Unlit. The Glazier masuk membawa nampan berisi benda dari Vitrine lain. Ia menerima Glint karena ia sedang menyusun sesuatu dari kaca langit.
 - **Reroll:** the Glazier menyimpan nampan itu dan merogoh retakan lain.
-- **Merge:** dua benda sejenis dilebur menjadi satu yang lebih kuat. Kaca yang dilebur mengingat kedua bentuknya. Usulan kata kerja di game: **Fuse**.
+- **Merge:** dua benda sejenis dilebur menjadi satu yang lebih kuat. Kaca yang dilebur mengingat kedua bentuknya. Kata kerja di game: **Fuse** (disetujui CD).
 
 **Warden.** Unlit yang paling banyak menelan. Benda-benda yang ia telan masih utuh di dalamnya; saat ia pecah, benda itu tumpah, dan Kept boleh memungut satu.
 
@@ -67,7 +67,7 @@ Bagian ini menjaga konsistensi. Pemain hanya boleh menebaknya dari nama dan satu
 
 **Permadeath.** Kept yang pecah menjadi serpihan kaca biru dan tidak bisa disusun ulang. Keping lain menyimpan orang lain. Teks akhir run: *"Kept Lost. Another wakes beneath the glass."*
 
-**Meta (Silt).** Cahaya seorang Kept tidak hilang sepenuhnya. Ia mengendap ke dasar kaca sebagai Silt. Makin banyak endapan, makin banyak yang bisa diingat keping: jenis orang lain (kelas baru) dan benda lain (Keepsake baru masuk ke nampan the Glazier). Silt membuka ragam, bukan kekuatan permanen, sesuai vision. Usulan judul layar meta: **The Keeping**.
+**Meta (Silt).** Cahaya seorang Kept tidak hilang sepenuhnya. Ia mengendap ke dasar kaca sebagai Silt. Makin banyak endapan, makin banyak yang bisa diingat keping: jenis orang lain (kelas baru) dan benda lain (Memento baru masuk ke nampan the Glazier). Silt membuka ragam, bukan kekuatan permanen, sesuai vision. Judul layar meta: **The Keeping** (disetujui CD).
 
 **Kode warna.**
 - **Biru** adalah langit yang dulu terlihat lewat the Pane. Warna identitas Kept.
@@ -77,7 +77,7 @@ Bagian ini menjaga konsistensi. Pemain hanya boleh menebaknya dari nama dan satu
 - Contoh flavor yang membawa aturan ini: *"Grandmother said red was the color of outside."* (46 karakter)
 - Cahaya lentera di bioma berwarna amber redup, bukan emas jenuh: itu cahaya yang ikut membeku, bukan cahaya milik Kept.
 
-## 5. Bioma (usulan, 3 tempat yang membeku saat langit jatuh)
+## 5. Bioma (nama disetujui CD, 3 tempat yang membeku saat langit jatuh)
 
 Setiap bioma adalah satu tempat yang dibekukan tepat di detik langit jatuh. Kalimat pembuka tampil satu kali saat Vitrine dimulai. Nama final dan detail milik LD dengan persetujuan CD.
 
@@ -90,9 +90,9 @@ Setiap bioma adalah satu tempat yang dibekukan tepat di detik langit jatuh. Kali
 Catatan:
 - Bioma 1 mengikuti arah CD (vision 7.2). Nama "Moth" menyinggung ngengat yang datang ke lentera, sama seperti the Unlit datang ke cahaya.
 - Bioma 2 dan 3 untuk Tingkat C. Keduanya bisa memakai ulang set Unlit dengan palet cahaya berbeda: lilin putih dingin (2) dan bara jingga redup (3), tetap di bawah batas saturasi cahaya lingkungan.
-- Benih boss (usulan arah untuk M2 dan M3, bukan nama final): 1) lentera festival raksasa yang kini menelan terang, 2) suara lonceng yang tumbuh tubuh, 3) api yang lupa ia sedang membakar apa.
+- Benih boss (usulan arah, bukan nama final): 1) lentera festival raksasa yang kini menelan terang (usulan nama M1: Paper Sun, the Light-Eater), 2) suara lonceng yang tumbuh tubuh, 3) api yang lupa ia sedang membakar apa.
 
-## 6. Kelas (usulan nama, 3 jenis Kept)
+## 6. Kelas (nama disetujui CD, 3 jenis Kept)
 
 Setiap kelas adalah orang yang sedang memegang cahaya saat langit jatuh. Nama 1 kata. Senjata, Rite, dan angka milik GD; kolom "condong" hanya saran rasa. Siluet dan aksen mengikuti style guide 1.4.
 
@@ -151,6 +151,6 @@ Maksud: kemenangan terasa hangat, tapi baris ketiga meninggalkan pertanyaan (lan
 ## 9. Aturan pemakaian lore
 
 - Lore hanya hadir lewat: nama, satu baris flavor, kalimat pembuka bioma, baris the Glazier, identitas kelas, dan teks akhir. Tidak ada cutscene, dialog bercabang, atau layar penjelasan.
-- Tunjukkan lewat benda, jangan jelaskan. Satu Keepsake = satu potongan cerita kecil. Petunjuk tentang bagian 2 boleh tersebar, tidak pernah dirangkum.
-- Motif "keep" (Kept, Keepsake, The Keeping, Light Kept) disengaja sebagai benang merah. Batasi agar tidak membingungkan: lihat risiko di glosarium.
+- Tunjukkan lewat benda, jangan jelaskan. Satu Memento = satu potongan cerita kecil. Petunjuk tentang bagian 2 boleh tersebar, tidak pernah dirangkum.
+- Motif "keep" (Kept, The Keeping, Light Kept) disengaja sebagai benang merah. Penggantian Keepsake dengan Memento menurunkan kepadatannya.
 - Semua teks game mematuhi style guide 4.2 dan 4.3. Dokumen ini sudah dicek tanpa em dash.

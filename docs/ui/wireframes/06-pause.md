@@ -19,7 +19,7 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S06, S06b).
 |...........................|  |I |  |  |                        STATS                           |.|
 |...........................|  +--+--+--+                        HP 51/60    Speed 108           |.|
 |...........................|                                    Damage +12% Crit 5%             |.|
-|...........................|  KEEPSAKES                         Armor 2     Pickup 100          |.|
+|...........................|  MEMENTOS                         Armor 2     Pickup 100          |.|
 |...........................|  [k][k][k][k][k][k]                                                |.|
 |...........................|                                                                    |.|
 |...........................|  +--------------------------------------------------------------+  |.|
@@ -28,7 +28,7 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S06, S06b).
 |...........................|  | Burning foes spread flame on death.                          |  |.|
 |...........................|  | Still warm from a hand that never let go.                    |  |.|
 |...........................|  +--------------------------------------------------------------+  |.|
-|...........................|  (panel detail: item atau Keepsake yang difokus atau di-hover)     |.|
+|...........................|  (panel detail: item atau Memento yang difokus atau di-hover)     |.|
 |...........................+--------------------------------------------------------------------+.|
 |..................................................................................................|
 |..................................................................................................|
@@ -37,7 +37,7 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S06, S06b).
 
 - Arena membeku dan digelapkan 60%. Sim tidak di-tick.
 - Ringkasan build hanya-baca, langsung di panel (tidak ada sub-layar "Build").
-- Grup fokus: Menu (atas/bawah) dan Build (grid Arms dan Keepsakes). Kanan dari menu masuk ke Build; Esc dari Build kembali ke menu, Esc dari menu sama dengan Resume.
+- Grup fokus: Menu (atas/bawah) dan Build (grid Arms dan Mementos). Kanan dari menu masuk ke Build; Esc dari Build kembali ke menu, Esc dari menu sama dengan Resume.
 
 | Input | Hasil |
 |---|---|

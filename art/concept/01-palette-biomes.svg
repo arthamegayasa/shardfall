@@ -128,7 +128,7 @@
 <text x="88" y="904" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">az 45 el 35 I 0.45</text>
 <rect x="36" y="918" width="44" height="34" fill="#E8B070" stroke="#3E3A46" stroke-width="1"/>
 <text x="88" y="932" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">point #E8B070  sat 52%</text>
-<text x="88" y="948" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">r 56px I 0.8 flicker 0.12</text>
+<text x="88" y="948" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">range 3.5 u I 0.8 flicker 0.12</text>
 <text x="36" y="980" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor under key + fill (centre)</text>
 <rect x="36" y="988" width="44" height="34" fill="#57515A" stroke="#3E3A46" stroke-width="1"/>
 <rect x="80" y="988" width="44" height="34" fill="#494247" stroke="#3E3A46" stroke-width="1"/>
@@ -195,7 +195,7 @@
 <text x="626.6666666666666" y="860" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">az 300 el 20 I 0.35</text>
 <rect x="574.6666666666666" y="874" width="44" height="34" fill="#E2B47E" stroke="#3E3A46" stroke-width="1"/>
 <text x="626.6666666666666" y="888" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">point #E2B47E  sat 44%</text>
-<text x="626.6666666666666" y="904" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">r 40px I 0.6 flicker 0.18</text>
+<text x="626.6666666666666" y="904" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">range 2.5 u I 0.6 flicker 0.18</text>
 <text x="574.6666666666666" y="936" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor under key + fill (centre)</text>
 <rect x="574.6666666666666" y="944" width="44" height="34" fill="#545458" stroke="#3E3A46" stroke-width="1"/>
 <rect x="618.6666666666666" y="944" width="44" height="34" fill="#444448" stroke="#3E3A46" stroke-width="1"/>
@@ -220,12 +220,12 @@
 <rect x="1113.3333333333333" y="482" width="44" height="34" fill="#1D1716" stroke="#3E3A46" stroke-width="1"/>
 <text x="1165.3333333333333" y="496" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">b3.void</text>
 <text x="1165.3333333333333" y="512" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#1D1716</text>
-<rect x="1366.6666666666665" y="482" width="44" height="34" fill="#55524E" stroke="#3E3A46" stroke-width="1"/>
+<rect x="1366.6666666666665" y="482" width="44" height="34" fill="#53524F" stroke="#3E3A46" stroke-width="1"/>
 <text x="1418.6666666666665" y="496" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">b3.floor-dark</text>
-<text x="1418.6666666666665" y="512" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#55524E</text>
-<rect x="1113.3333333333333" y="526" width="44" height="34" fill="#67625D" stroke="#3E3A46" stroke-width="1"/>
+<text x="1418.6666666666665" y="512" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#53524F</text>
+<rect x="1113.3333333333333" y="526" width="44" height="34" fill="#646260" stroke="#3E3A46" stroke-width="1"/>
 <text x="1165.3333333333333" y="540" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">b3.floor-light</text>
-<text x="1165.3333333333333" y="556" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#67625D</text>
+<text x="1165.3333333333333" y="556" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#646260</text>
 <rect x="1366.6666666666665" y="526" width="44" height="34" fill="#3D3633" stroke="#3E3A46" stroke-width="1"/>
 <text x="1418.6666666666665" y="540" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">b3.curb</text>
 <text x="1418.6666666666665" y="556" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">#3D3633</text>
@@ -262,17 +262,17 @@
 <text x="1165.3333333333333" y="860" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">az 20 el 55 I 0.5</text>
 <rect x="1113.3333333333333" y="874" width="44" height="34" fill="#D9955E" stroke="#3E3A46" stroke-width="1"/>
 <text x="1165.3333333333333" y="888" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">point #D9955E  sat 57%</text>
-<text x="1165.3333333333333" y="904" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">r 44px I 0.55 flicker 0.25</text>
+<text x="1165.3333333333333" y="904" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#A39A8C" font-weight="normal">range 2.75 u I 0.55 flicker 0.25</text>
 <text x="1113.3333333333333" y="936" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor under key + fill (centre)</text>
-<rect x="1113.3333333333333" y="944" width="44" height="34" fill="#55524E" stroke="#3E3A46" stroke-width="1"/>
-<rect x="1157.3333333333333" y="944" width="44" height="34" fill="#48433E" stroke="#3E3A46" stroke-width="1"/>
-<text x="1209.3333333333333" y="958" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor-dark: #55524E -> #48433E</text>
-<text x="1209.3333333333333" y="974" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#A39A8C" font-weight="normal">danger-core 8.1:1  cyan 6.3:1  unlit 1.7:1</text>
-<rect x="1113.3333333333333" y="988" width="44" height="34" fill="#67625D" stroke="#3E3A46" stroke-width="1"/>
-<rect x="1157.3333333333333" y="988" width="44" height="34" fill="#58514A" stroke="#3E3A46" stroke-width="1"/>
-<text x="1209.3333333333333" y="1002" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor-light: #67625D -> #58514A</text>
-<text x="1209.3333333333333" y="1018" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#A39A8C" font-weight="normal">danger-core 6.5:1  cyan 5.0:1  unlit 2.1:1</text>
-<rect x="1113.3333333333333" y="1040" width="498.66666666666663" height="40" fill="#58514A"/>
+<rect x="1113.3333333333333" y="944" width="44" height="34" fill="#53524F" stroke="#3E3A46" stroke-width="1"/>
+<rect x="1157.3333333333333" y="944" width="44" height="34" fill="#47433F" stroke="#3E3A46" stroke-width="1"/>
+<text x="1209.3333333333333" y="958" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor-dark: #53524F -> #47433F</text>
+<text x="1209.3333333333333" y="974" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#A39A8C" font-weight="normal">danger-core 8.2:1  cyan 6.3:1  unlit 1.7:1</text>
+<rect x="1113.3333333333333" y="988" width="44" height="34" fill="#646260" stroke="#3E3A46" stroke-width="1"/>
+<rect x="1157.3333333333333" y="988" width="44" height="34" fill="#55514D" stroke="#3E3A46" stroke-width="1"/>
+<text x="1209.3333333333333" y="1002" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#EDE6D8" font-weight="normal">floor-light: #646260 -> #55514D</text>
+<text x="1209.3333333333333" y="1018" font-family="Consolas, 'Courier New', monospace" font-size="11" fill="#A39A8C" font-weight="normal">danger-core 6.5:1  cyan 5.1:1  unlit 2.1:1</text>
+<rect x="1113.3333333333333" y="1040" width="498.66666666666663" height="40" fill="#55514D"/>
 <rect x="1129.3333333333333" y="1048" width="24" height="24" fill="#3D7DFF"/>
 <rect x="1135.3333333333333" y="1054" width="12" height="12" fill="#4FE3F0"/>
 <rect x="1173.3333333333333" y="1048" width="24" height="24" fill="#241A30"/>

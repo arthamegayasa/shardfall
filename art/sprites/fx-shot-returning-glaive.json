@@ -1,0 +1,39 @@
+{
+  "id": "fx-shot-returning-glaive",
+  "class": "projectile-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white"
+  ],
+  "status": "placeholder",
+  "note": "Weapon returning_glaive. Two crescents around a blue hub, spins by quarter turns.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 4,
+      "loop": true,
+      "frames": [
+        [
+          ".cww.",
+          "c...w",
+          "..B..",
+          "w...c",
+          ".wwc."
+        ],
+        [
+          ".w.c.",
+          "w...c",
+          "w.B.w",
+          "c...w",
+          ".c.w."
+        ]
+      ]
+    }
+  }
+}

@@ -14,11 +14,11 @@
     "danger-core",
     "danger-magenta"
   ],
-  "status": "concept",
+  "status": "placeholder",
   "note": "Role shooter. Round lantern head on a thin stalk. Wrong: its light is a magenta hole that fires.",
   "animations": {
     "idle": {
-      "ticksPerFrame": 15,
+      "ticksPerFrame": 18,
       "loop": true,
       "frames": [
         [
@@ -31,6 +31,23 @@
           "..uuu",
           "...uu",
           "....u",
+          "....u",
+          "..uuu",
+          ".uu.u",
+          ".u..u",
+          ".u.uu",
+          "...u.",
+          "..uu."
+        ],
+        [
+          "....u",
+          "..uuu",
+          ".uumm",
+          ".umpp",
+          ".umpp",
+          ".uumm",
+          "..uuu",
+          "...uu",
           "....u",
           "..uuu",
           ".uu.u",

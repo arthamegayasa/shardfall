@@ -106,7 +106,7 @@
       "point": {
         "color": "#E8B070",
         "intensity": 0.8,
-        "radiusPx": 56,
+        "rangeU": 3.5,
         "flicker": 0.12
       },
       "fog": {
@@ -156,7 +156,7 @@
       "point": {
         "color": "#E2B47E",
         "intensity": 0.6,
-        "radiusPx": 40,
+        "rangeU": 2.5,
         "flicker": 0.18
       },
       "fog": {
@@ -175,8 +175,8 @@
       "workingName": "Stillfire Vineyard",
       "env": {
         "void": "#1D1716",
-        "floor-dark": "#55524E",
-        "floor-light": "#67625D",
+        "floor-dark": "#53524F",
+        "floor-light": "#646260",
         "curb": "#3D3633",
         "charred": "#2E2624",
         "vine-wood": "#5A4636",
@@ -205,7 +205,7 @@
       "point": {
         "color": "#D9955E",
         "intensity": 0.55,
-        "radiusPx": 44,
+        "rangeU": 2.75,
         "flicker": 0.25
       },
       "fog": {

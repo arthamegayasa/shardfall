@@ -1,6 +1,6 @@
 # Shardfall: Arah Art
 
-Pemilik: Art Director (AD). Status: M0, versi 1 (2026-11-16). Reviewer: CD (visual), LP (teknis).
+Pemilik: Art Director (AD). Status: versi 1.1 (2026-11-17, M1-05: perbaikan review M0 dan placeholder M1). Reviewer: CD (visual), LP (teknis).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md`. Bila bertentangan, pilar dan style guide menang.
 Diselaraskan dengan: `docs/tech/architecture.md` (LP: kamera, lapisan, post-processing), `docs/levels/arena-design.md` (LD: arena), `docs/gdd.md` (GD: peran Unlit, kelas, Warden, boss), `docs/narrative/glossary.md` (WR: nama kerja).
 Pipeline produksi aset: `docs/art-pipeline.md`. Sumber kebenaran warna: `art/palette.json`.
@@ -75,8 +75,8 @@ Kebun anggur setengah terbakar, bara yang tidak pernah padam di cakrawala. Rasa:
 | Token | Hex | Pakai untuk |
 |---|---|---|
 | `b3.void` | `#1D1716` | Langit, kabut tepi |
-| `b3.floor-dark` | `#55524E` | Sambungan tanah padat |
-| `b3.floor-light` | `#67625D` | Lantai area main |
+| `b3.floor-dark` | `#53524F` | Sambungan tanah padat |
+| `b3.floor-light` | `#646260` | Lantai area main |
 | `b3.curb` | `#3D3633` | Tanah di luar bibir |
 | `b3.charred` | `#2E2624` | Tiang dan tunggul hangus |
 | `b3.vine-wood` | `#5A4636` | Batang anggur |
@@ -87,14 +87,15 @@ Kebun anggur setengah terbakar, bara yang tidak pernah padam di cakrawala. Rasa:
 | `b3.ember` | `#E0A070` | Bara di cakrawala dan tunggul (emisif, luar arena saja) |
 | `b3.glass` | `#B7C3CB` | Kaca |
 
-Catatan: lantai `b3` sengaja sedikit lebih netral dari draf awal (`#6A635B` menjadi `#67625D`) karena cahaya kunci oranye membuat median saturasi lantai melewati 15% di render uji.
+Catatan: lantai `b3` dibuat hampir netral dan sedikit dingin (versi 1 `#67625D`, versi 1.1 `#646260`) karena cahaya kunci bara oranye sudah memberi kehangatan. Median saturasi lantai turun dari 15,2% ke 10,1% (target CD 13% atau kurang, K6). Efek samping yang diinginkan: lantai b3 tidak lagi sama dengan b1 yang hangat (catatan CD 2.4). Identitas b3 tetap dibangun lewat siluet, bara di cakrawala, dan grading saat produksi b3.
 
 Bioma 2 dan 3 memakai set Unlit yang sama dengan bioma 1 (keputusan Producer dan GD). Unlit tidak diberi palet bioma; yang berubah adalah cahaya dan lingkungan.
 
 ## 3. Skala sprite dan proporsi
 
 ### 3.1 Satuan [Wajib]
-- 1 piksel sprite = 1 unit three.js (LP, architecture 7.1). 1 `u` gameplay = 16 piksel sprite = 1 tile (GDD, LD).
+- 1 piksel sprite = 1 piksel virtual. **1 u = 16 px lebar dan 10 px kedalaman lantai** (pitch asin(0,625), architecture 7.1). Sprite aktor adalah billboard, jadi tingginya tampil 1:1.
+- Posisi kaki dibulatkan ke piksel virtual utuh di vertex shader; sudut quad di piksel bulat (architecture 7.2).
 - Skala layar integer saja: 3x di 1920x1080, 2x di 1366x768 dan 1280x720 (LP 7.3). Resolusi virtual sekitar 640x360.
 - Satu skala piksel untuk semua sprite dan tekstur di area main (P3-b, toleransi 0).
 
@@ -114,7 +115,7 @@ Tinggi termasuk outline 1 px. Lebar maksimal adalah batas agar siluet tetap ramp
 | Proyektil pemain | 3 sampai 6 | 6 | 8 x 8 | `fx-shot-kept`: 4 px |
 | Potret the Glazier (UI) | 40 sampai 48 | 48 | 48 x 48 | belum (M2) |
 
-Validator `tools/art/check-sprites.mjs` menolak sprite di luar rentang tinggi ini.
+Validator `tools/art/check-sprites.ts` (`npm run art:check`) menolak sprite di luar rentang tinggi ini.
 
 ### 3.3 Proporsi semi-chibi pemain [Wajib]
 Untuk tinggi 20 px (18 px gambar plus outline):
@@ -183,9 +184,11 @@ Konvensi arah: azimut di bidang lantai dilihat dari kamera, 0 = dari sisi kamera
 
 | Bioma | Cahaya kunci | Cahaya isi | Titik cahaya | Lantai terang setelah kunci plus isi |
 |---|---|---|---|---|
-| b1 Moth Market | `#DCA466` amber redup, az 225 (kiri belakang), el 50, I 1,0, sat 54% | `#6F86B8` biru bulan, az 45 (kanan depan), el 35, I 0,45, sat 40% | Lentera `#E8B070`, I 0,8, radius 56 px (3,5 u), kedip 12%, sat 52% | `#6B6360` menjadi `#5A514C` |
-| b2 Vesper Steps | `#A7B4CC` cahaya bulan perak, az 150 (kanan belakang), el 60, I 0,9, sat 18% | `#C99B6A` lilin hangat, az 300 (kiri depan, rendah), el 20, I 0,35, sat 47% | Lilin `#E2B47E`, I 0,6, radius 40 px, kedip 18%, sat 44% | `#68676A` menjadi `#555356` |
-| b3 Stillfire Vineyard | `#C98A5A` bara dari cakrawala, az 180 (belakang), el 20, I 0,8, sat 55% | `#8C97A0` abu fajar, az 20 (depan atas), el 55, I 0,5, sat 12% | Bara `#D9955E`, I 0,55, radius 44 px, kedip 25%, sat 57% | `#67625D` menjadi `#58514A` |
+| b1 Moth Market | `#DCA466` amber redup, az 225 (kiri belakang), el 50, I 1,0, sat 54% | `#6F86B8` biru bulan, az 45 (kanan depan), el 35, I 0,45, sat 40% | Lentera `#E8B070`, I 0,8, jangkauan 3,5 u, kedip 12%, sat 52% | `#6B6360` menjadi `#5A514C` |
+| b2 Vesper Steps | `#A7B4CC` cahaya bulan perak, az 150 (kanan belakang), el 60, I 0,9, sat 18% | `#C99B6A` lilin hangat, az 300 (kiri depan, rendah), el 20, I 0,35, sat 47% | Lilin `#E2B47E`, I 0,6, jangkauan 2,5 u, kedip 18%, sat 44% | `#68676A` menjadi `#555356` |
+| b3 Stillfire Vineyard | `#C98A5A` bara dari cakrawala, az 180 (belakang), el 20, I 0,8, sat 55% | `#8C97A0` abu fajar, az 20 (depan atas), el 55, I 0,5, sat 12% | Bara `#D9955E`, I 0,55, jangkauan 2,75 u, kedip 25%, sat 57% | `#646260` menjadi `#55514D` |
+
+Jangkauan titik cahaya disimpan dalam unit dunia (`point.rangeU` di `art/palette.json`, review LP M0), bukan piksel.
 
 Aturan:
 - Tepat 1 cahaya kunci terarah plus 1 cahaya isi berwarna kontras per bioma (style guide 1.6). Lentera, lilin, dan bara adalah titik cahaya lokal di tepi arena, maksimal 8 aktif (LP 7.6) di kualitas Sedang dan Tinggi, 4 di Rendah.
@@ -224,16 +227,18 @@ Kualitas grafis mengikuti tabel LP 7.7. Rendah mematikan DoF, bloom, dan kilau k
 
 | Efek | Lapis | Visual | Durasi |
 |---|---|---|---|
-| Proyektil pemain | L3 | 4x4 `kept-white`/`kept-cyan`, jejak 3 sampai 4 piksel cyan memudar | Selama terbang |
+| Proyektil pemain | L3 | Satu sprite per senjata (`fx-shot-<id senjata>`), inti `kept-white`, badan `kept-cyan`, aksen `kept-blue`, tanpa emas. Proyektil garis (Splinter Shot) memilih 4 orientasi menurut arah di layar. Jejak memudar menyusul di M2 | Selama terbang |
 | Percikan hit pemain | L3 | 3 sampai 5 piksel `kept-white` memencar | 0,15 s |
-| Burn pada Unlit | L3 | Lidah api 2x3 `kept-gold` dan `kept-white` di atas kepala Unlit (efek milik pemain, bukan bagian sprite Unlit) | Selama status |
+| Burn pada Unlit | L3 | Lidah api kaca 2x3 `kept-cyan` dan `kept-white` (`fx-burn`) 1 px di atas kepala Unlit (efek milik pemain, bukan bagian sprite Unlit). Tidak memakai emas: emas kecil di area main berarti "pungut aku" (review CD M0 2.2) | Selama status |
 | Ledakan Lantern Bolt, zona api Rite | L3 | Isian `kept-gold` 25%, tepi `kept-white` putus-putus | Sesuai GDD |
 | Glint jatuh dan dipungut | L2/L3 | Glint 2 bingkai berkilau; saat dipungut terbang ke pemain dengan jejak emas 2 piksel | 0,2 s |
 | Level up, Keepsake | L3 | Cincin `kept-gold` mengembang dari kaki pemain, 8 piksel naik | 0,5 s |
 | Rite siap | UI dan L1 | Cincin kaki pemain berdenyut emas satu kali | 0,3 s |
-| Telegraf area | L4 | Isian `danger-red` 30% tumbuh dari tengah ke tepi selama waktu telegraf, tepi solid 1 px | Sesuai GDD |
+| Telegraf area | L4 | Isian `danger-red` 30% tumbuh dari tengah ke tepi selama waktu telegraf, tepi solid 1 px. Pola boss memakai `danger-magenta`. Digambar shader lantai (lingkaran, cincin bercelah, garis, kerucut), bukan sprite, karena ukurannya dari data | Sesuai GDD |
 | Telegraf terjang | L4 | Outline dan mata berkedip `danger-red`, garis arah putus-putus (3 px isi, 3 px kosong) | 0,6 s |
-| Telegraf spawn (retakan) | L4 | Retakan bercabang `danger-violet` tumbuh dari titik, tepi lingkaran solid (diameter dari LD) | Sesuai LD |
+| Telegraf spawn (retakan) | L4 | Retakan bercabang `danger-violet` berinti `danger-core` (`fx-spawn-crack`, 4 tahap menurut progres), tepi lingkaran `danger-violet` solid 1 px di radius tanda | Sesuai LD |
+| Angka damage | L3 | Digit bitmap 3x5 px plus outline `ink` (`fx-digits`), `bone` biasa, `kept-gold` kritikal (style guide 1.8). Naik 10 px dengan ease-out, pudar di 30% akhir, umur 0,65 s. Dirender, bukan DOM; mati bila `damageNumbers` off | 0,65 s |
+| Zona pemain | L3 di lantai | Isian `kept-gold` 25%, tepi `kept-white` putus-putus 3 px isi 3 px kosong | Sesuai GDD |
 | Proyektil musuh | L4 | `fx-shot-danger` 7x7, tiga lapis | Selama terbang |
 | Aura Warden | L1 | Cincin `danger-violet` 70% plus isian 14%, radius 1,75 u | Selama hidup |
 | Kematian Unlit | L3 | 4 sampai 8 motes `unlit-body` dan `unlit-rim` memencar dan memudar | Kurang dari 0,3 s |
@@ -275,17 +280,19 @@ Diukur oleh `tools/art/build-concepts.mjs` pada gambar akhir setelah post-proces
 
 | Ukuran | Syarat | b1 | b2 | b3 |
 |---|---|---|---|---|
-| Inti proyektil musuh vs lantai, minimum | 4,5:1 (P2-c) | 5,24 | 5,11 | 5,35 |
-| Cyan pemain vs lantai, minimum | 3,5:1 (P2-c) | 4,17 | 4,00 | 4,22 |
-| Inti proyektil pemain vs lantai, minimum | 3,5:1 | 6,35 | 6,08 | 6,45 |
-| Badan Unlit vs lantai, median | 2:1 (P2-c) | 2,29 | 2,26 | 2,15 |
-| Badan Unlit vs lantai, persentil 10 | 2:1 | 1,85 | 1,87 | 1,96 |
-| Median saturasi lantai area main | di bawah 15% | 14,5% | 3,6% | 15,2% |
+| Inti proyektil musuh vs lantai, minimum | 4,5:1 (P2-c) | 5,22 | 5,12 | 5,37 |
+| Cyan pemain vs lantai, minimum | 3,5:1 (P2-c) | 4,18 | 4,01 | 4,25 |
+| Inti proyektil pemain vs lantai, minimum | 3,5:1 | 6,36 | 6,13 | 6,55 |
+| Badan Unlit vs lantai, median per adegan | 2:1 (P2-c) | 2,23 | 2,24 | 2,14 |
+| Badan Unlit vs lantai, persentil 10 | 1,5:1 per aktor (K6) | 1,85 | 1,87 | 1,94 |
+| Median saturasi lantai area main | 15% atau kurang, target 13% | 14,5% | 3,6% | 10,1% |
+
+Versi 1.1 (M1-05): konsep dibuat ulang dengan proyeksi final (kedalaman 10/16, arena y 100 sampai 300 px, jangkauan cahaya dari `rangeU`) dan lantai b3 baru. Angka per aktor P2-c diukur ulang di M2 pada screenshot game.
 
 Temuan:
 1. Render pertama gagal (inti bahaya 3,77:1, cyan 3,16:1, saturasi lantai 28%). Penyebab: lantai terlalu terang, halo bloom proyektil musuh menaikkan terang lantai di sekitarnya, dan hue cahaya hangat diteruskan penuh. Perbaikan yang sekarang menjadi aturan: kecerahan lantai sekitar 0,88 albedo, hue cahaya 15% ke permukaan, proyektil musuh tanpa bloom scene (lapis L4).
 2. Badan Unlit di bawah 2:1 di sekitar 10% piksel, terutama di bawah isian telegraf merah, di kolam cahaya lentera, dan di dalam aura Warden. Median lolos. Usulan: P2-c untuk badan Unlit diukur per aktor (median), dan rim `unlit-rim` plus outline `ink` menjaga bentuk di area terang. Perlu persetujuan CD (pertanyaan terbuka).
-3. Median saturasi lantai b3 15,2%, tepat di batas. Kalibrasi lanjut di M2 dengan cahaya three.js sungguhan.
+3. Median saturasi lantai b3 15,2% di versi 1, sekarang 10,1% setelah lantai b3 dinetralkan (versi 1.1). b1 14,5% lolos tanpa ruang; dicek ulang di M2 dengan cahaya three.js sungguhan (K6).
 4. Uji nilai (`art/concept/05-readability-check.png`): tiga lapis terpisah. Sorotan pemain, Glint, dan proyektil terang; lantai sedang; Unlit gelap (P2-b versi konsep).
 
 ## 12. Konsep mood
@@ -308,3 +315,7 @@ Semua dibuat ulang dengan `node tools/art/build-concepts.mjs` (sekitar 5 detik).
 4. Kilat kena hit: `kept-white` untuk pemain, `bone` untuk Unlit.
 5. Proyektil musuh tanpa bloom scene; kilau bahaya di shader L4 bila diperlukan.
 6. Nama sprite mengikuti id GDD (`unlit-swarmer` untuk `swarmer`, dan seterusnya) dan nama kerja bioma dari glosarium.
+7. (1.1) Burn pada Unlit `kept-cyan` dan `kept-white`; proyektil pemain tanpa emas. Emas kecil di area main hanya Glint dan angka kritikal.
+8. (1.1) Lantai b3 `#646260` dan `#53524F`.
+9. (1.1) Telegraf berukuran data digambar shader lantai dengan tepi 1 px tepat; retakan spawn, proyektil, Glint, Burn, dan angka damage adalah sprite.
+10. (1.1) Sprite pemain tidak simetris (lentera di tangan kanan) agar arah hadap terbaca; menghadap kanan, runtime membalik untuk kiri.

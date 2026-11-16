@@ -1,0 +1,3 @@
+boss_id,phase,hp_below,gap_s,cycle,min_crack,transition_s
+boss_lantern,1,1,2,ember_rain_5|snuff_ring|ember_rain_5|moth_call,0,0
+boss_lantern,2,0.5,1.4,ember_rain_8|snuff_ring_double|lantern_lanes|moth_call,0,1.5

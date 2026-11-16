@@ -60,6 +60,7 @@ export default defineConfig(({ command, mode }) => {
         'tests/data/**/*.test.ts',
         'tests/determinism/**/*.test.ts',
         'tests/assets/**/*.test.ts',
+        'tests/render/**/*.test.ts',
       ],
       exclude: ['tests/e2e/**', 'tests/perf/**', 'node_modules/**'],
     },

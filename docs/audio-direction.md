@@ -1,6 +1,6 @@
 # Shardfall: Arah Audio
 
-Pemilik: Audio Director (AU). Status: draf M0 versi 1 (2026-11-16). Reviewer: CD (rasa), LP (teknis dan ukuran).
+Pemilik: Audio Director (AU). Status: versi 1.1 (2026-11-17), perbaikan review M0 (`docs/reviews/M0-cd.md`, `M0-lp.md`) dan engine M1-06 (bagian 13). Reviewer: CD (rasa), LP (teknis dan ukuran).
 Dasar: `docs/vision.md`, `docs/pillars.md`, `docs/style-guide.md` bagian 3, keputusan Producer di `docs/tasks.md`.
 Pasangan dokumen: `docs/audio-list.md` (daftar semua cue dengan id, pemicu, prioritas, durasi, polifoni).
 
@@ -40,8 +40,9 @@ Prinsip [Wajib]:
   - Data SFX: `src/audio/cues/cues.json` (satu file, format di `docs/audio-list.md` bagian 2).
   - DSP murni (osilator, FM, Karplus-Strong, noise, filter, envelope, IR): `src/audio/synth/`. Tanpa API Web Audio, agar bisa dijalankan di Node.
   - Engine (context, bus, voice limit, scheduler) dan `src/audio/event-map.ts`: `src/audio/`.
-  - Skrip alat: `tools/audio/` (`render-cues.ts` ekspor WAV untuk review CD, validator data musik).
-- Ekspor WAV di `audio/sfx/` dan `audio/music/` hanya untuk review dan arsip, tidak dikirim di build.
+  - Data pemetaan event ke cue: `src/audio/cues/routes.json` (dibaca `src/audio/event-map.ts`).
+  - Skrip alat: `tools/audio/render-cues.ts` (ekspor WAV untuk review CD) dan `tools/audio/validate.ts` (validator `cues.json`, `routes.json`, instrumen, dan lagu; uji A-5). Keduanya jalan langsung dengan `node`.
+- Ekspor WAV hanya ke `audio/preview/` (di-gitignore, tidak di-commit, tidak dikirim di build): `audio/preview/sfx/<cue-id>.wav` dan `audio/preview/music/<lagu>.L<level>.wav`.
 
 ### 2.2 Anggaran [Wajib, angka final dicek LP di M1]
 
@@ -79,7 +80,7 @@ Prinsip [Wajib]:
 
 Semua suara dibangun dari blok berikut. Tidak ada sampel rekaman.
 
-Keputusan AU tentang implementasi [Wajib]: **SFX** memakai padanan DSP murni dari tiap blok (fungsi di `src/audio/synth/`). **Instrumen musik** dimainkan sebagai node Web Audio langsung sesuai kolom implementasi di bawah, kecuali `pluck` (buffer Karplus-Strong dari DSP murni) dan IR reverb (dari DSP murni). Alasan: not musik butuh envelope dan filter yang bereaksi per not dan per tempo, sedangkan SFX butuh biaya putar minimal.
+Keputusan AU tentang implementasi [Wajib]: **SFX** memakai padanan DSP murni dari tiap blok (fungsi di `src/audio/synth/`). **Instrumen musik** dimainkan sebagai node Web Audio langsung sesuai kolom implementasi di bawah, kecuali `pluck` (buffer Karplus-Strong dari DSP murni) dan IR reverb (dari DSP murni). Alasan: not musik butuh envelope dan filter yang bereaksi per not dan per tempo, sedangkan SFX butuh biaya putar minimal. **Diubah di M1:** instrumen musik kini juga dari DSP murni lewat sampler (lihat 13.2 butir 2).
 
 | Blok | Implementasi Web Audio | Dipakai untuk |
 |---|---|---|
@@ -133,7 +134,7 @@ Versi sintesis dari "orkestra plus synth atau chiptune". Parameter adalah titik 
 | `unlit_drone` | Drone gelap | 2 saw pada D1 dan G#1 (tritone) ke lowpass 220 Hz dengan LFO 0.07 Hz, ditambah pink noise bandpass 300 Hz pada minus 18 dB ("napas") | 1.5 s, 0, 1.0, 2.0 s | Overlay Warden, boss L0 |
 | `kit` (perkusi) | Gendang, snare, simbal | Lihat tabel 4.1 | per bagian | Satu instrumen dengan lajur (lane) |
 | `riser` | Crescendo orkestra | Pink noise lewat bandpass Q 4 yang menyapu 300 Hz ke 4 kHz eksponensial, ditambah saw glide D3 ke D4, gain minus 30 ke minus 10 dB | sepanjang durasi, berhenti tegas | Lihat bagian 6.4 |
-| `shimmer` | Gesekan simbal, kilau | 8 sine acak 3 sampai 7 kHz dengan detune acak, envelope swell | 0.3 s, 0, 1.0, 1.2 s | Akhir Pulse, Keepsake |
+| `shimmer` | Gesekan simbal, kilau | 8 sine acak 3 sampai 7 kHz dengan detune acak, envelope swell | 0.3 s, 0, 1.0, 1.2 s | Akhir Pulse, Memento |
 
 ### 4.1 Lajur `kit`
 
@@ -165,7 +166,7 @@ Versi sintesis dari "orkestra plus synth atau chiptune". Parameter adalah titik 
 Alasan semua berpusat di D: transisi antar layar terasa satu keluarga, dan SFX bernada bisa dibuat dari nada netral yang cocok di semua lagu.
 
 ### 5.2 Aturan nada untuk SFX [Wajib]
-- **SFX hadiah dan pemain** (level up, Keepsake, Rite siap, sinergi) memakai hanya nada D, G, A, dan E dalam voicing sus atau kuint. Nada ini ada di semua lagu bioma 1, jadi tidak pernah bentrok.
+- **SFX hadiah dan pemain** (level up, Memento, Rite siap, sinergi) memakai hanya nada D, G, A, dan E dalam voicing sus atau kuint. Nada ini ada di semua lagu bioma 1, jadi tidak pernah bentrok.
 - **Tangga Glint** diambil dari data lagu aktif (`glintLadder`), karena Glint sering berbunyi saat musik paling padat:
   - Pulse (D dorian) dan toko (F lydian): D6 E6 G6 A6 B6 D7 E7 G7.
   - Boss (D phrygian): D6 F6 G6 A6 C7 D7 F7 G7.
@@ -234,7 +235,7 @@ Catatan teori: G mayor adalah warna khas dorian. Bb dipinjam dari aeolian sebaga
 
 ### 6.1 Alur state musik
 
-Fase mengikuti `RunPhase` di `docs/tech/architecture.md` 4.4 (`idle`, `pulse`, `pulseClear`, `levelUp`, `shop`, `victory`, `defeat`). Layar judul dan jeda adalah state app.
+Fase mengikuti `RunPhase` di `docs/tech/architecture.md` 4.4 (`idle`, `pulse`, `pulseClear`, `reward`, `levelUp`, `shop`, `victory`, `defeat`). Fase `reward` (pilihan Memento dari Warden) memakai musik toko seperti `levelUp`. Layar judul dan jeda adalah state app.
 
 ```
 Judul (mus.title, state app)
@@ -324,7 +325,7 @@ Aturan transisi:
 
 ## 7. Format data sequencer [Wajib]
 
-Satu file JSON per lagu di `src/audio/music/`. Validator di `tools/audio/validate-music` (M1) mengecek semua aturan di 7.2 sampai 7.4.
+Satu file JSON per lagu di `src/audio/music/`. Validator di `tools/audio/validate.ts` (M1, usul skrip `audio:check`) mengecek semua aturan di 7.2 sampai 7.4.
 
 ### 7.1 Field tingkat lagu
 
@@ -609,7 +610,7 @@ Level `gainDb` di data SFX adalah puncak target dalam dBFS dengan fader bus 100%
 |---|---|
 | Pemain kena hit | -6 |
 | Telegraf bahaya, ledakan peledak | -9 sampai -12 |
-| Level up, Keepsake, Rite | -10 sampai -14 |
+| Level up, Memento, Rite | -10 sampai -14 |
 | Pungut Glint | -20 |
 | Unlit mati | -21 |
 | Serangan otomatis pemain | -24 (18 dB di bawah kena hit, sesuai style guide 3.3) |
@@ -627,7 +628,7 @@ Prioritas mengikuti style guide 3.2 (1 tertinggi):
 |---|---|
 | 1 | Pemain kena hit, pemain mati, boss mati |
 | 2 | Telegraf dan serangan bahaya (musuh, Warden, boss), kedatangan Warden dan boss |
-| 3 | Level up, Keepsake, sinergi, Rite, alur Pulse |
+| 3 | Level up, Memento, sinergi, Rite, alur Pulse |
 | 4 | Pungut Glint, heal |
 | 5 | Unlit mati, spawn, hit kritikal, boss atau Warden terluka |
 | 6 | Serangan otomatis pemain, hit proyektil biasa |
@@ -646,18 +647,18 @@ Sim bisa mengirim puluhan event sejenis dalam satu frame (ledakan membunuh 20 Un
 
 | Pemicu | Target | Turun | Attack | Tahan | Release |
 |---|---|---|---|---|---|
-| `sfx.player.hit` | music bus | -6 dB | 10 ms | 150 ms | 300 ms |
+| `sfx.player.hit` (event `PlayerDamaged`) | music bus | -6 dB | 10 ms | 150 ms | 300 ms |
 | `sfx.player.hit` | sfx prioritas 4 sampai 6 | -8 dB | 10 ms | 150 ms | 300 ms |
 | Telegraf prioritas 2 aktif | sfx prioritas 5 sampai 6 | -4 dB | 20 ms | selama telegraf, maks 600 ms | 200 ms |
-| `sfx.levelup`, `sfx.keepsake.gain` | music bus | -4 dB | 30 ms | 300 ms | 600 ms |
+| `sfx.levelup`, `sfx.memento.gain` | music bus | -4 dB | 30 ms | 300 ms | 600 ms |
 | `sfx.boss.intro`, `sfx.boss.death`, `sfx.player.death` | music bus | -12 dB | 50 ms | durasi cue | 1.5 s |
 | `sfx.boss.intro`, `sfx.boss.death`, `sfx.player.death` | sfx prioritas 3 sampai 6 | -10 dB | 50 ms | durasi cue | 1.5 s |
 
 Ducking dibuat dengan GainNode khusus per kelompok (bukan sidechain kompresor) agar murah dan bisa diprediksi.
 
 ### 8.6 Panning [Wajib]
-- Suara milik pemain (kena hit, Rite, level up, Keepsake, serangan otomatis yang berasal dari pemain) di tengah.
-- Suara di dunia (Unlit mati, telegraf, tembakan musuh, Glint) dipan menurut posisi x dunia dari payload event, relatif terhadap arena: `pan = clamp((x - arenaCenterX) / arenaHalfWidth, -1, 1) * 0.6`. Ukuran arena dari data arena (asumsi GDD 28 x 18 u, jadi `arenaHalfWidth` 14), sehingga audio tidak butuh proyeksi render (audio tidak boleh import render).
+- Suara milik pemain (kena hit, Rite, level up, Memento, serangan otomatis yang berasal dari pemain) di tengah.
+- Suara di dunia (Unlit mati, telegraf, tembakan musuh, Glint) dipan menurut posisi x dunia dari payload event, relatif terhadap arena: `pan = clamp((x - arenaCenterX) / arenaHalfWidth, -1, 1) * 0.6`. `arenaCenterX` dan `arenaHalfWidth` diambil dari `ArenaDef.arena.boundary` lewat `AudioSystem.setArena(arena)`, bukan konstanta. Arena final 32 x 20 u, jadi `arenaHalfWidth` 16; sebelum `setArena` dipanggil engine memakai pusat 0 dan lebar setengah 16. Audio tidak butuh proyeksi render (audio tidak boleh import render).
 - Kamera tetap memperlihatkan seluruh area main, jadi tidak ada kasus "di luar layar" untuk aktor di arena.
 - Tidak ada atenuasi jarak lain (arena kecil, kamera tetap).
 - Opsi audio mono memaksa semua pan ke 0.
@@ -666,7 +667,7 @@ Ducking dibuat dengan GainNode khusus per kelompok (bukan sidechain kompresor) a
 
 | Opsi | Default | Catatan |
 |---|---|---|
-| Master, Musik, SFX, UI | 80%, 70%, 100%, 80% | Kurva: `gain = (v / 100)^2`, 0% berarti mute penuh. [Asumsi] `VolumeSettings` di architecture.md 6.8 baru punya master, music, sfx. AU meminta LP menambah `ui`; selama belum ada, bus ui mengikuti fader sfx |
+| Master, Musik, SFX, UI | 80%, 70%, 100%, 80% | Kurva: `gain = (v / 100)^2`, 0% berarti mute penuh. `VolumeSettings` final punya master, music, sfx, ui (nilai bulat 0 sampai 100) |
 | Audio mono | mati | Untuk pendengar satu telinga |
 | Kurangi suara berulang | mati | `maxVoices` prioritas 5 sampai 6 dibagi dua, gain minus 3 dB |
 | Mute saat tab tersembunyi | nyala | `AudioContext.suspend()` |
@@ -706,25 +707,25 @@ Berlaku untuk serangan otomatis, hit proyektil, Unlit mati, pungut Glint.
 | Glint beruntun naik bertahap | `ladder` | `{ "source": "song", "resetMs": 500 }` |
 
 ### 9.3 Senjata yang belum diketahui
-SFX serangan dibuat per **arketipe** (bolt, lob, arc, chain, glaive, ring, kontak orbit), bukan per senjata, agar senjata baru tidak menunggu audio. Setiap baris senjata di data GD punya kolom `sfxFire` berisi id cue, plus opsional `sfxPitchSemis` (geser pitch 0 sampai 7 semitone) agar dua senjata dengan arketipe sama tetap terdengar beda. Bila kolom kosong, engine memakai `sfx.weapon.fire.bolt`. Pemetaan 8 senjata GDD ada di `docs/audio-list.md` 4.1.
+SFX serangan dibuat per **arketipe** (bolt, lob, arc, chain, glaive, ring, kontak orbit), bukan per senjata, agar senjata baru tidak menunggu audio. CSV GD tidak memuat kolom audio (keputusan LP, review M0). Pemetaan ada di file AU `src/audio/cues/routes.json`: `weapons.fireById` (id senjata ke cue plus opsional `semis`, geser pitch 0 sampai 7 semitone agar dua senjata berarketipe sama terdengar beda), lalu `weapons.fireByArchetype` sebagai cadangan per kolom `archetype` di `weapons.csv`. `null` berarti sengaja tanpa suara (misalnya `orbit_shards`). Tes `tests/unit/audio/event-map.test.ts` memeriksa setiap id di `GameData` build punya cue atau `null` yang dinyatakan. Pemetaan senjata GDD ada di `docs/audio-list.md` 4.1.
 
 ### 9.4 Kekhasan suara penting (Pilar 2, uji P2-g) [Wajib]
-Kena hit, level up, dan dapat Keepsake harus bisa dibedakan dengan mata tertutup:
+Kena hit, level up, dan dapat Memento harus bisa dibedakan dengan mata tertutup:
 - Kena hit: transien retak kaca kering, turun, tanpa nada, memicu ducking. Sekitar 250 ms.
 - Level up: arpeggio chiptune cepat naik D5 G5 A5 D6, cerah, sekitar 700 ms.
-- Keepsake: lonceng rendah lambat D4 dan A4 lalu kilau terbalik dan "tok" tutup kaca, sekitar 1.1 s. Lebih rendah dan lebih lambat dari level up, tanpa arpeggio.
+- Memento: lonceng rendah lambat D4 dan A4 lalu kilau terbalik dan "tok" tutup kaca, sekitar 1.1 s. Lebih rendah dan lebih lambat dari level up, tanpa arpeggio.
 
 ---
 
 ## 10. Integrasi dengan simulasi
 
-Kontrak mengikuti `docs/tech/architecture.md` bagian 6.4 (`WorldView`), 6.5 (event bus, `SimEventType`), 6.8 (`AudioSystem`), dan 11. Nama event di `SimEventType` sudah memakai nama di `docs/audio-list.md`. Bila LP mengubah nama, AU mengganti kolom pemicu di daftar cue; id cue tidak berubah.
+Kontrak mengikuti `docs/tech/architecture.md` bagian 6.4 (`WorldView`), 6.5 (event bus, `SimEventType`), 6.8 (`AudioSystem`), dan 11. Nama dan payload event mengikuti tabel final architecture 6.5. Bila LP mengubah nama, AU mengganti kolom pemicu di daftar cue dan `routes.json`; id cue tidak berubah.
 
 Prinsip [Wajib]:
 1. **Audio hanya pendengar.** Sim deterministik tidak pernah membaca apa pun dari audio. Audio boleh dimatikan total (tes headless, bot balance) tanpa mengubah hasil sim. Audio tidak meng-import `sim` atau `render`.
 2. **Event per frame.** `AudioSystem.update(view, events, dtSec)` dipanggil tiap frame dengan FrameEvents (semua tick di frame itu). Audio membunyikan cue segera (`currentTime` plus offset sekitar 5 ms). Event dengan cue sama di satu frame digabung (8.4).
-3. **Pemetaan event ke cue** ada di `src/audio/event-map.ts`. Event turunan sesuai architecture.md 6.5: `ShopOpened` dan `ShopClosed` dari `PhaseChanged`; `PurchaseRejected` dari `CommandRejected` dengan kode Glint kurang; `ProjectileHit`, `WardenDamaged`, `BossDamaged` dari `EnemyDamaged` dengan rank dan kritikal di payload.
-4. **Payload hanya `x`, `y`, `a`, `b`.** Field lain diturunkan dari data: ukuran Unlit (`size`) dari definisi musuh lewat `EnemyTypeIndex`, arketipe dan cue serangan dari kolom `sfxFire` definisi senjata lewat `defIndex`, sumber telegraf (Unlit, Warden, boss) dari jenis telegraf.
+3. **Pemetaan event ke cue** ada di `src/audio/cues/routes.json` (data) dan `src/audio/event-map.ts` (logika). Event turunan sesuai architecture.md 6.5: masuk fase `shop` dari `PhaseChanged`; penolakan dari `CommandRejected` (`ui.denied`, kecuali `WrongPhase`, `UnknownId`, `DebugDisabled`); hit Warden dan boss dari `EnemyDamaged` (rank di bit 2-3 `b`).
+4. **Payload `x`, `y`, `a`, `b`, `c`** (`c` biasanya SourceRef dari `encodeSource`). Field lain diturunkan dari data: ukuran Unlit dari `sizeClass` lewat `EnemyTypeIndex`; cue serangan dari `routes.json` lewat `WeaponIndex`; sumber dampak (ledakan `lantern_bolt`, kontak `orbit_shards`) dari `EnemyDamaged.c` (senjata) dan `HitKind` di bit 4-6 `b`; sumber telegraf dari `c` (`EnemyAttack` dengan peran musuh, `BossPattern` dengan `archetype` pola, `Affix` dengan id affix); proc dari `ProcTriggered.a` (`EffectIndex`, dipetakan lewat `owner` efek seperti `syn_flame_4`, cadangan per `action`); Rush penuh dari `BuffMaxed`; boss mengamuk dari `BossEnraged`; Warden `hasted` dari `AffixApplied`; pungutan otomatis dari `GlintSwept`; retakan spawn dari `SpawnMarked`.
 5. **Snapshot musik dari `WorldView`** (read-only): `phase`, `pulse.index`, `pulse.ticksLeft`, `pulse.ticksTotal`, `pulse.isBoss`, jumlah Unlit hidup dan keberadaan Warden atau boss dari `enemies` (`alive`, `rank`), HP boss untuk naik ke L2. Fase boss dilacak dari event `BossPhaseChanged`. Jeda datang dari `setPaused`.
 6. **Telegraf memakai durasi dari sim** (`b` pada `TelegraphStarted` dalam tick). Cue `mode: live` dirender sepanjang `b / 60` detik agar puncak suara jatuh tepat saat serangan kena.
 7. **Tangga Glint:** bila sim mengisi `b` pada `GlintCollected` dengan panjang rentetan, audio memakainya sebagai anak tangga. Bila 0, audio memakai penghitung sendiri dengan reset 500 ms.
@@ -738,10 +739,10 @@ Prinsip [Wajib]:
 | Uji | Cara | Lolos bila | Pelaksana, mulai |
 |---|---|---|---|
 | A-1 Telinga 10 menit | Putar arena paling ramai 10 menit nonstop | Tidak melelahkan atau menusuk (style guide 3.3) | AU dan QA, M1 (placeholder), M4 (final) |
-| A-2 Mata tertutup | Penguji mendengar acak 10 pemicu: kena hit, level up, Keepsake, telegraf | Minimal 9 dari 10 benar (P2-g) | CD, M2 |
+| A-2 Mata tertutup | Penguji mendengar acak 10 pemicu: kena hit, level up, Memento, telegraf | Minimal 9 dari 10 benar (P2-g) | CD, M2 |
 | A-3 Bahaya di tengah kekacauan | Rekam detik paling ramai, minta penguji menekan tombol saat mendengar telegraf | Semua telegraf terdeteksi | QA, M2 |
 | A-4 Loop | Biarkan tiap lagu berputar 3 loop | Tanpa celah, klik, atau lonjakan level di batas loop | AU, M2 |
-| A-5 Validator data | `tools/audio/validate-music` pada semua JSON | Tiap birama 16 step, akor dikenal, instrumen dikenal, jumlah birama sama dengan jumlah akor | AU, M1 (masuk CI bila LP setuju) |
+| A-5 Validator data | `node tools/audio/validate.ts` pada semua JSON audio | Tiap birama 16 step, akor dikenal, instrumen dikenal, jumlah birama sama dengan jumlah akor | AU, M1 (masuk CI bila LP setuju) |
 | A-6 Orisinalitas | CD dan AU mendengar semua motif dan melodi | Tidak mirip melodi yang dikenal | CD, M2 dan M3 |
 | A-7 Anggaran | Ukur ukuran bundle audio, memori buffer, waktu render boot, beban CPU | Sesuai tabel 2.2 | LP, M1 dan M4 |
 | A-8 Determinisme | Jalankan sim yang sama dengan audio aktif dan mati | Hash state akhir identik | LP dan QA, M1 |
@@ -752,8 +753,50 @@ Prinsip [Wajib]:
 
 | Milestone | Pekerjaan audio |
 |---|---|
-| M1 | Engine minimal bersama LP (bus, buffer SFX, prioritas), SFX placeholder inti: serangan otomatis, kena hit, Unlit mati, Glint, level up, beli. Validator data musik. Satu loop Pulse L0 sampai L1 |
+| M1 | SELESAI (M1-06): engine (bus, buffer SFX, prioritas, ducking, panning), 87 cue placeholder, validator, preview WAV, sequencer dengan `mus.biome1.pulse` L0 sampai L3 dan `mus.shop`. Lihat bagian 13 |
 | M2 | Musik bioma 1 penuh (Pulse 4 lapis, toko, boss, overlay, stinger), seluruh SFX Tingkat A final, uji A-1 sampai A-6 |
 | M3 | SFX Tingkat B (kelas tambahan, Unlit tambahan, Warden kedua, ambience), musik bioma 2 dan 3 bila Tingkat C dikejar |
 | M4 | Mix akhir, loudness, opsi volume, uji telinga ulang, cek anggaran |
 | M5 | Cek kredit: semua audio buatan tim, tercatat di `docs/credits.md` |
+
+---
+
+## 13. Implementasi M1 (M1-06)
+
+### 13.1 Peta file
+
+| File | Isi |
+|---|---|
+| `src/audio/index.ts` | `createAudio(data)` sesuai kontrak `CreateAudio`, mengimpor data JSON |
+| `src/audio/audio-system.ts` | Orkestrasi: unlock, update per frame, pengaturan, jeda, tab tersembunyi, efek mati |
+| `src/audio/engine.ts` | Graf Web Audio 8.1, pemutaran SFX dengan voice pool, cache cue `live` |
+| `src/audio/music-player.ts` | Sequencer lookahead dan sampler instrumen |
+| `src/audio/music-director.ts` | Lagu per fase, level intensitas, riser (murni) |
+| `src/audio/event-map.ts`, `triggers.ts` | Event sim ke trigger cue, penggabungan per frame (murni) |
+| `src/audio/voices.ts`, `ducking.ts`, `mix-math.ts`, `cue-data.ts` | Voice limit, ducking, rumus mix, parser data (murni) |
+| `src/audio/synth/` | DSP murni: osilator PolyBLEP, noise, biquad RBJ, Karplus-Strong, FM, IR, mixdown |
+| `src/audio/music/song.ts` | Validasi dan kompilasi lagu, not per birama (murni) |
+| `src/audio/cues/cues.json`, `routes.json` | Resep 87 cue dan pemetaan event |
+| `src/audio/music/*.json` | Instrumen dan lagu `mus.biome1.pulse`, `mus.shop` |
+
+### 13.2 Keputusan implementasi
+1. **Resep cue adalah data.** Setiap cue punya `layers` (tone, noise, grains, pluck dengan envelope, filter, glide, FM, repeat) yang dirender DSP murni yang sama di browser dan Node. AU menyetel suara tanpa mengubah kode.
+2. **Instrumen musik memakai sampler, bukan node Web Audio per not** (mengubah keputusan bagian 3). Tiap instrumen dirender sekali per nada referensi (satu per oktaf, geser pitch maksimal 6 semitone), lalu sequencer memutar buffer dengan envelope release. Alasan: satu jalur DSP untuk game dan preview WAV, CPU per not sangat murah, data tetap kecil. Kekurangan: filter tidak bereaksi per not; diterima untuk M1, dievaluasi di M2.
+3. **Sample rate per cue.** SFX default 24 kHz, cue panjang tanpa isi di atas 8 kHz dan cue `live` 16 kHz, instrumen 8 sampai 32 kHz. Browser me-resample saat putar. Ekor di bawah -66 dB dipotong.
+4. **Penggabungan per frame.** Event dengan cue sama di satu frame menjadi satu putaran dengan tambahan +1 dB per penggandaan (8.4); `minIntervalMs` menangani antar frame.
+5. **Cue `live` dipanaskan saat boot** untuk durasi telegraf yang ada di data (`liveWarmupPairs`), agar telegraf pertama tidak memicu render di thread utama.
+6. **Lapisan intensitas berganti di batas birama tanpa fade 1 ketukan** (6.3). Fade lapisan masuk M2.
+7. **Pulse boss memakai loop Pulse di level maksimal** sampai `mus.biome1.boss` dibuat di M2.
+8. **`sfx.player.lowhp` memakai derit kaca berdetak pelan** (saran opsional CD), bukan detak jantung: dua ketuk rendah 60 dan 50 Hz plus bisikan kaca 4.5 kHz, di luar pita bahaya, diulang tiap 1 detik selama HP rendah dan fase `pulse`.
+
+### 13.3 Anggaran terukur (Node 24 dan Chromium headless, mesin pengembangan)
+
+| Hal | Anggaran | Terukur |
+|---|---|---|
+| Data JSON audio gzip | di bawah 15 KB | 7.8 KB |
+| Memori buffer (SFX, instrumen, IR) | di bawah 8 MB | sekitar 7.7 MB, ditambah sekitar 0.5 MB cache telegraf |
+| Render boot | di bawah 300 ms, bertahap | sekitar 280 ms di Node; `unlock()` sekitar 450 ms di Chromium headless (bertahap, UI tidak beku) |
+| CPU `update` per frame | di bawah 1 ms | median 0.1 ms; frame `PulseStarted` sekitar 1.7 ms (sekali per Pulse) |
+
+### 13.4 Belum ada (masuk M2)
+Lagu boss, judul, akhir, overlay Unlit, fade lapisan, uji A-1 sampai A-6 dengan telinga, cue Tingkat B lain (`hit_heavy`, exploder, summoner, ambience), `sfx.pulse.tick` opsional.

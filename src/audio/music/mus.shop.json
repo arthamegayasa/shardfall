@@ -1,0 +1,63 @@
+{
+  "id": "mus.shop",
+  "bpm": 76,
+  "meter": [4, 4],
+  "stepsPerBeat": 4,
+  "key": { "root": "F", "mode": "lydian" },
+  "glintLadder": ["D6", "E6", "G6", "A6", "B6", "D7", "E7", "G7"],
+  "form": ["A"],
+  "sections": {
+    "A": { "chords": ["Fmaj7", "G", "Em7", "Am7", "Dm7", "G6", "Fmaj7", "Csus2"] }
+  },
+  "layers": [
+    {
+      "id": "pad",
+      "instrument": "string_pad",
+      "gainDb": -19,
+      "send": { "hall": 0.35 },
+      "type": "chord",
+      "octave": 3,
+      "voicing": "close",
+      "rhythm": "X_______________"
+    },
+    {
+      "id": "bass",
+      "instrument": "sub_bass",
+      "gainDb": -18,
+      "type": "chordRoot",
+      "octave": 2,
+      "rhythm": "X_______________"
+    },
+    {
+      "id": "pluck_arp",
+      "instrument": "pluck",
+      "gainDb": -18,
+      "send": { "hall": 0.3 },
+      "pan": -0.15,
+      "type": "arp",
+      "octave": 4,
+      "stepLen": 2,
+      "tokens": "0 2 1+ 2 0+ 2 1+ 2"
+    },
+    {
+      "id": "bell_melody",
+      "instrument": "glass_bell",
+      "gainDb": -17,
+      "send": { "hall": 0.45 },
+      "pan": 0.1,
+      "type": "melody",
+      "bySection": {
+        "A": [
+          "C5:4 E5:4 A5:8",
+          "B5:8 A5:4 G5:4",
+          "G5:12 r:4",
+          "E5:4 G5:4 C6:8",
+          "A5:4 E5:4 D5:2 C5:2 D5:4",
+          "E5:6 B4:2 D5:8",
+          "C5:4 E5:4 G5:4 A5:4",
+          "G5:16"
+        ]
+      }
+    }
+  ]
+}

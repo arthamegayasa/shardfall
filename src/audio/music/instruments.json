@@ -1,0 +1,237 @@
+{
+  "instruments": {
+    "glass_bell": {
+      "sampleRate": 22050,
+      "refNotes": ["F#4", "F#5", "F#6"],
+      "lengthMs": 2200,
+      "releaseMs": 600,
+      "peakDb": -3,
+      "highpassHz": 200,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "ratio": 1,
+          "attackMs": 2,
+          "decayMs": 1800,
+          "fm": { "ratio": 3.5, "index": 2, "indexEnd": 0.3, "indexDecayMs": 300 }
+        },
+        { "kind": "tone", "wave": "sine", "ratio": 2.76, "attackMs": 2, "decayMs": 900, "gainDb": -12 }
+      ]
+    },
+    "string_pad": {
+      "sampleRate": 16000,
+      "refNotes": ["F#3", "F#4"],
+      "lengthMs": 4200,
+      "releaseMs": 800,
+      "peakDb": -6,
+      "highpassHz": 120,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "ratio": 1,
+          "detuneCents": -7,
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 60,
+          "filter": { "type": "lp", "freq": 1400, "q": 0.7 }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "ratio": 1,
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 60,
+          "filter": { "type": "lp", "freq": 1400, "q": 0.7 }
+        },
+        {
+          "kind": "tone",
+          "wave": "saw",
+          "ratio": 1,
+          "detuneCents": 7,
+          "attackMs": 400,
+          "env": "flat",
+          "releaseMs": 60,
+          "filter": { "type": "lp", "freq": 1400, "q": 0.7 }
+        }
+      ]
+    },
+    "sub_bass": {
+      "sampleRate": 8000,
+      "refNotes": ["F#1", "F#2"],
+      "lengthMs": 3500,
+      "releaseMs": 100,
+      "peakDb": -4,
+      "lowpassHz": 300,
+      "layers": [
+        { "kind": "tone", "wave": "sine", "ratio": 1, "attackMs": 8, "env": "flat", "releaseMs": 30 },
+        {
+          "kind": "tone",
+          "wave": "triangle",
+          "ratio": 2,
+          "attackMs": 8,
+          "env": "flat",
+          "releaseMs": 30,
+          "gainDb": -12
+        }
+      ]
+    },
+    "pluck": {
+      "sampleRate": 22050,
+      "refNotes": ["F#3", "F#4", "F#5"],
+      "lengthMs": 1500,
+      "releaseMs": 200,
+      "peakDb": -4,
+      "layers": [{ "kind": "pluck", "ratio": 1, "damping": 0.996, "env": "flat", "releaseMs": 20 }]
+    },
+    "brass": {
+      "sampleRate": 22050,
+      "refNotes": ["F#3", "F#4", "F#5"],
+      "lengthMs": 2000,
+      "releaseMs": 150,
+      "peakDb": -9,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "square",
+          "ratio": 0.983,
+          "ratioEnd": 1,
+          "glideMs": 40,
+          "detuneCents": -4,
+          "attackMs": 30,
+          "env": "flat",
+          "releaseMs": 40,
+          "filter": { "type": "lp", "freq": 2400, "freqEnd": 1400, "sweepMs": 300, "q": 0.9 }
+        },
+        {
+          "kind": "tone",
+          "wave": "square",
+          "ratio": 0.983,
+          "ratioEnd": 1,
+          "glideMs": 40,
+          "detuneCents": 4,
+          "attackMs": 30,
+          "env": "flat",
+          "releaseMs": 40,
+          "filter": { "type": "lp", "freq": 2400, "freqEnd": 1400, "sweepMs": 300, "q": 0.9 }
+        }
+      ]
+    },
+    "chip_arp": {
+      "sampleRate": 22050,
+      "refNotes": ["F#4", "F#5"],
+      "lengthMs": 400,
+      "releaseMs": 40,
+      "peakDb": -6,
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "pulse12",
+          "ratio": 1,
+          "attackMs": 2,
+          "decayMs": 500,
+          "filter": { "type": "lp", "freq": 3500 }
+        }
+      ]
+    },
+    "kit.kick": {
+      "sampleRate": 22050,
+      "refNotes": [],
+      "lengthMs": 250,
+      "peakDb": -3,
+      "layers": [
+        { "kind": "tone", "wave": "sine", "freq": 120, "freqEnd": 48, "glideMs": 120, "attackMs": 1 },
+        {
+          "kind": "noise",
+          "durMs": 5,
+          "decayMs": 5,
+          "gainDb": -10,
+          "filter": { "type": "lp", "freq": 2000 }
+        }
+      ]
+    },
+    "kit.tom": {
+      "sampleRate": 22050,
+      "refNotes": [],
+      "lengthMs": 300,
+      "peakDb": -3,
+      "layers": [
+        { "kind": "tone", "wave": "sine", "freq": 170, "freqEnd": 95, "glideMs": 150, "attackMs": 1 },
+        {
+          "kind": "noise",
+          "durMs": 30,
+          "decayMs": 30,
+          "gainDb": -14,
+          "filter": { "type": "lp", "freq": 1000 }
+        }
+      ]
+    },
+    "kit.snare": {
+      "sampleRate": 22050,
+      "refNotes": [],
+      "lengthMs": 160,
+      "peakDb": -3,
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 1,
+          "decayMs": 120,
+          "filter": { "type": "bp", "freq": 1800, "q": 0.8 }
+        },
+        { "kind": "tone", "wave": "triangle", "freq": 185, "attackMs": 1, "decayMs": 100, "gainDb": -6 }
+      ]
+    },
+    "kit.hat": {
+      "sampleRate": 32000,
+      "refNotes": [],
+      "lengthMs": 40,
+      "peakDb": -6,
+      "lowpassHz": 11000,
+      "layers": [
+        { "kind": "noise", "attackMs": 1, "decayMs": 30, "filter": { "type": "hp", "freq": 7000 } }
+      ]
+    },
+    "kit.hat_open": {
+      "sampleRate": 32000,
+      "refNotes": [],
+      "lengthMs": 200,
+      "peakDb": -6,
+      "lowpassHz": 11000,
+      "layers": [
+        { "kind": "noise", "attackMs": 1, "decayMs": 160, "filter": { "type": "hp", "freq": 7000 } }
+      ]
+    },
+    "kit.shaker": {
+      "sampleRate": 32000,
+      "refNotes": [],
+      "lengthMs": 70,
+      "peakDb": -6,
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 15,
+          "decayMs": 50,
+          "filter": { "type": "bp", "freq": 5000, "q": 1 }
+        }
+      ]
+    },
+    "kit.timp": {
+      "sampleRate": 16000,
+      "refNotes": [],
+      "lengthMs": 1400,
+      "peakDb": -3,
+      "layers": [
+        { "kind": "tone", "wave": "sine", "freq": "D2", "attackMs": 2, "decayMs": 1200 },
+        {
+          "kind": "noise",
+          "durMs": 80,
+          "decayMs": 80,
+          "gainDb": -12,
+          "filter": { "type": "lp", "freq": 400 }
+        }
+      ]
+    }
+  }
+}

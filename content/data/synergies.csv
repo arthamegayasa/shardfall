@@ -1,0 +1,20 @@
+tag,threshold,content_tier,owner,desc_key
+# Tag thresholds (data-schema 3.11, GDD 8.2). Effects in effects.csv with owner = syn_<tag>_<n>.
+flame,2,A,syn_flame_2,syn.flame.2
+flame,4,A,syn_flame_4,syn.flame.4
+flame,6,A,syn_flame_6,syn.flame.6
+shard,2,A,syn_shard_2,syn.shard.2
+shard,4,A,syn_shard_4,syn.shard.4
+shard,6,A,syn_shard_6,syn.shard.6
+edge,2,A,syn_edge_2,syn.edge.2
+edge,4,A,syn_edge_4,syn.edge.4
+edge,6,A,syn_edge_6,syn.edge.6
+echo,2,B,syn_echo_2,syn.echo.2
+echo,4,B,syn_echo_4,syn.echo.4
+echo,6,B,syn_echo_6,syn.echo.6
+ward,2,B,syn_ward_2,syn.ward.2
+ward,4,B,syn_ward_4,syn.ward.4
+ward,6,B,syn_ward_6,syn.ward.6
+trade,2,B,syn_trade_2,syn.trade.2
+trade,4,B,syn_trade_4,syn.trade.4
+trade,6,B,syn_trade_6,syn.trade.6

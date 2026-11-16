@@ -13,7 +13,7 @@
     "danger-core",
     "danger-magenta"
   ],
-  "status": "concept",
+  "status": "placeholder",
   "note": "Enemy projectile. Three layers: danger-core, magenta ring, ink outline. Round, never rotated.",
   "animations": {
     "idle": {

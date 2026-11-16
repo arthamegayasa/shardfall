@@ -1,0 +1,113 @@
+{
+  "id": "mus.biome1.pulse",
+  "bpm": 116,
+  "meter": [4, 4],
+  "stepsPerBeat": 4,
+  "key": { "root": "D", "mode": "dorian" },
+  "glintLadder": ["D6", "E6", "G6", "A6", "B6", "D7", "E7", "G7"],
+  "form": ["A", "B"],
+  "sections": {
+    "A": { "chords": ["Dm", "G", "Bb", "C", "Dm", "G", "Am", "A7"] },
+    "B": { "chords": ["Bb", "C", "Am", "Dm", "G", "Bb", "Csus4", "A7"] }
+  },
+  "intensity": {
+    "max": 3,
+    "baseByPulse": [
+      { "fromPulse": 1, "level": 0 },
+      { "fromPulse": 4, "level": 1 },
+      { "fromPulse": 8, "level": 2 }
+    ],
+    "progressSteps": [
+      { "atProgress": 0.35, "add": 1 },
+      { "atProgress": 0.7, "add": 2 }
+    ],
+    "pressure": { "enemiesAlive": 60, "add": 1, "holdBars": 2 },
+    "wardenAliveMinLevel": 2,
+    "quantize": "bar",
+    "fadeInBeats": 1,
+    "fadeOutBeats": 2,
+    "riser": { "cue": "mus.riser.pulse_end", "secondsBeforeEnd": 6, "skipIfWardenAlive": true }
+  },
+  "layers": [
+    {
+      "id": "bell_mark", "instrument": "glass_bell", "minLevel": 0,
+      "gainDb": -20, "send": { "hall": 0.5 }, "everyBars": 2,
+      "type": "chordRoot", "octave": 5, "rhythm": "X---------------"
+    },
+    {
+      "id": "pad", "instrument": "string_pad", "minLevel": 0,
+      "gainDb": -16, "send": { "hall": 0.35 },
+      "type": "chord", "octave": 3, "voicing": "close", "rhythm": "X_______________"
+    },
+    {
+      "id": "bass_hold", "instrument": "sub_bass", "minLevel": 0, "maxLevel": 0,
+      "gainDb": -14, "type": "chordRoot", "octave": 2, "rhythm": "X_______x_______"
+    },
+    {
+      "id": "bass_drive", "instrument": "sub_bass", "minLevel": 1,
+      "gainDb": -13, "type": "chordRoot", "octave": 2, "rhythm": "X__x__x_X__x_x__"
+    },
+    {
+      "id": "perc_base", "instrument": "kit", "minLevel": 1, "gainDb": -15,
+      "send": { "hall": 0.1 }, "type": "drum",
+      "lanes": {
+        "kick": "X-------X-x-----",
+        "tom":  "----x-------x---",
+        "hat":  "--x---x---x---x-"
+      }
+    },
+    {
+      "id": "perc_drive", "instrument": "kit", "minLevel": 2, "gainDb": -16,
+      "send": { "hall": 0.1 }, "type": "drum",
+      "lanes": {
+        "snare": "----X-------X---",
+        "hat":   "-.-.-.-.-.-.-.-."
+      }
+    },
+    {
+      "id": "brass_stab", "instrument": "brass", "minLevel": 2,
+      "gainDb": -15, "send": { "hall": 0.25 },
+      "type": "chord", "octave": 3, "voicing": "open",
+      "rhythm": "X-----x---X-----", "noteSteps": 2
+    },
+    {
+      "id": "arp", "instrument": "chip_arp", "minLevel": 2,
+      "gainDb": -19, "send": { "hall": 0.2 }, "pan": 0.2,
+      "type": "arp", "octave": 4, "stepLen": 1,
+      "tokens": "0 1 2 0+ 1 2 0+ 2 0 1 2 0+ 1+ 0+ 2 1"
+    },
+    {
+      "id": "lead", "instrument": "brass", "minLevel": 3,
+      "gainDb": -12, "send": { "hall": 0.3 },
+      "type": "melody",
+      "double": { "instrument": "glass_bell", "octave": 1, "gainDb": -22 },
+      "bySection": {
+        "A": [
+          "D5:4 A4:4 G4:2 F4:2 G4:4",
+          "A4:6 B4:2 C5:4 A4:4",
+          "D5:4 F5:2 E5:2 D5:4 C5:4",
+          "D5:12 r:4",
+          "F5:4 E5:2 D5:2 C5:4 A4:4",
+          "B4:4 C5:2 D5:2 G4:8",
+          "E5:4 C5:4 A4:2 B4:2 C5:4",
+          "A4:8 G4:2 A4:2 E4:4"
+        ],
+        "B": [
+          "F5:6 D5:2 F5:4 G5:4",
+          "E5:6 C5:2 E5:4 G5:4",
+          "A5:4 G5:2 E5:2 C5:4 E5:4",
+          "D5:12 r:4",
+          "B4:4 D5:4 G5:4 F5:2 E5:2",
+          "D5:4 F5:4 E5:2 D5:2 C5:4",
+          "F5:4 G5:4 F5:4 C5:4",
+          "E5:4 C#5:4 A4:4 r:4"
+        ]
+      }
+    },
+    {
+      "id": "timpani", "instrument": "kit", "minLevel": 3, "gainDb": -14,
+      "send": { "hall": 0.3 }, "everyBars": 4, "type": "drum",
+      "lanes": { "timp": "X-----------x-x-" }
+    }
+  ]
+}

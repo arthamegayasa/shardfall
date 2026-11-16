@@ -38,10 +38,13 @@ Skala: lihat `01-title.md`. Spec: `docs/ui/ui-spec.md` bagian 5 (S07) dan 9 (aks
 
 ```
 Graphics                                        Audio
-| > Quality          <  High  >          |      | > Master     [=========--]  80   |
-|   Screen Shake     [==========] 100    |      |   Music      [=========--]  80   |
-|   Fullscreen       <  Off   >          |      |   Sound FX   [=========--]  80   |
-|   (Low: tanpa DoF, bloom, kilau kaca)  |      |   Mute When Away   <  On  >      |
+| > Quality          < Medium >          |      | > Master     [========---]  80   |
+|   Screen Shake     [==========] 100    |      |   Music      [=======----]  70   |
+|   Fullscreen       <  Off   >          |      |   Sound FX   [==========] 100    |
+|   (Low: tanpa DoF, bloom, kilau kaca)  |      |   Interface  [========---]  80   |
+|                                        |      |   Mono Audio       <  Off >      |
+|                                        |      |   Reduce Repeats   <  Off >      |
+|                                        |      |   Mute When Away   <  On  >      |
 
 Controls
 | > Move Up          [ W     ]  [ Up    ]                       |

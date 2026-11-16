@@ -1,6 +1,6 @@
 # Skema Data CSV
 
-Pemilik: Game Designer (isi dan arti kolom). Format teknis (dialek CSV, bentuk JSON, tipe) milik Lead Programmer di `docs/tech/architecture.md` versi 2 bagian 9; bila berbeda, architecture yang berlaku. Status: versi 2, 2026-11-17 (perbaikan review M0 dan jawaban `docs/specs/gd-answers-m0.md`).
+Pemilik: Game Designer (isi dan arti kolom). Format teknis (dialek CSV, bentuk JSON, tipe) milik Lead Programmer di `docs/tech/architecture.md` versi 2 bagian 9; bila berbeda, architecture yang berlaku. Status: versi 2.1, 2026-11-17 (versi 2: perbaikan review M0 dan jawaban `docs/specs/gd-answers-m0.md`; versi 2.1: M1-02, lihat 0.1).
 Terkait: `docs/gdd.md`, `docs/systems/effect-primitives.md`.
 
 ## 0. Perubahan versi 2
@@ -15,6 +15,16 @@ Terkait: `docs/gdd.md`, `docs/systems/effect-primitives.md`.
 | `wave_spawns.csv` | tanpa sektor | kolom opsional `sectors` |
 | `waves.csv` | profil `run_a`, `run_b`, `run_c` | tambah `run_a_m1` (prototipe M1) |
 | Bentuk JSON | objek berkunci id | array berurutan, architecture 9.4 |
+
+### 0.1 Perubahan versi 2.1 (M1-02)
+
+| Hal | Isi |
+|---|---|
+| `content_tier` opsional | Kolom `content_tier` opsional (kosong = A) ditambahkan ke `effects.csv`, `waves.csv`, `wave_spawns.csv` (skema kode `src/content/tables`, menunggu review LP). Alasan: efek pemilik B/C dan profil `run_b`/`run_c` boleh tinggal di file yang sama tanpa menggagalkan build A (pemilik efek tidak ber-ref, dan baris `wave_spawns` tidak ikut cascade kunci `(profile, pulse)`) |
+| `waves.csv`, `wave_spawns.csv` | Dihasilkan `python tools/balance/model.py gen` dari tabel `PROFILES` di model. Edit model, bukan CSV |
+| Kolom `notes` | Semua tabel baris boleh punya kolom `notes` (diabaikan build) |
+| Bioma 2 dan 3 | `arena_id` sementara `arena_market` sampai LD membuat `arena_cloister` dan `arena_vineyard` |
+| Kunci `params` | Daftar kunci yang dipakai data ada di bagian 5, untuk registri GP |
 
 ## 1. Konvensi
 
@@ -289,6 +299,7 @@ Definisi lengkap tiap kolom dan enum di `effect-primitives.md`.
 | `stack_mode` | `value`, `chance`, `none` | `none` |
 | `action` | enum | `spawn_projectile` |
 | `params` | params | `pattern=split;count=3;dmg_frac=0.4;origin=target` |
+| `content_tier` | A/B/C, opsional (kosong = A) | `A`. Samakan dengan tingkat pemiliknya |
 
 Parameter pemicu ikut di `params` (`interval` untuk `periodic`, `distance` untuk `on_distance`).
 
@@ -434,6 +445,7 @@ Satu baris per slot Pulse per profil run.
 | `boss_id` | id enemy | kosong |
 | `alive_cap` | int, maks 120 | `70` |
 | `final` | 0/1 (Pulse terakhir; selesai = menang) | `0` |
+| `content_tier` | A/B/C, opsional (kosong = A) | `run_a_m1` dan `run_a` = A, `run_b` = B, `run_c` = C |
 
 ### 3.21 `wave_spawns.csv`
 
@@ -447,6 +459,7 @@ Satu baris per slot Pulse per profil run.
 | `end_frac` | 0 sampai 1 | `0.9` |
 | `group_min`, `group_max` | int | `1`, `1` (swarmer `3`, `6`) |
 | `sectors` | daftar sektor `n`, `s`, `e`, `w`, `ne`, `se`, `sw`, `nw`; kosong = semua | kosong |
+| `content_tier` | A/B/C, opsional (kosong = A), sama dengan baris `waves.csv`-nya | `A` |
 
 Kunci gabungan `(profile, pulse)` harus ada di `waves.csv`. Untuk Pulse boss, baris tetesan memakai `start_frac=0` dan jadwal dari `config.csv` (`boss_trickle_*`); kolom `count` diabaikan.
 
@@ -485,3 +498,43 @@ Crack tidak ada di tabel ini; Crack n terbuka setelah menang di Crack n minus 1.
 ## 4. Bentuk JSON
 
 Final di architecture 9.4: satu bundle `content/generated/game-data.json`, setiap tabel menjadi array dalam urutan baris CSV, `params` menjadi objek, daftar menjadi array, `weapon_tiers.csv` digabung ke senjata (`tiers[0..3]`), `waves.csv` dan `wave_spawns.csv` digabung menjadi `profiles[profile][i].spawns[]`, `effectsByOwner` dibangun saat load, baris di atas `contentTier` build dibuang saat build. Konversi satuan (detik ke tick, derajat ke putaran) di `buildGameData`.
+
+## 5. Kunci `params` yang dipakai data (M1-02)
+
+Untuk registri `src/content/params-registry.ts` (GP). Arti mengikuti GDD dan effect-primitives. Waktu dalam detik, jarak dalam u, kecepatan dalam u/s, sudut dalam derajat, persen sebagai poin persen. Bila GP butuh nama lain, GP menulis `docs/specs/gp-*.md` dan GD mengganti CSV; jangan dua nama untuk satu arti.
+
+| Tabel | Diskriminator | Kunci |
+|---|---|---|
+| `weapons` | `bolt_explode` | `explode_status` |
+| | `arc` | `arc_deg` |
+| | `orbit` | `rev_s` (detik per putaran) |
+| | `chain` | `jumps`, `jump_range`, `burn_chance` |
+| | `boomerang` | `hit_out`, `hit_back` (0/1) |
+| | `ring_echo` | `echo_delay`, `echo_frac`, `echo_count` |
+| | `coin` | `glint_per_kill`, `glint_cap_base`, `glint_cap_per_tier` |
+| `weapon_tiers` (tanpa registri) | per senjata | `radius_add`, `fire_zone_radius`, `fire_zone_s`, `pierce_add`, `fan_every_n`, `fan_count`, `arc_deg_add`, `spin_every_n`, `count_add`, `lunge_every_s`, `lunge_dist`, `jumps_add`, `allow_return`, `speed_pct_add`, `blades`, `echo_count_add`, `bounce`, `glint_per_kill_add`. Akhiran `_add` menambah nilai tier sebelumnya |
+| `rites` | `throw_zone` | `max_range`, `flight_s`, `zone_radius`, `zone_s`, `zone_tick`, `slow`, `status` |
+| | `ring` | `knockback`, `slow`, `slow_s` |
+| | `dash` | `dash_dist`, `dash_s`, `iframes_s`, `crit_hits`, `crit_window_s` |
+| `enemies` | `swarmer` | `weave_amp`, `weave_hz` |
+| | `charger` | `trigger_range`, `charge_speed`, `charge_s`, `recover_s`, `cooldown` |
+| | `shooter` | `keep_min`, `keep_max`, `shot_speed`, `shot_life`, `cooldown` |
+| | `tank`, `mote` | (kosong) |
+| | `exploder` | `trigger_range`, `fuse_s`, `blast_radius`, `fuse_move_mult`, `enemy_dmg` |
+| | `summoner` | `keep_min`, `keep_max`, `summon_every`, `summon_count`, `max_summons`, `summon_id` |
+| | `lobber` | `keep_min`, `keep_max`, `cooldown`, `zone_radius` |
+| | `warden_hound` | `trigger_range`, `charges`, `charge_gap_s`, `charge_speed`, `charge_s`, `rest_s`, `drop_count` |
+| | `warden_choir` | `keep_min`, `keep_max`, `fan_count`, `fan_deg`, `shot_speed`, `shot_life`, `cooldown`, `drop_count` |
+| | `warden_bulwark` | `slam_every`, `slam_radius`, `drop_count` |
+| | `boss_lantern`, `boss_bell`, `boss_vine` | `drop_count` (pola di `bosses.csv`) |
+| `affixes` (tanpa registri) | per id | `hasted`: `move_pct`. `volley`: `count`, `dmg`, `shot_speed`, `shot_life`. `veiled`: `shell_frac`, `regrow_s`. `blinking`: `interval`, `min_dist`. `brood`: `interval`, `count`, `summon_id`. `tar_trail`: `radius`, `duration`, `slow`, `drop_every`. `pulsing`: `interval`, `radius`, `dmg`. `bulwark`: `guard_add`, `kb_immune` |
+| `boss_patterns` | `target_circles` | `count`, `radius`, `spread`, `first_on_player` |
+| | `ring_gap` | `rings`, `ring_gap_s`, `thickness`, `speed`, `max_radius`, `gap_deg`, `min_gap_diff_deg` |
+| | `lanes` | `count`, `width`, `y_min`, `y_max`, `min_sep`, `spacing`, `speed` |
+| | `summon` | `count`, `enemy_id` |
+| | `spiral` | `arms`, `duration`, `rate`, `speed` |
+| | `blink_slam` | `radius` |
+| | `lines` | `count`, `width`, `fan_count`, `fan_deg`, `fan_dmg`, `fan_speed` |
+| | `cone` | `count`, `fan_deg`, `speed`, `repeats`, `repeat_gap_s` |
+| | `charge_lane` | `width`, `speed` |
+| `effects` | per `action` | Sesuai effect-primitives 5. Parameter pemicu: `interval` (`periodic`), `distance` (`on_distance`). Tambahan: `spawn_projectile` memakai `seek_range`, `tags`, `kind`; `buff.stats` berbentuk `stat:nilai\|stat:nilai` |

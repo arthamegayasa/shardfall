@@ -1,0 +1,8 @@
+level,enemy_hp_mult,enemy_dmg_mult,spawn_mult,enemy_speed_mult,price_mult,warden_extra_affixes,boss_hp_mult,boss_gap_mult,pulse_heal_frac,pulse_end_collect_frac,silt_mult
+# Crack 0 to 5, cumulative values (data-schema 3.22, GDD 18). Tier A and B use level 0 only.
+0,1.0,1.0,1.0,1.0,1.0,0,1.0,1.0,1.0,0.5,1.0
+1,1.15,1.0,1.0,1.0,1.0,0,1.0,1.0,1.0,0.5,1.25
+2,1.15,1.0,1.0,1.0,1.1,1,1.0,1.0,1.0,0.5,1.5
+3,1.15,1.2,1.15,1.0,1.1,1,1.0,1.0,1.0,0.5,1.75
+4,1.15,1.2,1.15,1.1,1.1,1,1.25,0.8,1.0,0.5,2.0
+5,1.15,1.2,1.15,1.1,1.1,1,1.25,0.8,0.5,0.25,2.25

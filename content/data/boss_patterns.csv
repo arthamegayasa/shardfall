@@ -1,0 +1,21 @@
+id,boss_id,archetype,telegraph_s,dmg,params,notes
+# Boss attack patterns (data-schema 3.18, GDD 16). telegraph_s >= telegraph_min_boss_s (cone: telegraph_min_charge_s).
+ember_rain_5,boss_lantern,target_circles,1.0,10,count=5;radius=1.5;spread=3;first_on_player=1,
+ember_rain_8,boss_lantern,target_circles,1.0,10,count=8;radius=1.5;spread=3;first_on_player=1,
+snuff_ring,boss_lantern,ring_gap,1.0,9,rings=1;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
+snuff_ring_double,boss_lantern,ring_gap,1.0,9,rings=2;ring_gap_s=0.8;min_gap_diff_deg=90;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
+lantern_lanes,boss_lantern,lanes,1.0,6,count=3;width=1.2;y_min=-9;y_max=9;min_sep=3;spacing=0.6;speed=8,
+moth_call,boss_lantern,summon,1.0,0,count=6;enemy_id=swarmer,spawn mark 0.8 s inside the 1.0 s telegraph [Asumsi]
+toll_waves_3,boss_bell,ring_gap,1.0,10,rings=3;ring_gap_s=0.6;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
+toll_waves_4,boss_bell,ring_gap,1.0,10,rings=4;ring_gap_s=0.6;thickness=0.6;speed=5;max_radius=19;gap_deg=60,
+choir_spiral,boss_bell,spiral,1.0,6,arms=1;duration=3;rate=10;speed=4,
+choir_spiral_double,boss_bell,spiral,1.0,6,arms=2;duration=3;rate=10;speed=4,
+bell_drop,boss_bell,blink_slam,1.0,14,radius=2.5,
+call_choir,boss_bell,summon,1.0,0,count=2;enemy_id=summoner,
+root_lines_3,boss_vine,lines,1.0,12,count=3;width=1.0,
+root_lines_5,boss_vine,lines,1.0,12,count=5;width=1.0,
+thorn_fan,boss_vine,cone,0.6,7,count=9;fan_deg=60;speed=6,
+thorn_fan_double,boss_vine,cone,0.6,7,count=9;fan_deg=60;speed=6;repeats=2;repeat_gap_s=0.5,
+trample,boss_vine,charge_lane,1.0,14,width=2;speed=12,
+seed_pods,boss_vine,summon,1.0,0,count=4;enemy_id=exploder,
+root_thorn_combo,boss_vine,lines,1.0,12,count=5;width=1.0;fan_count=9;fan_deg=60;fan_dmg=7;fan_speed=6,phase 3 (Crack 4+): Root Lines and Thorn Fan together

@@ -1,0 +1,6 @@
+id,order,color_token,memento_price,weapon_price,weapon_dmg_mult,weapon_cd_mult
+# Rarity = weapon tier I to IV (data-schema 3.7, GDD 4.3 and 6.2).
+plain,0,rarity-plain,14,16,1.0,1.00
+fine,1,rarity-fine,28,34,1.5,0.95
+rare,2,rarity-rare,50,70,2.2,0.90
+fabled,3,rarity-fabled,85,130,3.2,0.85

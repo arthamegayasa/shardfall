@@ -1,0 +1,40 @@
+{
+  "id": "fx-shot-chain-spark",
+  "class": "projectile-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan"
+  ],
+  "status": "placeholder",
+  "note": "Weapon chain_spark. Four-point spark that flickers between + and x.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 3,
+      "loop": true,
+      "frames": [
+        [
+          "..w..",
+          "..c..",
+          "wcwcw",
+          "..c..",
+          "..w.."
+        ],
+        [
+          "w...w",
+          ".c.c.",
+          "..w..",
+          ".c.c.",
+          "w...w"
+        ]
+      ]
+    }
+  }
+}

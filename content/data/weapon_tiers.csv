@@ -1,0 +1,26 @@
+weapon_id,tier,params,effects,notes
+# Tier II to IV bonuses (data-schema 3.6, GDD 6.2). Params add to the previous tier. Tier IV adds new behavior.
+lantern_bolt,2,radius_add=0.15,,
+lantern_bolt,3,radius_add=0.15,,total +0.3 u
+lantern_bolt,4,fire_zone_radius=1.5;fire_zone_s=2,,blast leaves a fire zone (Burn non-hit)
+splinter_shot,2,,,
+splinter_shot,3,pierce_add=1,,
+splinter_shot,4,fan_every_n=3;fan_count=3,,
+arc_blade,2,,,
+arc_blade,3,arc_deg_add=40,,arc 160 deg
+arc_blade,4,spin_every_n=3,,every 3rd sweep is 360 deg
+orbit_shards,2,count_add=1,,3 shards
+orbit_shards,3,count_add=1,,4 shards
+orbit_shards,4,lunge_every_s=4;lunge_dist=4,,
+chain_spark,2,jumps_add=1,,4 jumps
+chain_spark,3,jumps_add=1,,5 jumps
+chain_spark,4,jumps_add=2;allow_return=1,,7 jumps
+returning_glaive,2,,,
+returning_glaive,3,speed_pct_add=20,,
+returning_glaive,4,blades=2,,two blades in opposite directions
+echo_bell,2,,,
+echo_bell,3,radius_add=0.4,,radius 3.0 u
+echo_bell,4,echo_count_add=1,,echoes twice
+tithe_coin,2,,,
+tithe_coin,3,,,
+tithe_coin,4,bounce=1;glint_per_kill_add=1,,

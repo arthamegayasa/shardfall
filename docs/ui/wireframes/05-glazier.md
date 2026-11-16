@@ -14,10 +14,10 @@ Pembagian lebar (satuan UI): kolom kiri 140, kolom tengah 344, kolom kanan 140, 
 | | | 48u  |  Kept."   | | +----+ Still warm from a hand that never let go.     | | |II|I |I |   | |
 | | +------+           | +------------------------------------------------------+ | +--+--+--+   | |
 | |                    | +-[2]--------------------------------------------------+ | |Bw|  |  |   | |
-| | TAGS               | | +----+ Ember Lash      [MERGE > II]  [Fl]      (*)12 | | |I |  |  |   | |
+| | TAGS               | | +----+ Ember Lash      [FUSE > II]  [Fl]      (*)12 | | |I |  |  |   | |
 | | [Fl] Flame         | | | IC | Lashes the nearest foe for 6 damage.    [lck] | | +--+--+--+   | |
 | |  oo+.  2/4  (+1)   | | | 32 | Hits ignite for 2 seconds.                    | |              | |
-| | [Ec] Echo          | | +----+                                               | | KEEPSAKES    | |
+| | [Ec] Echo          | | +----+                                               | | MEMENTOS    | |
 | |  o+..  1/3  (+1)   | +------------------------------------------------------+ | [k][k][k][k] | |
 | | [Ed] Edge          | +-[3]-LOCKED-------------------------------------------+ | [k][k]       | |
 | |  oo..  2/4         | |#+----+ Shard Volley                [Sh][Ed]    (*)25 | |              | |
@@ -46,7 +46,7 @@ Nama item, angka, dan teks di atas adalah contoh tata letak, bukan konten (milik
 | `(*)18` | Harga dengan ikon Glint, mampu dibeli |
 | `(/)40` | Ikon Glint bergaris: belum mampu. Teks harga dan tombol redup abu, bukan merah |
 | `[lck]` / `[LCK]` | Gembok terbuka / tertutup. Kartu terkunci juga punya bingkai bergaris `#` |
-| `[MERGE > II]` | Membeli akan menggabung dengan item dimiliki, tier tujuan II. Slot `Lh II` di Arms menyala |
+| `[FUSE > II]` | Membeli akan menggabung dengan item dimiliki, tier tujuan II. Slot `Lh II` di Arms menyala |
 | `oo+.` | Pip ambang tag: `o` terisi, `+` pip bayangan dari kartu fokus, `.` kosong |
 | `(+1)` | Pratinjau dari kartu yang difokus |
 | `New` | Tag belum dimiliki, muncul sementara karena kartu fokus membawanya |
@@ -94,7 +94,7 @@ Daftar stat dari GD. Saat kartu yang mengubah stat difokus, nilai baru tampil "l
 ```
 - Panah atas/bawah di Offers berpindah kartu; kiri dari Offers ke Tags, kanan ke Inventory; bawah dari kartu terakhir ke bar bawah.
 - Tab dan Shift+Tab berputar: Offers > Inventory > Bottom bar > Tags > Offers.
-- Fokus pada slot Inventory menampilkan nama, efek, dan tier di baris info bawah, plus tombol Merge (M) atau Sell (X) bila GD mengizinkan.
+- Fokus pada slot Inventory menampilkan nama, efek, dan tier di baris info bawah, plus tombol Fuse (M) dan Sell (X) di bar bawah. Klik slot yang bisa digabung juga menjalankan Fuse.
 
 ## Interaksi
 | Input | Hasil | Jumlah input untuk beli |
@@ -138,4 +138,4 @@ Daftar stat dari GD. Saat kartu yang mengubah stat difokus, nilai baru tampil "l
 | [ Reroll (*)3  R ]   [ Arms/Stats  T ]                                [ Begin Pulse  B ]         |
 +--------------------------------------------------------------------------------------------------+
 ```
-- Kartu tanpa flavor. Strip tag di bar atas menggantikan panel Tag. T menampilkan Arms, Keepsakes, dan Stats di tempat kartu tawaran; T lagi kembali ke tawaran.
+- Kartu tanpa flavor. Strip tag di bar atas menggantikan panel Tag. T menampilkan Arms, Mementos, dan Stats di tempat kartu tawaran; T lagi kembali ke tawaran.

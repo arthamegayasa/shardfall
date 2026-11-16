@@ -13,7 +13,7 @@
     "kept-white",
     "kept-cyan"
   ],
-  "status": "concept",
+  "status": "placeholder",
   "note": "Player projectile. kept-white core, kept-cyan body, no outline.",
   "animations": {
     "idle": {

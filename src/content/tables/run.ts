@@ -34,6 +34,8 @@ export const wavesTable = defineTable({
     boss_id: col.optional(col.ref('enemies')),
     alive_cap: col.int({ min: 1, max: 120 }),
     final: col.bool({ default: false, as: 'isFinal' }),
+    /** Optional (GD M1-02): empty = A. run_b rows are B, run_c rows are C. */
+    content_tier: col.optional(col.contentTier()),
   },
 });
 
@@ -52,6 +54,8 @@ export const waveSpawnsTable = defineTable({
     group_max: col.int({ min: 1, default: 1 }),
     /** Empty = all sectors. */
     sectors: col.list(col.enumOf(SPAWN_SECTORS)),
+    /** Optional (GD M1-02): empty = A. Must match the tier of its waves.csv row. */
+    content_tier: col.optional(col.contentTier()),
   },
 });
 

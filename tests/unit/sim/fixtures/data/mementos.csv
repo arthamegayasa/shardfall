@@ -1,0 +1,14 @@
+id,name_key,desc_key,flavor_key,content_tier,rarity,tags,max_stack,unlock,is_flat,price_override,sort
+coal_locket,memento.coal_locket.name,memento.coal_locket.desc,,A,plain,flame,3,default,0,,1
+kindling_jar,memento.kindling_jar.name,memento.kindling_jar.desc,,A,fine,flame,1,default,0,,2
+torch_glove,memento.torch_glove.name,memento.torch_glove.desc,,A,fine,flame|edge,1,default,0,,3
+ashen_crown,memento.ashen_crown.name,memento.ashen_crown.desc,,A,fabled,flame,1,default,0,,4
+smolder_boots,memento.smolder_boots.name,memento.smolder_boots.desc,,A,plain,flame,1,default,0,,5
+glass_marble,memento.glass_marble.name,memento.glass_marble.desc,,A,plain,shard,2,default,1,,6
+prism_lens,memento.prism_lens.name,memento.prism_lens.desc,,A,rare,shard,1,default,0,,7
+shard_pouch,memento.shard_pouch.name,memento.shard_pouch.desc,,A,fabled,shard,1,default,1,,8
+splinter_comb,memento.splinter_comb.name,memento.splinter_comb.desc,,A,fine,shard|edge,1,default,0,,9
+whetstone,memento.whetstone.name,memento.whetstone.desc,,A,plain,edge,3,default,1,,10
+duelist_ribbon,memento.duelist_ribbon.name,memento.duelist_ribbon.desc,,A,fine,edge,1,default,0,,11
+headsman_hook,memento.headsman_hook.name,memento.headsman_hook.desc,,A,rare,edge,1,default,0,,12
+iron_thimble,memento.iron_thimble.name,memento.iron_thimble.desc,,B,plain,ward,5,default,1,,15

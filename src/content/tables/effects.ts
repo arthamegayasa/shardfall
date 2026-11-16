@@ -26,6 +26,8 @@ export const effectsTable = defineTable({
     stack_mode: col.enumOf(STACK_MODES, { default: 'value' }),
     action: col.enumOf(EFFECT_ACTIONS),
     params: col.params({ by: 'action' }),
+    /** Optional (GD M1-02): empty = A. Lets B/C owners' effects sit in one file without failing the A build. */
+    content_tier: col.optional(col.contentTier()),
   },
 });
 

@@ -9,10 +9,12 @@ import { tokenColor, CORE } from './sprite.mjs';
 
 export const LOW_W = 640;
 export const LOW_H = 360;
-// Camera pitch asin(2/3) (docs/tech/architecture.md 7.1): floor depth shows at 2/3, floor circles become ellipses ry = r * 2/3.
-const FORESHORTEN = 2 / 3;
+// Camera pitch asin(0.625) (docs/tech/architecture.md 7.1): 1 u = 16 px wide, 10 px deep, floor circles become ellipses ry = r * 10/16.
+const FORESHORTEN = 10 / 16;
+/** Screen px per world unit along x (architecture 7.1). */
+const PX_PER_U = 16;
 // Arena from docs/levels/arena-design.md: 32 x 20 u (1 u = 16 px), corners cut 3 u, centred in the 640 x 360 frame.
-export const MAIN = { x0: 64, x1: 576, y0: 97, y1: 310 };
+export const MAIN = { x0: 64, x1: 576, y0: 100, y1: 300 };
 const CUT = 48; // 3 u corner cut in world px
 /** Distance outside the cut-corner arena in world px (<= 0 inside). `top` weights the far edge (decor side). */
 export function outside(x, y, top = 1) {
@@ -154,7 +156,7 @@ function decorMarket(env, b, R) {
   for (const [x, y] of [[30, 150], [610, 150], [30, 262], [610, 262]]) {
     envRect(env, x, y - 34, 2, 34, E('wood-dark'));
     lantern(env, x + 1, y - 42, b, { size: 2 });
-    env.lights.push({ x: x + 1, y, r: b.point.radiusPx, color: hex(b.point.color), k: b.point.intensity });
+    env.lights.push({ x: x + 1, y, r: b.point.rangeU * PX_PER_U, color: hex(b.point.color), k: b.point.intensity });
   }
   for (let i = 0; i < 7; i++) env.lights.push({ x: 50 + i * 90, y: 92, r: 40, color: hex(b.point.color), k: b.point.intensity * 0.55 });
 }
@@ -197,7 +199,7 @@ function decorCloister(env, b, R) {
     envRect(env, x, y - 20, 2, 6, E('candle'), { emissive: 0.6 });
     envPx(env, x, y - 21, E('flame'), { emissive: 1 });
     envPx(env, x + 1, y - 21, E('flame'), { emissive: 1 });
-    env.lights.push({ x: x + 1, y, r: b.point.radiusPx, color: hex(b.point.color), k: b.point.intensity });
+    env.lights.push({ x: x + 1, y, r: b.point.rangeU * PX_PER_U, color: hex(b.point.color), k: b.point.intensity });
   }
 }
 
@@ -229,7 +231,7 @@ function decorVineyard(env, b, R) {
     envRect(env, x - 3, y - 10, 8, 10, E('charred'));
     envPx(env, x, y - 11, E('ember'), { emissive: 0.9 });
     envPx(env, x + 2, y - 12, E('ember'), { emissive: 0.7 });
-    env.lights.push({ x: x + 1, y, r: b.point.radiusPx, color: hex(b.point.color), k: b.point.intensity });
+    env.lights.push({ x: x + 1, y, r: b.point.rangeU * PX_PER_U, color: hex(b.point.color), k: b.point.intensity });
   }
   for (let i = 0; i < 8; i++) env.lights.push({ x: 40 + i * 80, y: 80, r: 50, color: hex(b.point.color), k: b.point.intensity * 0.45 });
 }
@@ -265,7 +267,7 @@ function lightEnv(env, b) {
         }
       }
       // Pulse light: faint pale glow from the arena centre (the shard).
-      const pd = ((x - 320) / 170) ** 2 + ((y - 204) / (170 * FORESHORTEN)) ** 2;
+      const pd = ((x - 320) / 170) ** 2 + ((y - 200) / (170 * FORESHORTEN)) ** 2;
       if (pd < 1) for (let c = 0; c < 3; c++) m[c] += 0.08 * (1 - pd) ** 2;
       const g = (m[0] + m[1] + m[2]) / 3;
       for (let c = 0; c < 3; c++) m[c] = g + (m[c] - g) * TINT;

@@ -23,10 +23,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build:e2e && playwright test",
-    "art:check": "node tools/art/check-sprites.mjs --no-preview",
-    "art:preview": "node tools/art/check-sprites.mjs",
+    "art:check": "node tools/art/check-sprites.ts --no-preview",
+    "art:preview": "node tools/art/check-sprites.ts",
     "art:concepts": "node tools/art/build-concepts.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run data:check"
+    "art:shot": "node tests/render/preview/capture.ts",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run data:check && npm run art:check"
   },
   "dependencies": {
     "three": "0.187.0"

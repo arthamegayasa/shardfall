@@ -1,0 +1,9 @@
+boss_id,phase,hp_below,gap_s,cycle,min_crack,transition_s
+# Boss phases (data-schema 3.17, GDD 16). Phase starts when HP drops below hp_below.
+boss_lantern,1,1.0,2.0,ember_rain_5|snuff_ring|ember_rain_5|moth_call,0,0
+boss_lantern,2,0.5,1.4,ember_rain_8|snuff_ring_double|lantern_lanes|moth_call,0,1.5
+boss_bell,1,1.0,2.0,toll_waves_3|choir_spiral|bell_drop|call_choir,0,0
+boss_bell,2,0.5,1.6,toll_waves_4|choir_spiral_double|bell_drop|call_choir,0,1.5
+boss_vine,1,1.0,2.0,root_lines_3|thorn_fan|trample|seed_pods,0,0
+boss_vine,2,0.5,1.6,root_lines_5|thorn_fan_double|trample|seed_pods,0,1.5
+boss_vine,3,0.2,1.2,root_thorn_combo|trample|seed_pods,4,1.5

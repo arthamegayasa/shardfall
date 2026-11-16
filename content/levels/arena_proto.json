@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "id": "arena_proto",
+  "arena": {
+    "boundary": [
+      [-13, -10],
+      [13, -10],
+      [16, -7],
+      [16, 7],
+      [13, 10],
+      [-13, 10],
+      [-16, 7],
+      [-16, -7]
+    ],
+    "lip": 1,
+    "rim": { "height": 0.25, "colorToken": "dust", "opacity": 0.5 },
+    "projectileMargin": 3,
+    "floor": { "baseToken": "floor-mid", "altToken": "floor-lit", "tileId": "tile-floor" }
+  },
+  "playerStart": { "default": [0, 0], "boss": [0, 5] },
+  "pulseOrigin": [0, 0],
+  "safeZones": [
+    {
+      "id": "start",
+      "shape": { "type": "circle", "center": [0, 0], "radius": 6 },
+      "blocks": ["obstacle", "spawn", "decor"]
+    },
+    {
+      "id": "boss_stage",
+      "shape": { "type": "circle", "center": [0, -3], "radius": 4 },
+      "blocks": ["obstacle", "decor"]
+    }
+  ],
+  "spawn": {
+    "playerSafeRadius": 4,
+    "interiorMinPlayerDist": 2,
+    "zones": [
+      { "id": "n", "shape": { "type": "rect", "min": [-12, -9], "max": [12, -7.5] } },
+      { "id": "s", "shape": { "type": "rect", "min": [-12, 7.5], "max": [12, 9] } },
+      { "id": "e", "shape": { "type": "rect", "min": [13.5, -6], "max": [15, 6] } },
+      { "id": "w", "shape": { "type": "rect", "min": [-15, -6], "max": [-13.5, 6] } },
+      {
+        "id": "ne",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12.5, -9],
+            [15, -6.5],
+            [13.5, -6],
+            [12, -7.5]
+          ]
+        }
+      },
+      {
+        "id": "se",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [12, 7.5],
+            [13.5, 6],
+            [15, 6.5],
+            [12.5, 9]
+          ]
+        }
+      },
+      {
+        "id": "sw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-12.5, 9],
+            [-15, 6.5],
+            [-13.5, 6],
+            [-12, 7.5]
+          ]
+        }
+      },
+      {
+        "id": "nw",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [-15, -6.5],
+            [-12.5, -9],
+            [-12, -7.5],
+            [-13.5, -6]
+          ]
+        }
+      }
+    ]
+  },
+  "bossStage": {
+    "shape": { "type": "circle", "center": [0, -3], "radius": 4 },
+    "landmarkId": "none",
+    "floorRingContrastMax": 1.15
+  },
+  "lighting": {
+    "edgeFade": { "startOutside": 3, "endOutside": 10 },
+    "points": []
+  },
+  "obstacles": [],
+  "decor": [],
+  "ambient": { "particles": [] }
+}

@@ -1,0 +1,168 @@
+{
+  "id": "fx-digits",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "status": "placeholder",
+  "note": "Damage number glyphs 0-9 (frame index = digit), 3 x 5 px plus ink outline, advance 4 px. normal bone, crit kept-gold.",
+  "animations": {
+    "normal": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "eee",
+          "e.e",
+          "e.e",
+          "e.e",
+          "eee"
+        ],
+        [
+          ".e.",
+          "ee.",
+          ".e.",
+          ".e.",
+          "eee"
+        ],
+        [
+          "eee",
+          "..e",
+          "eee",
+          "e..",
+          "eee"
+        ],
+        [
+          "eee",
+          "..e",
+          ".ee",
+          "..e",
+          "eee"
+        ],
+        [
+          "e.e",
+          "e.e",
+          "eee",
+          "..e",
+          "..e"
+        ],
+        [
+          "eee",
+          "e..",
+          "eee",
+          "..e",
+          "eee"
+        ],
+        [
+          "eee",
+          "e..",
+          "eee",
+          "e.e",
+          "eee"
+        ],
+        [
+          "eee",
+          "..e",
+          "..e",
+          ".e.",
+          ".e."
+        ],
+        [
+          "eee",
+          "e.e",
+          "eee",
+          "e.e",
+          "eee"
+        ],
+        [
+          "eee",
+          "e.e",
+          "eee",
+          "..e",
+          "eee"
+        ]
+      ]
+    },
+    "crit": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "ggg",
+          "g.g",
+          "g.g",
+          "g.g",
+          "ggg"
+        ],
+        [
+          ".g.",
+          "gg.",
+          ".g.",
+          ".g.",
+          "ggg"
+        ],
+        [
+          "ggg",
+          "..g",
+          "ggg",
+          "g..",
+          "ggg"
+        ],
+        [
+          "ggg",
+          "..g",
+          ".gg",
+          "..g",
+          "ggg"
+        ],
+        [
+          "g.g",
+          "g.g",
+          "ggg",
+          "..g",
+          "..g"
+        ],
+        [
+          "ggg",
+          "g..",
+          "ggg",
+          "..g",
+          "ggg"
+        ],
+        [
+          "ggg",
+          "g..",
+          "ggg",
+          "g.g",
+          "ggg"
+        ],
+        [
+          "ggg",
+          "..g",
+          "..g",
+          ".g.",
+          ".g."
+        ],
+        [
+          "ggg",
+          "g.g",
+          "ggg",
+          "g.g",
+          "ggg"
+        ],
+        [
+          "ggg",
+          "g.g",
+          "ggg",
+          "..g",
+          "ggg"
+        ]
+      ]
+    }
+  }
+}

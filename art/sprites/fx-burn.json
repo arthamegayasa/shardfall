@@ -1,0 +1,35 @@
+{
+  "id": "fx-burn",
+  "class": "vfx-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white"
+  ],
+  "status": "placeholder",
+  "note": "Status burn on an Unlit. Cyan and white glass flame (never gold, gold means pick me up).",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 8,
+      "loop": true,
+      "frames": [
+        [
+          "c.",
+          "cw",
+          "wc"
+        ],
+        [
+          ".c",
+          "wc",
+          "cw"
+        ]
+      ]
+    }
+  }
+}
