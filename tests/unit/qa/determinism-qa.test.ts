@@ -13,6 +13,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createFixedStep, createInputFrame, toHex8 } from '../../../src/core/index.ts';
+import { defaultRunProfile } from '../../../src/content/index.ts';
 import { createSim, decodeReplay, playReplay } from '../../../src/sim/index.ts';
 import { fixtureGameData } from '../../support/fixture-data.ts';
 import { recordBotRun } from './support/record.ts';
@@ -50,7 +51,9 @@ describe('QA determinism (M1-09b)', () => {
   });
 
   it('D-2: two separate Node processes give the same hashes as this process', () => {
-    const local = scriptedRun(createSim({ data: real }), 42, 3600, realClass);
+    // The CLI uses the app's default profile (defaultRunProfile), as the browser does (D-5).
+    const profile = defaultRunProfile(real);
+    const local = scriptedRun(createSim({ data: real }), 42, 3600, realClass, profile);
     const a = cli('script', '42', '3600');
     const b = cli('script', '42', '3600');
     expect(a['checkpoints']).toEqual(local.checkpoints);

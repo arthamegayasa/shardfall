@@ -52,6 +52,8 @@ export interface RunRow {
   pulses: PulseStat[];
   maxAliveAll: number;
   poolOverflow: number;
+  /** Silt given at the run end (WorldView runStats.silt; 0 in content tier A). LP M2-09. */
+  silt: number;
 }
 
 function arg(args: string[], flag: string, def: string): string {
@@ -194,6 +196,7 @@ export function runOne(
     pulses,
     maxAliveAll,
     poolOverflow: sim.poolOverflow,
+    silt: v.runStats.silt,
   };
 }
 
@@ -226,6 +229,9 @@ export function summarize(rows: RunRow[], label: string): string {
         .map(([p, c]) => `P${p} x${c}`)
         .join(', ') || '-'
     }`,
+  );
+  lines.push(
+    `Silt per run: median ${f(median(rows.map((r) => r.silt)))}, losses ${f(median(rows.filter((r) => r.outcome !== 'victory').map((r) => r.silt)))}, wins ${f(median(wins.map((r) => r.silt)))}`,
   );
   lines.push(
     `median Pulse reached ${median(rows.map((r) => r.pulseReached))}; median est. run minutes (wins) ${f(median(wins.map((r) => r.estMinutes)))}, sim minutes (wins) ${f(median(wins.map((r) => r.pulseTicks / TICK_RATE / 60)))}`,

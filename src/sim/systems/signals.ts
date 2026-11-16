@@ -1,9 +1,9 @@
 // Presentation signals derived from sim state once per tick (architecture 6.5, M1-09a):
-// PlayerHpLowChanged (UI HP pulse, low-HP cue) and MusicPressureChanged (adaptive music, GD Q21).
+// PlayerHpLowChanged (UI HP pulse, low-HP cue; threshold config low_hp_frac) and MusicPressureChanged (adaptive music, GD Q21).
 // Both are false outside the pulse phase, so a loaded save and an uninterrupted run emit the same
 // events. They only produce events; no game rule reads them, so they are not part of the state hash.
 
-import { LOW_HP_FRAC, SimEventType } from '../../core/index.ts';
+import { SimEventType } from '../../core/index.ts';
 import type { SimCtx } from '../ctx.ts';
 
 export function updateSignals(ctx: SimCtx): void {
@@ -11,7 +11,7 @@ export function updateSignals(ctx: SimCtx): void {
   const inPulse = run.started && world.phase === 'pulse' && run.deathTicks < 0;
   const p = world.player;
 
-  const low = inPulse && p.hp > 0 && p.hp <= p.maxHp * LOW_HP_FRAC;
+  const low = inPulse && p.hp > 0 && p.hp <= p.maxHp * cfg.lowHpFrac;
   if (low !== run.lowHpSignal) {
     run.lowHpSignal = low;
     events.push(SimEventType.PlayerHpLowChanged, p.x, p.y, low ? 1 : 0, 0, 0);

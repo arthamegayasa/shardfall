@@ -57,6 +57,11 @@ export interface MetaView {
   readonly highestDifficultyWon: number;
   readonly lastClassId: string;
   readonly hasRunSave: boolean;
+  /**
+   * Runs finished on this device (MetaSave.runs). Additive M2-09: the HUD shows the control hint
+   * only in the first run. Optional so older fakes stay valid; undefined reads as 0.
+   */
+  readonly runs?: number;
 }
 
 export interface UiDeps {

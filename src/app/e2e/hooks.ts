@@ -33,7 +33,12 @@ function screenPoints(ctx: AppContext, pool: PoolView): { x: number; y: number }
   return out;
 }
 
-export function installE2eHooks(ctx: AppContext): void {
+/** App context plus test-only actions created inside boot's __E2E__ branch. */
+export interface E2eAppContext extends AppContext {
+  grantSilt(amount: number): void;
+}
+
+export function installE2eHooks(ctx: E2eAppContext): void {
   const { sim } = ctx;
   const send = (cmd: Command): void => {
     ctx.commands.send(cmd);
@@ -258,6 +263,9 @@ export function installE2eHooks(ctx: AppContext): void {
         throw new Error('spawnStress needs a running Pulse (startRun first)');
       for (const cmd of stressCommands(ctx.data, preset)) send(cmd);
       step(1);
+    },
+    grantSilt(amount) {
+      ctx.grantSilt(amount);
     },
     grantItem(id, tier = 1) {
       const kind = ctx.data.weapons.some((w) => w.id === id) ? 'weapon' : 'memento';

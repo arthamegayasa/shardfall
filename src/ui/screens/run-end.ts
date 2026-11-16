@@ -1,7 +1,8 @@
 // S08 Run end (ui-spec 5): Kept Lost or Light Kept, "Felled by", short stats, final build, then
-// Try Again (initial focus), Choose Kept, Title. Input lock 500 ms so a key held at death never
+// Try Again (initial focus), Choose Kept, The Keeping (tiers B and C), Title. Input lock 500 ms so a key held at death never
 // starts a new run.
 
+import { unlockCost } from '../../content/index.ts';
 import type { WorldView } from '../../core/index.ts';
 import { button, h, put } from '../dom.ts';
 import { formatInt } from '../format.ts';
@@ -56,8 +57,19 @@ export function createRunEndScreen(ctx: UiContext): Screen {
       statRow('ui.end.unlit', formatInt(m.kills)),
       statRow('ui.end.glint', formatInt(m.glintEarned)),
     );
-    if (deps.data.meta.contentTier !== 'A')
+    const hasSilt = deps.data.meta.contentTier !== 'A';
+    if (hasSilt) {
       stats.appendChild(statRow('ui.end.silt', formatInt(m.silt)));
+      // Balance after this run and a pointer to The Keeping when an unlock is now affordable (S08).
+      const meta = deps.meta();
+      stats.appendChild(
+        h(doc, 'p', 'end-silt-total dim', t('ui.common.silt', { n: formatInt(meta.silt) })),
+      );
+      const canBuy = deps.data.metaUnlocks.some(
+        (u) => !meta.unlocked.includes(u.id) && meta.silt >= unlockCost(deps.data, u),
+      );
+      if (canBuy) stats.appendChild(h(doc, 'p', 'end-new-unlock', t('ui.end.new_unlock')));
+    }
 
     const buildCol = panel(ctx, 'end-build');
     buildCol.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
@@ -95,7 +107,8 @@ export function createRunEndScreen(ctx: UiContext): Screen {
     const again = button(doc, 'end-again', t('ui.end.again'), 'primary');
     const choose = button(doc, 'end-choose', t('ui.end.choose'));
     const toTitle = button(doc, 'end-title', t('ui.end.title'));
-    put(bar, again, choose, toTitle);
+    const keeping = hasSilt ? button(doc, 'end-keeping', t('ui.end.keeping')) : null;
+    put(bar, again, choose, keeping, toTitle);
     focus.add({
       el: again,
       group: 0,
@@ -110,6 +123,14 @@ export function createRunEndScreen(ctx: UiContext): Screen {
         ctx.go('classSelect');
       }),
     });
+    if (keeping !== null)
+      focus.add({
+        el: keeping,
+        group: 0,
+        activate: guarded(() => {
+          deps.app.openArchive();
+        }),
+      });
     focus.add({
       el: toTitle,
       group: 0,

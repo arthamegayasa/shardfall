@@ -9,6 +9,11 @@ export type Command =
       readonly profile: string;
       /** Crack level, 0 in content tiers A and B. */
       readonly difficulty: number;
+      /**
+       * Meta unlock ids the player owns (meta_unlocks.csv): unlocked weapons and Memento packs join
+       * the shop and chest pools. Omitted = none. Additive M2-09 (tier B activation).
+       */
+      readonly unlocked?: readonly string[];
     }
   | { readonly type: 'pulse.begin' }
   /** Warden or boss reward (phase reward). choice = index into RewardView.choices. */

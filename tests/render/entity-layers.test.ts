@@ -10,7 +10,11 @@ import { DAMAGE_RANK_SHIFT, SimEventType } from '../../src/core/index.ts';
 import type { Settings } from '../../src/core/index.ts';
 import type { RenderFrame } from '../../src/core/dom.ts';
 import { SpriteLight } from '../../src/render/shaders/index.ts';
-import { AiAnim, createEntityLayers } from '../../src/render/sprites/entity-layers.ts';
+import {
+  AiAnim,
+  createEntityLayers,
+  PLAYER_HIT_FLASH_ALPHA,
+} from '../../src/render/sprites/entity-layers.ts';
 import type { EntityLayers } from '../../src/render/sprites/entity-layers.ts';
 import { linearRgb } from '../../src/render/vfx/telegraph-style.ts';
 import { createPreviewScene, eventsOf, playerOf, PREVIEW_DATA } from './fake-scene.ts';
@@ -106,7 +110,9 @@ describe('entity layers', () => {
     playerOf(scene.world).hitFlashTicks = 6;
     layers.update(frame(scene, 6));
     expect(hit.map((f) => f.x)).toContain(attr(actors, 'iRect')[0]);
-    expect(attr(actors, 'iFlash')[3]).toBe(1);
+    // A partial kept-white tint keeps the class readable under frequent hits (LP M2-09).
+    expect(attr(actors, 'iFlash')[3]).toBeCloseTo(PLAYER_HIT_FLASH_ALPHA, 6);
+    expect(PLAYER_HIT_FLASH_ALPHA).toBeLessThan(1);
   });
 
   it('flashes the player gold after a level up (reward colour), never red', () => {

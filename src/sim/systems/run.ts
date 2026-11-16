@@ -407,13 +407,18 @@ export function levelPick(ctx: SimCtx, choice: number, sc: StatScratch): boolean
   return true;
 }
 
-/** End the run with an outcome (victory, defeat, abandon). Silt: none in content tier A. */
+/**
+ * End the run with an outcome (victory, defeat, abandon). Silt (GDD 17.1, tiers B and C):
+ * floor((cleared Pulses x silt_per_pulse + Warden and boss silt + won ? silt_win : 0) x silt_mult).
+ * Abandon counts as a loss. None in content tier A.
+ */
 export function endRun(ctx: SimCtx, outcome: number): void {
-  const { world, data, run } = ctx;
+  const { world, data, run, cfg } = ctx;
   let silt = 0;
   if (data.meta.contentTier !== 'A') {
-    // GDD 17.1 without the per-Pulse and win terms that have no data key yet (see gp-core-loop.md).
-    silt = Math.floor(run.siltKills * (run.diff?.siltMult ?? 1));
+    const won = outcome === RunOutcome.Victory ? cfg.siltWin : 0;
+    const base = world.runStats.pulsesCleared * cfg.siltPerPulse + run.siltKills + won;
+    silt = Math.floor(base * (run.diff?.siltMult ?? 1));
   }
   world.runStats.silt = silt;
   run.victoryTicks = -1;

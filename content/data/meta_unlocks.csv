@@ -1,6 +1,7 @@
 id,kind,targets,cost_silt,content_tier,cost_silt_b
 # Silt unlocks (data-schema 3.23, GDD 17.2). Crack is not bought.
-unlock_blade,class,blade,40,B,
+# LP M2-09 (playable default build): unlock_blade cost_silt_b 6 so a new player opens a second class in 1 to 2 runs (naive bot run_b loss median 3 Silt). GD retunes in M3.
+unlock_blade,class,blade,40,B,6
 unlock_bell,class,bell,60,B,
 unlock_tithe,weapon,tithe_coin,20,B,
 pack_memento_1,memento_pack,dust_hourglass|lucky_button|haggler_seal,20,B,

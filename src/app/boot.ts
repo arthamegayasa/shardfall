@@ -13,14 +13,22 @@ import {
 } from '../core/index.ts';
 import type { Command, CommandSink, MetaSave, Settings, StringTable } from '../core/index.ts';
 import type { AppActions, MetaView, Renderer, Ui } from '../core/dom.ts';
-import { buildGameData, formatString, GAME_DATA_FORMAT } from '../content/index.ts';
+import {
+  applyUnlock,
+  buildGameData,
+  defaultRunProfile,
+  formatString,
+  GAME_DATA_FORMAT,
+  isClassOpen,
+  ownedUnlockIds,
+} from '../content/index.ts';
 import type { GameData, RawGameData } from '../content/index.ts';
 import { createSim } from '../sim/index.ts';
 import { createRenderer } from '../render/index.ts';
 import { createUi } from '../ui/index.ts';
-import { createAudio } from '../audio/index.ts';
 import { loadArtAssets } from './assets.ts';
 import { createInputSource } from './input/input.ts';
+import { createLazyAudio } from './lazy-audio.ts';
 import { createLogger } from './logger.ts';
 import { createLoop } from './loop.ts';
 import type { GameLoop } from './loop.ts';
@@ -45,14 +53,11 @@ const idStringModules = import.meta.glob('../../content/strings/id.json', { impo
 
 const log = createLogger('app');
 
-/**
- * Profile used when the UI starts a run: run_a, the tier A run (10 Pulses, Warden at Pulse 5, boss at
- * Pulse 10). run_a_m1 has neither, so the Warden reward and boss could not be played (LP M1-09a).
- */
-const DEFAULT_PROFILE = 'run_a';
 /** Resume countdown after pause during a Pulse: 3, 2, 1 over 900 ms (ui-spec S06). */
 const COUNTDOWN_STEPS = 3;
 const COUNTDOWN_STEP_MS = 300;
+/** Latest time after boot to start loading the audio chunk when the page never goes idle. */
+const AUDIO_PREFETCH_MS = 2000;
 
 export type HoldReason = 'user' | 'hidden' | 'e2e' | 'countdown';
 
@@ -135,7 +140,8 @@ export async function boot(doc: Document): Promise<void> {
   const assets = loadArtAssets();
   const sim = createSim({ data, debugCommands: __DEV_TOOLS__ });
   const renderer = createRenderer(canvas, assets, data);
-  const audio = createAudio(data);
+  // src/audio is a lazy chunk (bundle budget, LP M2-09): loaded on the first gesture or when idle.
+  const audio = createLazyAudio(data, () => import('../audio/index.ts'));
   const recorder = __DEV_TOOLS__
     ? createReplayRecorder({
         contentHash: data.meta.contentHash,
@@ -190,6 +196,8 @@ export async function boot(doc: Document): Promise<void> {
     countdownTimer = window.setTimeout(tickDown, COUNTDOWN_STEP_MS);
   };
 
+  // Run of the build's content tier (run_b since M2-09: 15 Pulses, Wardens at 4 and 10, boss at 15).
+  const profile = defaultRunProfile(data);
   const startRun: AppContext['startRun'] = (opts) => {
     stopCountdown();
     clearRunSave(store);
@@ -197,8 +205,9 @@ export async function boot(doc: Document): Promise<void> {
       type: 'run.start',
       seed: opts.seed >>> 0,
       classId: opts.classId,
-      profile: opts.profile ?? DEFAULT_PROFILE,
+      profile: opts.profile ?? profile,
       difficulty: opts.difficulty ?? 0,
+      unlocked: ownedUnlockIds(data, meta.unlocked),
     });
     ui?.setScreen('run');
     setHold('user', false);
@@ -206,6 +215,11 @@ export async function boot(doc: Document): Promise<void> {
 
   const app: AppActions = {
     startRun(classId, difficulty) {
+      // Locked classes never start (the UI shows them as locked; this guards the action itself).
+      if (!isClassOpen(data, meta.unlocked, classId)) {
+        log.warn(`class ${classId} is locked`);
+        return;
+      }
       startRun({ seed: seedRng.nextU32(), classId, difficulty });
     },
     continueRun() {
@@ -251,9 +265,13 @@ export async function boot(doc: Document): Promise<void> {
       renderer.applySettings(s);
       audio.applySettings(s.audio);
     },
-    unlock() {
-      // TODO(LP, M3): meta unlocks (content tier B).
-      return false;
+    unlock(unlockId) {
+      // Silt unlock (GDD 17.2, ui-spec S09): pure rule in src/sim/meta, stored at once.
+      const next = applyUnlock(data, meta, unlockId);
+      if (next === null) return false;
+      meta = next;
+      saveMeta(store, meta);
+      return true;
     },
     deleteSaveData() {
       store.remove(STORAGE_KEYS.run);
@@ -276,6 +294,7 @@ export async function boot(doc: Document): Promise<void> {
     highestDifficultyWon: meta.highestDifficultyWon,
     lastClassId: meta.lastClassId,
     hasRunSave: hasRunSave(store),
+    runs: meta.runs,
   });
 
   ui = createUi({
@@ -359,15 +378,33 @@ export async function boot(doc: Document): Promise<void> {
   // Title background: the arena of the first Pulse until a run picks its own.
   watch.afterTick();
 
+  // Audio unlocks on a user gesture; the listeners stay until an unlock succeeds (a failed chunk
+  // load or context resume is retried by the next gesture).
+  let audioUnlocked = false;
   const unlockAudio = (): void => {
-    audio.unlock().catch((err: unknown) => {
-      log.warn('audio unlock failed', err);
-    });
-    window.removeEventListener('pointerdown', unlockAudio);
-    window.removeEventListener('keydown', unlockAudio);
+    if (audioUnlocked) return;
+    audio
+      .unlock()
+      .then(() => {
+        audioUnlocked = true;
+        window.removeEventListener('pointerdown', unlockAudio);
+        window.removeEventListener('keydown', unlockAudio);
+      })
+      .catch((err: unknown) => {
+        log.warn('audio unlock failed', err);
+      });
   };
   window.addEventListener('pointerdown', unlockAudio);
   window.addEventListener('keydown', unlockAudio);
+  // Prefetch the audio chunk once the title is up, so the first gesture can unlock synchronously.
+  const prefetchAudio = (): void => {
+    audio.preload().catch((err: unknown) => {
+      log.warn('audio chunk failed to load', err);
+    });
+  };
+  if (typeof window.requestIdleCallback === 'function')
+    window.requestIdleCallback(prefetchAudio, { timeout: AUDIO_PREFETCH_MS });
+  else window.setTimeout(prefetchAudio, AUDIO_PREFETCH_MS);
   doc.addEventListener('visibilitychange', () => {
     audio.setHidden(doc.hidden);
     setHold('hidden', doc.hidden && settings.access.pauseWhenUnfocused);
@@ -391,6 +428,11 @@ export async function boot(doc: Document): Promise<void> {
       app,
       startRun,
       setHold,
+      // Test-only meta access lives inside the __E2E__ branch, so production builds drop it.
+      grantSilt(amount) {
+        meta = { ...meta, silt: Math.max(0, meta.silt + Math.floor(amount)) };
+        saveMeta(store, meta);
+      },
     });
   }
 }

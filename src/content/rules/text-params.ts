@@ -4,6 +4,7 @@
 // values, so a text can never show a {placeholder} or a number that disagrees with the data.
 // Values are tier I / one stack, as shown on shop cards. Pure: no DOM.
 
+import { TICK_RATE } from '../../core/index.ts';
 import type { EffectDef, GameData } from '../game-data.ts';
 
 export type TextParams = Readonly<Record<string, string>>;
@@ -65,8 +66,34 @@ function candidates(data: GameData, e: EffectDef): Record<string, number> {
       else set(stat, v);
     }
   }
-  if (e.action === 'buff') set('stacks', num(p['max_stacks']));
+  if (e.action === 'buff') {
+    set('stacks', num(p['max_stacks']));
+    // stats=attack_speed_pct:25 reads as {attack_speed_pct} = 25 (LP M2-09, string-table 4.1).
+    const stats = typeof p['stats'] === 'string' ? p['stats'] : '';
+    for (const part of stats.split('|')) {
+      const [stat, v] = part.split(':');
+      if (stat !== undefined && stat !== '') set(stat, num(v));
+    }
+  }
+  if (e.action === 'status_rule' && p['rule'] === 'add_mark') set('mark', num(p['value']));
+  if (e.action === 'status_rule' && p['rule'] === 'spread_chance') {
+    const v = num(p['value']);
+    set('spread_pct', v === null ? null : pct(v));
+  }
+  if (e.action === 'shop_mod' && p['field'] === 'price_mult') {
+    // 0.9 reads as "10% less".
+    const v = num(p['value']);
+    set('discount_pct', v === null ? null : pct(1 - v));
+  }
+  if (e.action === 'shop_mod' && p['field'] === 'reroll_delta') {
+    const v = num(p['value']);
+    set('reroll_less', v === null ? null : -v);
+  }
+  if (e.icdTicks > 0) set('icd', e.icdTicks / TICK_RATE);
+  set('hurt_s', condition(e, 'time_since_hurt'));
   for (const k of ['count', 'interval', 'dmg', 'radius', 'duration']) set(k, num(p[k]));
+  // Any other numeric param by its own name (amount, max_per_sec, charges, base, per_t).
+  for (const k of Object.keys(p)) set(k, num(p[k]));
   return out;
 }
 

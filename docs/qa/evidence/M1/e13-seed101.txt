@@ -1,18 +1,7 @@
 0.1s pulse 1 pulse hp 30/30 glint 0 lv 1
-5.3s pulse 1 shop hp 26/30 glint 17 lv 1
-6.3s pulse 2 pulse hp 30/30 glint 17 lv 1
-11.7s pulse 2 pulseClear hp 18.999999999999996/30 glint 40 lv 2
-12.1s pulse 2 levelUp hp 18.999999999999996/30 glint 40 lv 2
-13.2s pulse 2 shop hp 18.999999999999996/30 glint 40 lv 2
-14.8s pulse 3 pulse hp 30/30 glint 17 lv 2
-20.8s pulse 3 pulseClear hp 16.799999999999997/30 glint 55 lv 2
-21.3s pulse 3 shop hp 16.799999999999997/30 glint 55 lv 2
-23.5s pulse 4 pulse hp 30/30 glint 7 lv 2
-30.5s pulse 4 pulseClear hp 14.400000000000002/30 glint 52 lv 3
-30.9s pulse 4 levelUp hp 14.400000000000002/30 glint 52 lv 3
-32.1s pulse 4 shop hp 14.400000000000002/30 glint 52 lv 3
-33.7s pulse 5 pulse hp 30/30 glint 30 lv 3
-39.7s pulse 5 defeat hp 0/30 glint 38 lv 3
-end: defeat pulse 5 tick 9633 hash 625c0c0a
-node replay: {"ticks":9633,"mismatchAt":-1,"finalHash":"625c0c0a","contentHash":"ff51169c"}
+5.3s pulse 1 shop hp 22/30 glint 20 lv 1
+6.9s pulse 2 pulse hp 30/30 glint 2 lv 1
+11.8s pulse 2 defeat hp 0/30 glint 25 lv 2
+end: defeat pulse 2 tick 2928 hash 999c6909
+node replay: {"ticks":2928,"mismatchAt":-1,"finalHash":"999c6909","contentHash":"2008c1b6"}
 problems: []

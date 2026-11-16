@@ -1770,3 +1770,108 @@
 .sf-ui[data-text-scale='2'] .shop-offers .tag-chips {
   flex-direction: row;
 }
+
+/* LP M2-09, tier B activation: class portraits and lock state, The Keeping (minimal S09), Silt. */
+.sf-ui .class-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 4);
+  text-align: left;
+}
+
+.sf-ui .class-row-name {
+  flex: 1;
+}
+
+.sf-ui .class-row-price,
+.sf-ui .class-lock {
+  color: var(--dust);
+}
+
+.sf-ui .class-row.is-locked .class-portrait .px-art,
+.sf-ui .class-detail.is-locked .class-portrait .px-art {
+  filter: brightness(0.15);
+}
+
+.sf-ui .class-portrait.icon-small {
+  width: calc(var(--u) * 26);
+  height: calc(var(--u) * 26);
+}
+
+.sf-ui .class-portrait.icon-big {
+  width: calc(var(--u) * 52);
+  height: calc(var(--u) * 52);
+}
+
+.sf-ui .class-item {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .class-lock:empty {
+  display: none;
+}
+
+.sf-ui .title-silt,
+.sf-ui .keeping-silt {
+  color: var(--kept-gold);
+}
+
+.sf-ui .title-silt {
+  position: absolute;
+  right: calc(var(--u) * 8);
+  top: calc(var(--u) * 6);
+}
+
+.sf-ui .keeping-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sf-ui .keeping-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 3);
+  overflow-y: auto;
+}
+
+.sf-ui .keeping-row {
+  display: grid;
+  grid-template-columns: calc(var(--u) * 34) minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 6);
+  align-items: center;
+  text-align: left;
+  padding: calc(var(--u) * 3) calc(var(--u) * 4);
+}
+
+.sf-ui .keeping-text {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 1);
+}
+
+.sf-ui .keeping-price {
+  color: var(--kept-gold);
+  white-space: nowrap;
+}
+
+.sf-ui .keeping-row.is-owned .keeping-price {
+  color: var(--kept-cyan);
+}
+
+.sf-ui .keeping-row.is-poor .keeping-price {
+  color: var(--dust);
+  text-decoration: line-through;
+}
+
+.sf-ui .keeping-row.is-armed {
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .end-new-unlock {
+  color: var(--kept-gold);
+}

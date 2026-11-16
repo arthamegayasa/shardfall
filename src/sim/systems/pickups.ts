@@ -9,7 +9,6 @@ import { Trigger } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { statOf } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
-import { cfgOpt } from '../sim-data.ts';
 import { addXp } from './xp.ts';
 
 const tmp: Point = { x: 0, y: 0 };
@@ -87,8 +86,8 @@ export function dropGlint(ctx: SimCtx, x: number, y: number, amount: number): vo
 
 /**
  * Glint pull (GDD 4.2, CD M1 4 "Glint melesat"): a piece inside the pickup radius starts flying at
- * glint_fly_speed and speeds up by glint_fly_accel (u/s^2) each tick, capped at glint_fly_speed_max.
- * Both keys are optional data (gp-requests-m2.md); without them the speed stays constant (M1).
+ * glint_fly_speed_start and speeds up by glint_fly_accel (u/s^2) each tick, capped at the top speed
+ * glint_fly_speed (GD M2-01 config keys). With glint_fly_accel 0 a piece flies at the top speed (M1).
  */
 export function updatePickups(ctx: SimCtx): void {
   const { world, cfg, sd } = ctx;
@@ -98,11 +97,9 @@ export function updatePickups(ctx: SimCtx): void {
   const r2 = r * r;
   const collect = p.radius + cfg.glintCollectDistAddU;
   const collect2 = collect * collect;
-  const speed = cfg.glintFlySpeedUPerTick;
-  const accelRaw = cfgOpt(cfg, 'glintFlyAccel');
-  const accel = accelRaw !== null && accelRaw > 0 ? accelRaw / (TICK_RATE * TICK_RATE) : 0;
-  const maxRaw = cfgOpt(cfg, 'glintFlySpeedMaxUPerTick');
-  const vmax = maxRaw !== null && maxRaw > 0 ? maxRaw : Infinity;
+  const vmax = cfg.glintFlySpeedUPerTick;
+  const accel = cfg.glintFlyAccel > 0 ? cfg.glintFlyAccel / (TICK_RATE * TICK_RATE) : 0;
+  const speed = accel > 0 ? Math.min(cfg.glintFlySpeedStartUPerTick, vmax) : vmax;
   for (let i = 0; i < pk.highWater; i++) {
     if (pk.alive[i] === 0) continue;
     pk.prevX[i] = pk.x[i]!;

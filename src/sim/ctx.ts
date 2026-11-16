@@ -188,6 +188,13 @@ export interface RunState {
   synergyMask: number;
   /** Silt from killed Wardens and bosses (enemies.csv silt column), content tiers B and C. */
   siltKills: number;
+  /**
+   * Meta unlock ids owned when the run started (run.start, kept in the save), data order. LP M2-09.
+   * weaponOpen / mementoOpen: 1 when the shop and chests may offer the weapon or Memento.
+   */
+  unlocked: readonly string[];
+  weaponOpen: Uint8Array;
+  mementoOpen: Uint8Array;
   /** Per effect: per_target counter slot (assigned to active effects in order), -1 none (MAYOR M1-19). */
   readonly targetSlotOf: Int32Array;
   /** Per weapon slot: Glint dropped by coin kills this Pulse (tithe_coin cap, GDD 4.1). */
@@ -433,6 +440,9 @@ export function createRunState(
     pendingSeq: 0,
     synergyMask: 0,
     siltKills: 0,
+    unlocked: [],
+    weaponOpen: new Uint8Array(0),
+    mementoOpen: new Uint8Array(0),
     targetSlotOf: new Int32Array(effectCount).fill(-1),
     coinGlint: new Int32Array(slots),
     lungeTimer: new Int32Array(slots),

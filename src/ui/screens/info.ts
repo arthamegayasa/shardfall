@@ -1,5 +1,5 @@
-// The Keeping (S09, content tier B) and Credits placeholders for M1: title, short body, Back.
-// TODO(UI, M3): full The Keeping screen per ui-spec S09 and wireframe 09.
+// Credits (and the M1 Keeping placeholder): title, short body, Back. The Keeping itself is
+// screens/keeping.ts since M2-09; the full two-tab S09 screen (wireframe 09) stays with UI.
 
 import { button, h, put } from '../dom.ts';
 import { panel, titleBlock } from './components.ts';

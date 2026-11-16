@@ -3,76 +3,76 @@
   "headless": true,
   "peak": {
     "phase": "pulse",
-    "enemiesMin": 89,
-    "enemiesAvg": 110.1,
-    "enemiesMax": 123,
+    "enemiesMin": 78,
+    "enemiesAvg": 109.7,
+    "enemiesMax": 120,
     "countsEnd": {
-      "enemies": 78,
-      "enemyShots": 6,
-      "playerShots": 17,
+      "enemies": 90,
+      "enemyShots": 5,
+      "playerShots": 19,
       "pickups": 150,
-      "dangerAreas": 5,
+      "dangerAreas": 1,
       "playerZones": 0
     },
-    "frames": 232,
+    "frames": 219,
     "frameMs": {
-      "avg": 43.75,
+      "avg": 44.44,
       "p95": 50.1,
       "p99": 50.1,
       "max": 50.1
     },
-    "fpsAvg": 22.9,
+    "fpsAvg": 22.5,
     "perfHook": {
       "frameMs": {
-        "avg": 45.831481481481475,
-        "p95": 50.10000000000002,
+        "avg": 46.045512820512805,
+        "p95": 50.100000000000364,
         "p99": 50.100000000000364,
-        "max": 400
+        "max": 400.0000000000001
       },
       "simTickMs": {
-        "avg": 0.103666666050752,
-        "p95": 0.20000004768371582
+        "avg": 0.11633333375056584,
+        "p95": 0.2999999523162842
       },
       "drawCalls": 13,
-      "triangles": 8327,
+      "triangles": 8267,
       "eventOverflow": 0,
       "poolOverflow": 0
     }
   },
   "peak-boss": {
     "phase": "pulse",
-    "enemiesMin": 93,
-    "enemiesAvg": 111.4,
-    "enemiesMax": 119,
+    "enemiesMin": 80,
+    "enemiesAvg": 109.3,
+    "enemiesMax": 120,
     "countsEnd": {
-      "enemies": 80,
-      "enemyShots": 4,
-      "playerShots": 17,
+      "enemies": 77,
+      "enemyShots": 2,
+      "playerShots": 12,
       "pickups": 150,
-      "dangerAreas": 7,
+      "dangerAreas": 4,
       "playerZones": 0
     },
-    "frames": 232,
+    "frames": 230,
     "frameMs": {
-      "avg": 43.96,
+      "avg": 44.78,
       "p95": 50.1,
       "p99": 50.1,
       "max": 50.1
     },
-    "fpsAvg": 22.7,
+    "fpsAvg": 22.3,
     "perfHook": {
       "frameMs": {
-        "avg": 43.83133333333326,
-        "p95": 50.099999999999454,
+        "avg": 44.33149999999992,
+        "p95": 50.100000000000364,
         "p99": 50.10000000000218,
-        "max": 116.70000000000073
+        "max": 133.39999999999964
       },
       "simTickMs": {
-        "avg": 0.11000000019868215,
-        "p95": 0.20000004768371582
+        "avg": 0.10949999948342641,
+        "p95": 0.2999999523162842
       },
       "drawCalls": 13,
-      "triangles": 8239,
+      "triangles": 8225,
       "eventOverflow": 0,
       "poolOverflow": 0
     }

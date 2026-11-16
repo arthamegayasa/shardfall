@@ -38,10 +38,3 @@ export const DOF_SHARP_BOTTOM_PX = 324;
 /** Final arena bounds in world u (architecture 7.3). Arenas larger than this need LP, CD, LD approval. */
 export const ARENA_MAX_HALF_W_U = 16;
 export const ARENA_MAX_HALF_D_U = 10;
-
-/**
- * PlayerHpLowChanged threshold: HP at or below this fraction of max HP during a Pulse (ui-spec S03,
- * "below 30%"). Presentation signal only (UI pulse, low-HP cue); it never changes game rules.
- * LP decision M1-09a; GD may move it to config.csv later.
- */
-export const LOW_HP_FRAC = 0.3;

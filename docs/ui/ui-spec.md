@@ -655,6 +655,13 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.keeping.title` | The Keeping | Ada |
 | `ui.keeping.unknown` | Not yet found | Ada |
 | `ui.keeping.unlock` | Unlock | Ada (belum dipakai M1) |
+| `ui.keeping.owned` | Owned | Ada (LP M2-09, The Keeping minimal) |
+| `ui.keeping.kind_class` | Kept | Ada (LP M2-09) |
+| `ui.keeping.kind_weapon` | Weapon | Ada (LP M2-09) |
+| `ui.keeping.kind_pack` | Mementos | Ada (LP M2-09) |
+| `ui.keeping.no_silt` | Not enough Silt | Ada (LP M2-09) |
+| `ui.keeping.unlocked` | {name} unlocked. | Ada (LP M2-09) |
+| `ui.keeping.empty` | Nothing to unlock yet. | Ada (LP M2-09) |
 | `ui.levelup.level` | Lv {n} | Ada |
 | `ui.levelup.queue` | {i} of {total} | Ada |
 | `ui.levelup.stat_change` | {stat} {old} > {new} | Ada |

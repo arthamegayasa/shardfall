@@ -34,16 +34,6 @@ export function phas(p: ParamsRaw, key: string): boolean {
   return p[key] !== undefined;
 }
 
-/**
- * Optional config value by GameData key (camelCase plus unit suffix, architecture 19 v2.1 item 7).
- * Returns null when the key is not in this build: the behavior that needs it stays off
- * (gp-core-loop 3, never a number in code). Used for keys requested from GD in gp-requests-m2.md.
- */
-export function cfgOpt(cfg: object, key: string): number | null {
-  const v = (cfg as Readonly<Record<string, unknown>>)[key];
-  return typeof v === 'number' && Number.isFinite(v) ? v : null;
-}
-
 /** Stat ids the sim reads by name (GDD 5.1). Missing stats resolve to -1 and read as neutral. */
 export const STAT_IDS = [
   'max_hp',

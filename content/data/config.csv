@@ -62,3 +62,5 @@ boss_trickle_max_alive,24,
 death_slowmo_s,1.0,
 low_hp_frac,0.3,PlayerHpLowChanged when hp <= this x max hp during a Pulse (ui-spec S03; M2-01 moved from src/core/constants.ts LOW_HP_FRAC)
 victory_delay_s,1.5,
+silt_per_pulse,1,Silt per cleared Pulse at the run end (GDD 17.1; LP M2-09 key for the tier B activation)
+silt_win,10,Silt bonus for a won run (GDD 17.1; LP M2-09 key for the tier B activation)

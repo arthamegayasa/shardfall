@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Dir, findNeighbor, nextGroupIndex } from '../../../src/ui/focus-nav.ts';
 import type { NavRect } from '../../../src/ui/focus-nav.ts';
-import { menuIntent } from '../../../src/ui/menu-keys.ts';
+import { choiceLockApplies, menuIntent } from '../../../src/ui/menu-keys.ts';
 import { defaultSettings } from '../../../src/app/settings.ts';
 
 const r = (x: number, y: number, group: number, w = 10, h = 10): NavRect => ({ x, y, w, h, group });
@@ -92,5 +92,14 @@ describe('menu key intents', () => {
     expect(menuIntent('Tab', false, binds)).toBe('nextGroup');
     expect(menuIntent('Tab', true, binds)).toBe('prevGroup');
     expect(menuIntent('KeyR', false, binds)).toBeNull();
+  });
+});
+
+describe('choice input lock (ui-spec 8.4, LP M2-09)', () => {
+  it('applies after run screens and menus, not to a screen restored by Continue', () => {
+    expect(choiceLockApplies('pulse')).toBe(true);
+    expect(choiceLockApplies('level-up')).toBe(true);
+    expect(choiceLockApplies('pause')).toBe(true);
+    expect(choiceLockApplies('title')).toBe(false);
   });
 });

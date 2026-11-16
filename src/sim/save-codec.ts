@@ -3,6 +3,7 @@
 
 import { OfferKind, RNG_STREAMS } from '../core/index.ts';
 import type { LoadResult, RngState, RunSave } from '../core/index.ts';
+import { setRunUnlocks } from '../content/index.ts';
 import type { GameData } from '../content/index.ts';
 import type { CardChoice, OfferState, SimCtx } from './ctx.ts';
 import { rebuildActiveEffects } from './effects/active.ts';
@@ -92,8 +93,11 @@ export function createSave(ctx: SimCtx): RunSave | null {
     // M2-05 (additive): view details that would otherwise be lost on load (LP review M1).
     rewardSourceId: data.enemies[run.rewardSourceType]?.id ?? '',
     levelsThisPulse: run.levelsThisPulse,
+    unlocked: run.unlocked,
   };
 }
+
+const isString = (v: unknown): v is string => typeof v === 'string';
 
 function idx(list: readonly { readonly id: string }[], id: string): number {
   return list.findIndex((x) => x.id === id);
@@ -236,6 +240,7 @@ export function applySave(
     return { ok: false, reason: 'unknownId' };
   // beginRun replaced ctx.run with a fresh run state.
   const run = ctx.run;
+  setRunUnlocks(data, run, Array.isArray(save.unlocked) ? save.unlocked.filter(isString) : []);
   for (const name of RNG_STREAMS) ctx.rng[name].setState(save.rng[name]);
   world.tick = save.tick;
   canonicalReset(ctx);

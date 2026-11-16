@@ -2,7 +2,7 @@
 // debug helpers used by the e2e hooks, and the event order at defeat (architecture 6.5).
 
 import { describe, expect, it } from 'vitest';
-import { LOW_HP_FRAC, RejectReason, RunPhaseCode, SimEventType } from '../../../src/core/index.ts';
+import { RejectReason, RunPhaseCode, SimEventType } from '../../../src/core/index.ts';
 import type { RunSave } from '../../../src/core/index.ts';
 import { harness, stepUntil } from './support/harness.ts';
 
@@ -12,7 +12,7 @@ describe('presentation signals', () => {
     h.start({ profile: 'run_a' });
     h.quiet();
     const max = h.sim.view.player.maxHp;
-    h.send({ type: 'debug.setHp', hp: Math.floor(max * LOW_HP_FRAC) });
+    h.send({ type: 'debug.setHp', hp: Math.floor(max * h.data.config.lowHpFrac) });
     h.step();
     expect(h.of(SimEventType.PlayerHpLowChanged).map((e) => e.a)).toEqual([1]);
     h.send({ type: 'debug.endPulse' });

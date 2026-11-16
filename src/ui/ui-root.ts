@@ -9,7 +9,7 @@ import { createFocusList } from './focus.ts';
 import { createIconArt } from './icons.ts';
 import { Dir } from './focus-nav.ts';
 import { keyLabel } from './format.ts';
-import { isBound, menuIntent, pausesRun } from './menu-keys.ts';
+import { choiceLockApplies, isBound, menuIntent, pausesRun } from './menu-keys.ts';
 import { mementoInfo, tierKey, weaponInfo } from './presenters/content.ts';
 import { resolveScreenId } from './presenters/phase.ts';
 import { loadPixelFont } from './pixel-font.ts';
@@ -19,6 +19,7 @@ import { createClassSelectScreen } from './screens/class-select.ts';
 import { createGlazierScreen } from './screens/glazier.ts';
 import { createHudScreen } from './screens/hud.ts';
 import { createInfoScreen } from './screens/info.ts';
+import { createKeepingScreen } from './screens/keeping.ts';
 import { createPauseScreen } from './screens/pause.ts';
 import { createRunEndScreen } from './screens/run-end.ts';
 import { createSettingsScreen } from './screens/settings.ts';
@@ -73,7 +74,8 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     let staleRevision = -1;
     let confirmOpen = false;
     let lockUntil = 0;
-    let returningFromMenu = false;
+    /** The screen being entered came from a menu: its enter() must not start the input lock. */
+    let enteringFromMenu = false;
     /** Run screen that was active when the pause menu opened. */
     let pausedFrom = '';
     let lastFocusSound = -Infinity;
@@ -148,8 +150,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       },
       previous: () => prevAppScreen,
       lockInput(ms) {
-        // Returning from pause or settings is not a new choice screen: no second lock (ui-spec 8.4).
-        if (!returningFromMenu) lockUntil = now() + ms;
+        // Only after a run screen (ui-spec 8.4): not when back from pause or settings, nor a Glazier
+        // restored by Continue on the title.
+        if (!enteringFromMenu) lockUntil = now() + ms;
       },
       inputLocked: () => now() < lockUntil,
       view: () => lastView,
@@ -212,7 +215,7 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
           s = createRunEndScreen(ctx);
           break;
         case 'archive':
-          s = createInfoScreen(ctx, 'archive');
+          s = createKeepingScreen(ctx);
           break;
         case 'credits':
           s = createInfoScreen(ctx, 'credits');
@@ -241,9 +244,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       else if (id === 'level-up') sawTemper = true;
       const fromMenu = fromId === 'pause' || fromId === 'confirm' || fromId === 'settings';
       if (!fromMenu && (id === 'pause' || id === 'settings')) pausedFrom = fromId;
-      returningFromMenu = fromMenu && id === pausedFrom;
+      enteringFromMenu = (fromMenu && id === pausedFrom) || !choiceLockApplies(fromId);
       next.enter(id);
-      returningFromMenu = false;
+      enteringFromMenu = false;
     };
 
     const route = (): void => {

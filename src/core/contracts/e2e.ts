@@ -72,6 +72,11 @@ export interface E2eHooks {
   /** Deterministic stress scene from debug commands. 'peak': last normal Pulse composition + late-run build. */
   spawnStress(preset: 'peak' | 'peak-boss'): void;
   grantItem(id: string, tier?: number): void;
+  /**
+   * Add Silt to the meta save (stored at once) so tests can buy unlocks in The Keeping. Additive
+   * M2-09; e2e builds only, like every hook.
+   */
+  grantSilt(amount: number): void;
   loadReplay(replay: unknown): void;
   exportReplay(): unknown;
   getPerf(): E2ePerf;

@@ -79,6 +79,10 @@ export const configTable = defineKvTable({
     /** PlayerHpLowChanged threshold as a fraction of max HP (ui-spec S03, GD M2-01). */
     low_hp_frac: col.float({ min: 0, max: 1, default: 0.3 }),
     victory_delay_s: sec(),
+    /** Silt per cleared Pulse at the run end (GDD 17.1), content tiers B and C. 0 = none. */
+    silt_per_pulse: col.float({ min: 0, default: 0 }),
+    /** Silt bonus for a won run (GDD 17.1), content tiers B and C. 0 = none. */
+    silt_win: col.float({ min: 0, default: 0 }),
   },
 });
 

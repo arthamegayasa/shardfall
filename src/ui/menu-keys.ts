@@ -38,3 +38,12 @@ export function pausesRun(screenId: string): boolean {
     screenId === 'glazier'
   );
 }
+
+/**
+ * The choice-screen input lock (ui-spec 8.4) guards against keys carried over from play or from the
+ * press that ended the run. A Glazier, Temper, or reward restored by Continue on the title comes from
+ * a menu press that already finished, so it is not locked (LP M2-09, e2e keyboard-play E-15).
+ */
+export function choiceLockApplies(fromScreenId: string): boolean {
+  return fromScreenId !== 'title';
+}

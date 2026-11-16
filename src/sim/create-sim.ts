@@ -24,6 +24,7 @@ import type {
   Sim,
   SimConfig,
 } from '../core/index.ts';
+import { setRunUnlocks } from '../content/index.ts';
 import { ENEMY_CAPACITY, HIT_STACK_DEPTH, WEAPON_MAX_TIER } from './capacity.ts';
 import { TRIGGER_COUNT } from './codes.ts';
 import { createHitCtx, createPending, createRunState } from './ctx.ts';
@@ -214,6 +215,7 @@ export function createSimInternals(config: SimConfig): SimInternals {
       reject(RejectReason.UnknownId);
       return;
     }
+    setRunUnlocks(data, ctx.run, cmd.unlocked ?? []);
     const cls = data.classes[ci];
     const wi = data.weapons.findIndex((w) => w.id === cls?.startWeapon);
     if (wi >= 0) {

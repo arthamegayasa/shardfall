@@ -65,7 +65,12 @@ export function createTitleScreen(ctx: UiContext): Screen {
       t('ui.title.version', { version: deps.data.meta.contentHash.slice(0, 8) }),
     );
     const notice = saveLost ? h(doc, 'p', 'title-notice', t('ui.title.save_lost')) : null;
-    put(el, put(safe, head, menu, notice, version));
+    // Silt balance top right while Silt exists (tiers B and C, ui-spec S01).
+    const silt =
+      deps.data.meta.contentTier !== 'A'
+        ? h(doc, 'p', 'title-silt', t('ui.common.silt', { n: meta.silt }))
+        : null;
+    put(el, put(safe, head, menu, notice, silt, version));
     focus.focus(0, true);
   };
 

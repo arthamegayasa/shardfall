@@ -138,6 +138,11 @@ const BURN_GAP_PX = 1;
 const SLOT_PHASE_TICKS = 7;
 /** Player hit flash length in sim ticks (hitFlashTicks counts down from about this). */
 const PLAYER_HIT_TICKS = 8;
+/**
+ * Player hit flash strength: a kept-white tint, not a full replacement, so the class silhouette and
+ * colours stay readable when hits come often in a dense Pulse (LP M2-09 legibility; was 1).
+ */
+export const PLAYER_HIT_FLASH_ALPHA = 0.6;
 /** Normal Unlit rise out of their crack over this many ticks (dissolve in reverse). */
 const EMERGE_TICKS = 18;
 /** Player death dissolve (art-direction 8.2: 0.8 s). */
@@ -378,7 +383,7 @@ export function createEntityLayers(
       let flR = pfR;
       let flG = pfG;
       let flB = pfB;
-      let flA = p.hitFlashTicks > 0 ? 1 : 0;
+      let flA = p.hitFlashTicks > 0 ? PLAYER_HIT_FLASH_ALPHA : 0;
       if (flA === 0 && now < ps0.flashUntil) {
         flR = ps0.flashR;
         flG = ps0.flashG;

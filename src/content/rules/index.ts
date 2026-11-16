@@ -34,3 +34,4 @@ export function priceFor(
 // TODO(LP with GD, M1-02): rerollPriceFor(t, n, delta) once GDD 4.4 fixes the reroll formula
 // (shop.csv reroll_base_add, reroll_t_div, reroll_step).
 export * from './text-params.ts';
+export * from './unlocks.ts';

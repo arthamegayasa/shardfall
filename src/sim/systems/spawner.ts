@@ -20,7 +20,6 @@ import {
 import { AiState } from '../codes.ts';
 import type { SimCtx } from '../ctx.ts';
 import { allocSlot, freeSlot } from '../pools.ts';
-import { cfgOpt } from '../sim-data.ts';
 import type { PulseSlotDef } from '../../content/index.ts';
 import { applyAffix } from './affixes.ts';
 
@@ -109,11 +108,10 @@ export function countedAlive(ctx: SimCtx): number {
 function markRadiusFor(ctx: SimCtx, type: number, size: number): number {
   const sim = ctx.sd.enemies[type];
   let r = sim?.markRadiusU ?? 0;
-  // Groups of spawn_mark_medium_group or more use at least the medium mark (GDD 3.2). The group
-  // size is data (config, requested in gp-requests-m2.md); without the key marks keep their size.
-  const minGroup = cfgOpt(ctx.cfg, 'spawnMarkMediumGroup');
+  // Groups of spawn_mark_medium_group_min or more use at least the medium mark (GDD 3.2, config).
+  const minGroup = ctx.cfg.spawnMarkMediumGroupMin;
   const medium = ctx.cfg.spawnMarkDiamMediumU * 0.5;
-  if (minGroup !== null && minGroup > 0 && size >= minGroup && r < medium) r = medium;
+  if (minGroup > 0 && size >= minGroup && r < medium) r = medium;
   return r;
 }
 

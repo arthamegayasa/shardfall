@@ -7,6 +7,9 @@
 import { OPAQUE_ALPHA, STACKED_FILL_MAX_ALPHA } from '../pipeline/danger-rules.ts';
 import { TILT_SHIFT_WEIGHT_GLSL } from './post-tilt-shift.ts';
 
+/** Share of the bloom held off the player's own sprite pixels (LP M2-09 legibility). */
+export const PLAYER_BLOOM_HOLD = 0.85;
+
 export const POST_COMPOSITE_FRAGMENT = /* glsl */ `
 ${TILT_SHIFT_WEIGHT_GLSL}
 uniform sampler2D uScene;
@@ -67,8 +70,14 @@ void main() {
     float w = sfTiltWeight(refRow);
     if (w > 0.0) c = mix(c, texture2D(uBlur, suv).rgb, min(1.0, w * 1.5));
   }
-  if (uBloomLevels > 0.5) c += texture2D(uBloomA, suv).rgb * uBloom;
-  if (uBloomLevels > 1.5) c += texture2D(uBloomB, suv).rgb * uBloom * 0.6;
+  // Player pixels keep their own colours: bloom from nearby effects (Glint pickups, rings, the Rite
+  // flare) is mostly held off the sprite so the Kept never washes out to a white blob (LP M2-09).
+  vec2 rel = vec2(t) + 0.5 - uFeet;
+  bool nearPlayer = uHasPlayer > 0.5 && abs(rel.x) < 16.0 && rel.y > -6.0 && rel.y < 30.0;
+  vec4 m = nearPlayer ? texelFetch(uMask, t, 0) : vec4(0.0);
+  float bloomKeep = 1.0 - ${PLAYER_BLOOM_HOLD.toFixed(3)} * m.r;
+  if (uBloomLevels > 0.5) c += texture2D(uBloomA, suv).rgb * uBloom * bloomKeep;
+  if (uBloomLevels > 1.5) c += texture2D(uBloomB, suv).rgb * uBloom * 0.6 * bloomKeep;
   c = clamp(c, 0.0, 1.0);
 
   // Vignette: 20% darker in the corners, starting at normalised distance 0.55.
@@ -94,9 +103,7 @@ void main() {
 
   // See-through player silhouette above the danger layer.
   // Only pixels near the player's feet can belong to the silhouette (sprite 24 x 24 plus ring).
-  vec2 rel = vec2(t) + 0.5 - uFeet;
-  if (uHasPlayer > 0.5 && abs(rel.x) < 16.0 && rel.y > -6.0 && rel.y < 30.0) {
-    vec4 m = texelFetch(uMask, t, 0);
+  if (nearPlayer) {
     if (m.r < 0.5) {
       vec4 n0 = texelFetch(uMask, clamp(t + ivec2(1, 0), ivec2(0), maxT), 0);
       vec4 n1 = texelFetch(uMask, clamp(t - ivec2(1, 0), ivec2(0), maxT), 0);

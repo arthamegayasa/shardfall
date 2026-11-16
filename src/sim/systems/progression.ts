@@ -118,11 +118,11 @@ export function pickLevelCard(ctx: SimCtx, choice: number): boolean {
   return true;
 }
 
-/** Memento is offerable: in the build, default unlock, not at max stack. */
+/** Memento is offerable: in the build, open (default or an owned unlock), not at max stack. */
 export function mementoOfferable(ctx: SimCtx, m: number): boolean {
   const def = ctx.data.mementos[m];
   if (def === undefined) return false;
-  if (def.unlock !== 'default') return false;
+  if (ctx.run.mementoOpen[m] !== 1) return false;
   return (ctx.run.mementoCount[m] ?? 0) < def.maxStack;
 }
 

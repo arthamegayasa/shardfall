@@ -179,6 +179,8 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   hashArray(h, w.shop.tagCounts);
   h.u32(run.synergyMask);
   h.f64(run.siltKills);
+  hashArray(h, run.weaponOpen);
+  hashArray(h, run.mementoOpen);
   // Run timers and effect state.
   h.f64(run.threat);
   h.u32(run.pulseTick);

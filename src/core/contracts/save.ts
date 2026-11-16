@@ -54,6 +54,8 @@ export interface RunSaveV1 {
   readonly rewardSourceId?: string;
   /** Levels gained in the cleared Pulse (LevelUpView.total, "1 of 2"). M2-05, additive. */
   readonly levelsThisPulse?: number;
+  /** Meta unlock ids owned when the run started (pools of this run). M2-09, additive; absent = none. */
+  readonly unlocked?: readonly string[];
 }
 
 export type RunSave = RunSaveV1;

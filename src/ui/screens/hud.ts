@@ -208,7 +208,9 @@ export function createHudScreen(ctx: UiContext): Screen {
         if (type === SimEventType.PlayerHpLowChanged) lowHp = a === 1;
         else if (type === SimEventType.PulseStarted) {
           lowHp = false;
-          if (a === 0) hintStart(hint, tick, view.player.x, view.player.y);
+          // Control hint in Pulse 1 of the first run only (LP M2-09, MetaView.runs).
+          if (a === 0 && (deps.meta().runs ?? 0) === 0)
+            hintStart(hint, tick, view.player.x, view.player.y);
         } else if (type === SimEventType.RiteCast) riteCast = true;
         else if (type === SimEventType.RiteRejected) deniedUntil = tick + RITE_DENIED_TICKS;
         bannerEvent(banner, type, a, tick, pulseNumber);

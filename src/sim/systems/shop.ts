@@ -201,7 +201,11 @@ function rollOffer(ctx: SimCtx, offers: OfferState[], at: number): OfferState {
     const ws: number[] = [];
     for (let w = 0; w < data.weapons.length; w++) {
       const def = data.weapons[w];
-      if (def === undefined || def.unlockSilt > 0 || inOffers(offers, OfferKind.Weapon, w, at)) {
+      if (
+        def === undefined ||
+        run.weaponOpen[w] !== 1 ||
+        inOffers(offers, OfferKind.Weapon, w, at)
+      ) {
         ws.push(0);
         continue;
       }

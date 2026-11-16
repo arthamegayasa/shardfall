@@ -30,9 +30,10 @@ export function scriptedRun(
   seed: number,
   ticks: number,
   classId: string,
+  profile = 'run_a',
 ): { hash: string; tick: number; phase: string; checkpoints: string[] } {
   const input = createInputFrame();
-  sim.enqueue({ type: 'run.start', seed, classId, profile: 'run_a', difficulty: 0 });
+  sim.enqueue({ type: 'run.start', seed, classId, profile, difficulty: 0 });
   const checkpoints: string[] = [];
   for (let t = 0; t < ticks; t++) {
     scriptInput(t, input);
