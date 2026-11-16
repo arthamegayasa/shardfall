@@ -1,0 +1,43 @@
+{
+  "id": "kept-bell",
+  "class": "kept",
+  "faction": "kept",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": true,
+  "status": "concept",
+  "note": "Class bell (Chorister). Silhouette: pointed hood. Accent blue with cyan trim.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          ".....b",
+          "....bB",
+          "...bBB",
+          "..bBBc",
+          "..bcee",
+          "..beke",
+          "..bwee",
+          "..bcgg",
+          ".bBBBc",
+          "bcBBBc",
+          "ecbgBc",
+          "ecbBBc",
+          ".bBBBc",
+          ".bBBcc",
+          "..bBcc",
+          "..bccw",
+          "...hh.",
+          "...hh."
+        ]
+      ]
+    }
+  }
+}

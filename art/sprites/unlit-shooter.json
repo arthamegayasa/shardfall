@@ -1,0 +1,45 @@
+{
+  "id": "unlit-shooter",
+  "class": "unlit-medium",
+  "faction": "unlit",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": "odd",
+  "emissive": [
+    "danger-core",
+    "danger-magenta"
+  ],
+  "status": "concept",
+  "note": "Role shooter. Round lantern head on a thin stalk. Wrong: its light is a magenta hole that fires.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          "....u",
+          "..uuu",
+          ".uumm",
+          ".umpp",
+          ".umpp",
+          ".uumm",
+          "..uuu",
+          "...uu",
+          "....u",
+          "....u",
+          "..uuu",
+          ".uu.u",
+          ".u..u",
+          ".u.uu",
+          "...u.",
+          "..uu."
+        ]
+      ]
+    }
+  }
+}

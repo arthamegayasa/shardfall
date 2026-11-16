@@ -1,0 +1,62 @@
+{
+  "id": "warden-choir",
+  "class": "warden",
+  "faction": "unlit",
+  "frameW": 48,
+  "frameH": 48,
+  "anchor": {
+    "x": 24,
+    "y": 47
+  },
+  "outline": "ink",
+  "mirror": true,
+  "emissive": [
+    "danger-magenta",
+    "danger-violet",
+    "danger-core"
+  ],
+  "status": "concept",
+  "note": "Warden concept for warden_choir (shooter based). Spiked crown, four magenta eyes, four arms with extra elbows, violet chest core.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 20,
+      "loop": true,
+      "frames": [
+        [
+          "........u...u",
+          "........u..uu",
+          "........uu.uu",
+          ".........uuuu",
+          ".........uuuu",
+          "........uuumu",
+          "........umuuu",
+          ".........uuuu",
+          ".........uuuu",
+          "...uuuuuuuuuu",
+          "..uu....uuuuu",
+          "..u.....uuuuu",
+          ".uu.....uuuuu",
+          ".u......uuuuu",
+          ".uu.....uuuuu",
+          "..u.....uuuuu",
+          "..R.....uuuuu",
+          "....uuuuuuuuv",
+          "...uu...uuuvp",
+          "...u....uuuuv",
+          "..uu....uuuuu",
+          "..u.....uuuuu",
+          "..uu....uuuuu",
+          "...R.....uuuu",
+          ".........uuuu",
+          "........uuuuu",
+          "........uu.uu",
+          "........u..uu",
+          "....u...u...u",
+          "....u......uu",
+          "....u...u..uu",
+          "...uu...u.uuu"
+        ]
+      ]
+    }
+  }
+}

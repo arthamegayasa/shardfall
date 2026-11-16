@@ -1,0 +1,416 @@
+{
+ "version": 1,
+ "image": "atlas.png",
+ "width": 512,
+ "height": 128,
+ "padding": 1,
+ "filter": "nearest",
+ "sprites": {
+  "boss-lantern": {
+   "class": "boss",
+   "faction": "unlit",
+   "frameW": 128,
+   "frameH": 128,
+   "anchor": {
+    "x": 64,
+    "y": 127
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 30,
+     "loop": true,
+     "frames": [
+      {
+       "x": 1,
+       "y": 1,
+       "w": 68,
+       "h": 83,
+       "ox": 30,
+       "oy": 45
+      }
+     ]
+    }
+   }
+  },
+  "fx-glint": {
+   "class": "glint",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 10,
+     "loop": true,
+     "frames": [
+      {
+       "x": 316,
+       "y": 1,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      },
+      {
+       "x": 322,
+       "y": 1,
+       "w": 5,
+       "h": 5,
+       "ox": 1,
+       "oy": 3
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-danger": {
+   "class": "projectile-danger",
+   "faction": "unlit",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 8,
+     "loop": true,
+     "frames": [
+      {
+       "x": 308,
+       "y": 1,
+       "w": 7,
+       "h": 7,
+       "ox": 0,
+       "oy": 1
+      }
+     ]
+    }
+   }
+  },
+  "fx-shot-kept": {
+   "class": "projectile-kept",
+   "faction": "kept",
+   "frameW": 8,
+   "frameH": 8,
+   "anchor": {
+    "x": 4,
+    "y": 7
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 8,
+     "loop": true,
+     "frames": [
+      {
+       "x": 328,
+       "y": 1,
+       "w": 4,
+       "h": 4,
+       "ox": 2,
+       "oy": 4
+      }
+     ]
+    }
+   }
+  },
+  "kept-bell": {
+   "class": "kept",
+   "faction": "kept",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 163,
+       "y": 1,
+       "w": 14,
+       "h": 20,
+       "ox": 5,
+       "oy": 4
+      }
+     ]
+    }
+   }
+  },
+  "kept-blade": {
+   "class": "kept",
+   "faction": "kept",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 178,
+       "y": 1,
+       "w": 18,
+       "h": 20,
+       "ox": 3,
+       "oy": 4
+      }
+     ]
+    }
+   }
+  },
+  "kept-lantern": {
+   "class": "kept",
+   "faction": "kept",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 197,
+       "y": 1,
+       "w": 16,
+       "h": 20,
+       "ox": 4,
+       "oy": 4
+      }
+     ]
+    }
+   }
+  },
+  "unlit-charger": {
+   "class": "unlit-medium",
+   "faction": "unlit",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 10,
+     "loop": true,
+     "frames": [
+      {
+       "x": 243,
+       "y": 1,
+       "w": 22,
+       "h": 16,
+       "ox": 1,
+       "oy": 8
+      }
+     ]
+    }
+   }
+  },
+  "unlit-exploder": {
+   "class": "unlit-medium",
+   "faction": "unlit",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 266,
+       "y": 1,
+       "w": 13,
+       "h": 15,
+       "ox": 5,
+       "oy": 9
+      }
+     ]
+    }
+   }
+  },
+  "unlit-shooter": {
+   "class": "unlit-medium",
+   "faction": "unlit",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 214,
+       "y": 1,
+       "w": 9,
+       "h": 18,
+       "ox": 7,
+       "oy": 6
+      }
+     ]
+    }
+   }
+  },
+  "unlit-summoner": {
+   "class": "unlit-medium",
+   "faction": "unlit",
+   "frameW": 24,
+   "frameH": 24,
+   "anchor": {
+    "x": 12,
+    "y": 23
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 15,
+     "loop": true,
+     "frames": [
+      {
+       "x": 224,
+       "y": 1,
+       "w": 18,
+       "h": 17,
+       "ox": 3,
+       "oy": 7
+      }
+     ]
+    }
+   }
+  },
+  "unlit-swarmer": {
+   "class": "unlit-small",
+   "faction": "unlit",
+   "frameW": 16,
+   "frameH": 16,
+   "anchor": {
+    "x": 8,
+    "y": 15
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 10,
+     "loop": true,
+     "frames": [
+      {
+       "x": 280,
+       "y": 1,
+       "w": 13,
+       "h": 10,
+       "ox": 1,
+       "oy": 6
+      },
+      {
+       "x": 294,
+       "y": 1,
+       "w": 13,
+       "h": 10,
+       "ox": 1,
+       "oy": 6
+      }
+     ]
+    }
+   }
+  },
+  "unlit-tank": {
+   "class": "unlit-large",
+   "faction": "unlit",
+   "frameW": 32,
+   "frameH": 32,
+   "anchor": {
+    "x": 16,
+    "y": 31
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 20,
+     "loop": true,
+     "frames": [
+      {
+       "x": 142,
+       "y": 1,
+       "w": 20,
+       "h": 24,
+       "ox": 6,
+       "oy": 8
+      }
+     ]
+    }
+   }
+  },
+  "warden-choir": {
+   "class": "warden",
+   "faction": "unlit",
+   "frameW": 48,
+   "frameH": 48,
+   "anchor": {
+    "x": 24,
+    "y": 47
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 20,
+     "loop": true,
+     "frames": [
+      {
+       "x": 70,
+       "y": 1,
+       "w": 26,
+       "h": 34,
+       "ox": 11,
+       "oy": 14
+      }
+     ]
+    }
+   }
+  },
+  "warden-hound": {
+   "class": "warden",
+   "faction": "unlit",
+   "frameW": 48,
+   "frameH": 48,
+   "anchor": {
+    "x": 24,
+    "y": 47
+   },
+   "animations": {
+    "idle": {
+     "ticksPerFrame": 20,
+     "loop": true,
+     "frames": [
+      {
+       "x": 97,
+       "y": 1,
+       "w": 44,
+       "h": 32,
+       "ox": 2,
+       "oy": 16
+      }
+     ]
+    }
+   }
+  }
+ }
+}

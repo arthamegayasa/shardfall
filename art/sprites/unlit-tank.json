@@ -1,0 +1,47 @@
+{
+  "id": "unlit-tank",
+  "class": "unlit-large",
+  "faction": "unlit",
+  "frameW": 32,
+  "frameH": 32,
+  "anchor": {
+    "x": 16,
+    "y": 31
+  },
+  "outline": "ink",
+  "mirror": true,
+  "status": "concept",
+  "note": "Role tank. Wide block, tiny faceless head, heavy fists. Wrong: the eye is on its chest.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 20,
+      "loop": true,
+      "frames": [
+        [
+          "......uuu",
+          ".....uuuu",
+          ".....uuuu",
+          "......uuu",
+          "..uuuuuuu",
+          ".uuuuuuuu",
+          "uuuuuuuuu",
+          "uuuuuuuuR",
+          "uuuuuuuRp",
+          "uuuuuuuuR",
+          "uuu.uuuuu",
+          "uuu.uuuuu",
+          "uuu.uuuuu",
+          "uuu.uuuuu",
+          "uuuu.uuuu",
+          "uuuu.uuuu",
+          "....uuuu.",
+          "....uuu..",
+          "....uuu..",
+          "...uuuu..",
+          "...uuuu..",
+          "..uuuuu.."
+        ]
+      ]
+    }
+  }
+}

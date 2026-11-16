@@ -1,0 +1,32 @@
+{
+  "id": "fx-shot-kept",
+  "class": "projectile-kept",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "none",
+  "emissive": [
+    "kept-white",
+    "kept-cyan"
+  ],
+  "status": "concept",
+  "note": "Player projectile. kept-white core, kept-cyan body, no outline.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 8,
+      "loop": true,
+      "frames": [
+        [
+          ".cc.",
+          "cwwc",
+          "cwwc",
+          ".cc."
+        ]
+      ]
+    }
+  }
+}

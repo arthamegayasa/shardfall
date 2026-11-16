@@ -1,0 +1,222 @@
+{
+  "$comment": "Shardfall palette, single source of colour (Art Director). Core = style-guide 1.2. Biomes = docs/art-direction.md section 2. Light azimuth: 0 front (camera side), 90 screen right, 180 back, 270 screen left.",
+  "version": 1,
+  "core": {
+    "ink": "#14121C",
+    "night": "#1C1926",
+    "shadow": "#3E3A46",
+    "floor-mid": "#57515A",
+    "floor-lit": "#6B6360",
+    "stone": "#8A817A",
+    "dust": "#A39A8C",
+    "bone": "#EDE6D8",
+    "kept-blue": "#3D7DFF",
+    "kept-blue-deep": "#2449A8",
+    "kept-cyan": "#4FE3F0",
+    "kept-white": "#F2FBFF",
+    "kept-gold": "#FFC94A",
+    "glint": "#FFD966",
+    "unlit-body": "#241A30",
+    "unlit-rim": "#5B3A78",
+    "danger-red": "#FF3B4E",
+    "danger-magenta": "#FF2E9A",
+    "danger-violet": "#B44CFF",
+    "danger-core": "#FFE3EE",
+    "rarity-plain": "#C9C2B6",
+    "rarity-fine": "#6FD08C",
+    "rarity-rare": "#3D7DFF",
+    "rarity-fabled": "#FFC94A"
+  },
+  "emissive": [
+    "glint",
+    "kept-white",
+    "danger-core"
+  ],
+  "groups": {
+    "neutral": [
+      "ink",
+      "night",
+      "shadow",
+      "floor-mid",
+      "floor-lit",
+      "stone",
+      "dust",
+      "bone"
+    ],
+    "kept": [
+      "kept-blue",
+      "kept-blue-deep",
+      "kept-cyan",
+      "kept-white",
+      "kept-gold",
+      "glint"
+    ],
+    "keptHighlight": [
+      "kept-cyan",
+      "kept-gold",
+      "kept-white",
+      "glint"
+    ],
+    "unlit": [
+      "ink",
+      "unlit-body",
+      "unlit-rim",
+      "danger-red",
+      "danger-magenta",
+      "danger-violet",
+      "danger-core"
+    ]
+  },
+  "biomes": [
+    {
+      "id": "b1",
+      "contentId": "biome_market",
+      "workingName": "The Moth Market",
+      "env": {
+        "void": "#1C1926",
+        "floor-dark": "#57515A",
+        "floor-light": "#6B6360",
+        "curb": "#3E3A46",
+        "wood-dark": "#3B302C",
+        "wood": "#5C4838",
+        "cloth-indigo": "#3F4463",
+        "cloth-ochre": "#7E6A4A",
+        "cloth-moss": "#4E5A46",
+        "rope": "#7A6C5A",
+        "paper": "#D9BE92",
+        "flame": "#FFE2B0",
+        "glass": "#B7C3CB"
+      },
+      "emissive": [
+        "paper",
+        "flame"
+      ],
+      "key": {
+        "color": "#DCA466",
+        "intensity": 1,
+        "azimuthDeg": 225,
+        "elevationDeg": 50
+      },
+      "fill": {
+        "color": "#6F86B8",
+        "intensity": 0.45,
+        "azimuthDeg": 45,
+        "elevationDeg": 35
+      },
+      "point": {
+        "color": "#E8B070",
+        "intensity": 0.8,
+        "radiusPx": 56,
+        "flicker": 0.12
+      },
+      "fog": {
+        "color": "#1C1926",
+        "strength": 0.85
+      },
+      "grade": {
+        "lift": "#232036",
+        "gain": "#F3E2C8",
+        "strength": 0.08
+      }
+    },
+    {
+      "id": "b2",
+      "contentId": "biome_cloister",
+      "workingName": "Vesper Steps",
+      "env": {
+        "void": "#171A24",
+        "floor-dark": "#545458",
+        "floor-light": "#68676A",
+        "curb": "#3A3C45",
+        "stone-dark": "#4A4B52",
+        "stone": "#7C7B7F",
+        "stone-light": "#A3A1A0",
+        "moss": "#5D6650",
+        "banner": "#6B5E4E",
+        "candle": "#E9D3A8",
+        "flame": "#FFE9C4",
+        "glass": "#B7C3CB"
+      },
+      "emissive": [
+        "candle",
+        "flame"
+      ],
+      "key": {
+        "color": "#A7B4CC",
+        "intensity": 0.9,
+        "azimuthDeg": 150,
+        "elevationDeg": 60
+      },
+      "fill": {
+        "color": "#C99B6A",
+        "intensity": 0.35,
+        "azimuthDeg": 300,
+        "elevationDeg": 20
+      },
+      "point": {
+        "color": "#E2B47E",
+        "intensity": 0.6,
+        "radiusPx": 40,
+        "flicker": 0.18
+      },
+      "fog": {
+        "color": "#171A24",
+        "strength": 0.9
+      },
+      "grade": {
+        "lift": "#1B2030",
+        "gain": "#E6E9EE",
+        "strength": 0.08
+      }
+    },
+    {
+      "id": "b3",
+      "contentId": "biome_vineyard",
+      "workingName": "Stillfire Vineyard",
+      "env": {
+        "void": "#1D1716",
+        "floor-dark": "#55524E",
+        "floor-light": "#67625D",
+        "curb": "#3D3633",
+        "charred": "#2E2624",
+        "vine-wood": "#5A4636",
+        "leaf-dry": "#6E6A48",
+        "leaf-dead": "#7A5E42",
+        "ash": "#8E8780",
+        "trellis": "#6D5D4E",
+        "ember": "#E0A070",
+        "glass": "#B7C3CB"
+      },
+      "emissive": [
+        "ember"
+      ],
+      "key": {
+        "color": "#C98A5A",
+        "intensity": 0.8,
+        "azimuthDeg": 180,
+        "elevationDeg": 20
+      },
+      "fill": {
+        "color": "#8C97A0",
+        "intensity": 0.5,
+        "azimuthDeg": 20,
+        "elevationDeg": 55
+      },
+      "point": {
+        "color": "#D9955E",
+        "intensity": 0.55,
+        "radiusPx": 44,
+        "flicker": 0.25
+      },
+      "fog": {
+        "color": "#1D1716",
+        "strength": 0.85
+      },
+      "grade": {
+        "lift": "#261C1C",
+        "gain": "#EFE0CF",
+        "strength": 0.08
+      }
+    }
+  ]
+}

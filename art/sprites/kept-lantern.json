@@ -1,0 +1,43 @@
+{
+  "id": "kept-lantern",
+  "class": "kept",
+  "faction": "kept",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": true,
+  "status": "concept",
+  "note": "Class lantern (Lamplighter). Silhouette: wide flat brim. Accent gold.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          "......bb",
+          ".....bBB",
+          ".....ggg",
+          "..bbBBBB",
+          ".bBBBBBB",
+          "....beee",
+          "....beke",
+          "....beee",
+          ".....bgg",
+          "....bBBg",
+          "...gBBBc",
+          "...ebggg",
+          "...eBBBg",
+          "....bBBc",
+          "....bBcg",
+          "....bgcc",
+          ".....hh.",
+          ".....hh."
+        ]
+      ]
+    }
+  }
+}

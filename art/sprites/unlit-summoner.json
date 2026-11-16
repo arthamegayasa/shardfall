@@ -1,0 +1,44 @@
+{
+  "id": "unlit-summoner",
+  "class": "unlit-medium",
+  "faction": "unlit",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": true,
+  "emissive": [
+    "danger-violet",
+    "danger-core"
+  ],
+  "status": "concept",
+  "note": "Role summoner. Y shape, raised arms holding violet orbs. Wrong: no feet, the hem drifts.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          "vv......",
+          "vp.....u",
+          ".u....uu",
+          ".u...uRu",
+          ".u..uuuu",
+          ".uuuuuuu",
+          ".....uuu",
+          ".....uuu",
+          "....uuuu",
+          "....uuuu",
+          "...uuuuu",
+          "...uuuuu",
+          "..uuuuuu",
+          "..uuuuuu",
+          "..u.u.uu"
+        ]
+      ]
+    }
+  }
+}

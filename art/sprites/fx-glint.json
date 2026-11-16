@@ -1,0 +1,37 @@
+{
+  "id": "fx-glint",
+  "class": "glint",
+  "faction": "kept",
+  "frameW": 8,
+  "frameH": 8,
+  "anchor": {
+    "x": 4,
+    "y": 7
+  },
+  "outline": "ink",
+  "emissive": [
+    "glint",
+    "kept-gold",
+    "kept-white"
+  ],
+  "status": "concept",
+  "note": "Glint pickup. Gold diamond, two-frame sparkle.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 10,
+      "loop": true,
+      "frames": [
+        [
+          ".w.",
+          "ygy",
+          ".y."
+        ],
+        [
+          ".y.",
+          "ywy",
+          ".g."
+        ]
+      ]
+    }
+  }
+}

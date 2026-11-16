@@ -1,0 +1,42 @@
+{
+  "id": "unlit-exploder",
+  "class": "unlit-medium",
+  "faction": "unlit",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": "odd",
+  "emissive": [
+    "danger-red",
+    "danger-core"
+  ],
+  "status": "concept",
+  "note": "Role exploder. Swollen sphere with red cracks. Wrong: its only eye sits low among the cracks.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          "....uu",
+          "..uuuu",
+          ".uuRuu",
+          ".uuuRu",
+          "uuuuuR",
+          "uRuuuR",
+          "uuRuuu",
+          "uuuuRp",
+          ".uuuuR",
+          ".uuuuu",
+          "..uuuu",
+          "...u.u",
+          "..u..u"
+        ]
+      ]
+    }
+  }
+}

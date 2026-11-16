@@ -1,0 +1,43 @@
+{
+  "id": "kept-blade",
+  "class": "kept",
+  "faction": "kept",
+  "frameW": 24,
+  "frameH": 24,
+  "anchor": {
+    "x": 12,
+    "y": 23
+  },
+  "outline": "ink",
+  "mirror": true,
+  "status": "concept",
+  "note": "Class blade (Vintner). Silhouette: broad shoulder plates, bare head. Accent cyan.",
+  "animations": {
+    "idle": {
+      "ticksPerFrame": 15,
+      "loop": true,
+      "frames": [
+        [
+          ".....bbb",
+          "....bbbb",
+          "....bbee",
+          "....beke",
+          "....beee",
+          ".....bee",
+          ".ccccbcg",
+          "cwcccBBc",
+          "cccccBBc",
+          "..ebBBBc",
+          "..ebBccc",
+          "..ebBBBc",
+          "...bBBBc",
+          "...bBBcc",
+          "...bBBBc",
+          "...bccBw",
+          "....hh..",
+          "....hh.."
+        ]
+      ]
+    }
+  }
+}

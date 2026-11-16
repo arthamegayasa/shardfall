@@ -1,0 +1,90 @@
+{
+  "b1": {
+    "floorLuminanceMedian": 0.1001,
+    "floorSaturationMedian": 0.145,
+    "floorSaturationP90": 0.152,
+    "dangerCoreVsFloor": {
+      "n": 45,
+      "min": 5.24,
+      "p10": 5.24,
+      "median": 5.58
+    },
+    "keptCyanVsFloor": {
+      "n": 10,
+      "min": 4.17,
+      "p10": 4.17,
+      "median": 4.19
+    },
+    "keptWhiteShotVsFloor": {
+      "n": 36,
+      "min": 6.35,
+      "p10": 6.35,
+      "median": 6.64
+    },
+    "unlitBodyVsFloor": {
+      "n": 3003,
+      "min": 1.47,
+      "p10": 1.85,
+      "median": 2.29
+    }
+  },
+  "b2": {
+    "floorLuminanceMedian": 0.1038,
+    "floorSaturationMedian": 0.036,
+    "floorSaturationP90": 0.037,
+    "dangerCoreVsFloor": {
+      "n": 45,
+      "min": 5.11,
+      "p10": 5.14,
+      "median": 5.3
+    },
+    "keptCyanVsFloor": {
+      "n": 10,
+      "min": 4,
+      "p10": 4.01,
+      "median": 4.04
+    },
+    "keptWhiteShotVsFloor": {
+      "n": 36,
+      "min": 6.08,
+      "p10": 6.1,
+      "median": 6.35
+    },
+    "unlitBodyVsFloor": {
+      "n": 2964,
+      "min": 1.45,
+      "p10": 1.87,
+      "median": 2.26
+    }
+  },
+  "b3": {
+    "floorLuminanceMedian": 0.0963,
+    "floorSaturationMedian": 0.152,
+    "floorSaturationP90": 0.157,
+    "dangerCoreVsFloor": {
+      "n": 45,
+      "min": 5.35,
+      "p10": 5.37,
+      "median": 5.79
+    },
+    "keptCyanVsFloor": {
+      "n": 10,
+      "min": 4.22,
+      "p10": 4.22,
+      "median": 4.24
+    },
+    "keptWhiteShotVsFloor": {
+      "n": 36,
+      "min": 6.45,
+      "p10": 6.46,
+      "median": 6.71
+    },
+    "unlitBodyVsFloor": {
+      "n": 2985,
+      "min": 1.4,
+      "p10": 1.96,
+      "median": 2.15
+    }
+  },
+  "note": "Measured on concept renders (tools/art/lib/scene.mjs), not on the game. Ratios use WCAG luminance, sprite pixel vs median of nearby floor pixels in the final post-processed image. Re-run on real screenshots in M2 (P2-c)."
+}

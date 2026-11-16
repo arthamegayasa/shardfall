@@ -1,0 +1,62 @@
+{
+  "id": "tile-floor",
+  "class": "tile",
+  "faction": "env",
+  "frameW": 16,
+  "frameH": 16,
+  "anchor": {
+    "x": 8,
+    "y": 15
+  },
+  "outline": "none",
+  "legend": {
+    "a": "b1.floor-light",
+    "o": "b1.floor-dark"
+  },
+  "status": "concept",
+  "note": "Floor tile, 16x16 texels, two variants. b1 tokens are remapped per biome. Worn flagstone, broken seams only.",
+  "animations": {
+    "variants": {
+      "ticksPerFrame": 0,
+      "loop": false,
+      "frames": [
+        [
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaoaaaa",
+          "aaaaaaaaaaaoaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aooooaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaoaaaaaaaaaaa",
+          "aaaaoaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaooooaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa"
+        ],
+        [
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaoooaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaoaa",
+          "aaaaaaaaaaaaaoaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaoaaaaaaaaaaaaa",
+          "aaoaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaaaaaaaaa",
+          "aaaaaaaaoooaaaaa",
+          "aaaaaaaaaaaaaaaa"
+        ]
+      ]
+    }
+  }
+}
