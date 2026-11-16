@@ -1,4 +1,7 @@
 // Replay recorder (architecture.md 4.5). Dev and e2e only: input RLE, commands with tick, hash checkpoints.
+// Ticks are counted by the recorder itself (steps since run.start was enqueued), the same clock
+// playReplay uses, so a browser replay plays back in Node (QA D-8). The sim also restarts its own
+// tick at run.start, so checkpoint hashes match a fresh sim.
 
 import { REPLAY_CHECKPOINT_TICKS, toHex8 } from '../core/index.ts';
 import type { Command, InputFrame, ReplayInputRun, ReplayV1 } from '../core/index.ts';
@@ -10,36 +13,37 @@ export interface ReplayMeta {
 
 export interface ReplayRecorder {
   /** Start a new recording at run.start (the command is recorded at tick 0). */
-  begin(cmd: Extract<Command, { type: 'run.start' }>, tick: number): void;
-  recordCommand(tick: number, cmd: Command): void;
-  /** Call after each sim step with the input used and the sim tick after the step. */
-  recordTick(input: InputFrame, tickAfter: number, hash: () => number): void;
+  begin(cmd: Extract<Command, { type: 'run.start' }>): void;
+  /** Commands enqueued after begin, recorded at the number of steps taken so far. */
+  recordCommand(cmd: Command): void;
+  /** Call after each sim step with the input used. */
+  recordTick(input: InputFrame, hash: () => number): void;
+  /** A run continued from an autosave cannot be replayed from run.start: stop recording. */
+  stop(): void;
   export(): ReplayV1 | null;
 }
 
 export function createReplayRecorder(meta: ReplayMeta): ReplayRecorder {
   let start: Extract<Command, { type: 'run.start' }> | null = null;
-  let startTick = 0;
   let ticks = 0;
   const input: [number, number, number, number, number, number, number][] = [];
   const commands: [number, Command][] = [];
   const checkpoints: [number, string][] = [];
 
   return {
-    begin(cmd, tick) {
+    begin(cmd) {
       start = cmd;
-      startTick = tick;
       ticks = 0;
       input.length = 0;
       commands.length = 0;
       checkpoints.length = 0;
       commands.push([0, cmd]);
     },
-    recordCommand(tick, cmd) {
+    recordCommand(cmd) {
       if (start === null || cmd.type === 'run.start') return;
-      commands.push([tick - startTick, cmd]);
+      commands.push([ticks, cmd]);
     },
-    recordTick(f, tickAfter, hash) {
+    recordTick(f, hash) {
       if (start === null) return;
       ticks++;
       const last = input[input.length - 1];
@@ -56,8 +60,10 @@ export function createReplayRecorder(meta: ReplayMeta): ReplayRecorder {
       } else {
         input.push([1, f.moveX, f.moveY, f.held, f.pressed, f.aimX, f.aimY]);
       }
-      const rel = tickAfter - startTick;
-      if (rel % REPLAY_CHECKPOINT_TICKS === 0) checkpoints.push([rel, toHex8(hash())]);
+      if (ticks % REPLAY_CHECKPOINT_TICKS === 0) checkpoints.push([ticks, toHex8(hash())]);
+    },
+    stop() {
+      start = null;
     },
     export() {
       if (start === null) return null;

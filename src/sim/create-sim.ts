@@ -30,7 +30,7 @@ import { createHitCtx, createPending, createRunState } from './ctx.ts';
 import type { SimCtx } from './ctx.ts';
 import { rebuildActiveEffects } from './effects/active.ts';
 import { createEffectHooks, updatePending, updateTimedEffects } from './effects/engine.ts';
-import { applySave, createSave } from './save-codec.ts';
+import { applySave, createSave, validateSave } from './save-codec.ts';
 import { buildSimData } from './sim-data.ts';
 import { hashState } from './state-hash.ts';
 import { createStatScratch, passiveConditionMask } from './stats.ts';
@@ -66,9 +66,10 @@ import {
   shopReroll,
   shopSell,
 } from './systems/shop.ts';
+import { updateSignals } from './systems/signals.ts';
 import { spawnEnemy, updateMarks, updateSpawner } from './systems/spawner.ts';
 import { updateWeapons } from './systems/weapons.ts';
-import { xpToNext } from './systems/xp.ts';
+import { addXp, xpToNext } from './systems/xp.ts';
 import { createWorld } from './world.ts';
 
 /** Sim plus its internal context. Tests use it to check systems directly; the app uses createSim. */
@@ -163,6 +164,9 @@ export function createSimInternals(config: SimConfig): SimInternals {
     ctx.arena = null;
     ctx.grid = null;
     ctx.hitDepth = -1;
+    // Run-relative clock: run state stores absolute ticks (lastHurtTick, effect cooldowns), so a run
+    // started after the title screen idled must see the same ticks as a fresh sim (replays, D-8).
+    world.tick = 0;
     canonicalReset(ctx);
     const p = world.player;
     p.classIndex = classIndex;
@@ -290,6 +294,10 @@ export function createSimInternals(config: SimConfig): SimInternals {
         if (world.phase === 'shop') refreshShopView(ctx);
         return;
       case 'debug.setHp':
+        if (!Number.isFinite(cmd.hp) || world.phase === 'victory' || world.phase === 'defeat') {
+          reject(RejectReason.WrongPhase);
+          return;
+        }
         world.player.hp = Math.max(1, Math.min(world.player.maxHp, cmd.hp));
         return;
       case 'debug.endPulse':
@@ -302,8 +310,17 @@ export function createSimInternals(config: SimConfig): SimInternals {
           run.bossKilled = true;
           bossDefeated(ctx);
         } else {
+          // A living Warden dies first, so its reward follows (e2e goToScreen('warden-reward')).
+          if (run.wardenSlot >= 0) killEnemy(ctx, run.wardenSlot, 0, false);
           endPulse(ctx, run.diff?.pulseEndCollectFrac ?? data.config.pulseEndCollectFrac);
         }
+        return;
+      case 'debug.xp':
+        if (world.phase !== 'pulse') {
+          reject(RejectReason.WrongPhase);
+          return;
+        }
+        addXp(ctx, Math.max(0, cmd.amount));
         return;
     }
   };
@@ -362,7 +379,8 @@ export function createSimInternals(config: SimConfig): SimInternals {
         return;
       case 'run.abandon': {
         const ph = world.phase;
-        if (ph === 'idle' || ph === 'victory' || ph === 'defeat') {
+        // The final boss already fell: the victory delay must end in victory (LP review M1-09a).
+        if (ph === 'idle' || ph === 'victory' || ph === 'defeat' || run.victoryTicks >= 0) {
           reject(RejectReason.WrongPhase);
           return;
         }
@@ -414,11 +432,18 @@ export function createSimInternals(config: SimConfig): SimInternals {
     }
   };
 
+  // Boss trickle type: resolved once per Pulse (and run), not every tick (no per-tick closures).
+  let trickleSlots: unknown = null;
+  let trickleIndex = -1;
+  let trickleCached = 0;
   const trickleType = (): number => {
-    const slot = ctx.run.slots[world.pulse.index];
-    const sp = slot?.spawns[0];
+    if (ctx.run.slots === trickleSlots && world.pulse.index === trickleIndex) return trickleCached;
+    trickleSlots = ctx.run.slots;
+    trickleIndex = world.pulse.index;
+    const sp = ctx.run.slots[trickleIndex]?.spawns[0];
     const t = sp !== undefined ? data.enemies.findIndex((e) => e.id === sp.enemyId) : -1;
-    return t >= 0 ? t : sd.swarmerType;
+    trickleCached = t >= 0 ? t : sd.swarmerType;
+    return trickleCached;
   };
 
   const pulseTick = (input: InputFrame): void => {
@@ -472,9 +497,16 @@ export function createSimInternals(config: SimConfig): SimInternals {
     if (run.passiveMask !== passiveConditionMask(ctx)) run.statsDirty = true;
   };
 
+  /** load() happens between steps; its PhaseChanged is emitted after the next clear (contract 6.5). */
+  let loadedPhasePending = false;
+
   const step = (input: InputFrame): void => {
     events.clear();
     ctx.hitDepth = -1;
+    if (loadedPhasePending) {
+      loadedPhasePending = false;
+      events.push(SimEventType.PhaseChanged, 0, 0, RunPhaseCode[world.phase], RunPhaseCode.idle, 0);
+    }
     for (let i = 0; i < queue.length; i++) {
       const cmd = queue[i];
       if (cmd !== undefined) apply(cmd);
@@ -487,6 +519,7 @@ export function createSimInternals(config: SimConfig): SimInternals {
       world.runStats.runTicks++;
     ensureStats(ctx, sc);
     syncFoes();
+    updateSignals(ctx);
     world.tick++;
   };
 
@@ -501,18 +534,24 @@ export function createSimInternals(config: SimConfig): SimInternals {
       return createSave(ctx);
     },
     load(save: RunSave): LoadResult {
-      const res = applySave(ctx, save, sc, beginRun);
-      if (res.ok) setPhaseSilently();
+      const bad = validateSave(save, data);
+      if (bad !== null) return bad;
+      let res: LoadResult;
+      try {
+        res = applySave(ctx, save, sc, beginRun);
+      } catch {
+        // A save that passed the shape check but still breaks applySave: report, never throw.
+        res = { ok: false, reason: 'corrupt' };
+      }
+      if (res.ok) loadedPhasePending = true;
       return res;
     },
     hash() {
       return hashState(ctx, hasher, words);
     },
+    get poolOverflow() {
+      return ctx.poolOverflow;
+    },
   };
   return { sim, ctx, sc };
-
-  function setPhaseSilently(): void {
-    // applySave already set the phase; raise PhaseChanged so consumers rebuild their screens.
-    events.push(SimEventType.PhaseChanged, 0, 0, RunPhaseCode[world.phase], RunPhaseCode.idle, 0);
-  }
 }

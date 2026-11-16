@@ -211,6 +211,8 @@ export function killEnemy(ctx: SimCtx, slot: number, sourceRef: number, byPlayer
   } else if (rank === 2) {
     run.bossKilled = true;
     run.bossSlot = -1;
+    // A non-final boss opens the boss chest (boss_chest_min_rarity), not the Warden's.
+    run.rewardSourceType = type;
     ctx.events.push(SimEventType.BossKilled, x, y, type, 0, 0);
     dropPieces(ctx, x, y, glint, ctx.sd.enemies[type]?.glintPieces ?? 1);
   } else {

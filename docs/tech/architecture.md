@@ -1,6 +1,6 @@
 # Shardfall: Arsitektur Teknis
 
-Pemilik: Lead Programmer (LP). Status: **versi 2.1, 2026-11-17: kontrak dibekukan di kode oleh M1-01 (lihat bagian 6 dan 19)**. Sumber kebenaran tunggal untuk M1.
+Pemilik: Lead Programmer (LP). Status: **versi 2.2, 2026-11-17: kontrak dibekukan di kode oleh M1-01, tambahan aditif M1-09a (lihat bagian 6 dan 19)**. Sumber kebenaran tunggal untuk M1.
 Dokumen terkait: `docs/tech/coding-standards.md` (aturan kode), `docs/reviews/M0-lp.md` (putusan review dan arahan perbaikan per pemilik), `docs/pillars.md`, `docs/style-guide.md`, `docs/gdd.md` dan `docs/systems/*.md` (GD: isi dan arti data), `docs/levels/arena-design.md` (LD), `docs/art-pipeline.md` (AD), `docs/audio-direction.md` dan `docs/audio-list.md` (AU), `docs/ui/ui-spec.md` (UI), `docs/qa/test-plan.md` (QA).
 
 Penanda: **[Beku M1]** bagian yang dibekukan untuk M1: perubahan hanya lewat LP, dikumpulkan dan diputuskan sekali per putaran, lalu dicatat di bagian 19. **[Wajib]** tidak boleh dilanggar tanpa persetujuan LP. **[Saran]** boleh disesuaikan pemilik wilayah dengan alasan tertulis. **[Asumsi]** dikalibrasi di M1 atau M2.
@@ -384,7 +384,8 @@ export type DebugCommand =
   | { readonly type: 'debug.spawn'; readonly enemyId: string; readonly x: number; readonly y: number; readonly count: number }
   | { readonly type: 'debug.glint'; readonly amount: number }
   | { readonly type: 'debug.setHp'; readonly hp: number }
-  | { readonly type: 'debug.endPulse' };
+  | { readonly type: 'debug.endPulse' }                 // M1-09a: a living Warden dies first (reward follows)
+  | { readonly type: 'debug.xp'; readonly amount: number };  // M1-09a: XP without Glint
 
 export interface CommandSink { send(cmd: Command): void }
 
@@ -678,6 +679,8 @@ export const SimEventType = {
   LevelUpCardsShown: 60, LevelUpCardChosen: 61,
   ItemBought: 62, ItemSold: 63, ItemMerged: 64, ItemLocked: 65, ShopRerolled: 66,
   CommandRejected: 67, RewardShown: 68, RewardChosen: 69,
+  // adaptive music (M1-09a)
+  MusicPressureChanged: 70,
 } as const;
 export type SimEventType = (typeof SimEventType)[keyof typeof SimEventType];
 
@@ -706,7 +709,8 @@ Arti payload (final; kolom kosong = 0). `x, y` selalu posisi dunia kejadian bila
 | `PlayerDamaged` | damage setelah armor | HP sesudah | SourceRef |
 | `PlayerHealed` | jumlah | | SourceRef (efek, leech, kelas) |
 | `PlayerDied` | | | SourceRef hit pembunuh |
-| `PlayerHpLowChanged` | 1 masuk, 0 keluar | | |
+| `PlayerHpLowChanged` | 1 masuk, 0 keluar (HP <= `LOW_HP_FRAC` x maks saat `pulse`; 0 saat keluar `pulse`) | | |
+| `MusicPressureChanged` | 1 masuk, 0 keluar (Unlit normal hidup >= `music_pressure_frac` x `alive_cap`, lepas di bawah `music_pressure_release_frac`; 0 di luar `pulse` dan di Pulse boss) | | |
 | `DamageBlocked` | sisa muatan Barrier | | SourceRef penyerang |
 | `PlayerDodged` | | | SourceRef penyerang |
 | `WeaponFired` | `WeaponIndex` | jumlah proyektil | slot inventaris |
@@ -1432,18 +1436,21 @@ Unit test sim memakai fixture kecil. Tes data asli hanya validitas, referensi, d
 | `test:e2e` | `build:e2e` lalu Playwright `tests/e2e` | QA |
 | `test:perf` | `build:e2e` lalu Playwright `tests/perf` (headed, manual di mesin QA) | QA |
 | `bench` | Vitest bench | LP |
-| `bundle:check` | Ukuran gzip dan string terlarang di `dist/` | LP |
+| `bundle:check` | `node tools/bundle/check-bundle.ts`: ukuran gzip dan string terlarang di `dist/` | LP |
 | `art:check` | `node tools/art/check-sprites.ts --no-preview` | AD |
 | `art:preview` | `node tools/art/check-sprites.ts` | AD |
 | `art:concepts` | `node tools/art/build-concepts.ts` | AD |
-| `audio:check` | `node tools/audio/validate-music.ts` (A-5) dan validasi `cues.json` | AU |
+| `audio:check` | `node tools/audio/validate.ts` (A-5, cues, routes, lagu, anggaran gzip) | AU |
+| `levels:check` | `node tools/levels/check-arena.ts` (LD-T01, LD-T10) | LD |
 | `audio:render` | Playwright merender WAV ke `audio/preview/` | AU |
 | `qa:report` | `node tools/qa/report.ts` | QA |
 | `check` | `data:check`, `art:check`, `audio:check`, `format:check`, `typecheck`, `lint`, `test`, `build`, `bundle:check` berurutan. **Wajib hijau sebelum menyerahkan pekerjaan** | LP |
 
 Selama skrip atau tool milik peran lain belum ada di M1, `check` melewatinya dengan pesan jelas (bukan gagal diam-diam), dan LP menyalakannya begitu tool tersedia.
 
-**Keadaan M1-01:** `check` = `typecheck`, `lint`, `test`, `data:check` (brief M1-01). `art:check` masih menjalankan `tools/art/check-sprites.mjs` sampai AD memindah tool ke `.ts` (M1-05), lalu masuk `check` bersama `format:check`, `build`, `bundle:check`, dan `audio:check`. `data:build` adalah alias `data`. CI menjalankan `typecheck`, `lint`, `test`, `data:check` saja; e2e hanya lokal (brief M1-01, menggantikan 15.3 untuk M1).
+**Keadaan M1-09a:** `check` = `data:check` (termasuk cek string), `art:check`, `levels:check`, `audio:check`, `format:check`, `typecheck`, `lint`, `test`, `build`, `bundle:check`. `test:e2e` tetap terpisah (lokal).
+
+**Keadaan M1-01 (lama):** `check` = `typecheck`, `lint`, `test`, `data:check` (brief M1-01). `art:check` masih menjalankan `tools/art/check-sprites.mjs` sampai AD memindah tool ke `.ts` (M1-05), lalu masuk `check` bersama `format:check`, `build`, `bundle:check`, dan `audio:check`. `data:build` adalah alias `data`. CI menjalankan `typecheck`, `lint`, `test`, `data:check` saja; e2e hanya lokal (brief M1-01, menggantikan 15.3 untuk M1).
 
 ### 15.2 tsconfig
 - `tsconfig.json`: `src/` (kecuali yang hanya di sim config), `tests/`, `art/**/*.ts`, file konfigurasi. Lib DOM.
@@ -1507,3 +1514,4 @@ Selama skrip atau tool milik peran lain belum ada di M1, `check` melewatinya den
 | 2026-11-16 | 1 | Draf awal M0 | |
 | 2026-11-16 | 2 | Review M0 (M0-11b): Memento, konvensi id bioma dan arena, kompensasi gerak vertikal, pass akhir bilinear untuk bloom dan blur, satuan 16 px per u, pitch asin(0,625), skala dari kotak wajib LD, fase `reward`, kolom event `c`, event baru, K1 sampai K11, Settings final, hook e2e final, format arena dan CSV final, skrip final. Detail per peran di `docs/reviews/M0-lp.md` | Menyelaraskan semua dokumen M0 sebelum M1 |
 | 2026-11-17 | 2.1 | M1-01, kontrak dibekukan di kode (daftar file di awal bagian 6). Penyesuaian: (1) `CreateRenderer` dan `CreateAudio` menerima `GameData` agar index padat di `WorldView` dan event bisa dipetakan ke id sprite, VFX, dan cue; (2) `core/contracts` boleh `import type` `GameData` dari `src/content` (pengecualian arah import, tipe saja); (3) kontrak ber-DOM dipisah ke `src/core/dom.ts`; (4) factory ditulis sebagai tipe; (5) `PaletteDef.point` menerima `rangeU` atau `radiusPx` sampai AD memigrasi palet; (6) tiga konstanta tambahan: `MAX_FRAME_DELTA_MS`, `REF_ORIGIN_X/Y`, `ARENA_MAX_HALF_W_U/D_U`; (7) kunci GameData diturunkan otomatis dari nama kolom CSV: camelCase plus akhiran satuan (`cooldown` jadi `cooldownTicks`, `speed` jadi `speedUPerTick`, `range` jadi `rangeU`), `final` jadi `isFinal` | Integrasi blok pembuka M1 |
+| 2026-11-17 | 2.2 | M1-09a, integrasi dan review M1. Tambahan aditif: (1) event `MusicPressureChanged: 70` (Q21) dan emisi `PlayerHpLowChanged` di sim (`src/sim/systems/signals.ts`), ambang HP rendah konstanta presentasi `LOW_HP_FRAC = 0.3` di `src/core/constants.ts` (ui-spec S03, GD boleh memindah ke `config.csv`); (2) `Sim.poolOverflow`; (3) `Ui.setResumeCountdown(n)` untuk hitung mundur 900 ms (state app); (4) `DebugCommand` `debug.xp`, dan `debug.endPulse` membunuh Warden hidup lebih dulu; (5) tick sim dimulai ulang di `run.start` (jam relatif run: replay browser cocok dengan Node, state run yang menyimpan tick absolut tidak bergantung lama layar judul); (6) hash state memakai kecocokan serial (bukan nilai serial) untuk memori pierce; (7) `Sim.load` memvalidasi bentuk save (`corrupt`, bukan throw) dan memancarkan `PhaseChanged` di step berikutnya; (8) registri `params` diisi (GP spec 3, data-schema 5, effect-primitives 5); (9) validasi data: peran `warden_id`/`boss_id` dan kesamaan `content_tier` `wave_spawns` dengan `waves`; (10) cek string resmi (`tools/data/lib/check-strings.ts`) di pipeline data; (11) parameter teks efek dari data (`src/content/rules/text-params.ts`), satu sumber untuk UI dan cek; (12) profil default app `run_a` (bukan `run_a_m1`, yang tanpa Warden dan boss); (13) `?lang=id` memuat `content/strings/id.json` secara lazy dengan cadangan EN; (14) `content_tier` opsional di `effects`, `waves`, `wave_spawns` disetujui. Detail di `docs/reviews/M1-lp.md` | Game bisa dimainkan end-to-end, pertanyaan teknis peran M1 ditutup |

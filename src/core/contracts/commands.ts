@@ -41,7 +41,10 @@ export type DebugCommand =
     }
   | { readonly type: 'debug.glint'; readonly amount: number }
   | { readonly type: 'debug.setHp'; readonly hp: number }
-  | { readonly type: 'debug.endPulse' };
+  /** Ends the Pulse; a living Warden dies first so its reward follows (M1-09a). */
+  | { readonly type: 'debug.endPulse' }
+  /** Adds XP as if Glint pieces were collected, without Glint (M1-09a, additive). */
+  | { readonly type: 'debug.xp'; readonly amount: number };
 
 export type CommandType = Command['type'];
 

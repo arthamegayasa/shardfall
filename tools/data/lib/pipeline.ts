@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join } from 'node:path';
 import { buildRaw, canonicalJson } from '../../../src/content/index.ts';
 import type { BuildInput, BuildOutput, ContentTier } from '../../../src/content/index.ts';
+import { checkStrings } from './check-strings.ts';
 
 export const GAME_DATA_PATH = 'content/generated/game-data.json';
 export const STRINGS_PATH = 'content/generated/strings.json';
@@ -59,6 +60,30 @@ export interface RenderedOutput {
   readonly stringsText: string;
 }
 
+/**
+ * String table check (check-strings.ts) on a successful build of the shipped tier; its errors fail
+ * the build. Builds of another tier to a custom --out (balance tools) skip it: tier B and C strings
+ * are not written yet (string-table.md 6).
+ */
+function withStringCheck(
+  root: string,
+  output: BuildOutput,
+  check = true,
+): { ok: boolean; report: string[] } {
+  const report = formatReport(output);
+  if (!output.ok || !check) return { ok: output.ok, report };
+  const sc = checkStrings(root, output.data, output.strings);
+  return {
+    ok: sc.errors.length === 0,
+    report: [
+      ...sc.errors.map((e) => `ERROR ${e}`),
+      ...sc.warnings.map((w) => `WARN  ${w}`),
+      ...report,
+      `strings: ${String(sc.errors.length)} error(s), ${String(sc.warnings.length)} warning(s)`,
+    ],
+  };
+}
+
 export function renderOutput(output: BuildOutput): RenderedOutput {
   return {
     output,
@@ -88,9 +113,8 @@ export function buildDataToDisk(
   opts: { readonly tier?: ContentTier; readonly out?: string } = {},
 ): { readonly ok: boolean; readonly report: string[] } {
   const rendered = renderOutput(buildRaw(readInputs(defaultPaths(root), opts.tier)));
-  const report = formatReport(rendered.output);
-  if (!rendered.output.ok)
-    return { ok: false, report: [...report, 'not written: fix the errors above'] };
+  const { ok, report } = withStringCheck(root, rendered.output, opts.out === undefined);
+  if (!ok) return { ok: false, report: [...report, 'not written: fix the errors above'] };
   if (opts.out !== undefined) {
     writeText(join(root, opts.out), rendered.gameDataText);
     return { ok: true, report: [...report, `wrote ${opts.out}`] };
@@ -103,8 +127,8 @@ export function buildDataToDisk(
 /** Build in memory and compare with the committed files (architecture 9.5). */
 export function checkData(root: string): { readonly ok: boolean; readonly report: string[] } {
   const rendered = renderOutput(buildRaw(readInputs(defaultPaths(root))));
-  const report = formatReport(rendered.output);
-  if (!rendered.output.ok) return { ok: false, report };
+  const { ok, report } = withStringCheck(root, rendered.output);
+  if (!ok) return { ok: false, report };
   const stale: string[] = [];
   for (const [path, text] of [
     [GAME_DATA_PATH, rendered.gameDataText],

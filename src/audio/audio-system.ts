@@ -94,6 +94,7 @@ export function createAudioSystem(data: GameData, files: AudioData): AudioSystem
   let defeatFx = false;
   let defeatAt = 0;
   let lowHp = false;
+  let pressure = false;
   let nextLowHp = 0;
   let riserPulse = -1;
   let disposed = false;
@@ -199,7 +200,7 @@ export function createAudioSystem(data: GameData, files: AudioData): AudioSystem
       else l.music.play(song, want === 'mus.shop' ? SHOP_FADE_IN_SEC : 0, fadeOut);
     }
     const song = want === null ? undefined : songs.get(want);
-    l.music.update(song === undefined ? 0 : levelFor(song, view));
+    l.music.update(song === undefined ? 0 : levelFor(song, view, pressure));
     // Riser: once per Pulse, joined late with a buffer offset so it always ends with the Pulse.
     const secs = song?.intensity?.riserSecondsBeforeEnd ?? null;
     if (riserCue !== undefined && secs !== null && riserPulse !== view.pulse.index && riserDue(view, secs)) {
@@ -247,6 +248,7 @@ export function createAudioSystem(data: GameData, files: AudioData): AudioSystem
         lowHp = sig.lowHp === 1;
         nextLowHp = now;
       }
+      if (sig.pressure >= 0) pressure = sig.pressure === 1;
       if (sig.playerDied && !defeatFx) {
         defeatFx = true;
         defeatAt = now;

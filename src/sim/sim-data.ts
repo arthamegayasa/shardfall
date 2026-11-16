@@ -109,6 +109,37 @@ export interface ConditionSim {
   readonly targetCounter: number;
 }
 
+export interface StatPart {
+  readonly stat: number;
+  readonly value: number;
+}
+
+function buffPartsOf(statIdx: ReadonlyMap<string, number>, p: ParamsRaw): StatPart[] {
+  const raw = p['stats'];
+  if (typeof raw !== 'string' || raw === '') return [];
+  const out: StatPart[] = [];
+  for (const part of raw.split('|')) {
+    const at = part.indexOf(':');
+    if (at <= 0) continue;
+    const stat = statIdx.get(part.slice(0, at)) ?? -1;
+    const value = Number(part.slice(at + 1));
+    if (stat >= 0 && Number.isFinite(value)) out.push({ stat, value });
+  }
+  return out;
+}
+
+/** `tags=shard|edge` in effect params as a TagIndex bit mask; -1 when the key is absent or empty. */
+function paramTagMask(data: GameData, p: ParamsRaw): number {
+  const raw = p['tags'];
+  if (typeof raw !== 'string' || raw === '') return -1;
+  let m = 0;
+  for (const t of raw.split('|')) {
+    const i = data.tags.findIndex((d) => d.id === t);
+    if (i >= 0) m |= 1 << i;
+  }
+  return m;
+}
+
 export interface EffectSim {
   readonly index: number;
   readonly id: string;
@@ -124,6 +155,12 @@ export interface EffectSim {
   readonly p: ParamsRaw;
   /** True when the action is visible or audible (architecture 6.5 ProcTriggered rule). */
   readonly emitsProc: boolean;
+  /** Tag mask from params `tags` (resolved at load), -1 when absent: spawned hits inherit the hit's tags. */
+  readonly tagMask: number;
+  /** Buff `stats=a:1|b:2` resolved to stat indices (stat recompute runs mid-Pulse; no parsing there). */
+  readonly buffParts: readonly StatPart[];
+  /** stat_mod `stat` as a StatIndex, -1 when absent or unknown. */
+  readonly statIndex: number;
   readonly sourceRef: number;
 }
 
@@ -131,6 +168,10 @@ export interface SimData {
   readonly data: GameData;
   readonly stat: StatSlots;
   readonly statCount: number;
+  /** Stat id to StatIndex (Map lookups allocate nothing). */
+  readonly statIdx: ReadonlyMap<string, number>;
+  /** Class stat_mods per ClassIndex, resolved to stat indices. */
+  readonly classStatMods: readonly (readonly StatPart[])[];
   readonly tagCount: number;
   /** 1 when the tag has a synergy row in this build tier (inactive tags are not counted, GDD 8.1). */
   readonly tagActive: Uint8Array;
@@ -268,6 +309,7 @@ function defaultAllowProc(action: Action): boolean {
 }
 
 export function buildSimData(data: GameData): SimData {
+  const statIdx = new Map<string, number>(data.stats.map((st, i) => [st.id, i]));
   const statIndex = (id: string): number => data.stats.findIndex((s) => s.id === id);
   const stat = Object.fromEntries(STAT_IDS.map((id) => [id, statIndex(id)])) as Record<
     StatId,
@@ -351,6 +393,9 @@ export function buildSimData(data: GameData): SimData {
       action,
       p: e.params,
       emitsProc: VISIBLE_ACTIONS.has(action),
+      tagMask: paramTagMask(data, e.params),
+      buffParts: buffPartsOf(statIdx, e.params),
+      statIndex: typeof e.params['stat'] === 'string' ? (statIdx.get(e.params['stat']) ?? -1) : -1,
       sourceRef: encodeSource(SourceKind.Effect, index),
     };
   });
@@ -382,6 +427,13 @@ export function buildSimData(data: GameData): SimData {
     data,
     stat,
     statCount: data.stats.length,
+    statIdx,
+    classStatMods: data.classes.map((c) =>
+      Object.entries(c.statMods).flatMap(([k, v]): StatPart[] => {
+        const stat = statIdx.get(k) ?? -1;
+        return stat >= 0 && typeof v === 'number' ? [{ stat, value: v }] : [];
+      }),
+    ),
     tagCount: data.tags.length,
     tagActive,
     weapons,

@@ -126,6 +126,8 @@ describe('music director', () => {
     const w = createFakeWorld({ phase: 'pulse' });
     w.pulse = { ...w.pulse, ticksTotal: 1200, ticksLeft: 300 };
     expect(levelFor(song, w)).toBe(2);
+    // MusicPressureChanged (Q21) adds the pressure step.
+    expect(levelFor(song, w, true)).toBe(3);
     w.pulse = { ...w.pulse, isBoss: true };
     expect(levelFor(song, w)).toBe(3);
   });

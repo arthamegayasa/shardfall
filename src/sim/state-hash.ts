@@ -41,6 +41,22 @@ function hashPool(
   for (let i = 0; i < p.freeTop; i++) h.u32(p.freeList[i] ?? 0);
 }
 
+function hashHitMemory(
+  h: Hasher,
+  ps: SimCtx['world']['playerShots'],
+  enemySerial: ArrayLike<number>,
+): void {
+  const stride = ps.hitSlots.length / ps.capacity;
+  for (let i = 0; i < ps.highWater; i++) {
+    if (ps.alive[i] === 0) continue;
+    for (let k = 0; k < stride; k++) {
+      const at = i * stride + k;
+      const slot = ps.hitSlots[at] ?? 0;
+      h.u32(ps.hitSerials[at] === enemySerial[slot] ? 1 : 0);
+    }
+  }
+}
+
 export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
   const { world: w, run } = ctx;
   h.reset();
@@ -258,8 +274,11 @@ export function hashState(ctx: SimCtx, h: Hasher, words: Uint32Array): number {
       ps.zoneSlow,
       ps.zoneTick,
     ],
-    [ps.hitSlots, ps.hitSerials],
+    [ps.hitSlots],
   );
+  // Pierce memory: enemy serials are never reset or saved (architecture 8.1), so a loaded run has
+  // other raw values. Hash whether each remembered hit still names the living enemy instead.
+  hashHitMemory(h, ps, w.enemies.serial);
   const pk = w.pickups;
   hashPool(h, pk, [pk.kind, pk.amount, pk.magnetized, pk.dropTick], []);
   for (const a of [w.dangerAreas, w.playerZones]) {

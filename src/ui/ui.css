@@ -988,3 +988,25 @@
 .sf-ui.is-too-small .small-window {
   display: block;
 }
+
+/* Resume countdown in the timer slot (ui-spec S06, LP M1-09a). */
+.sf-ui .resume-countdown {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * 8 + var(--f) * 12);
+  transform: translateX(-50%);
+  font-size: calc(var(--f) * 16);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-gold);
+  pointer-events: none;
+}
+
+.sf-ui.is-counting .resume-countdown {
+  display: block;
+}
+
+.sf-ui.is-counting .screen-hud .timer,
+.sf-ui.is-counting .screen-hud .foe {
+  visibility: hidden;
+}

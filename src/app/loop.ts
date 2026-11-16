@@ -17,6 +17,8 @@ export interface LoopDeps {
   readonly audio: AudioSystem;
   readonly input: InputSource;
   readonly recorder: ReplayRecorder | null;
+  /** Called after every sim step (autosave, run end, arena changes). Must not allocate per tick. */
+  readonly afterTick?: () => void;
   readonly maxTicksPerFrame: number;
   readonly frameEventCapacity: number;
   /** performance.now, injectable for tests. */
@@ -62,8 +64,9 @@ export function createLoop(deps: LoopDeps): GameLoop {
     sim.step(inp);
     tickMs[tickCount % PERF_WINDOW] = deps.now() - t0;
     tickCount++;
-    deps.recorder?.recordTick(inp, sim.view.tick, hash);
+    deps.recorder?.recordTick(inp, hash);
     frameEvents.appendFrom(sim.events, sim.view.tick);
+    deps.afterTick?.();
   };
 
   const renderFrame = (dtSec: number): void => {
@@ -143,8 +146,7 @@ export function createLoop(deps: LoopDeps): GameLoop {
         drawCalls: stats.drawCalls,
         triangles: stats.triangles,
         eventOverflow,
-        // TODO(GP, M1-03): expose pool overflow from the sim (getPerf().poolOverflow).
-        poolOverflow: 0,
+        poolOverflow: sim.poolOverflow,
       };
     },
   };

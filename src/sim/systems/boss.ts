@@ -24,11 +24,29 @@ import { farthestSector, startMark } from './spawner.ts';
 const pt: Point = { x: 0, y: 0 };
 const sec = (s: number): number => Math.round(s * TICK_RATE);
 
-export function bossPhases(ctx: SimCtx, bossType: number): BossPhaseDef[] {
+/** Phases per (data, boss type, Crack), built once: bossPhases runs every boss tick. */
+const phaseCache = new WeakMap<object, Map<number, readonly BossPhaseDef[]>>();
+
+function phaseOf(phases: readonly BossPhaseDef[], n: number): BossPhaseDef | undefined {
+  for (let i = 0; i < phases.length; i++) if (phases[i]?.phase === n) return phases[i];
+  return undefined;
+}
+
+export function bossPhases(ctx: SimCtx, bossType: number): readonly BossPhaseDef[] {
+  let byKey = phaseCache.get(ctx.data);
+  if (byKey === undefined) {
+    byKey = new Map();
+    phaseCache.set(ctx.data, byKey);
+  }
+  const key = bossType * 1024 + ctx.run.difficulty;
+  const hit = byKey.get(key);
+  if (hit !== undefined) return hit;
   const id = ctx.data.enemies[bossType]?.id;
-  return ctx.data.bossPhases
+  const list = ctx.data.bossPhases
     .filter((p) => p.bossId === id && p.minCrack <= ctx.run.difficulty)
     .sort((a, b) => a.phase - b.phase);
+  byKey.set(key, list);
+  return list;
 }
 
 function patternById(ctx: SimCtx, id: string): number {
@@ -93,7 +111,7 @@ function emergeBoss(
 /** HP floor = next phase threshold while that phase is pending (GDD 16: no skipping phase 2). */
 function setFloor(ctx: SimCtx, phases: readonly BossPhaseDef[]): void {
   const run = ctx.run;
-  const next = phases.find((p) => p.phase === run.bossPhase + 1);
+  const next = phaseOf(phases, run.bossPhase + 1);
   const max = run.bossSlot >= 0 ? ctx.world.enemies.maxHp[run.bossSlot]! : 0;
   run.bossHpFloor = next !== undefined ? next.hpBelow * max : 0;
 }
@@ -294,7 +312,7 @@ export function updateBoss(
   const e = ctx.world.enemies;
   run.bossFightTicks++;
   const phases = bossPhases(ctx, run.bossType);
-  const phase = phases.find((p) => p.phase === run.bossPhase);
+  const phase = phaseOf(phases, run.bossPhase);
   if (!run.bossEnraged && cfg.bossEnrageTicks > 0 && run.bossFightTicks >= cfg.bossEnrageTicks) {
     run.bossEnraged = true;
     ctx.events.push(SimEventType.BossEnraged, e.x[s]!, e.y[s]!, run.bossType, 0, 0);
@@ -319,7 +337,7 @@ export function updateBoss(
       const old = run.bossPhase;
       run.bossPhase++;
       run.bossCyclePos = 0;
-      const np = phases.find((p) => p.phase === run.bossPhase);
+      const np = phaseOf(phases, run.bossPhase);
       run.bossGapTicks = np?.gapTicks ?? 0;
       e.aiState[s] = AiState.Move;
       setFloor(ctx, phases);
@@ -340,7 +358,7 @@ export function updateBoss(
   }
   // Phase change pending: HP reached the floor, start the transition after the pattern ended.
   if (run.bossHpFloor > 0 && e.hp[s]! <= run.bossHpFloor) {
-    const np = phases.find((p) => p.phase === run.bossPhase + 1);
+    const np = phaseOf(phases, run.bossPhase + 1);
     run.bossHpFloor = 0;
     run.bossTransitionTicks = Math.max(1, np?.transitionTicks ?? 1);
     e.aiState[s] = AiState.Transition;

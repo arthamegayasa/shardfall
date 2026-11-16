@@ -34,6 +34,14 @@ import { createEntityLayers } from '../sprites/entity-layers.ts';
 const VOID_TOKEN = 'night';
 const FLOOR_FALLBACK_TOKEN = 'floor-mid';
 
+/** Free a mesh's GPU buffers and material (textures are shared and disposed separately). */
+function disposeMesh(m: Mesh): void {
+  m.geometry.dispose();
+  const mat = m.material;
+  if (Array.isArray(mat)) for (const x of mat) x.dispose();
+  else mat.dispose();
+}
+
 export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer => {
   const gl = new WebGLRenderer({
     canvas,
@@ -42,6 +50,9 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
     powerPreference: 'high-performance',
   });
   gl.setPixelRatio(1);
+  // One frame = several render() calls (scene, danger, upscale): count them all (getPerf, budget 13).
+  gl.info.autoReset = false;
+  const frameStats = { drawCalls: 0, triangles: 0 };
   gl.outputColorSpace = SRGBColorSpace;
   const voidHex = assets.palette.core[VOID_TOKEN] ?? '#000000';
   gl.setClearColor(new Color(voidHex), 1);
@@ -126,11 +137,13 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
     },
     setArena(arena: ArenaDef, _biomeId: string) {
       scene.remove(floor);
+      disposeMesh(floor);
       floor = createFloorMesh(arena.arena.boundary, floorTexture, floorFallback);
       scene.add(floor);
       // TODO(AD, M1-05): biome palette, lip, rim, decor, lights from arena + art/palette.json.
     },
     render(f: RenderFrame) {
+      gl.info.reset();
       entities.update(f);
       gl.setRenderTarget(target);
       gl.setViewport(0, 0, frame.width, frame.height);
@@ -149,11 +162,15 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
         frame.height * frame.pixelScale,
       );
       gl.render(blitScene, blitCamera);
+      frameStats.drawCalls = gl.info.render.calls;
+      frameStats.triangles = gl.info.render.triangles;
     },
     stats() {
-      return { drawCalls: gl.info.render.calls, triangles: gl.info.render.triangles };
+      return frameStats;
     },
     dispose() {
+      disposeMesh(floor);
+      disposeMesh(blitQuad);
       target.dispose();
       entities.dispose();
       atlas.texture.dispose();

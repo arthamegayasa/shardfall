@@ -97,33 +97,42 @@ function markRadiusFor(ctx: SimCtx, type: number, size: number): number {
   return r;
 }
 
+/** One sector attempt for pickPoint (module level: no closure per spawn). */
+function tryInSector(
+  ctx: SimCtx,
+  arena: NonNullable<SimCtx['arena']>,
+  sec: number,
+  checkPlayer: boolean,
+  markR: number,
+  out: Point,
+): boolean {
+  const shape = arena.sectors[SECTOR_IDS[sec] ?? 'n'];
+  if (shape === undefined) return false;
+  const p = ctx.world.player;
+  const safe = arena.def.spawn.playerSafeRadius;
+  for (let a = 0; a < SPAWN_POINT_ATTEMPTS; a++) {
+    randomPointInShape(shape, ctx.rng.spawn, out);
+    const dx = out.x - p.x;
+    const dy = out.y - p.y;
+    if (checkPlayer && dx * dx + dy * dy < safe * safe) continue;
+    if (insideDistance(arena, out.x, out.y) < markR) continue;
+    return true;
+  }
+  return false;
+}
+
 /** Pick a spawn point in a sector (arena-design 5.2): reject near the player or with the mark outside. */
 function pickPoint(ctx: SimCtx, sector: number, markR: number, out: Point): void {
   const arena = ctx.arena;
-  const p = ctx.world.player;
   if (arena === null) {
     out.x = 0;
     out.y = 0;
     return;
   }
-  const safe = arena.def.spawn.playerSafeRadius;
-  const tryIn = (sec: number, checkPlayer: boolean): boolean => {
-    const shape = arena.sectors[SECTOR_IDS[sec] ?? 'n'];
-    if (shape === undefined) return false;
-    for (let a = 0; a < SPAWN_POINT_ATTEMPTS; a++) {
-      randomPointInShape(shape, ctx.rng.spawn, out);
-      const dx = out.x - p.x;
-      const dy = out.y - p.y;
-      if (checkPlayer && dx * dx + dy * dy < safe * safe) continue;
-      if (insideDistance(arena, out.x, out.y) < markR) continue;
-      return true;
-    }
-    return false;
-  };
-  if (tryIn(sector, true)) return;
+  if (tryInSector(ctx, arena, sector, true, markR, out)) return;
   const far = farthestSector(ctx);
-  if (tryIn(far, true)) return;
-  tryIn(far, false);
+  if (tryInSector(ctx, arena, far, true, markR, out)) return;
+  tryInSector(ctx, arena, far, false, markR, out);
 }
 
 /** Sector whose centre is farthest from the player (ties: lowest index). */

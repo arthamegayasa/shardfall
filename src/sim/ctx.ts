@@ -137,6 +137,9 @@ export interface RunState {
   lastPickupTick: number;
   statsDirty: boolean;
   passiveMask: number;
+  /** Last emitted PlayerHpLowChanged and MusicPressureChanged states (events only, not hashed). */
+  lowHpSignal: boolean;
+  pressureSignal: boolean;
   /** A held_glint convert is active: Glint changes dirty the stats. */
   glintConvert: boolean;
   /** Per effect: next tick the effect may fire (icd), fires this Pulse, periodic timer. */
@@ -367,6 +370,8 @@ export function createRunState(
     lastPickupTick: 0,
     statsDirty: true,
     passiveMask: 0,
+    lowHpSignal: false,
+    pressureSignal: false,
     glintConvert: false,
     effectNextTick: new Int32Array(effectCount),
     effectFires: new Int32Array(effectCount),

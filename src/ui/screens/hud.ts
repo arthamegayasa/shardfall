@@ -107,9 +107,12 @@ export function createHudScreen(ctx: UiContext): Screen {
       }
       fillHudModel(view, lowHp, model);
       const m = model;
-      if (m.hp !== pHp || m.maxHp !== pMax) {
-        pHp = m.hp;
-        pMax = m.maxHp;
+      // Compare the shown integers: regen changes HP by a fraction every tick (no DOM write then).
+      const hpShown = Math.ceil(m.hp - 1e-9);
+      const maxShown = Math.ceil(m.maxHp - 1e-9);
+      if (hpShown !== pHp || maxShown !== pMax) {
+        pHp = hpShown;
+        pMax = maxShown;
         hpText.textContent = t('ui.hud.hp', { hp: formatInt(m.hp), max: formatInt(m.maxHp) });
       }
       if (m.hpFrac !== pHpFrac) {

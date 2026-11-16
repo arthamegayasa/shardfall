@@ -25,8 +25,7 @@ export function createStatScratch(statCount: number): StatScratch {
 }
 
 function statIndexOf(ctx: SimCtx, id: string): number {
-  // Stat ids in effect params are few and checked only on recompute (not per tick).
-  return ctx.data.stats.findIndex((s) => s.id === id);
+  return ctx.sd.statIdx.get(id) ?? -1;
 }
 
 function passiveActive(ctx: SimCtx, effect: number): boolean {
@@ -83,10 +82,11 @@ export function recomputeStats(ctx: SimCtx, sc: StatScratch): void {
 
   // 2. Add: class stat_mods, level-up cards, stat_mod add, buffs.
   const cls = data.classes[run.classIndex];
-  if (run.started && cls !== undefined) {
-    for (const [k, v] of Object.entries(cls.statMods)) {
-      const i = statIndexOf(ctx, k);
-      if (i >= 0 && typeof v === 'number') sc.add[i] = (sc.add[i] ?? 0) + v;
+  const clsMods = sd.classStatMods[run.classIndex];
+  if (run.started && clsMods !== undefined) {
+    for (let m = 0; m < clsMods.length; m++) {
+      const part = clsMods[m];
+      if (part !== undefined) sc.add[part.stat] = (sc.add[part.stat] ?? 0) + part.value;
     }
   }
   for (let i = 0; i < n; i++) sc.add[i] = (sc.add[i] ?? 0) + (run.statCardAdd[i] ?? 0);
@@ -98,12 +98,9 @@ export function recomputeStats(ctx: SimCtx, sc: StatScratch): void {
     if (eff.action === Action.Buff) {
       const stacks = run.buffStacks[eff.index] ?? 0;
       if (stacks <= 0) continue;
-      for (const part of pstr(eff.p, 'stats', '').split('|')) {
-        const at = part.indexOf(':');
-        if (at <= 0) continue;
-        const i = statIndexOf(ctx, part.slice(0, at));
-        const v = Number(part.slice(at + 1));
-        if (i >= 0 && Number.isFinite(v)) sc.add[i] = (sc.add[i] ?? 0) + v * stacks;
+      for (let b = 0; b < eff.buffParts.length; b++) {
+        const part = eff.buffParts[b];
+        if (part !== undefined) sc.add[part.stat] = (sc.add[part.stat] ?? 0) + part.value * stacks;
       }
       continue;
     }
@@ -111,7 +108,7 @@ export function recomputeStats(ctx: SimCtx, sc: StatScratch): void {
     const mul = eff.stackMode === StackMode.Value ? copies : 1;
     switch (eff.action) {
       case Action.StatMod: {
-        const i = statIndexOf(ctx, pstr(eff.p, 'stat', ''));
+        const i = eff.statIndex;
         if (i < 0) break;
         const op = pstr(eff.p, 'op', 'add');
         const v = pnum(eff.p, 'value', 0);

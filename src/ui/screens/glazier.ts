@@ -154,8 +154,12 @@ export function createGlazierScreen(ctx: UiContext): Screen {
     if (model === null) return;
     const preview = tagPreview(model, deps.data, o);
     renderTags(preview);
-    const unlock = preview.find((p) => p.unlockDescKey !== null)?.unlockDescKey ?? null;
-    infoLine.textContent = unlock === null ? '' : t('ui.shop.tag_unlocks', { effect: t(unlock) });
+    const unlock = preview.find((p) => p.unlockDescKey !== null);
+    const unlockKey = unlock?.unlockDescKey ?? null;
+    infoLine.textContent =
+      unlock === undefined || unlockKey === null
+        ? ''
+        : t('ui.shop.tag_unlocks', { effect: t(unlockKey, unlock.unlockParams) });
     el.querySelectorAll('.slot.is-fuse-target').forEach((n) => {
       n.classList.remove('is-fuse-target');
     });

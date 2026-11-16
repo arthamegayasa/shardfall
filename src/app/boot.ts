@@ -1,5 +1,6 @@
-// Composition root (architecture.md 3, 5). LP only: wires data, sim, renderer, UI, audio, input, loop.
-// Test hooks are loaded with a dynamic import behind __E2E__, so production builds never contain them.
+// Composition root (architecture.md 3, 5). LP only: wires data, sim, renderer, UI, audio, input, loop,
+// autosave, meta, and the resume countdown. Test hooks are loaded with a dynamic import behind
+// __E2E__, so production builds never contain them.
 
 import {
   assert,
@@ -8,10 +9,11 @@ import {
   FRAME_EVENT_CAPACITY_E2E,
   MAX_TICKS_PER_FRAME,
   MAX_TICKS_PER_FRAME_E2E,
+  STORAGE_KEYS,
 } from '../core/index.ts';
-import type { Command, CommandSink, Settings, StringTable } from '../core/index.ts';
+import type { Command, CommandSink, MetaSave, Settings, StringTable } from '../core/index.ts';
 import type { AppActions, MetaView, Renderer, Ui } from '../core/dom.ts';
-import { buildGameData, GAME_DATA_FORMAT } from '../content/index.ts';
+import { buildGameData, formatString, GAME_DATA_FORMAT } from '../content/index.ts';
 import type { GameData, RawGameData } from '../content/index.ts';
 import { createSim } from '../sim/index.ts';
 import { createRenderer } from '../render/index.ts';
@@ -22,11 +24,13 @@ import { createInputSource } from './input/input.ts';
 import { createLogger } from './logger.ts';
 import { createLoop } from './loop.ts';
 import type { GameLoop } from './loop.ts';
+import { loadMeta, metaAfterRun, saveMeta, defaultMeta } from './meta/meta-store.ts';
 import { createReplayRecorder } from './replay.ts';
 import type { ReplayRecorder } from './replay.ts';
+import { createRunWatch } from './run-watch.ts';
+import { clearRunSave, hasRunSave, readRunSave, writeRunSave } from './save/run-save.ts';
 import { defaultSettings, loadSettings, saveSettings } from './settings.ts';
 import { createStorage } from './storage.ts';
-import { formatString } from '../content/index.ts';
 
 const gameDataModules = import.meta.glob('../../content/generated/game-data.json', {
   eager: true,
@@ -36,11 +40,21 @@ const stringModules = import.meta.glob('../../content/generated/strings.json', {
   eager: true,
   import: 'default',
 });
+/** Indonesian table (WR), loaded lazily only for ?lang=id; missing keys fall back to English. */
+const idStringModules = import.meta.glob('../../content/strings/id.json', { import: 'default' });
 
 const log = createLogger('app');
 
-/** Profile used when the UI starts a run (M1 prototype profile, data-schema 3.20). */
-const DEFAULT_PROFILE = 'run_a_m1';
+/**
+ * Profile used when the UI starts a run: run_a, the tier A run (10 Pulses, Warden at Pulse 5, boss at
+ * Pulse 10). run_a_m1 has neither, so the Warden reward and boss could not be played (LP M1-09a).
+ */
+const DEFAULT_PROFILE = 'run_a';
+/** Resume countdown after pause during a Pulse: 3, 2, 1 over 900 ms (ui-spec S06). */
+const COUNTDOWN_STEPS = 3;
+const COUNTDOWN_STEP_MS = 300;
+
+export type HoldReason = 'user' | 'hidden' | 'e2e' | 'countdown';
 
 export interface AppContext {
   readonly data: GameData;
@@ -52,8 +66,9 @@ export interface AppContext {
   readonly commands: CommandSink;
   readonly recorder: ReplayRecorder | null;
   readonly sim: ReturnType<typeof createSim>;
-  /** The loop runs only while no hold is set (user pause, hidden tab, e2e driving). */
-  setHold(reason: 'user' | 'hidden' | 'e2e', on: boolean): void;
+  readonly app: AppActions;
+  /** The loop runs only while no hold is set (user pause, hidden tab, countdown, e2e driving). */
+  setHold(reason: HoldReason, on: boolean): void;
   startRun(opts: {
     readonly seed: number;
     readonly classId: string;
@@ -73,9 +88,19 @@ function loadGameData(): GameData {
   return buildGameData(raw, { freeze: __DEV_TOOLS__ });
 }
 
-function loadStrings(): StringTable {
+async function loadStrings(lang: string | null): Promise<StringTable> {
   const s = Object.values(stringModules)[0];
-  return s !== null && typeof s === 'object' ? (s as StringTable) : {};
+  const en = s !== null && typeof s === 'object' ? (s as StringTable) : {};
+  if (lang !== 'id') return en;
+  const loader = Object.values(idStringModules)[0];
+  if (loader === undefined) return en;
+  try {
+    const id = (await loader()) as StringTable;
+    return { ...en, ...id };
+  } catch (err) {
+    log.warn('id strings failed to load', err);
+    return en;
+  }
 }
 
 function hasWebGl2(doc: Document): boolean {
@@ -90,7 +115,9 @@ export async function boot(doc: Document): Promise<void> {
   const canvas = doc.querySelector<HTMLCanvasElement>('#game');
   const uiRoot = doc.querySelector<HTMLElement>('#ui-root');
   assert(canvas !== null && uiRoot !== null, 'index.html must contain #game and #ui-root');
-  const strings = loadStrings();
+  const lang = new URLSearchParams(window.location.search).get('lang');
+  const strings = await loadStrings(lang);
+  if (lang === 'id') doc.documentElement.lang = 'id';
   if (!hasWebGl2(doc)) {
     const msg = doc.createElement('p');
     msg.className = 'fatal';
@@ -103,6 +130,8 @@ export async function boot(doc: Document): Promise<void> {
   const store = createStorage();
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let settings: Settings = loadSettings(store, defaultSettings(reducedMotion));
+  const firstClass = data.classes[0]?.id ?? '';
+  let meta: MetaSave = loadMeta(store, firstClass);
   const assets = loadArtAssets();
   const sim = createSim({ data, debugCommands: __DEV_TOOLS__ });
   const renderer = createRenderer(canvas, assets, data);
@@ -115,24 +144,55 @@ export async function boot(doc: Document): Promise<void> {
     : null;
   // Seeds for UI-started runs come from a visual-only RNG seeded once per session (never Math.random).
   const seedRng = createRngStreams(Math.floor(performance.now() * 1000) >>> 0).spawn;
+  /** run.abandon was sent while paused: resume without the countdown so the end shows at once. */
+  let abandonQueued = false;
 
   const commands: CommandSink = {
     send(cmd: Command) {
-      if (cmd.type === 'run.start') recorder?.begin(cmd, sim.view.tick);
-      else recorder?.recordCommand(sim.view.tick, cmd);
+      if (cmd.type === 'run.start') recorder?.begin(cmd);
+      else recorder?.recordCommand(cmd);
+      if (cmd.type === 'run.abandon') abandonQueued = true;
       sim.enqueue(cmd);
     },
   };
 
   let ui: Ui | null = null;
-  const holds = new Set<string>();
+  const holds = new Set<HoldReason>();
   const setHold: AppContext['setHold'] = (reason, on) => {
     if (on) holds.add(reason);
     else holds.delete(reason);
     if (holds.size === 0) loop.start();
     else loop.stop();
   };
+
+  // Resume countdown (ui-spec S06): app state, the sim does not tick meanwhile.
+  let countdownTimer = 0;
+  const stopCountdown = (): void => {
+    if (countdownTimer !== 0) window.clearTimeout(countdownTimer);
+    countdownTimer = 0;
+    ui?.setResumeCountdown(0);
+    setHold('countdown', false);
+  };
+  const startCountdown = (): void => {
+    let n = COUNTDOWN_STEPS;
+    setHold('countdown', true);
+    ui?.setResumeCountdown(n);
+    const tickDown = (): void => {
+      n--;
+      if (n <= 0) {
+        countdownTimer = 0;
+        stopCountdown();
+        return;
+      }
+      ui?.setResumeCountdown(n);
+      countdownTimer = window.setTimeout(tickDown, COUNTDOWN_STEP_MS);
+    };
+    countdownTimer = window.setTimeout(tickDown, COUNTDOWN_STEP_MS);
+  };
+
   const startRun: AppContext['startRun'] = (opts) => {
+    stopCountdown();
+    clearRunSave(store);
     commands.send({
       type: 'run.start',
       seed: opts.seed >>> 0,
@@ -141,6 +201,7 @@ export async function boot(doc: Document): Promise<void> {
       difficulty: opts.difficulty ?? 0,
     });
     ui?.setScreen('run');
+    setHold('user', false);
   };
 
   const app: AppActions = {
@@ -148,17 +209,34 @@ export async function boot(doc: Document): Promise<void> {
       startRun({ seed: seedRng.nextU32(), classId, difficulty });
     },
     continueRun() {
-      // TODO(LP, M1-09): load shardfall.run.v1 through sim.load().
+      const saved = readRunSave(store);
+      const res = saved.kind === 'ok' ? sim.load(saved.run) : null;
+      if (res?.ok !== true) {
+        // ui.title.save_lost: shown by the title once UI has a channel for it (review M1-lp).
+        log.warn(
+          `autosave could not be restored (${saved.kind}${res === null ? '' : `, ${res.reason}`})`,
+        );
+        clearRunSave(store);
+        ui?.setScreen('title');
+        return;
+      }
+      // A continued run cannot be replayed from run.start.
+      recorder?.stop();
+      watch.reset();
+      ui?.setScreen('run');
+      setHold('user', false);
     },
     pause() {
+      stopCountdown();
       setHold('user', true);
       audio.setPaused(true);
       ui?.setScreen('paused');
     },
     resume() {
-      // TODO(LP, M1-09): 900 ms countdown before ticking (ui-spec S06).
       audio.setPaused(false);
       ui?.setScreen('run');
+      const countdown = sim.view.phase === 'pulse' && !abandonQueued;
+      if (countdown) startCountdown();
       setHold('user', false);
     },
     openSettings() {
@@ -178,20 +256,26 @@ export async function boot(doc: Document): Promise<void> {
       return false;
     },
     deleteSaveData() {
-      // TODO(LP, M1-09): clear run, meta, settings keys.
+      store.remove(STORAGE_KEYS.run);
+      store.remove(STORAGE_KEYS.meta);
+      store.remove(STORAGE_KEYS.settings);
+      meta = defaultMeta(firstClass);
+      app.applySettings(defaultSettings(reducedMotion));
     },
     quitToTitle() {
+      stopCountdown();
       ui?.setScreen('title');
+      setHold('user', false);
     },
   };
 
-  const meta = (): MetaView => ({
-    silt: 0,
-    unlocked: [],
-    mementosFound: [],
-    highestDifficultyWon: -1,
-    lastClassId: data.classes[0]?.id ?? '',
-    hasRunSave: false,
+  const metaView = (): MetaView => ({
+    silt: meta.silt,
+    unlocked: meta.unlocked,
+    mementosFound: meta.mementosFound,
+    highestDifficultyWon: meta.highestDifficultyWon,
+    lastClassId: meta.lastClassId,
+    hasRunSave: hasRunSave(store),
   });
 
   ui = createUi({
@@ -207,7 +291,7 @@ export async function boot(doc: Document): Promise<void> {
       },
     },
     settings: () => settings,
-    meta,
+    meta: metaView,
     art: assets,
   });
 
@@ -219,6 +303,36 @@ export async function boot(doc: Document): Promise<void> {
     playerPos: () => sim.view.player,
   });
 
+  const watch = createRunWatch({
+    sim,
+    save() {
+      const run = sim.save();
+      if (run !== null) writeRunSave(store, run, new Date().toISOString());
+    },
+    onRunEnd(end) {
+      abandonQueued = false;
+      clearRunSave(store);
+      const v = sim.view;
+      meta = metaAfterRun(meta, {
+        outcome: end.outcome,
+        classId: data.classes[v.player.classIndex]?.id ?? meta.lastClassId,
+        difficulty: v.runStats.difficulty,
+        silt: end.silt,
+        mementoIds: v.shop.mementos
+          .map((m) => data.mementos[m.mementoIndex]?.id ?? '')
+          .filter((id) => id !== ''),
+      });
+      saveMeta(store, meta);
+    },
+    onArena(index) {
+      const arena = data.arenas[index];
+      if (arena === undefined) return;
+      const biome = data.biomes.find((b) => b.arenaId === arena.id);
+      renderer.setArena(arena, biome?.id ?? '');
+      audio.setArena(arena);
+    },
+  });
+
   const loop = createLoop({
     sim,
     renderer,
@@ -226,6 +340,9 @@ export async function boot(doc: Document): Promise<void> {
     audio,
     input,
     recorder,
+    afterTick: () => {
+      watch.afterTick();
+    },
     maxTicksPerFrame: __E2E__ ? MAX_TICKS_PER_FRAME_E2E : MAX_TICKS_PER_FRAME,
     frameEventCapacity: __E2E__ ? FRAME_EVENT_CAPACITY_E2E : FRAME_EVENT_CAPACITY,
     now: () => performance.now(),
@@ -239,6 +356,8 @@ export async function boot(doc: Document): Promise<void> {
   resize();
   renderer.applySettings(settings);
   audio.applySettings(settings.audio);
+  // Title background: the arena of the first Pulse until a run picks its own.
+  watch.afterTick();
 
   const unlockAudio = (): void => {
     audio.unlock().catch((err: unknown) => {
@@ -269,6 +388,7 @@ export async function boot(doc: Document): Promise<void> {
       commands,
       recorder,
       sim,
+      app,
       startRun,
       setHold,
     });

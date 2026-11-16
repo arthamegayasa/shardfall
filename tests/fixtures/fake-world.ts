@@ -68,7 +68,11 @@ const foe = (): Mutable<BigFoeView> => ({
   enraged: false,
 });
 
-export type FakeWorld = Mutable<WorldView> & {
+/**
+ * Omit first: an intersection with the read-only WorldView members would keep pulse and player
+ * fields read-only, so tests could not write w.pulse.index or w.player.hp directly (LP, M1-09a).
+ */
+export type FakeWorld = Omit<Mutable<WorldView>, 'pulse' | 'player'> & {
   pulse: Mutable<PulseView>;
   player: Mutable<WorldView['player']>;
 };

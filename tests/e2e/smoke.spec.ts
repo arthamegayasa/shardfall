@@ -28,7 +28,8 @@ test('boots the e2e build, renders the canvas, and steps the sim', async ({ page
     return { version: h.version, before, snap: h.getSnapshot(), hash: h.getStateHash() };
   });
   expect(result.version).toBe(1);
-  expect(result.snap.tick - result.before).toBe(60);
+  // The sim tick restarts at run.start (run-relative clock, LP M1-09a), so 60 steps = tick 60.
+  expect(result.snap.tick).toBe(60);
   expect(result.snap.phase).toBe('pulse');
   expect(result.hash).toMatch(/^[0-9a-f]{8}$/);
 

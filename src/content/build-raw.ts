@@ -675,6 +675,11 @@ function joinProfiles(
   return profiles;
 }
 
+/** content_tier cell as text; empty means A (data-schema 0.1). */
+function tierText(v: unknown): string {
+  return typeof v === 'string' && v !== '' ? v : 'A';
+}
+
 /** Cross-table rules from data-schema 1 (validation list) that the column DSL cannot express. */
 function runTableChecks(
   parsed: ReadonlyMap<string, ParsedTable>,
@@ -743,6 +748,39 @@ function runTableChecks(
     });
     for (const [p, n] of finals)
       if (n > 1) rep.errors.push(`content/data/waves.csv:0:0 profile "${p}" has ${n} final Pulses`);
+    // The foe must have the matching role: a boss_id that is not a boss never dies as a boss, so
+    // the untimed boss Pulse would never end (LP review M1-09a).
+    const roleOf = new Map<string, string>();
+    for (const e of keptRows('enemies')) roleOf.set(String(e['id']), String(e['role']));
+    keptRows('waves').forEach((r, i) => {
+      const line = lines[i] ?? 0;
+      const w = typeof r['warden_id'] === 'string' ? r['warden_id'] : null;
+      const b = typeof r['boss_id'] === 'string' ? r['boss_id'] : null;
+      if (r['kind'] === 'warden' && w !== null && roleOf.get(w) !== 'warden')
+        rep.error('content/data/waves.csv', line, 0, `warden_id "${w}" is not a warden`);
+      if (r['kind'] === 'boss' && b !== null && roleOf.get(b) !== 'boss')
+        rep.error('content/data/waves.csv', line, 0, `boss_id "${b}" is not a boss`);
+    });
+    // wave_spawns rows share the content_tier of their waves row; otherwise a tier build silently
+    // drops a Pulse's spawns (or reports a confusing missing key).
+    const wavesT = parsed.get('waves');
+    const spawnsT = parsed.get('wave_spawns');
+    if (wavesT !== undefined && spawnsT !== undefined) {
+      const tierOf = new Map<string, string>();
+      for (const r of wavesT.rows)
+        tierOf.set(`${String(r['profile'])}#${String(r['pulse'])}`, tierText(r['content_tier']));
+      spawnsT.rows.forEach((r, i) => {
+        const want = tierOf.get(`${String(r['profile'])}#${String(r['pulse'])}`);
+        const have = tierText(r['content_tier']);
+        if (want !== undefined && want !== have)
+          rep.error(
+            'content/data/wave_spawns.csv',
+            spawnsT.lines[i] ?? 0,
+            0,
+            `content_tier ${have} differs from its waves.csv row (${want})`,
+          );
+      });
+    }
   }
   // P2-e: boss pattern telegraphs above the minimum (cone uses the charge minimum).
   const config = kv.get('config');

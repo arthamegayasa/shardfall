@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ownerTextParams } from '../../../src/content/index.ts';
 import { OfferKind } from '../../../src/core/index.ts';
 import type { ShopOfferView } from '../../../src/core/index.ts';
 import { buildShopModel, initialOfferFocus, tagPreview } from '../../../src/ui/presenters/shop.ts';
@@ -99,7 +100,15 @@ describe('Glazier model', () => {
     if (card === undefined) throw new Error('missing offer');
     const p = tagPreview(m, data, card);
     expect(p).toEqual([
-      { tag: 'flame', count: 1, newCount: 2, isNewTag: false, unlockDescKey: 'syn.flame.2' },
+      {
+        tag: 'flame',
+        count: 1,
+        newCount: 2,
+        isNewTag: false,
+        unlockDescKey: 'syn.flame.2',
+        // Placeholder values come from the synergy's effects (string-table 4).
+        unlockParams: ownerTextParams(data, 'syn_flame_2'),
+      },
     ]);
   });
 

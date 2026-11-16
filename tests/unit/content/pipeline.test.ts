@@ -222,4 +222,24 @@ describe('data pipeline', () => {
       'content/levels/arena_ccw.json:1:0 arena.boundary must be clockwise on screen',
     );
   });
+
+  it('rejects a Pulse foe with the wrong role and spawn rows with another tier (LP M1-09a)', () => {
+    const out = buildRaw(
+      withCsv({
+        waves: [
+          'profile,pulse,kind,biome,threat,duration_s,warden_id,boss_id,alive_cap,final,content_tier',
+          'run_a_m1,1,normal,biome_test,1,20,,,30,0,A',
+          'run_a_m1,2,warden,biome_test,2,25,test_charger,,40,1,A',
+        ].join('\n'),
+        wave_spawns: [
+          'profile,pulse,enemy_id,count,start_frac,end_frac,group_min,group_max,sectors,content_tier',
+          'run_a_m1,1,test_swarmer,12,0,0.9,3,4,,B',
+          'run_a_m1,2,test_swarmer,10,0,0.9,3,4,n|s,A',
+        ].join('\n'),
+      }),
+    );
+    const errors = out.report.errors.join('\n');
+    expect(errors).toContain('warden_id "test_charger" is not a warden');
+    expect(errors).toContain('content_tier B differs from its waves.csv row (A)');
+  });
 });

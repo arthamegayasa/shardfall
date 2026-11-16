@@ -111,14 +111,8 @@ function damageFrom(ctx: SimCtx, eff: EffectSim, power: number): number {
 }
 
 function tagsOf(ctx: SimCtx, eff: EffectSim): number {
-  const tags = pstr(eff.p, 'tags', '');
-  if (tags === '') return hitNow(ctx)?.tagMask ?? 0;
-  let m = 0;
-  for (const t of tags.split('|')) {
-    const i = ctx.data.tags.findIndex((d) => d.id === t);
-    if (i >= 0) m |= 1 << i;
-  }
-  return m;
+  // Resolved once in sim-data (no string split in the hit path).
+  return eff.tagMask >= 0 ? eff.tagMask : (hitNow(ctx)?.tagMask ?? 0);
 }
 
 function burnInRadius(ctx: SimCtx, x: number, y: number, r: number, dps: number): void {

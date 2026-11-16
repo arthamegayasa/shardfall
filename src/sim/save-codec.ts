@@ -3,6 +3,7 @@
 
 import { OfferKind, RNG_STREAMS } from '../core/index.ts';
 import type { LoadResult, RngState, RunSave } from '../core/index.ts';
+import type { GameData } from '../content/index.ts';
 import type { CardChoice, OfferState, SimCtx } from './ctx.ts';
 import { rebuildActiveEffects } from './effects/active.ts';
 import type { StatScratch } from './stats.ts';
@@ -97,6 +98,61 @@ function idx(list: readonly { readonly id: string }[], id: string): number {
 
 function isRngState(v: unknown): v is RngState {
   return Array.isArray(v) && v.length === 4 && v.every((n) => typeof n === 'number');
+}
+
+const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+const isArr = (v: unknown): v is readonly unknown[] => Array.isArray(v);
+const isObj = (v: unknown): v is Readonly<Record<string, unknown>> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/**
+ * Shape and range check before applySave touches the sim (LP review M1-09a): a malformed or
+ * truncated save returns 'corrupt' instead of throwing or loading into a state that cannot advance
+ * (a pulseIndex past the profile, a choice phase without choices). Returns null when the save is usable.
+ */
+export function validateSave(save: unknown, data: GameData): LoadResult | null {
+  const corrupt: LoadResult = { ok: false, reason: 'corrupt' };
+  if (!isObj(save)) return corrupt;
+  if (save['v'] !== 1) return { ok: false, reason: 'badVersion' };
+  const player = save['player'];
+  const shop = save['shop'];
+  const rng = save['rng'];
+  if (
+    !isNum(save['seed']) ||
+    !isNum(save['difficulty']) ||
+    !isNum(save['pulseIndex']) ||
+    !isNum(save['tick']) ||
+    !isNum(save['pendingLevelUps']) ||
+    typeof save['classId'] !== 'string' ||
+    typeof save['profile'] !== 'string' ||
+    !isObj(player) ||
+    !isNum(player['hp']) ||
+    !isNum(player['level']) ||
+    !isNum(player['xp']) ||
+    !isNum(player['glint']) ||
+    !isObj(shop) ||
+    !isArr(shop['offers']) ||
+    !isNum(shop['rerollCount']) ||
+    !isNum(shop['freeRerollsUsed']) ||
+    !isObj(rng) ||
+    !isArr(save['weapons']) ||
+    !isArr(save['mementos']) ||
+    !isArr(save['levelUpPicks']) ||
+    !isArr(save['levelUpChoices']) ||
+    !isArr(save['rewardChoices']) ||
+    !isObj(save['effectState']) ||
+    !isObj(save['runStats'])
+  )
+    return corrupt;
+  const slots = data.profiles[save['profile']];
+  if (slots === undefined) return { ok: false, reason: 'unknownId' };
+  // pulseIndex is the Pulse just cleared; pulse.begin needs a next slot.
+  const pi = save['pulseIndex'];
+  if (pi < 0 || pi + 1 >= slots.length || !Number.isInteger(pi)) return corrupt;
+  const phase = save['phase'];
+  if (phase === 'levelUp' && save['levelUpChoices'].length === 0) return corrupt;
+  if (phase === 'reward' && save['rewardChoices'].length === 0) return corrupt;
+  return null;
 }
 
 /**

@@ -26,22 +26,21 @@ export function songForPhase(phase: RunPhase): string | null {
   }
 }
 
-function enemiesAlive(view: WorldView): number {
-  const e = view.enemies;
-  let n = 0;
-  for (let i = 0; i < e.highWater; i++) if ((e.alive[i] ?? 0) !== 0) n++;
-  return n;
-}
-
-/** Intensity level for the current snapshot; songs without intensity rules stay at 0. */
-export function levelFor(song: CompiledSong, view: WorldView): number {
+/**
+ * Intensity level for the current snapshot; songs without intensity rules stay at 0.
+ * pressure comes from MusicPressureChanged (sim owns the Q21 thresholds from config.csv), so the
+ * director never counts Unlit itself.
+ */
+export function levelFor(song: CompiledSong, view: WorldView, pressure = false): number {
   const rules = song.intensity;
   if (rules === null) return 0;
   const p = view.pulse;
   // TODO(AU, M2): boss levels from boss phase once mus.biome1.boss exists (audio-direction 6.6).
   if (p.isBoss) return rules.max;
   const progress = p.ticksTotal > 0 ? 1 - p.ticksLeft / p.ticksTotal : 0;
-  return computeLevel(rules, p.index + 1, progress, enemiesAlive(view), p.wardenAlive);
+  // computeLevel compares a count with rules.pressure.enemiesAlive; the event decides instead.
+  const alive = pressure ? Number.MAX_SAFE_INTEGER : 0;
+  return computeLevel(rules, p.index + 1, progress, alive, p.wardenAlive);
 }
 
 /** Riser 6 s before the end of a timed Pulse, never while a Warden holds the timer (6.4). */

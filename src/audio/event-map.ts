@@ -80,6 +80,7 @@ export const CODED_EVENTS: readonly string[] = [
   'PhaseChanged',
   'RunEnded',
   'PlayerHpLowChanged',
+  'MusicPressureChanged',
   'WeaponFired',
   'RiteCast',
   'RiteReady',
@@ -101,6 +102,8 @@ export const CODED_EVENTS: readonly string[] = [
 export interface MapSignals {
   /** -1 unchanged, 0 left low HP, 1 entered low HP. */
   lowHp: number;
+  /** -1 unchanged, 0 pressure released, 1 pressure entered (MusicPressureChanged, GD Q21). */
+  pressure: number;
   playerDied: boolean;
   /** Longest telegraph started this frame, seconds (telegraph duck hold). */
   telegraphSec: number;
@@ -348,7 +351,7 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
   let lastGlint = -Infinity;
   let wardenSeq = 0;
   let lastWardenCharge = -Infinity;
-  const signals: MapSignals = { lowHp: -1, playerDied: false, telegraphSec: 0 };
+  const signals: MapSignals = { lowHp: -1, pressure: -1, playerDied: false, telegraphSec: 0 };
 
   function ladderSemis(step: number, ladder: readonly number[]): number {
     if (ladder.length === 0) return 0;
@@ -401,6 +404,7 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
     signals,
     map(ev, out, now, ladder) {
       signals.lowHp = -1;
+      signals.pressure = -1;
       signals.playerDied = false;
       signals.telegraphSec = 0;
       for (let i = 0; i < ev.count; i++) {
@@ -428,6 +432,9 @@ export function createEventMap(data: GameData, cues: CueTable, routes: Routes): 
             break;
           case SimEventType.PlayerHpLowChanged:
             signals.lowHp = a === 1 ? 1 : 0;
+            break;
+          case SimEventType.MusicPressureChanged:
+            signals.pressure = a === 1 ? 1 : 0;
             break;
           case SimEventType.WeaponFired:
             out.add(wFire[a] ?? NONE, Number.NaN, wSemis[a] ?? 0, 0, 0);

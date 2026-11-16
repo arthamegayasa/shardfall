@@ -26,6 +26,8 @@ export interface Sim {
   load(save: RunSave): LoadResult;
   /** FNV-1a 32-bit over the canonical sim state (architecture 8.4). */
   hash(): number;
+  /** Spawns skipped because a pool or soft cap was full (getPerf().poolOverflow). M1-09a, additive. */
+  readonly poolOverflow: number;
 }
 
 export type LoadResult =

@@ -49,7 +49,7 @@ export default defineConfig(({ command, mode }) => {
       sourcemap: isE2e,
       assetsInlineLimit: 0,
       // three.js alone is ~500 kB minified; the real gate is the gzip budget (architecture 13).
-      chunkSizeWarningLimit: 900,
+      chunkSizeWarningLimit: 1200,
     },
     preview: { port: isE2e ? 4174 : 4173, strictPort: true },
     server: { port: 5173 },

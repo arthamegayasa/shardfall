@@ -47,7 +47,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     live.setAttribute('aria-live', 'polite');
     live.setAttribute('role', 'status');
     const smallWindow = h(doc, 'div', 'small-window', t('ui.common.small_window'));
-    layer.append(screenLayer, live, smallWindow);
+    const countdown = h(doc, 'div', 'resume-countdown');
+    countdown.setAttribute('aria-hidden', 'true');
+    layer.append(screenLayer, countdown, live, smallWindow);
     deps.root.appendChild(layer);
 
     let appScreen: AppScreen = 'title';
@@ -90,7 +92,13 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       layer.classList.toggle('solid-panels', s.access.solidPanels);
       layer.dataset['cv'] = s.access.colorVision;
       if (prev?.access.textScale !== s.access.textScale) applyScale();
-      if (prev !== null && prev.access.showFlavor !== s.access.showFlavor && current !== null) {
+      // Rebuild a screen that shows flavor text; the Settings screen itself keeps its focus.
+      if (
+        prev !== null &&
+        prev.access.showFlavor !== s.access.showFlavor &&
+        current !== null &&
+        activeId !== 'settings'
+      ) {
         current.enter(activeId);
       }
     };
@@ -342,6 +350,11 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
         readEvents(view, events);
         route();
         current?.update?.(view, events);
+      },
+      setResumeCountdown(n) {
+        const on = n > 0;
+        layer.classList.toggle('is-counting', on);
+        countdown.textContent = on ? String(Math.ceil(n)) : '';
       },
       get activeScreenId() {
         return activeId;

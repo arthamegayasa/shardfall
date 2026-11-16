@@ -2,6 +2,7 @@
 // 300 ms. Esc opens pause (the pick is mandatory). DOM rebuilds only when the view revision changes.
 
 import type { ScreenId } from '../../core/dom.ts';
+import { SimEventType } from '../../core/index.ts';
 import type { WorldView } from '../../core/index.ts';
 import { h, put } from '../dom.ts';
 import { buildLevelUpModel, buildRewardModel } from '../presenters/choices.ts';
@@ -105,7 +106,10 @@ export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): 
       }
       ctx.lockInput(CHOICE_LOCK_MS);
     },
-    update(view) {
+    update(view, events) {
+      // A rejected pick (e.g. the sim moved on) must not leave the cards dead until a new revision.
+      for (let i = 0; i < events.count; i++)
+        if (events.type[i] === SimEventType.CommandRejected) picked = false;
       const rev = mode === 'levelUp' ? view.levelUp.revision : view.reward.revision;
       if (rev !== revision || view.phaseRevision !== phaseRevision) {
         // A new card set (next level in the queue) gets its own input lock.

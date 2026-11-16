@@ -6,6 +6,7 @@ import type { GameData, TagId } from '../../content/index.ts';
 import { synergyTierFor } from '../../content/index.ts';
 import { OfferKind } from '../../core/index.ts';
 import type { ShopOfferView, WorldView } from '../../core/index.ts';
+import type { StringParams } from '../../core/index.ts';
 import { mementoInfo, mementoRarityOrder, synergiesOf, weaponInfo } from './content.ts';
 import type { ItemInfo } from './content.ts';
 
@@ -159,6 +160,7 @@ export interface TagPreview {
   readonly isNewTag: boolean;
   /** Description key of the synergy tier this purchase would unlock, null when none. */
   readonly unlockDescKey: string | null;
+  readonly unlockParams: StringParams;
 }
 
 /**
@@ -174,9 +176,15 @@ export function tagPreview(model: ShopModel, data: GameData, offer: OfferCard): 
     const thresholds = syn.map((s) => s.threshold);
     const before = synergyTierFor(count, thresholds);
     const after = synergyTierFor(count + add, thresholds);
-    const unlock =
-      after > before ? (syn.find((s) => s.threshold === after)?.descKey ?? null) : null;
-    return { tag, count, newCount: count + add, isNewTag: count === 0, unlockDescKey: unlock };
+    const step = after > before ? syn.find((s) => s.threshold === after) : undefined;
+    return {
+      tag,
+      count,
+      newCount: count + add,
+      isNewTag: count === 0,
+      unlockDescKey: step?.descKey ?? null,
+      unlockParams: step?.params ?? {},
+    };
   });
 }
 

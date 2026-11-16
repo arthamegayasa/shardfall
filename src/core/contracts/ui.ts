@@ -77,6 +77,11 @@ export interface Ui {
   setScreen(screen: AppScreen): void;
   /** Called every frame. reward, levelUp, shop screens derive from view.phase. */
   update(view: WorldView, events: SimEventReader): void;
+  /**
+   * Resume countdown after pause during a Pulse (ui-spec S06): 3, 2, 1 shown in the timer slot,
+   * 0 hides it. The loop is held meanwhile, so update() is not called. M1-09a, additive.
+   */
+  setResumeCountdown(n: number): void;
   readonly activeScreenId: ScreenId;
   dispose(): void;
 }

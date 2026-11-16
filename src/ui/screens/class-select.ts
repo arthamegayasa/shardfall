@@ -4,7 +4,7 @@
 import type { ClassDef } from '../../content/index.ts';
 import { button, h, put, setText } from '../dom.ts';
 import { ceilSeconds, formatStatValue } from '../format.ts';
-import { weaponParams } from '../presenters/content.ts';
+import { classPassiveParams, weaponParams } from '../presenters/content.ts';
 import { panel, titleBlock } from './components.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
@@ -71,7 +71,7 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
       rite === undefined ? '' : t('ui.class.cooldown', { s: ceilSeconds(rite.cooldownTicks) }),
     );
     setText(dPassiveLabel, t('ui.class.passive'));
-    setText(dPassive, t(`class.${c.id}.passive`));
+    setText(dPassive, t(`class.${c.id}.passive`, classPassiveParams(deps.data, c.id)));
     detail.classList.toggle('is-locked', isLocked(c));
   };
 

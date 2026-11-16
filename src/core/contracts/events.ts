@@ -57,6 +57,8 @@ export const SimEventType = {
   CommandRejected: 67,
   RewardShown: 68,
   RewardChosen: 69,
+  // adaptive music (M1-09a, additive)
+  MusicPressureChanged: 70,
 } as const;
 export type SimEventType = (typeof SimEventType)[keyof typeof SimEventType];
 
