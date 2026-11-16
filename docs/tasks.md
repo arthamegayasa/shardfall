@@ -6,8 +6,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 
 | Milestone | Status | Catatan |
 |---|---|---|
-| M0 Konsep dan pilar | BERJALAN | Dimulai 2026-11-16 |
-| M1 Prototipe main loop | BELUM | |
+| M0 Konsep dan pilar | SELESAI | Semua dokumen SETUJU / SETUJU DENGAN CATATAN, pilar dan style guide v1.1 dikunci CD |
+| M1 Prototipe main loop | BERJALAN | Dimulai 2026-11-17 |
 | M2 Vertical slice HD-2D | BELUM | |
 | M3 Konten penuh | BELUM | |
 | M4 Polish dan QA | BELUM | |
@@ -24,16 +24,31 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | ID | Tugas | Pemilik | Reviewer | Status |
 |---|---|---|---|---|
 | M0-01 | vision.md, pillars.md, style-guide.md | CD | Producer (scope) | SELESAI (scope disetujui Producer) |
-| M0-02 | gdd.md | GD | CD, LP | BERJALAN |
-| M0-03 | architecture.md, coding-standards.md | LP | Producer | BERJALAN |
-| M0-04 | art-direction.md, art-pipeline.md, konsep mood | AD | CD | BERJALAN |
-| M0-05 | audio-direction.md, audio-list.md | AU | CD | BERJALAN |
-| M0-06 | lore-premise.md, glossary.md | WR | CD | BERJALAN |
-| M0-07 | arena-design.md | LD | CD | BERJALAN |
-| M0-08 | ui-spec.md, wireframe | UI | CD | BERJALAN |
-| M0-09 | test-plan.md, accessibility.md | QA | Producer | BERJALAN |
-| M0-10 | Pertanyaan spec untuk GD | GP | GD | BELUM |
-| M0-11 | Review kreatif dan teknis M0 | CD, LP | Producer | BELUM |
+| M0-02 | gdd.md | GD | CD, LP | SETUJU DENGAN CATATAN, GD menjawab Q01-Q41 |
+| M0-03 | architecture.md, coding-standards.md | LP | Producer | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-04 | art-direction.md, art-pipeline.md, konsep mood | AD | CD | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-05 | audio-direction.md, audio-list.md | AU | CD | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-06 | lore-premise.md, glossary.md | WR | CD | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-07 | arena-design.md | LD | CD | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-08 | ui-spec.md, wireframe | UI | CD | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-09 | test-plan.md, accessibility.md | QA | Producer | SETUJU DENGAN CATATAN (perbaikan dibawa ke tugas M1) |
+| M0-10 | Pertanyaan spec untuk GD | GP | GD | SELESAI (docs/specs/gp-questions-m0.md) |
+| M0-11 | Review kreatif dan teknis M0 | CD, LP | Producer | SELESAI (docs/reviews/M0-cd.md, M0-lp.md) |
+
+## Tugas M1
+
+| ID | Tugas | Pemilik | Reviewer | Status |
+|---|---|---|---|---|
+| M1-00 | Jawab pertanyaan GP, perbaikan review M0 di gdd dan data-schema | GD | LP | BERJALAN |
+| M1-01 | Kerangka proyek, kontrak, pipeline data, CI, deploy Pages | LP | QA | BERJALAN |
+| M1-02 | Data M1 (CSV) dan model balance | GD | LP | BELUM |
+| M1-03 | Core loop sim | GP | LP, QA | BELUM |
+| M1-04 | HUD, toko, level-up, akhir run | UI | LP, CD | BELUM |
+| M1-05 | Placeholder berskala benar | AD | CD, LP | BELUM |
+| M1-06 | SFX placeholder | AU | CD, LP | BELUM |
+| M1-07 | Arena prototipe | LD | CD, LP | BELUM |
+| M1-08 | String table awal | WR | CD | BELUM |
+| M1-09 | Review kode, uji build, catatan rasa main | LP, QA, CD | Producer | BELUM |
 
 ## Keputusan
 
@@ -45,3 +60,12 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | 2026-11-16 | Scope 1.0: Tingkat A (vision.md 7.2) adalah lantai rilis wajib, Tingkat B target berkomitmen, Tingkat C dikejar bila waktu cukup (bioma tambahan memakai ulang Unlit dengan palet cahaya berbeda). GD merancang struktur data untuk C sejak awal | Producer | Waktu produksi satu malam, prioritas rasa main dan keterbacaan |
 | 2026-11-16 | Font: font bitmap pixel buatan tim (data di kode) bila sempat; placeholder dan cadangan memakai font sistem monospace. Tidak mengunduh font eksternal | Producer | Lisensi bersih, tanpa jaringan |
 | 2026-11-16 | Kamera ortografis miring sekitar 40 derajat, 1 px sprite = 3 px layar di 1080p sebagai titik awal kalibrasi M1 | CD (usul), LP dan AD kalibrasi | style-guide.md |
+| 2026-11-16 | Lisensi proyek: hak cipta Dok (all rights reserved) sampai Dok memilih lisensi terbuka. Kolom lisensi aset di credits: "Buatan tim, hak cipta proyek" | Producer | Langkah paling aman dan bisa diubah kapan saja oleh Dok |
+| 2026-11-16 | Safari asli tidak tersedia di Windows: WebKit Playwright dipakai sebagai proksi, dicatat sebagai keterbatasan. Unduh Firefox Playwright diizinkan | Producer | Alat tes gratis, tanpa pembelian |
+| 2026-11-16 | Uji screenshot 1 detik (P2-a): subagent proksi selama produksi; konfirmasi manusia (Dok) dicatat sebagai sisa setelah rilis | Producer | Dok tidak tersedia malam ini |
+| 2026-11-16 | Tab ditutup di tengah Pulse: lanjut dari autosave toko terakhir. Diterima | Producer | Sesuai architecture.md |
+| 2026-11-16 | Urutan M1: blok pembuka LP (kerangka dan kontrak dibekukan) lebih dulu, lalu peran lain paralel. Dependensi npm usulan LP disetujui (three, typescript, vite, vitest, @playwright/test, eslint, typescript-eslint, @eslint/js, globals, prettier, @types/three) | Producer | architecture.md bagian 16 |
+| 2026-11-17 | Keepsake diganti Memento (identifier `memento`). Istilah Temper, Fuse, The Keeping, Crack, Vitrine Steady, Light Kept, bioma The Moth Market / Vesper Steps / Stillfire Vineyard, kelas Lamplighter / Chorister / Vintner disetujui | CD | Risiko nama sistem Hades; docs/reviews/M0-cd.md |
+| 2026-11-17 | Kamera pitch asin(0.625) = 38.68 derajat, 1 u = 16 px lebar dan 10 px kedalaman, arena 32 x 20 u | LP | docs/reviews/M0-lp.md |
+| 2026-11-17 | @types/node disetujui. @vitest/coverage-v8 tidak dipakai | Producer | Hemat dependensi |
+| 2026-11-17 | Perbaikan dokumen kecil dari review M0 untuk WR, AD, AU, LD, UI, QA dikerjakan sebagai langkah pertama tugas M1 masing-masing, bukan putaran terpisah | Producer | Hemat waktu, tidak menghalangi M1 |

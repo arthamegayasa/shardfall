@@ -1,6 +1,6 @@
 # Shardfall: Pilar Desain
 
-Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1, 2026-11-16).
+Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Perubahan versi 1.1 dari review M0: cara ukur badan Unlit di P2-c, uji baru P4-f (toko singkat tanpa timer).
 
 Pilar mengalahkan semua dokumen lain. Setiap fitur, aset, dan teks harus lolos uji pilar yang relevan sebelum disetujui. Penomoran mengikuti handoff agar rujukan seperti "Pilar 2" di kriteria milestone tetap sama.
 
@@ -26,8 +26,8 @@ Cara memakai uji: setiap uji punya pemilik pelaksana dan milestone pertama kali 
 
 | ID | Uji | Cara verifikasi | Lolos bila | Pelaksana, mulai |
 |---|---|---|---|---|
-| P1-a | Rasio item pengubah gaya | Hitung di data GD: item (senjata, skill, Keepsake) yang efeknya hanya stat datar tanpa syarat | Item stat datar paling banyak 30% dari pool toko; sisanya mengubah perilaku atau punya syarat | GD dan CD, M0 (GDD) dan tiap update data |
-| P1-b | Tag di setiap item | Cek kolom tag di CSV | 100% senjata dan Keepsake punya minimal 1 tag sinergi | GD, M1 |
+| P1-a | Rasio item pengubah gaya | Hitung di data GD: item (senjata, skill, Memento) yang efeknya hanya stat datar tanpa syarat | Item stat datar paling banyak 30% dari pool toko; sisanya mengubah perilaku atau punya syarat | GD dan CD, M0 (GDD) dan tiap update data |
+| P1-b | Tag di setiap item | Cek kolom tag di CSV | 100% senjata dan Memento punya minimal 1 tag sinergi | GD, M1 |
 | P1-c | Ragam build bot | Simulasi atau bot 50 run ber-seed dengan pilihan acak yang wajar | Tidak ada satu tag yang menjadi tag dominan di lebih dari 40% run | GD dengan QA, M3 |
 | P1-d | Ragam build manusia | 3 run berurutan dengan kelas sama, catat 3 item yang paling memengaruhi run | Minimal 2 dari 3 run punya tag dominan berbeda, dan penguji bisa menyebut beda cara mainnya dalam satu kalimat | CD, M2 |
 | P1-e | Sinergi terlihat | Kumpulkan ambang tag pertama di satu run | Efek sinergi terlihat atau terdengar di arena (bukan hanya angka di menu) | CD, M2 |
@@ -52,11 +52,11 @@ Cara memakai uji: setiap uji punya pemilik pelaksana dan milestone pertama kali 
 |---|---|---|---|---|
 | P2-a | Uji screenshot 1 detik | Ambil screenshot di detik paling ramai (jumlah musuh puncak). Tampilkan 1 detik ke penguji yang belum melihatnya, lalu minta ia menunjuk pemain dan ancaman terdekat | Penguji menunjuk keduanya dengan benar di minimal 4 dari 5 screenshot | QA dan CD, M2 (versi placeholder di M1) |
 | P2-b | Uji grayscale | Ubah screenshot ramai ke grayscale | Tiga lapis nilai jelas terpisah: pemain paling terang, lantai sedang, Unlit paling gelap. Proyektil musuh tetap terlihat | AD, M1 |
-| P2-c | Kontras terukur | Ukur rasio kontras luminans (rumus WCAG) pada screenshot final, bukan pada hex mentah | Inti proyektil musuh vs lantai minimal 4.5:1. Sorotan pemain (cyan, emas, putih) vs lantai minimal 3.5:1. Badan Unlit vs lantai minimal 2:1 | AD dan QA, M2 |
+| P2-c | Kontras terukur | Ukur rasio kontras luminans (rumus WCAG) pada screenshot final, bukan pada hex mentah | Inti proyektil musuh vs lantai minimal 4.5:1. Sorotan pemain (cyan, emas, putih) vs lantai minimal 3.5:1. Badan Unlit vs lantai diukur per aktor: median piksel badan tiap aktor minimal 2:1 dan persentil 10 tiap aktor minimal 1.5:1, outline `ink` dan rim `unlit-rim` utuh. Piksel di bawah isian telegraf bahaya tidak dihitung (telegraf sendiri sudah menandai bahaya) | AD dan QA, M2 |
 | P2-d | Kode warna tidak tertukar | Audit palet tiap sprite dan VFX | Nol piksel merah, magenta, atau ungu terang pada pemain dan efeknya. Nol piksel biru, cyan, atau emas pada Unlit dan bahaya | AD (otomatis lewat skrip bila bisa), M1 |
 | P2-e | Bahaya selalu ditelegrafkan | Rekam serangan setiap jenis musuh, Warden, dan boss | Setiap serangan yang memberi damage punya tanda visual sebelum kena (durasi minimum ditentukan GD; saran CD minimal 0.4 detik untuk serangan area). Serangan sentuh biasa tidak perlu telegraf | GP dan CD, M2 |
 | P2-f | Urutan gambar | Cek render order | Proyektil musuh dan telegraf digambar di atas efek pemain. Efek pemain tidak pernah menutupi proyektil musuh | LP dan AD, M1 |
-| P2-g | Apa yang baru terjadi | Saat pemain kena hit, level up, atau dapat Keepsake | Masing-masing punya tanda visual dan suara yang berbeda dan bisa dikenali tanpa melihat HUD | CD, M2 |
+| P2-g | Apa yang baru terjadi | Saat pemain kena hit, level up, atau dapat Memento | Masing-masing punya tanda visual dan suara yang berbeda dan bisa dikenali tanpa melihat HUD | CD, M2 |
 
 ### Kriteria tolak
 - Efek pemain (proyektil, ledakan, bloom) menutupi proyektil atau telegraf musuh.
@@ -109,6 +109,7 @@ Cara memakai uji: setiap uji punya pemilik pelaksana dan milestone pertama kali 
 | P4-c | Langkah beli | Hitung input | Membeli satu item maksimal 2 klik atau 2 tombol dari layar toko. Tidak ada menu bertingkat lebih dari 1 level selama run | UI, M1 |
 | P4-d | Dampak terlihat | Beli item baru, mulai Pulse berikutnya | Dalam 5 detik pertama Pulse, item baru terlihat atau terdengar di arena (proyektil baru, aura, suara, perubahan sprite atau efek). Pengecualian: item pengisi stat datar (kuota Pilar 1) | CD, M2 |
 | P4-e | Info yang cukup | Saat memilih, pemain melihat Glint yang dimiliki, harga, dan tag yang sudah terkumpul tanpa pindah layar | Semua tampil di layar toko yang sama | UI dan CD, M2 |
+| P4-f | Toko tetap singkat tanpa timer | Catat waktu dari toko terbuka sampai Begin Pulse (termasuk Temper) di playtest | Median 25 detik atau kurang per toko. Bila median di atas 30 detik, CD meninjau ulang (opsi: timer toko opsional, kurangi info) | CD dengan QA, M2 |
 
 ### Kriteria tolak
 - Efek lebih dari 2 baris, atau efek yang hanya bisa dipahami lewat tooltip berlapis.

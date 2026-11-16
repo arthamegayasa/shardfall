@@ -1,6 +1,6 @@
 # Shardfall: Style Guide
 
-Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1, 2026-11-16).
+Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Daftar perubahan versi 1.1 dari review M0 ada di bagian 6.
 Berlaku untuk: Art Director, UI Programmer, Audio Director, Writer, Level Designer, Gameplay Programmer.
 Dasar: `docs/vision.md` dan `docs/pillars.md`. Bila bertentangan, pilar yang menang.
 
@@ -41,7 +41,7 @@ Penanda: **[Wajib]** tidak boleh dilanggar tanpa persetujuan CD. **[Saran]** bol
 | `kept-blue-deep` | `#2449A8` | Bayangan pada sprite pemain |
 | `kept-cyan` | `#4FE3F0` | Serangan, proyektil, efek pemain, cincin penanda di bawah kaki |
 | `kept-white` | `#F2FBFF` | Inti proyektil pemain, sorotan terkuat |
-| `kept-gold` | `#FFC94A` | Hadiah: Glint, level up, Keepsake, Rite siap, pilihan aktif di UI |
+| `kept-gold` | `#FFC94A` | Hadiah: Glint, level up, Memento, Rite siap, pilihan aktif di UI |
 | `glint` | `#FFD966` | Inti butir Glint (dengan outline `ink`) |
 
 **Kubu bahaya (Unlit): merah, magenta, ungu terang**
@@ -73,6 +73,8 @@ Rasio kontras yang sudah dicek pada hex mentah (luminans WCAG): `danger-core` vs
 - Sprite pemain: minimal 15% piksel adalah sorotan terang (`kept-cyan`, `kept-gold`, atau `kept-white`) agar pemain lolos uji grayscale.
 - Proyektil musuh selalu tiga lapis: inti `danger-core`, cincin `danger-magenta` (atau merah atau ungu), outline `ink`. Bentuk bulat atau simetris agar tidak perlu diputar.
 - Proyektil pemain: inti `kept-white`, badan `kept-cyan`, tanpa outline (membedakan dari proyektil musuh secara bentuk juga).
+- Emas kecil di area main selalu berarti Glint atau hadiah. Penanda status milik pemain yang menempel di atas Unlit (Burn dan sejenisnya) memakai `kept-cyan` dan `kept-white` ("api kaca biru"), bukan emas. Isian area api milik pemain (ledakan Lantern Bolt, zona Rite) boleh `kept-gold` dengan opasitas maksimal 25%.
+- Audit P2-d dilakukan per kepemilikan sprite dan VFX, bukan per tumpang tindih di layar: efek pemain yang digambar di atas Unlit tetap efek pemain.
 - Cahaya lingkungan hangat (lentera) memakai amber redup, bukan emas jenuh. Batas: saturasi cahaya lingkungan di bawah 60% dan tidak pernah dipakai sebagai warna objek kecil di area main.
 - Mode buta warna (milik QA dan UI): kode tetap dibedakan juga oleh bentuk dan nilai (inti pucat plus outline untuk bahaya, cincin kaki untuk pemain), bukan hanya hue.
 
@@ -81,6 +83,12 @@ Rasio kontras yang sudah dicek pada hex mentah (luminans WCAG): `danger-core` vs
 - Skala layar [Asumsi, kalibrasi M1]: 1 piksel sprite = 3 piksel layar pada 1920x1080, 2 piksel layar pada 1280x720 dan 1366x768. Hanya kelipatan integer.
 - Kerapatan texel lantai dan dekorasi sama dengan kerapatan piksel sprite di layar. [Wajib]
 - Kamera: tetap, miring sekitar 40 derajat dari horizontal, tidak berputar. [Saran untuk LP dan AD] Kamera ortografis agar skala pixel konstan di seluruh area main. Sprite aktor berupa billboard menghadap kamera.
+- **Rasa gerak terhadap kemiringan kamera** [Wajib secara rasa, implementasi milik LP dan GP, angka milik GD]: kamera miring membuat gerak ke atas dan bawah layar tampak lebih lambat (faktor kedalaman sekitar 0.63 sampai 0.67). Arah yang diputuskan:
+  1. Arah input sama dengan arah di layar: W+D tampak bergerak diagonal 45 derajat di layar.
+  2. Kecepatan layar pemain ke atas atau bawah ditargetkan 80% dari kecepatan ke samping (rentang kalibrasi M1: 75 sampai 85%). Tanpa kompensasi terasa berat; kompensasi penuh (100%) membuat lantai terasa rata dan menghilangkan rasa miniatur.
+  3. Kompensasi hanya pada gerak yang dikendalikan input pemain (jalan dan dash Rite). Bentuk area, jangkauan, proyektil, dan telegraf tetap jujur di lantai dunia (lingkaran tetap lingkaran di lantai dan tampil elips). Yang terlihat selalu sama dengan yang terjadi (Pilar 2).
+  4. Unlit tidak dikompensasi secara default. GD boleh menambah kompensasi yang sama pada Unlit bila playtest menunjukkan kabur vertikal terlalu mudah.
+  5. Rasio disimpan di data agar CD bisa menyetel rasa di M1 tanpa mengubah kode.
 
 | Aktor | Tinggi sprite (px) | Bingkai (px) |
 |---|---|---|
@@ -134,7 +142,7 @@ Aturan bentuk:
 - Kematian pemain: Kept pecah menjadi serpihan kaca biru dan cyan, layar melambat sebentar.
 
 ### 1.9 Lingkungan dan arena (untuk LD dan AD)
-- Area main: lantai polos atau pola sangat halus, saturasi di bawah 15%, nilai antara `floor-mid` dan `floor-lit`.
+- Area main: lantai polos atau pola sangat halus, nilai antara `floor-mid` dan `floor-lit`. Saturasi diukur tiga cara [Wajib]: (a) albedo tekstur di bawah 15% HSV; (b) median saturasi lantai area main pada render akhir paling tinggi 15%, dengan target desain 13% atau kurang agar ada ruang untuk variasi cahaya three.js; (c) blok 8x8 piksel mana pun di area main paling tinggi 25% (kolam cahaya lentera di tepi).
 - Dekorasi tinggi hanya di tepi luar arena dan di sisi atas layar (latar jauh), tidak di sisi bawah layar agar tidak menutupi aktor.
 - Low-poly dengan tekstur piksel dari palet. Jumlah objek dekorasi mengikuti anggaran LP.
 - Minimal 3 elemen bergerak di lingkungan (lentera berkedip, debu kaca melayang, kain bergoyang) agar diorama terasa hidup.
@@ -148,12 +156,16 @@ Aturan bentuk:
 - Sudut terpotong miring 2 piksel (seperti tepi pecahan kaca), bukan sudut bulat.
 - Satu garis kilau kaca tipis di sudut kiri atas panel utama (opsional, bisa dimatikan bersama efek).
 - Elemen terpilih atau fokus: bingkai `kept-gold`. Elemen tidak aktif: teks `dust` dengan opasitas 50%.
-- Kartu item: ikon besar di atas, nama, maksimal 2 baris efek, baris tag (ikon kecil tag), harga dengan ikon Glint. Bingkai kartu memakai warna rarity.
+- Kartu item berbentuk **baris**: ikon besar (32 satuan) di kiri, lalu nama, maksimal 2 baris efek, flavor opsional, baris tag (ikon kecil tag), harga dengan ikon Glint di kanan. Kartu ditumpuk vertikal agar efek 2 x 40 karakter muat pada ukuran teks minimum dan nama sejajar kiri untuk dipindai. Bingkai kartu memakai warna rarity plus pip rarity (bukan hanya warna).
 - Merah di UI hanya untuk bahaya nyata (HP rendah, boss datang).
 - Tidak meniru jendela, menu, atau tata letak game lain.
 
 ### 2.2 HUD saat Pulse [Wajib]
 Hanya: HP, waktu Pulse, jumlah Glint, cooldown Rite. Boleh ditambah bar XP tipis. Tidak ada elemen lain. HUD di tepi layar, tidak di tengah.
+
+Slot waktu Pulse berubah isi, jumlah elemen tetap:
+- **Pulse boss** (tanpa batas waktu): slot waktu menjadi bar HP boss dengan nama boss di atasnya. Isian `danger-violet`, bingkai tipis, tanpa angka besar.
+- **Warden menahan Pulse** (waktu habis, Warden masih hidup): slot waktu menjadi bar HP Warden dengan label "Held" (string table), komponen yang sama dengan bar boss. Pemain selalu tahu apa yang harus dilakukan agar Pulse berakhir.
 
 ### 2.3 Tipografi
 - **Font bitmap pixel buatan tim**, didefinisikan sebagai data (glyph sekitar 5x7 di sel 6x9), huruf besar, huruf kecil, angka, dan tanda baca dasar. Dicatat di `docs/credits.md`. [Saran untuk AD dan UI] Placeholder M1 boleh memakai font sistem sans-serif.
@@ -163,9 +175,9 @@ Hanya: HP, waktu Pulse, jumlah Glint, cooldown Rite. Boleh ditambah bar XP tipis
 - Opsi ukuran teks (aksesibilitas) memperbesar skala integer.
 
 ### 2.4 Aturan teks singkat [Wajib]
-- Nama item, Keepsake, skill: maksimal 3 kata dan maksimal 18 karakter.
+- Nama item, Memento, skill: maksimal 3 kata dan maksimal 18 karakter.
 - Efek: maksimal 2 baris, sekitar 40 karakter per baris. Kata kerja di depan, angka eksplisit.
-- Flavor Keepsake: maksimal 1 baris, maksimal 70 karakter, tampil warna `dust` di bawah efek. Boleh disembunyikan.
+- Flavor Memento: maksimal 1 baris, maksimal 70 karakter, tampil warna `dust` di bawah efek. Boleh disembunyikan.
 - Judul layar 1 sampai 2 kata ("The Glazier", "Pulse 7", "Kept Lost").
 - Tombol: 1 sampai 2 kata kerja ("Reroll", "Begin Pulse").
 - Semua teks dari string table Writer, tidak di-hardcode.
@@ -186,7 +198,7 @@ Palet suara yang realistis untuk sintesis Web Audio [Saran untuk AU]:
 - Drone rendah untuk the Unlit.
 
 Musik:
-- Musik Pulse: modus minor (aeolian atau dorian), sekitar 110 sampai 125 BPM [Asumsi], loop 8 sampai 16 birama, 3 lapis intensitas (dasar, perkusi, melodi atau arpeggio) plus riser di sekitar 5 detik terakhir Pulse.
+- Musik Pulse: modus minor (aeolian atau dorian), sekitar 110 sampai 125 BPM [Asumsi], loop 8 sampai 16 birama, 3 lapis intensitas (dasar, perkusi, melodi atau arpeggio) plus riser 6 detik terakhir Pulse (selaras lonjakan spawn GDD; dua detik terakhir tanpa spawn menjadi puncak riser).
 - Musik toko: tenang, sekitar 70 sampai 80 BPM, jarang, lonceng kaca dan petik.
 - Motif tanda tangan: awal Pulse = lonceng kaca rendah; akhir Pulse = akor kaca naik; the Glazier datang = denting kecil plus dengung topeng.
 - Semua melodi dibuat tim. Dilarang memakai, me-remix, atau meniru melodi berhak cipta.
@@ -194,7 +206,7 @@ Musik:
 ### 3.2 Hierarki SFX (prioritas tertinggi dulu) [Wajib]
 1. Pemain kena hit.
 2. Telegraf bahaya musuh (serangan area, terjang, peledak).
-3. Level up dan dapat Keepsake.
+3. Level up dan dapat Memento.
 4. Pungut Glint.
 5. Unlit mati.
 6. Serangan otomatis pemain.
@@ -219,7 +231,7 @@ Berlaku untuk serangan otomatis, Unlit mati, dan pungut Glint:
 Fantasi gelap yang ringkas, sedikit misterius, melankolis hangat. Kalimat pendek, benda konkret, kata kerja kuat. Dunia diceritakan lewat benda dan nama, bukan penjelasan. Teks game berbahasa Inggris.
 
 Contoh arah (ilustrasi gaya, bukan konten final):
-- Nama Keepsake: "Ember Ring", "Ferry Token", "Unsent Letter".
+- Nama Memento: "Ember Ring", "Ferry Token", "Unsent Letter".
 - Efek: "Hits ignite foes. Burning foes spread flame on death."
 - Flavor: "Still warm from a hand that never let go."
 - Akhir run: "Kept Lost. Another wakes beneath the glass."
@@ -228,7 +240,7 @@ Contoh arah (ilustrasi gaya, bukan konten final):
 
 | Jenis | Batas |
 |---|---|
-| Item, Keepsake, skill, Rite | Maksimal 3 kata, maksimal 18 karakter |
+| Item, Memento, skill, Rite | Maksimal 3 kata, maksimal 18 karakter |
 | Unlit (jenis musuh) | Maksimal 2 kata |
 | Warden dan boss | Nama maksimal 3 kata, boleh dengan julukan pendek ("the Many-Jointed") |
 | Kelas | 1 kata |
@@ -239,15 +251,15 @@ Contoh arah (ilustrasi gaya, bukan konten final):
 Gaya efek: kata kerja di depan, angka eksplisit, istilah konsisten dengan glosarium, tanpa kata "you" bila bisa dihindari. Flavor harus selaras dengan efek mekanik (efek api, flavor menyinggung panas atau api).
 
 ### 4.3 Kata terlarang (teks game)
-- Nama dan istilah khas game lain: Octopath, Traveler (sebagai nama kelas atau gelar), Brotato, Square Enix, Materia, Estus, Boon, Soul (sebagai mata uang), dan sejenisnya. Writer mengecek setiap istilah utama terhadap game lain.
-- Istilah generik yang sudah kita ganti: Wave (pakai Pulse), Shop atau Store (pakai the Glazier), Gold, Coin, XP, EXP (pakai Glint), Relic (pakai Keepsake), Elite (pakai Warden), Ultimate atau Special (pakai Rite).
+- Nama dan istilah khas game lain: Octopath, Traveler (sebagai nama kelas atau gelar), Brotato, Square Enix, Materia, Estus, Boon, Keepsake (sistem Hades), Soul (sebagai mata uang), Unkindled, Ashen, Hollow, dan sejenisnya. Writer mengecek setiap istilah utama terhadap game lain.
+- Istilah generik yang sudah kita ganti: Wave (pakai Pulse), Shop atau Store (pakai the Glazier), Gold, Coin, XP, EXP (pakai Glint), Relic (pakai Memento), Elite (pakai Warden), Ultimate atau Special (pakai Rite).
 - Klise: "ancient evil", "chosen one", "destiny", "darkness falls", "hero".
 - Gaul dan meme: "OP", "epic", "loot", "lol", "noob", "GG".
 - Kekerasan grafis: blood, gore, guts, dan sejenisnya.
 - Tanda baca: tanpa em dash, baik di teks game maupun dokumen tim.
 
 ### 4.4 Kapitalisasi istilah
-the Pane, the Unlit (an Unlit), Vitrine, Kept, the Glazier, Glint, Silt, Keepsake, Warden, Rite, Pulse. Tag sinergi selalu kapital: Flame, Shard, Edge, Echo, Ward, Trade.
+the Pane, the Unlit (an Unlit), Vitrine, Kept, the Glazier, Glint, Silt, Memento (jamak Mementos), Warden, Rite, Pulse, Temper, Fuse, The Keeping, Crack. Tag sinergi selalu kapital: Flame, Shard, Edge, Echo, Ward, Trade. Kata "crack" huruf kecil (retakan) tetap boleh di flavor; "Crack" kapital hanya untuk tingkat kesulitan.
 
 ---
 
@@ -313,3 +325,21 @@ CD memakai checklist ini untuk putusan SETUJU, SETUJU DENGAN CATATAN, atau TOLAK
 - [ ] Item baru terasa di Pulse berikutnya (P4-d).
 - [ ] Tidak ada upgrade stat datar di luar kuota pengisi (P1-a).
 - [ ] Kematian selalu bisa dijelaskan pemain ("aku mati karena...").
+
+---
+
+## 6. Perubahan versi 1.1 (review M0, 2026-11-16)
+
+Sumber dan alasan: `docs/reviews/M0-cd.md`.
+
+| Bagian | Perubahan |
+|---|---|
+| Semua | Keepsake diganti Memento (risiko nama sistem Hades) |
+| 1.3 | Penanda status pemain di atas Unlit memakai cyan dan putih, bukan emas; isian area api pemain boleh emas maksimal 25%; audit P2-d per kepemilikan |
+| 1.4 | Arah rasa gerak terhadap kemiringan kamera (target kecepatan vertikal layar 80%) |
+| 1.9 | Saturasi lantai diukur tiga cara: albedo, median render, blok 8x8 |
+| 2.1 | Kartu item berbentuk baris, ikon di kiri |
+| 2.2 | Slot waktu menjadi bar HP boss atau bar HP Warden saat Pulse ditahan |
+| 3.1 | Riser 6 detik (bukan sekitar 5) |
+| 4.3 | Kata terlarang ditambah Keepsake, Unkindled, Ashen, Hollow |
+| 4.4 | Kapitalisasi Temper, Fuse, The Keeping, Crack |

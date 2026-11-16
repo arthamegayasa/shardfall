@@ -1,6 +1,6 @@
 # Shardfall: Standar Kode
 
-Pemilik: Lead Programmer (LP). Status: draf M0 untuk review Producer dan QA (versi 1, 2026-11-16).
+Pemilik: Lead Programmer (LP). Status: versi 2, 2026-11-16, diselaraskan dengan `architecture.md` versi 2 (review M0-11b). Berlaku untuk M1.
 Berlaku untuk semua kode di `src/`, `tools/`, `tests/`. Dasar: `docs/tech/architecture.md`.
 
 Penanda: **[Wajib]** pelanggaran berarti review PERLU PERBAIKAN. **[Saran]** boleh menyimpang dengan alasan di komentar atau laporan.
@@ -37,7 +37,7 @@ Sebagian besar aturan [Wajib] dipaksa otomatis oleh TypeScript, ESLint, atau skr
 }
 ```
 
-Tiga file: `tsconfig.json` (src kecuali sim, tests), `tsconfig.sim.json` (`src/sim`, `src/core`, `src/content` tanpa DOM), `tsconfig.tools.json` (`tools/`, lingkungan Node).
+Tiga file: `tsconfig.json` (src kecuali sim, tests, `art/**/*.ts`), `tsconfig.sim.json` (`src/sim`, `src/core`, `src/content` tanpa DOM), `tsconfig.tools.json` (`tools/`, `art/**/*.ts`, lingkungan Node dengan `@types/node`). Semua tool ditulis `.ts`; tool `.mjs` yang ada dipindah ke `.ts` di M1.
 
 ### 1.2 Akibat `erasableSyntaxOnly` (agar tool jalan langsung di Node 24) [Wajib] (otomatis)
 - Tidak ada `enum` dan `const enum`. Pakai objek `as const` plus tipe turunan:
@@ -71,12 +71,13 @@ Tiga file: `tsconfig.json` (src kecuali sim, tests), `tsconfig.sim.json` (`src/s
 | Event sim | `PascalCase` bentuk lampau, selaras `docs/audio-list.md` | `SimEventType.EnemyKilled`, `PulseStarted` |
 | Boolean | awalan `is`, `has`, `can`, `should` | `isWarden`, `hasTarget` |
 | Factory | awalan `create` | `createRenderer`, `createRng` |
-| Id data (CSV, JSON, string table) | `snake_case`, berawalan jenis bila membantu | `enemy_swarmer`, `ks_ember_ring` |
+| Id data (CSV, JSON arena, string table) | `snake_case`, id kerja GD tanpa awalan wajib. Termasuk tag dan id arena | `swarmer`, `coal_locket`, `flame`, `night_market` |
+| Id aset art (sprite, tile, mesh dekorasi, token palet) | `kebab-case` dengan awalan grup AD; tidak dirujuk dari CSV | `unlit-swarmer`, `tile-floor`, `floor-mid` |
 | Kunci string table | titik sebagai pemisah, `snake_case` | `shop.reroll`, `keepsake.ember_ring.name` |
-| Kolom CSV | `snake_case` dengan akhiran satuan | `move_speed_per_sec`, `windup_sec` |
+| Kolom CSV | `snake_case`; satuan ditentukan skema per kolom (`architecture.md` 9.2), akhiran `_s` dianjurkan untuk waktu bila nama tidak jelas | `cooldown`, `speed`, `telegraph_s`, `content_tier` |
 | Variabel GLSL | uniform `u`, attribute `a`, varying `v` | `uTime`, `aUvRect`, `vColor` |
 
-**Akhiran satuan** wajib bila nilai punya satuan: `Ticks`, `Sec`, `Ms`, `Px` (unit dunia), `PerTick`, `PerSec`. Contoh: `windupTicks`, `speedPxPerTick`. Nilai sudut dalam radian kecuali bernama `...Turns` atau `...Deg`.
+**Akhiran satuan** wajib pada identifier kode bila nilai punya satuan: `Ticks`, `Sec`, `Ms`, `U` (unit dunia, 1 u = 16 px), `Px` (piksel virtual layar), `PerTick`, `PerSec`. Contoh: `windupTicks`, `speedUPerTick`, `rangeU`, `offsetPx`. Sudut di sim disimpan dalam putaran (`...Turns`); di render boleh radian; nilai derajat bernama `...Deg`.
 
 Istilah game di identifier mengikuti `docs/vision.md` bagian 5: `pulse` (boleh `wave` di kode internal), `glint`, `keepsake`, `warden`, `rite`, `glazier` atau `shop`, `unlit` atau `enemy`, `kept` atau `player`.
 
@@ -105,7 +106,7 @@ Istilah game di identifier mengikuti `docs/vision.md` bagian 5: `pulse` (boleh `
 - Tes tidak boleh menyalin angka dari data asli sebagai harapan; baca dari data atau pakai fixture (lihat 6.3).
 
 ### 4.2 Determinisme sim (otomatis, ESLint pada `src/sim/**` dan tsconfig tanpa DOM)
-- Tidak ada `Math.random` (dilarang di **seluruh** `src/`; pakai `createRng` dari `src/core/rng.ts`).
+- Tidak ada `Math.random` (dilarang di **seluruh** `src/` dan `art/`; pakai `createRng` dari `src/core/rng.ts`). Generator sprite di `art/` juga memakai `src/core/math` untuk trig agar piksel identik lintas browser.
 - Di `src/sim`: tidak ada `Date`, `performance`, `setTimeout`, `setInterval`, `requestAnimationFrame`, `crypto`, `import.meta.env`, DOM, `three`.
 - Di `src/sim`: tidak ada `Math.sin`, `Math.cos`, `Math.tan`, `Math.atan2`, `Math.exp`, `Math.log`, `Math.pow`, `Math.hypot`, `Math.cbrt`, dan `**` dengan pangkat bukan bilangan bulat. Pakai `src/core/math`.
 - Tidak ada iterasi `for...in`. Tidak ada iterasi `Set` atau `Map` yang urutan sisipnya bergantung pada hal non-deterministik.
@@ -145,7 +146,8 @@ Pengecualian: kode yang berjalan sekali (boot, load data, membuka layar toko, me
 ## 6. Format tes [Wajib]
 
 ### 6.1 Lokasi dan nama
-- Unit: `tests/unit/<modul>/<nama-file-yang-diuji>.test.ts`. Determinisme: `tests/determinism/*.test.ts`. Benchmark: `tests/bench/*.bench.ts`. E2E: `tests/e2e/*.spec.ts` (milik QA). Fixture: `tests/fixtures/`. Helper: `tests/support/`.
+- Unit: `tests/unit/<modul>/<nama-file-yang-diuji>.test.ts`. Validasi data dan teks: `tests/data/`. Determinisme: `tests/determinism/*.test.ts`. Bot: `tests/bot/` (konfigurasi `bot-config.json`). Audit aset: `tests/assets/`. Benchmark: `tests/bench/*.bench.ts`. E2E: `tests/e2e/*.spec.ts` dan performa `tests/perf/` (milik QA). Fixture: `tests/fixtures/` (`data/`, `replays/`, `fake-world.ts`). Helper: `tests/support/`. Hasil sementara: `tests/out/` (gitignore).
+- Tes regresi bug menyebut id bug di nama tes: `it('BUG-012: glint not lost on merge', ...)` (QA test-plan 1).
 
 ### 6.2 Struktur
 ```ts
@@ -155,7 +157,7 @@ import { createSpatialHash } from '../../../src/sim/spatial-hash.ts';
 describe('spatial hash', () => {
   it('returns only items whose cell overlaps the query circle', () => {
     // Arrange
-    const grid = createSpatialHash({ width: 256, depth: 256, cellPx: 32, capacity: 8 });
+    const grid = createSpatialHash({ widthU: 38, depthU: 26, cellU: 2, capacity: 8 });
     // Act
     // ...
     // Assert
@@ -182,7 +184,7 @@ describe('spatial hash', () => {
 
 ### 6.5 Hook e2e
 - Hanya di `src/app/e2e/`, di-import dinamis di balik `if (__E2E__)`. Tidak ada `if (isTest)` di modul lain; modul lain menyediakan API biasa yang dipakai hook.
-- Setiap hook baru dicatat di interface `E2eHooks` (`architecture.md` 6.11).
+- Setiap hook baru dicatat di interface `E2eHooks` (`architecture.md` 6.12). Objek global `window.__shardfall`. Perubahan state di luar aturan main (beri item, spawn, set HP) hanya lewat `DebugCommand` yang diterima sim bila `SimConfig.debugCommands` bernilai true.
 
 ---
 

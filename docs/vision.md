@@ -1,6 +1,6 @@
 # Shardfall: Visi
 
-Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1, 2026-11-16).
+Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Perubahan versi 1.1 dari review M0 (`docs/reviews/M0-cd.md`): Keepsake diganti Memento, istilah UI dan nama bioma serta kelas dikunci (bagian 5).
 Dokumen terkait: `docs/pillars.md` (pilar dan uji), `docs/style-guide.md` (aturan gaya dan checklist).
 
 Bila dokumen lain bertentangan dengan pilar, pilar yang menang. Bila bertentangan dengan visi atau style guide soal rasa, nama, atau gaya, CD yang memutuskan.
@@ -54,12 +54,12 @@ Prinsip: utamakan referensi dunia nyata untuk motif visual. Referensi game hanya
 2. **Cahaya adalah jam.** Satu Pulse sama dengan satu denyut cahaya pecahan. Pulse dibuka dengan gelombang cahaya dari tengah arena dan ditutup dengan kilatan kaca yang membakar habis the Unlit. Ritme gameplay, cahaya, dan musik adalah satu hal yang sama.
 3. **Glint adalah uang sekaligus XP, dan harus dipungut.** Setiap pecahan debu kaca adalah pilihan kecil: kejar Glint ke dekat bahaya, atau aman dan miskin.
 4. **Musuh yang sedikit salah.** The Unlit meniru bentuk hal-hal yang pernah diterangi: serigala dengan terlalu banyak sendi, lentera yang menyerap terang. Siluet gelap dengan mata berwarna bahaya, mudah dibedakan dari pemain yang terang.
-5. **Lore di dalam benda.** Cerita hanya ada di nama dan satu baris deskripsi Keepsake, Warden, dan bioma. Tanpa cutscene. Pemain merangkai sendiri apa yang terjadi saat langit jatuh.
+5. **Lore di dalam benda.** Cerita hanya ada di nama dan satu baris deskripsi Memento, Warden, dan bioma. Tanpa cutscene. Pemain merangkai sendiri apa yang terjadi saat langit jatuh.
 6. **Dibuat sepenuhnya dari kode.** Pixel art didefinisikan sebagai data, audio disintesis. Gaya dirancang agar keterbatasan ini terlihat sengaja: sprite kecil yang tegas, cahaya dan post-processing yang membawa rasa HD-2D.
 
 ## 5. Istilah inti (keputusan CD, wajib dipakai tim)
 
-Semua usulan handoff dipertahankan. Istilah ini dipakai di dokumen, kode (identifier Inggris), dan teks game. Writer boleh mengusulkan perubahan lewat review CD, bukan mengganti sepihak.
+Usulan handoff dipertahankan kecuali Keepsake, yang diganti **Memento** di review M0 karena "Keepsake" adalah nama sistem benda di Hades, salah satu referensi kita, dengan fungsi serupa. Istilah ini dipakai di dokumen, kode (identifier Inggris), dan teks game. Writer boleh mengusulkan perubahan lewat review CD, bukan mengganti sepihak.
 
 | Istilah (Inggris, di game) | Arti | Pemakaian | Identifier kode (saran) |
 |---|---|---|---|
@@ -70,14 +70,29 @@ Semua usulan handoff dipertahankan. Istilah ini dipakai di dokumen, kode (identi
 | **the Glazier** | Pedagang bertopeng; fase toko | Judul layar toko | `glazier`, `shop` |
 | **Glint** | Debu kaca: mata uang run sekaligus XP | Ikon kecil emas, angka di HUD | `glint` |
 | **Silt** | Mata uang meta setelah run | Layar akhir run dan meta | `silt` |
-| **Keepsake** | Relic: benda yang ikut tersegel di kaca | Kartu toko, hadiah Warden | `keepsake` |
+| **Memento** (jamak Mementos) | Relic: benda yang ikut tersegel di kaca | Kartu toko, hadiah Warden | `memento` (pengganti `keepsake`; dipakai sejak kode M1 pertama) |
 | **Warden** | Elite bernama | Nama Warden tampil saat muncul | `warden` |
 | **Rite** | Skill aktif kelas dengan cooldown | Ikon HUD cooldown | `rite` |
 | **Pulse** | Satu gelombang | "Pulse 3", bukan "Wave 3" | `pulse`, `wave` boleh di kode internal |
 
 Istilah tambahan yang diputuskan:
 - **Tag sinergi** (nama kerja disetujui): Flame, Shard, Edge, Echo, Ward, Trade. Jumlah dan efek milik Game Designer.
-- **Tingkat rarity** (nama kerja, Writer boleh mengusulkan pengganti): Plain, Fine, Rare, Fabled. Warna di style guide. Tidak ada rarity berwarna ungu, merah, atau magenta karena warna itu milik bahaya.
+- **Tingkat rarity** (dikunci di review M0): Plain, Fine, Rare, Fabled. Warna di style guide. Tidak ada rarity berwarna ungu, merah, atau magenta karena warna itu milik bahaya.
+- **Istilah UI dan loop** (dikunci di review M0, teks game):
+
+| Istilah | Arti | Catatan |
+|---|---|---|
+| **Temper** | Judul panel level-up (pilih 1 dari 3) | Level tetap tampil sebagai "Lv 5" di HUD dan subjudul panel. Kata "Level Up" tidak dipakai sebagai judul |
+| **Fuse** | Kata kerja dan lencana merge di toko ("Fuse > II") | Identifier kode boleh tetap `merge` |
+| **The Keeping** | Layar meta tempat Silt dibelanjakan | Mengganti "Archive". Tab: "Kept" dan "Mementos" |
+| **Vitrine Steady** | Judul layar antara saat satu bioma selesai dan ada bioma berikutnya | Bukan layar akhir run |
+| **Light Kept** | Judul layar akhir run menang | Membalik "Kept Lost" |
+| **Kept Lost** | Judul layar akhir run kalah | Subjudul "Another wakes beneath the glass." |
+| **Crack** | Tingkat kesulitan bertingkat ("Crack 3") | Mengganti usulan "Depth". Tingkat C |
+
+- **Nama bioma (Vitrine)** dikunci untuk string table, dicek ulang di M3: 1 **The Moth Market** (`biome_market`), 2 **Vesper Steps** (`biome_cloister`), 3 **Stillfire Vineyard** (`biome_vineyard`). Identifier final milik LP; satu konvensi untuk GD, LD, dan AD.
+- **Nama kelas** dikunci, dicek ulang di M3: **Lamplighter** (`lantern`), **Chorister** (`bell`), **Vintner** (`blade`).
+- **Warden, Glint, Silt** dipertahankan. Warden adalah kata umum lintas banyak game tanpa satu pemilik; ikon tag Ward wajib berbeda bentuk dari penanda Warden, dan tidak ada Warden tunggal yang bernama "the Warden".
 - **Boss** di dokumen tetap "boss". Di game, boss tampil dengan namanya sendiri tanpa kata "Boss".
 - Kata "Shardfall" adalah nama kerja. [Asumsi] Nama ini mungkin sudah dipakai produk lain. Writer mengecek dan menyiapkan kandidat judul di M3, CD memilih di M5.
 
@@ -99,9 +114,9 @@ Producer memutuskan scope dan jadwal. Bagian ini adalah batas kreatif dan rekome
 
 | Tingkat | Isi | Arti |
 |---|---|---|
-| **A. Lantai rilis** | 1 kelas lengkap, 1 bioma lengkap dan indah, sekitar 10 Pulse, 4 jenis Unlit, 1 Warden, 1 boss, sekitar 6 senjata atau skill auto-attack, sekitar 12 Keepsake, 3 tag sinergi aktif, toko dengan reroll dan merge, layar akhir run | Ini sudah "game". Jangan rilis di bawah ini |
-| **B. Target** | 3 kelas, 1 bioma sangat dipoles, sekitar 15 sampai 20 Pulse, 6 jenis Unlit, 2 Warden, 8 skill auto-attack, sekitar 20 Keepsake, 6 tag, Silt dan buka kelas | Tambah hanya bila A sudah terasa benar |
-| **C. Plafon 1.0 (handoff)** | 3 bioma dengan boss masing-masing, 20 Pulse, sekitar 30 Keepsake, tingkat kesulitan bertingkat | Hanya bila waktu tersisa. Bioma tambahan boleh berbagi set Unlit dengan palet cahaya berbeda |
+| **A. Lantai rilis** | 1 kelas lengkap, 1 bioma lengkap dan indah, sekitar 10 Pulse, 4 jenis Unlit, 1 Warden, 1 boss, sekitar 6 senjata atau skill auto-attack, sekitar 12 Memento, 3 tag sinergi aktif, toko dengan reroll dan merge, layar akhir run | Ini sudah "game". Jangan rilis di bawah ini |
+| **B. Target** | 3 kelas, 1 bioma sangat dipoles, sekitar 15 sampai 20 Pulse, 6 jenis Unlit, 2 Warden, 8 skill auto-attack, sekitar 20 Memento, 6 tag, Silt dan buka kelas | Tambah hanya bila A sudah terasa benar |
+| **C. Plafon 1.0 (handoff)** | 3 bioma dengan boss masing-masing, 20 Pulse, sekitar 30 Memento, tingkat kesulitan bertingkat | Hanya bila waktu tersisa. Bioma tambahan boleh berbagi set Unlit dengan palet cahaya berbeda |
 
 Arah CD untuk bioma pertama: **pasar malam berlentera yang membeku saat langit jatuh**. Alasan: cahaya titik hangat paling kuat membawa rasa HD-2D dengan aset sederhana, kontras alami dengan the Unlit yang gelap, dan cocok dengan lore. Level Designer memutuskan detail dan nama final dalam batas ini.
 
