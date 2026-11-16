@@ -1,12 +1,12 @@
 # Shardfall: Checklist Aksesibilitas
 
-Pemilik: QA Lead. Reviewer: Producer. Status: draf M0 (versi 1, 2026-11-16).
+Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.1 (2026-11-17): hook dan lokasi tes diselaraskan dengan architecture v2.2; hasil audit M1 di `docs/qa/M1-report.md`.
 Implementasi: UI Programmer (pengaturan, menu, fokus), Art Director (palet mode buta warna, efek), Gameplay Programmer (jeda, efek di sim), Audio Director (volume). QA menguji.
 Dokumen terkait: `docs/qa/test-plan.md` (hook tes, format bukti), `docs/style-guide.md` (1.3, 1.7, 1.8, 2.3), `docs/pillars.md` (Pilar 2).
 
 Penanda: **[Wajib]** harus lolos untuk keluar M4. **[Saran]** dikerjakan bila waktu cukup, gagal dicatat sebagai MINOR. **[Asumsi]** keputusan sementara QA, bisa diubah pemilik wilayah.
 
-Semua uji di bawah memakai build tes dengan hook `window.__SHARDFALL_TEST__` (lihat `test-plan.md` 7.2). Bukti disimpan di `docs/qa/evidence/<milestone>/a11y/`.
+Semua uji di bawah memakai build tes dengan hook `window.__shardfall` dari `npm run build:e2e` (lihat `test-plan.md` 7.2 dan architecture 6.12). Bukti disimpan di `docs/qa/evidence/<milestone>/a11y/`.
 
 ---
 
@@ -119,7 +119,7 @@ Semua uji di bawah memakai build tes dengan hook `window.__SHARDFALL_TEST__` (li
 - Game terjeda otomatis saat tab tersembunyi atau jendela kehilangan fokus.
 - Melanjutkan tidak membuat pemain langsung kena damage dari input yang tertahan; [Saran] hitung mundur singkat sebelum lanjut, dan tidak berlaku di Reduce Effects bila mengganggu.
 
-**Cara uji (Playwright, `tests/e2e/a11y-pause.spec.ts`)**
+**Cara uji (Playwright; M1: `tests/e2e/keyboard-play.spec.ts` fungsi `checkPause` untuk Pulse, Temper, dan the Glazier; langkah 3 dan konteks Warden mulai M2 di `tests/e2e/a11y-pause.spec.ts`)**
 1. Di tiap konteks (Pulse, level-up, toko, kemunculan Warden lewat replay): tekan `Esc`, catat `tick` dan sisa timer dari snapshot, tunggu 2 detik waktu nyata, catat lagi.
 2. Saat jeda, tahan tombol gerak 1 detik: posisi pemain tidak berubah.
 3. Saat Pulse, buka tab kedua (`context.newPage()` lalu `bringToFront()`) agar tab game tersembunyi: snapshot tab game menunjukkan jeda dan tick tidak bertambah. Bila browser headless tidak mengubah `visibilityState`, uji di mode headed.
@@ -134,7 +134,7 @@ Semua uji di bawah memakai build tes dengan hook `window.__SHARDFALL_TEST__` (li
 - Fokus selalu terlihat (bingkai `kept-gold`, style guide 2.1), urutannya logis (kiri ke kanan, atas ke bawah), dan tidak ada jebakan fokus.
 - `Esc` atau tombol batal selalu kembali satu langkah atau menutup layar saat ini.
 
-**Cara uji (Playwright, `tests/e2e/a11y-keyboard.spec.ts`)**
+**Cara uji (Playwright; M1 alur run: `tests/e2e/keyboard-play.spec.ts` dengan pencatat pointer `installPointerBlocker`; semua layar dan semua kontrol mulai M2 di `tests/e2e/a11y-keyboard.spec.ts`)**
 1. Pasang pemblokir: tes gagal bila ada event `mousedown`, `click` dari pointer, atau `pointermove` yang dikirim tes. Seluruh tes hanya memakai `page.keyboard`.
 2. Alur: boot, pilih kelas, Pulse 1 (bot keyboard sederhana), level-up pilih kartu, toko beli satu item, reroll, mulai Pulse 2, jeda, buka pengaturan, ubah setiap kontrol satu kali, tutup, lanjut, kalah lewat hook, layar akhir run, ulang.
 3. Di tiap layar, tekan `Tab` (atau tombol navigasi yang dipetakan) berulang sampai kembali ke elemen awal: catat urutan fokus dan screenshot tiap fokus. Hitung jumlah elemen interaktif yang terlihat vs yang bisa difokus.
@@ -161,7 +161,7 @@ Semua uji di bawah memakai build tes dengan hook `window.__SHARDFALL_TEST__` (li
 ## A-09 Isyarat suara punya padanan visual, volume terpisah [Wajib]
 
 **Syarat**
-- Setiap isyarat suara yang membawa informasi (pemain kena hit, telegraf bahaya, level up, dapat Keepsake, Pulse hampir habis, boss datang) punya padanan visual yang bisa dikenali tanpa suara (Pilar 2 P2-g).
+- Setiap isyarat suara yang membawa informasi (pemain kena hit, telegraf bahaya, level up, dapat Memento, Pulse hampir habis, boss datang) punya padanan visual yang bisa dikenali tanpa suara (Pilar 2 P2-g).
 - Volume Master, Musik, dan SFX terpisah, masing-masing bisa 0.
 
 **Cara uji**

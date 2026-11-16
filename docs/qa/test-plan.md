@@ -1,9 +1,11 @@
 # Shardfall: Rencana Tes
 
-Pemilik: QA Lead. Reviewer: Producer. Status: draf M0 (versi 1, 2026-11-16).
-Dokumen terkait: `docs/pillars.md` (uji pilar), `docs/style-guide.md` (kode warna, kontras, teks), `docs/qa/accessibility.md`, `docs/qa/bugs.md`, `docs/tech/architecture.md` (milik LP, belum ada saat dokumen ini ditulis).
+Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.1 (2026-11-17), diselaraskan dengan `docs/tech/architecture.md` v2.2 dan review `docs/reviews/M0-lp.md` (perbaikan QA 1 sampai 5).
+Dokumen terkait: `docs/pillars.md` (uji pilar), `docs/style-guide.md` (kode warna, kontras, teks), `docs/qa/accessibility.md`, `docs/qa/bugs.md`, `docs/tech/architecture.md` (sumber kebenaran untuk hook, folder tes, perintah, anggaran performa, format replay).
 
 Penanda: **[Asumsi]** perlu dikonfirmasi pemilik wilayah lain. **[Usul ke LP]** butuh dukungan arsitektur atau kode.
+
+Perubahan versi 1.1: hook e2e final `window.__shardfall` (7.2), lokasi tes dan perintah npm final (3), replay emas memakai data fixture (5.3 D-7), format replay merujuk architecture 4.5 (5.1), ambang PF-1 sampai PF-6 dari architecture 13 (9.4), lingkungan dan browser diperbarui (2).
 
 ---
 
@@ -27,7 +29,7 @@ Penanda: **[Asumsi]** perlu dikonfirmasi pemilik wilayah lain. **[Usul ke LP]** 
 | RAM | 28 GB |
 | Layar | 2560x1440, 144 Hz |
 | Node, npm | Node 24, npm 11 |
-| Playwright | 1.65.1 (lewat `npx`, belum terpasang sebagai dependensi proyek) |
+| Playwright | `@playwright/test` 1.64.1, dependensi dev proyek (dicek 2026-11-17) |
 
 Mesin ini lebih kuat dari "laptop kelas menengah". Karena itu uji performa memakai profil emulasi (bagian 9.2).
 
@@ -38,28 +40,33 @@ Mesin ini lebih kuat dari "laptop kelas menengah". Karena itu uji performa memak
 | Chromium (build Playwright) | Ada di cache Playwright | project `chromium` | Headless memakai render perangkat lunak (SwiftShader) bila GPU tidak dipakai, sehingga angka fps headless tidak sah |
 | Google Chrome 157 | Terpasang | `channel: 'chrome'` | Tidak ada |
 | Microsoft Edge 157 | Terpasang | `channel: 'msedge'` | Tidak ada |
-| Firefox 143 | Terpasang di sistem | Tidak bisa dipakai Playwright (Playwright butuh build Firefox khususnya) | Build Firefox Playwright tidak ada di cache. Sampai terpasang, Firefox diuji manual dengan checklist smoke (bagian 11) |
-| WebKit (build Playwright) | Ada di cache (`webkit-2336`), versi belum tentu cocok dengan Playwright yang akan dipasang LP | project `webkit` | Hanya pendekatan Safari, bukan Safari asli |
-| Safari asli | Tidak tersedia (butuh macOS) | Tidak bisa | Kriteria M4 "lolos di Safari" tidak bisa diverifikasi penuh. Lihat pertanyaan terbuka |
+| Firefox (build Playwright) | `firefox-1555` (Firefox 157) dipasang QA 2026-11-17 lewat `npx playwright install firefox` (izin Producer, tasks.md 2026-11-16) | `test.use({ browserName: 'firefox' })` di `tests/e2e/smoke-firefox.spec.ts` | `page.setViewportSize` macet di build ini pada Windows; tes memakai viewport dari konfigurasi |
+| WebKit (build Playwright) | Cache hanya punya `webkit-2336`; Playwright 1.64.1 meminta `webkit-2370`. Unduh WebKit belum diizinkan | `tests/e2e/smoke-webkit.spec.ts` memakai build yang diminta, atau `webkit-2336` sebagai cadangan (hasil indikatif) | Hanya pendekatan Safari, bukan Safari asli |
+| Safari asli | Tidak tersedia (butuh macOS) | Tidak bisa | Keputusan Producer 2026-11-16: WebKit Playwright dipakai sebagai proksi, dicatat sebagai keterbatasan |
 
-Memasang build Firefox Playwright (`npx playwright install firefox`) mengunduh dari CDN Playwright, bukan npm registry. [Asumsi] Ini butuh izin Producer karena aturan jaringan.
+Spec smoke per browser dilewati otomatis (`test.skip`) bila browser atau build tidak terpasang, sehingga `npm run test:e2e` tetap jalan di mesin lain dan CI (Chromium saja).
 
 ## 3. Lapisan tes
 
-| Lapisan | Alat | Lokasi [Usul ke LP] | Kapan jalan | Target waktu |
-|---|---|---|---|---|
-| Unit sim dan logika | Vitest (env node) | `tests/unit/` | Setiap perubahan, `npm test` | di bawah 30 detik |
-| Validasi data | Vitest | `tests/data/` | Setiap perubahan data atau string | di bawah 10 detik |
-| Determinisme | Vitest (env node) | `tests/sim/determinism.test.ts` | Setiap perubahan sim | di bawah 60 detik |
-| Bot run penuh headless | Vitest atau skrip Node | `tests/sim/bot/` | Setiap milestone, dan sebelum laporan QA | di bawah 5 menit untuk 20 seed |
-| Audit aset (kode warna, skala) | Vitest | `tests/assets/` | Setiap perubahan art | di bawah 30 detik |
-| End-to-end dan screenshot | Playwright | `tests/e2e/` | Sebelum laporan QA dan sebelum push milestone | di bawah 10 menit |
-| Performa | Playwright headed + hook tes | `tests/perf/` | M2, M3, M4, M5 | sekitar 5 menit per profil |
-| Manual dan playtest | Checklist di dokumen ini | `docs/qa/` | Per milestone | sesuai kebutuhan |
+Lokasi dan perintah final mengikuti architecture 14 dan 15.1 (beku M1).
 
-Perintah npm yang diusulkan [Usul ke LP, LP pemilik `package.json`]: `test`, `test:det`, `test:bot`, `test:assets`, `test:e2e`, `test:perf`, `qa:report`. Semua harus keluar dengan kode 0 bila lulus dan bukan 0 bila gagal.
+| Lapisan | Alat | Lokasi | Perintah | Kapan jalan | Target waktu |
+|---|---|---|---|---|---|
+| Unit sim dan logika | Vitest (env node) | `tests/unit/<modul>/` | `npm test` | Setiap perubahan | di bawah 30 detik |
+| Validasi data dan teks | Vitest + pipeline data | `tests/data/`, `tools/data/lib/check-strings.ts` | `npm test`, `npm run data:check` | Setiap perubahan data atau string | di bawah 10 detik |
+| Determinisme | Vitest (env node) | `tests/determinism/`, `tests/unit/sim/determinism.test.ts` (GP), `tests/unit/qa/determinism-qa.test.ts` (QA) | `npm test`, `npm run test:det` | Setiap perubahan sim | di bawah 60 detik |
+| Bot run penuh headless | Vitest | `tests/bot/` (architecture), sementara `tests/unit/qa/bot-real-data.test.ts` dan `tests/unit/sim/bot.test.ts` | `npm test` (sementara), `npm run test:bot` | Setiap milestone, dan sebelum laporan QA | di bawah 5 menit untuk 20 seed |
+| Audit aset (kode warna, skala) | Vitest + validator AD | `tests/assets/`, `tools/art/check-sprites.ts` | `npm run test:assets`, `npm run art:check` | Setiap perubahan art | di bawah 30 detik |
+| End-to-end dan screenshot | Playwright | `tests/e2e/` | `npm run test:e2e` (`build:e2e` lalu Playwright) | Sebelum laporan QA dan sebelum push milestone | di bawah 15 menit |
+| Performa | Playwright headed + hook tes | `tests/perf/` | `npm run test:perf` | M2, M3, M4, M5 | sekitar 5 menit per profil |
+| Benchmark sim | Vitest bench | `tests/bench/` | `npm run bench` | Bila sim berubah | |
+| Manual dan playtest | Checklist di dokumen ini | `docs/qa/` | | Per milestone | sesuai kebutuhan |
 
-Hasil sementara (screenshot mentah, CSV bot, trace) masuk `tests/out/` yang di-gitignore. Bukti yang dipakai di laporan disalin ke `docs/qa/evidence/<milestone>/`.
+Gerbang wajib sebelum menyerahkan pekerjaan: `npm run check` (data:check, art:check, levels:check, audio:check, format:check, typecheck, lint, test, build, bundle:check). `test:e2e` lokal dan di CI (Chromium). Semua perintah keluar dengan kode 0 bila lulus dan bukan 0 bila gagal.
+
+Keadaan M1 (2026-11-17): skrip `test:det`, `test:bot`, `test:assets`, `test:perf`, `bench`, `qa:report` belum ada di `package.json` (milik LP). Selama itu tes QA tinggal di `tests/unit/qa/` (ikut `npm test`) dan `tests/e2e/`. [Usul ke LP] Saat `tests/bot/` dan `test:bot` dibuat, `tests/unit/qa/bot-real-data.test.ts` dipindah ke sana.
+
+Hasil sementara (screenshot mentah, replay, trace) masuk `tests/out/` yang di-gitignore. Bukti yang dipakai di laporan ada di `docs/qa/evidence/<milestone>/`.
 
 ## 4. Unit test (Vitest)
 
@@ -84,7 +91,7 @@ Hasil sementara (screenshot mentah, CSV bot, trace) masuk `tests/out/` yang di-g
 | Level-up | Ambang XP dari data; tiap level memberi satu pilihan kartu di awal toko |
 | Toko (the Glazier) | Harga dari data; beli mengurangi Glint dengan tepat; tidak bisa beli bila Glint kurang; reroll menaikkan harga sesuai data; merge dua item sejenis menaikkan tier |
 | Sinergi tag | Ambang tag aktif tepat di jumlah yang ditentukan data; melepas item menonaktifkan efek |
-| Warden dan boss | Muncul di Pulse yang ditentukan data; hadiah Warden berupa pilihan Keepsake |
+| Warden dan boss | Muncul di Pulse yang ditentukan data; hadiah Warden berupa pilihan Memento |
 | Akhir run | Menang setelah Pulse terakhir; kalah saat HP 0; Silt dihitung sesuai data |
 | Save dan load | Serialisasi state lalu deserialisasi menghasilkan hash identik; versi save lama ditolak dengan pesan, tidak crash |
 | Input | Pemetaan tombol ke aksi memakai tabel remap; aksi yang sama dari dua tombol berbeda menghasilkan state sama |
@@ -94,7 +101,7 @@ Hasil sementara (screenshot mentah, CSV bot, trace) masuk `tests/out/` yang di-g
 | ID | Cek | Lolos bila |
 |---|---|---|
 | DV-1 | Skema setiap file `content/data/*` | Semua kolom wajib ada, tipe benar, tidak ada id ganda, semua rujukan id valid |
-| DV-2 | Tag item (P1-b) | 100% senjata dan Keepsake punya minimal 1 tag dari daftar tag resmi |
+| DV-2 | Tag item (P1-b) | 100% senjata dan Memento punya minimal 1 tag dari daftar tag resmi |
 | DV-3 | Batas teks (P4-b, style guide 4.2) | Nama maksimal 3 kata dan 18 karakter; efek maksimal 2 baris dan sekitar 40 karakter per baris; flavor 1 baris maksimal 70 karakter |
 | DV-4 | Kata terlarang (style guide 4.3) | Nol kecocokan pada daftar kata terlarang di string table, tidak peka huruf besar kecil |
 | DV-5 | Em dash | Nol karakter em dash di string table dan di `docs/` |
@@ -104,12 +111,12 @@ Hasil sementara (screenshot mentah, CSV bot, trace) masuk `tests/out/` yang di-g
 ## 5. Tes determinisme
 
 ### 5.1 Definisi
-- **Hash state:** fungsi `hashState(state)` yang menserialisasi seluruh state sim dengan urutan kunci tetap, lalu menghitung hash 32 bit atau 64 bit (misalnya FNV-1a). Bilangan float dimasukkan lewat representasi bit-nya, bukan teks berpembulatan. [Usul ke LP]
-- **Rekaman input (replay):** file JSON berisi versi format, versi data, seed, kelas, dan daftar input per tick. Input gerak dikuantisasi (misalnya arah 8 mata angin atau vektor dibulatkan) agar rekaman kecil dan bebas float acak. Aksi toko dan level-up dicatat dengan tick dan id pilihan.
-- **Checkpoint:** hash dicatat tiap 60 tick, sehingga bila hasil beda, tick pertama yang menyimpang langsung diketahui.
+- **Hash state:** `Sim.hash()` (architecture 8.4): FNV-1a atas bit float, 8 hex lewat `toHex8`, hanya slot hidup, pool di-reset kanonik di batas Pulse. Di browser dibaca lewat `window.__shardfall.getStateHash()`.
+- **Rekaman input (replay):** format final architecture 4.5 (`format: "shardfall-replay"`, `v: 1`, `contentHash`, `contentTier`, `seed`, `classId`, `profile`, `difficulty`, `ticks`, input RLE `[count, moveX, moveY, held, pressed, aimX, aimY]`, `commands` bertick, `checkpoints`). Tick relatif terhadap `run.start` (architecture 19, v2.2 butir 5). Diputar dengan `playReplay` dari `src/sim`; perekam browser `src/app/replay.ts`, ekspor lewat `exportReplay()`.
+- **Checkpoint:** hash dicatat tiap 60 tick (`REPLAY_CHECKPOINT_TICKS`), sehingga bila hasil beda, tick pertama yang menyimpang langsung diketahui.
 
 ### 5.2 Sumber nondeterminisme yang dilarang di kode sim
-`Math.random`, `Date.now`, `performance.now`, `new Date`, timer (`setTimeout`, `setInterval`), urutan iterasi objek dengan kunci campuran, dan bergantung pada frame rate render. Cek otomatis lewat aturan ESLint `no-restricted-globals` dan `no-restricted-properties` pada folder sim [Usul ke LP], ditambah tes D-6.
+`Math.random`, `Date.now`, `performance.now`, `new Date`, timer (`setTimeout`, `setInterval`), urutan iterasi objek dengan kunci campuran, dan bergantung pada frame rate render. Larangan final ada di architecture 4.2 (dipaksa ESLint dan `tsconfig.sim.json`), ditambah tes D-6.
 
 Catatan: fungsi seperti `Math.sin`, `Math.exp`, `Math.pow` tidak dijamin identik antar mesin JavaScript. Determinisme dijamin minimal dalam satu mesin (V8: Node, Chrome, Edge). Kesamaan antar browser diuji di D-5 dan hasilnya dilaporkan, bukan diasumsikan.
 
@@ -117,14 +124,14 @@ Catatan: fungsi seperti `Math.sin`, `Math.exp`, `Math.pow` tidak dijamin identik
 
 | ID | Tes | Cara uji | Lolos bila | Mulai |
 |---|---|---|---|---|
-| D-1 | Ulang dalam satu proses | Jalankan replay yang sama 2 kali berturut-turut dalam satu proses Vitest, N = 36.000 tick (10 menit sim) atau sampai run selesai | Semua hash checkpoint identik | M1 |
-| D-2 | Ulang di proses terpisah | Jalankan replay di 2 proses Node terpisah (`node` dua kali atau dua worker) | Hash akhir identik; menangkap state global modul yang bocor | M1 |
-| D-3 | Seed benar dipakai | Replay sama dengan seed berbeda | Hash akhir berbeda (sanity) | M1 |
-| D-4 | Save, load, lanjut | Run A tanpa jeda. Run B: simpan di fase toko Pulse 3, buang state, muat, lanjutkan input sisa | Hash akhir A dan B identik | M2 |
-| D-5 | Lintas runtime | Replay di Node lalu di Chromium lewat hook tes (`step` dan `getStateHash`) | Hash identik di Node, Chromium, Chrome, Edge. Firefox dan WebKit dicatat sebagai temuan bila berbeda | M1 (V8), M4 (semua) |
-| D-6 | Bebas frame rate | Jalankan sim lewat loop render tiruan dengan dt variabel setara 30, 60, 144 fps, dan dt acak berseed | Hash akhir identik dengan run tick murni | M1 |
-| D-7 | Replay emas | Simpan 3 replay di `tests/fixtures/replays/` beserta hash yang diharapkan | Hash cocok. Bila perubahan sim yang disengaja mengubah hash, replay emas diperbarui dengan alasan tertulis di laporan, bukan dihapus | M1 |
-| D-8 | Rekam dari permainan nyata | Rekam input dari sesi browser (bot di browser, bagian 7), putar ulang di Node | Hash akhir identik | M1 |
+| D-1 | Ulang dalam satu proses | Rekam run bot penuh di data asli (sampai menang atau kalah), putar 2 kali dalam satu proses Vitest | Semua hash checkpoint identik | M1 |
+| D-2 | Ulang di proses terpisah | `node tests/unit/qa/support/sim-cli.ts` dua kali (child process) untuk run berskrip dan untuk replay | Checkpoint dan hash akhir identik dengan proses Vitest; menangkap state global modul yang bocor | M1 |
+| D-3 | Seed benar dipakai | Input sama dengan seed berbeda | Hash akhir berbeda (sanity) | M1 |
+| D-4 | Save, load, lanjut | Run A tanpa jeda. Run B: simpan di fase toko Pulse 3, buang state, muat, lanjutkan input sisa | Hash akhir A dan B identik | M2 (sudah ada di `tests/unit/sim/determinism.test.ts`) |
+| D-5 | Lintas runtime | Run berskrip yang sama di Node (`sim-cli.ts script`) dan di browser lewat `step` dan `getStateHash` | Hash identik di Node, Chromium, Chrome, Edge. Firefox dan WebKit dicatat sebagai temuan bila berbeda | M1 (V8), M4 (semua) |
+| D-6 | Bebas frame rate | Sim lewat `createFixedStep` (accumulator asli loop) dengan dt setara 30, 60, 144 fps, dan dt acak berseed | Hash akhir identik dengan run tick murni, tidak ada tick dibuang | M1 |
+| D-7 | Replay emas | 3 replay run penuh memakai **data fixture** `tests/fixtures/data/` (architecture 14.1), disimpan dengan hash akhir yang diharapkan. Lokasi M1: `tests/unit/qa/replays/` [Asumsi QA: architecture menyebut `tests/fixtures/replays/`, di luar wilayah tulis QA pada M1-09b; LP boleh memindah]. Buat ulang hanya dengan `QA_UPDATE_GOLDEN=1` | Hash cocok. Bila perubahan logika sim yang disengaja mengubah hash, replay emas diperbarui dengan alasan tertulis di laporan, bukan dihapus. Perubahan balance GD tidak menyentuhnya | M1 |
+| D-8 | Rekam dari permainan nyata | Rekam input dari sesi browser (keyboard nyata dan bot browser E-13) lewat perekam app, putar ulang di Node | Semua checkpoint dan hash akhir identik | M1 |
 
 ## 6. Bot dan simulasi run penuh headless
 
@@ -146,7 +153,7 @@ Catatan: fungsi seperti `Math.sin`, `Math.exp`, `Math.pow` tidak dijamin identik
 | `dodger+random` | `dodger` di arena, di toko membeli item acak yang terjangkau, memilih kartu level-up acak, reroll dengan peluang tetap | Bot utama uji run penuh dan P1-c |
 | `dodger+focus` (M3) | Seperti di atas, tapi bobot pilihan condong ke satu tag yang dipilih acak di awal | Membandingkan kekuatan tiap tag |
 
-Angka radius, ambang, dan peluang reroll bot disimpan di file konfigurasi bot `tests/sim/bot/bot-config.json`, bukan di data game.
+Angka radius, ambang, dan peluang reroll bot adalah konstanta bot di kode tes (`tests/unit/sim/support/bot.ts` milik GP untuk gerak, `tests/unit/qa/support/qa-bot.ts` untuk pilihan acak), bukan di data game.
 
 ### 6.4 Tes bot
 
@@ -164,29 +171,32 @@ Kolom CSV balance: `seed, bot, class, biome, outcome, pulse_reached, sim_seconds
 
 ## 7. End-to-end Playwright
 
-### 7.1 Konfigurasi [Usul ke LP]
-- Uji build produksi lewat `vite preview`, bukan server dev. Server dijalankan oleh opsi `webServer` Playwright sehingga otomatis mati setelah tes (aturan agent 11).
-- Project default: `chromium`. Project tambahan: `chrome` (`channel: 'chrome'`), `msedge` (`channel: 'msedge'`), `webkit` (bila build cocok), `firefox` (bila build terpasang).
-- Resolusi: 1920x1080 (utama), 1280x720, 1366x768.
-- Setiap tes gagal bila ada `console.error`, `pageerror`, atau request gagal.
-- Trace dan video hanya disimpan saat gagal.
+### 7.1 Konfigurasi (architecture 14.3, `playwright.config.ts` milik LP)
+- `npm run test:e2e` menjalankan `build:e2e` (keluaran `dist-e2e/`, konstanta `__E2E__` `true`), lalu Playwright. `webServer` menjalankan `vite preview --mode e2e --outDir dist-e2e` di port tetap 4174 dan mematikannya otomatis (aturan agent 11).
+- Project: `chromium` (default, viewport 1280x720). Chrome, Edge, Firefox, WebKit lewat spec smoke per browser (`tests/e2e/smoke-*.spec.ts`, `test.use` di tingkat file), dilewati bila tidak terpasang.
+- Resolusi: 1920x1080 (utama, lewat `test.use` atau `setViewportSize`), 1280x720, 1366x768 (M2).
+- Setiap tes gagal bila ada `console.error`, `pageerror`, request gagal, atau respons HTTP 4xx/5xx (`tests/e2e/support/qa.ts` `watchProblems`).
+- Trace dan video hanya disimpan saat gagal (`tests/out/playwright/`).
 
-### 7.2 Hook tes [Usul ke LP]
-Objek `window.__SHARDFALL_TEST__` hanya ada di build tes (misalnya flag build `VITE_TEST_HOOKS=1`) dan tidak pernah ada di build rilis (dicek di M5-03). Fungsi minimal:
+### 7.2 Hook tes (final, architecture 6.12)
+Objek `window.__shardfall` (`E2eHooks`, `version: 1`) hanya ada di build `npm run build:e2e` (konstanta `__E2E__`), dimuat lewat dynamic import di `src/app/boot.ts`, dan hilang total dari build produksi (dicek `bundle:check`: string `__shardfall` dan chunk `hooks`). Perubahan state memakai `DebugCommand` yang ditolak sim di build produksi.
 
 | Fungsi | Guna |
 |---|---|
-| `setSeed(seed)`, `startRun(classId, biomeId)` | Run yang bisa diulang |
-| `pause()`, `resume()`, `step(ticks)`, `setTimeScale(x)` | Membekukan atau mempercepat sim untuk screenshot dan tes cepat |
-| `getStateHash()`, `getSnapshot()` | Determinisme dan pengecekan state (posisi pemain, musuh, proyektil, layar aktif, Glint, HP, tick) |
-| `getScreenPositions()` | Koordinat layar pemain, ancaman terdekat, proyektil musuh, untuk uji 1 detik dan kontras |
-| `loadReplay(json)`, `exportReplay()` | Putar dan rekam input |
-| `getPerf()` | Frame time per frame (rolling 600 frame), waktu tick sim, jumlah draw call, jumlah entitas |
-| `goToScreen(id)` | Lompat ke layar tertentu untuk screenshot |
-| `spawnStress(presetId)` | Memuat skenario arena paling ramai |
-| `grantItem(id)` | Memberi item untuk uji konten |
-
-Selama LP belum menulis `docs/tech/architecture.md`, tabel ini adalah usulan. Bila LP memakai nama lain, rencana ini mengikuti LP.
+| `ready()` | Menunggu app siap |
+| `startRun({ seed, classId, profile?, difficulty? })` | Run yang bisa diulang (profil default app `run_a`). Mengakhiri run aktif lebih dulu |
+| `pauseLoop()`, `resumeLoop()` | Menghentikan atau menyalakan loop rAF; saat berhenti tes yang mengendalikan waktu |
+| `step(ticks, input?)` | Menjalankan tick sinkron dengan `InputFrame` parsial, lalu merender satu frame (`step(0)` hanya merender) |
+| `setTimeScale(x)` | 0,25 sampai 16 (di atas 4 tick per frame hanya di e2e) |
+| `send(cmd)` | Mengirim `Command` atau `DebugCommand` (`debug.endPulse`, `debug.glint`, `debug.xp`, `debug.setHp`, `debug.spawn`, `debug.grant`) |
+| `getStateHash()` | 8 hex dari `Sim.hash()` |
+| `getSnapshot()` | `screen`, `phase`, `tick`, `pulseIndex`, `hp`, `maxHp`, `glint`, `level`, posisi pemain, jumlah entitas per pool |
+| `getScreenPositions()` | Posisi CSS pemain, musuh (dengan `rank`), proyektil musuh, area bahaya |
+| `goToScreen(id)` | Membangun state sah lewat command lalu menampilkan layar (`title`, `class-select`, `pulse`, `level-up`, `warden-reward`, `glazier`, `pause`, `confirm`, `settings`, `run-end`, `run-lost`, `run-won`, `archive`, `credits`) |
+| `spawnStress('peak' \| 'peak-boss')` | Komposisi Pulse normal terakhir (atau boss) plus build akhir run. Satu kali spawn; uji stres menambah musuh sendiri agar puncak bertahan |
+| `grantItem(id, tier?)` | Memberi senjata atau Memento |
+| `loadReplay(replay)`, `exportReplay()` | Putar dan rekam (format architecture 4.5) |
+| `getPerf()` | `frameMs` (avg, p95, p99, max, rolling 600 frame), `simTickMs`, `drawCalls`, `triangles`, `eventOverflow`, `poolOverflow` |
 
 ### 7.3 Skenario
 
@@ -260,7 +270,7 @@ Lewat hook, posisikan proyektil musuh tepat di bawah efek pemain terbesar (ledak
 - Waktu muat sampai layar judul interaktif.
 - Ukuran bundle (dari output build).
 
-Anggaran resmi milik LP. Bila LP belum menetapkan, dipakai ambang sementara di 9.4 dan ditandai [Asumsi].
+Anggaran resmi milik LP dan sudah ditetapkan di architecture 13 (beku M1). Tabel 9.4 menyalin ambang itu.
 
 ### 9.2 Profil perangkat
 | Profil | Isi | Pakai untuk |
@@ -269,23 +279,25 @@ Anggaran resmi milik LP. Bila LP belum menetapkan, dipakai ambang sementara di 9
 | P-DEV | GPU diskret RTX 3060, tanpa throttling | Pembanding, tidak dipakai untuk lolos |
 | P-LOW | P-REF dengan kualitas Rendah | Membuktikan kualitas rendah memberi ruang performa |
 
-[Asumsi] P-REF adalah perkiraan laptop menengah. LP boleh mengganti definisinya. Layar 144 Hz: fps dibatasi rAF pada laju layar, jadi ambang dihitung terhadap frame time 16,7 ms, dan laju layar dicatat di laporan.
+P-REF diterima LP sebagai profil acuan (architecture 13): GPU terintegrasi AMD Radeon (Power saving), throttling CPU 2x lewat CDP, 1920 x 1080, kualitas Sedang, headed. Layar 144 Hz: fps dibatasi rAF pada laju layar, jadi ambang dihitung terhadap frame time 16,7 ms, dan laju layar dicatat di laporan.
 
 ### 9.3 Skenario "arena paling ramai"
-- `spawnStress('peak')`: jumlah musuh puncak dari data Pulse terakhir (GD), ditambah build pemain akhir run dengan proyektil terbanyak, Warden atau boss aktif, semua efek ON.
+- Skenario puncak architecture 13: 120 musuh, 150 proyektil musuh, 300 proyektil pemain (200 proc), 24 zona, 150 Glint, partikel penuh.
+- `spawnStress('peak')` atau `'peak-boss'`: komposisi Pulse normal terakhir (dibatasi `alive_cap`) atau boss, ditambah build akhir run. Karena build itu membersihkan musuh dalam beberapa detik, uji stres QA menambah Unlit lewat `debug.spawn` tiap 200 ms sampai 120 dan menjaga HP penuh (`tests/e2e/screens.spec.ts`).
 - Alternatif yang lebih jujur: replay bot di tick dengan jumlah entitas tertinggi dari data B-5.
 - Browser dijalankan headed dengan GPU (bukan headless), pemanasan 5 detik, pengukuran 30 detik.
 
 ### 9.4 Tes performa
 
-| ID | Tes | Lolos bila [Asumsi bila LP belum menetapkan] | Mulai |
+| ID | Tes | Lolos bila (architecture 13) | Mulai |
 |---|---|---|---|
-| PF-1 | fps arena paling ramai, P-REF | Rata-rata minimal 55 fps dan 1% low minimal 40 fps | M2 |
-| PF-2 | fps arena paling ramai, P-LOW | Rata-rata minimal 60 fps (atau laju layar) dan 1% low minimal 50 fps | M2 |
-| PF-3 | Waktu tick sim | Persentil 95 di bawah 4 ms di P-REF | M2 |
-| PF-4 | Waktu muat | Layar judul interaktif dalam 5 detik dari `vite preview` lokal dengan cache kosong | M2 |
-| PF-5 | Kebocoran memori | 3 run berturut-turut dengan bot browser; heap di awal run ke-3 tidak lebih dari 20% di atas awal run ke-1 setelah garbage collection | M4 |
-| PF-6 | Ukuran bundle | Sesuai anggaran LP | M4 |
+| PF-1 | Frame time skenario puncak, P-REF Sedang (`getPerf()`, pemanasan 5 s, ukur 30 s) | p95 16,7 ms atau kurang, p99 25 ms atau kurang (1% low 40 fps), rata-rata 58 fps atau laju layar | M2 |
+| PF-2 | Frame time skenario puncak, P-REF Rendah | p99 20 ms atau kurang | M2 |
+| PF-3 | Waktu tick sim di puncak | p95 4 ms atau kurang di P-REF (`getPerf().simTickMs`); 2 ms di Node mesin dev (`tests/bench/sim-peak.bench.ts`) | M2 (angka indikatif dicatat sejak M1) |
+| PF-4 | Waktu muat | Layar judul interaktif dalam 5 s dari `vite preview` lokal cache kosong (M2); 2 s pada 10 Mbps (M4) | M2 |
+| PF-5 | Memori | Heap stabil di bawah 150 MB; awal run ke-3 maksimal 20% di atas run ke-1 setelah garbage collection | M4 |
+| PF-6 | Ukuran bundle gzip (`bundle:check`) | JS awal target 300 KB (gagal 400 KB); data dan string 40 KB (80); art 40 KB (60); audio 15 KB (25); halaman pertama 400 KB (600) | M1 (otomatis di `check`) |
+| PF-7 | Draw call dan segitiga | 60 draw call dan 100 ribu segitiga atau kurang (`getPerf().drawCalls`, `triangles`) | M2 |
 
 Catatan: angka fps dari Chromium headless (render perangkat lunak) tidak pernah dipakai sebagai bukti performa.
 
@@ -325,7 +337,7 @@ Klik pemain jatuh dalam radius 2 kali tinggi sprite pemain di layar dari pusat p
 8. Hash determinisme replay emas (D-5) dicatat.
 9. fps rata-rata selama 30 detik Pulse biasa dicatat (sanity, bukan kriteria performa).
 
-Smoke manual Firefox dijalankan oleh QA dengan membuka build `vite preview` di Firefox sistem, mencatat tiap butir dengan screenshot. [Asumsi] Agen QA bisa membuka Firefox lewat baris perintah dan mengambil screenshot; bila tidak bisa, butir ini TIDAK DIUJI dan dilaporkan.
+Sejak M1 butir 1 sampai 4, 8, dan 9 otomatis di `tests/e2e/smoke-{chrome,msedge,firefox,webkit}.spec.ts` (`tests/e2e/support/smoke.ts`), dengan build Firefox Playwright yang sudah terpasang. Butir 8 wajib identik untuk Chrome dan Edge (V8) dan hanya dicatat untuk Firefox dan WebKit. Butir 5 sampai 7 manual atau mulai M2.
 
 ## 12. Aksesibilitas
 Checklist dan cara uji ada di `docs/qa/accessibility.md`. Kriteria per milestone di bagian 13 merujuk id di sana (A-01 dan seterusnya).
@@ -342,7 +354,7 @@ Semua kriteria di bawah wajib. Satu GAGAL atau TIDAK DIUJI berarti laporan miles
 | M1-02 | Semua fitur main loop ada | E-02 sampai E-11 | Semua lolos di Chromium 1920x1080 |
 | M1-03 | Run penuh lewat browser dengan input asli | E-13 | Minimal 3 seed selesai menang atau kalah tanpa error konsol |
 | M1-04 | Determinisme | D-1, D-2, D-3, D-5 (Node, Chromium), D-6, D-7, D-8 | Semua lolos |
-| M1-05 | Pemeriksaan proyek | `npm run typecheck`, `npm run lint`, `npm test` (nama perintah mengikuti LP) | Ketiganya keluar dengan kode 0; log disimpan |
+| M1-05 | Pemeriksaan proyek | `npm run check` (termasuk typecheck, lint, test, build, bundle:check) dan `npm run test:e2e` | Keluar dengan kode 0; log disimpan |
 | M1-06 | Validasi data | DV-1 sampai DV-6 | Semua lolos |
 | M1-07 | Uji pilar M1 | CW-1, CW-2, CW-4, 8.3 (P2-b), 8.4 (P3-a, P3-b), 8.6 (P2-f), E-08 (P4-c), DV-3 (P4-b), uji 1 detik versi proksi | Semua lolos; uji 1 detik minimal 4 dari 5 |
 | M1-08 | Screenshot per layar | 7.4 set M1 di 1920x1080 dan 1280x720 | Semua file ada dan dilihat QA; temuan masuk `bugs.md` |
@@ -371,7 +383,7 @@ Semua kriteria di bawah wajib. Satu GAGAL atau TIDAK DIUJI berarti laporan miles
 | ID | Kriteria | Cara uji | Lolos bila |
 |---|---|---|---|
 | M3-01 | Regresi M1 dan M2 | Ulang semua tes otomatis | Semua lolos |
-| M3-02 | Semua konten bisa dimainkan | B-7 (matriks kelas x bioma); untuk tiap item dan Keepsake: `grantItem` lalu jalankan 5 detik Pulse | Semua run selesai; tiap item memicu minimal satu event efek di sim dalam 5 detik tanpa exception (proksi P4-d, kecuali item stat datar) |
+| M3-02 | Semua konten bisa dimainkan | B-7 (matriks kelas x bioma); untuk tiap item dan Memento: `grantItem` lalu jalankan 5 detik Pulse | Semua run selesai; tiap item memicu minimal satu event efek di sim dalam 5 detik tanpa exception (proksi P4-d, kecuali item stat datar) |
 | M3-03 | Kurva kesulitan | B-5 untuk tiap kelas | Angka berada di dalam target tertulis GD; QA melaporkan, GD menyatakan sesuai atau tidak |
 | M3-04 | Ragam build | B-6 (P1-c) | Tidak ada tag dominan di lebih dari 40% run |
 | M3-05 | Keterbacaan dan kontras dengan konten penuh | Bagian 10, 8.2 di bioma paling ramai | Lolos |
@@ -399,7 +411,7 @@ Semua kriteria di bawah wajib. Satu GAGAL atau TIDAK DIUJI berarti laporan miles
 |---|---|---|---|
 | M5-01 | Build rilis lulus semua tes | Seluruh suite otomatis terhadap build rilis | Semua lolos |
 | M5-02 | Replay emas di build rilis | D-7 lewat `vite preview` build rilis (tanpa hook, hash dibaca lewat jalur debug yang disetujui LP, atau dari build tes dengan commit yang sama) | Hash cocok |
-| M5-03 | Tidak ada kode atau flag tes di bundle | Cari di `dist/` string `__SHARDFALL_TEST__`, nama fungsi hook, dan flag tes; cek ukuran bundle | Nol kecocokan |
+| M5-03 | Tidak ada kode atau flag tes di bundle | `npm run bundle:check` (string `__shardfall` dan chunk `hooks` di `dist/`), ditambah pencarian manual nama fungsi hook dan `__E2E__`; cek ukuran bundle | Nol kecocokan |
 | M5-04 | Smoke rilis semua browser | 11.2 di semua browser yang tersedia | Lolos |
 | M5-05 | Kredit lengkap | Skrip M2-10 dan pemeriksaan Producer | Setiap aset buatan tim atau CC0 dan tercatat |
 | M5-06 | Daftar bug yang diketahui | Bagian "Bug yang diketahui" di `bugs.md` diisi semua bug MINOR terbuka | Lengkap, nol BLOCKER dan MAYOR |
@@ -440,7 +452,7 @@ File: `docs/qa/<milestone>-report.md` (contoh `docs/qa/M1-report.md`). Isi:
 
 | Dari | Kebutuhan | Untuk |
 |---|---|---|
-| LP | `hashState`, format replay, hook tes 7.2, flag build tes, aturan lint sim, struktur folder tes, perintah npm, anggaran performa | Bagian 5, 7, 9 |
+| LP | Sudah dipenuhi di architecture v2.2 (hash, replay, hook, `__E2E__`, lint sim, folder, perintah, anggaran). Sisa: skrip `test:bot`, `test:det`, `test:perf`, `qa:report`; perbaikan `goToScreen('confirm')` (BUG-004) | Bagian 3, 5, 7, 9 |
 | LP | Keputusan dependensi: `@vitest/coverage-v8` (opsional), build Firefox Playwright (unduhan CDN) | 4.1, 2.2 |
 | GD | Target kurva kesulitan tertulis, kolom penanda item stat datar, jumlah musuh puncak, durasi minimum telegraf | B-5, DV-7, 9.3 |
 | AD | Metadata kubu per sprite, kalibrasi ambang hue dan selisih grayscale | CW-1, CW-3, 8.3 |

@@ -1,6 +1,6 @@
 # Shardfall: Style Guide
 
-Pemilik: Creative Director (CD). Status: dikunci untuk M0 (versi 1.1, 2026-11-16). Daftar perubahan versi 1.1 dari review M0 ada di bagian 6.
+Pemilik: Creative Director (CD). Status: dikunci (versi 1.2, 2026-11-17). Daftar perubahan versi 1.1 (review M0) dan 1.2 (review rasa M1) ada di bagian 6 dan 7.
 Berlaku untuk: Art Director, UI Programmer, Audio Director, Writer, Level Designer, Gameplay Programmer.
 Dasar: `docs/vision.md` dan `docs/pillars.md`. Bila bertentangan, pilar yang menang.
 
@@ -73,14 +73,14 @@ Rasio kontras yang sudah dicek pada hex mentah (luminans WCAG): `danger-core` vs
 - Sprite pemain: minimal 15% piksel adalah sorotan terang (`kept-cyan`, `kept-gold`, atau `kept-white`) agar pemain lolos uji grayscale.
 - Proyektil musuh selalu tiga lapis: inti `danger-core`, cincin `danger-magenta` (atau merah atau ungu), outline `ink`. Bentuk bulat atau simetris agar tidak perlu diputar.
 - Proyektil pemain: inti `kept-white`, badan `kept-cyan`, tanpa outline (membedakan dari proyektil musuh secara bentuk juga).
-- Emas kecil di area main selalu berarti Glint atau hadiah. Penanda status milik pemain yang menempel di atas Unlit (Burn dan sejenisnya) memakai `kept-cyan` dan `kept-white` ("api kaca biru"), bukan emas. Isian area api milik pemain (ledakan Lantern Bolt, zona Rite) boleh `kept-gold` dengan opasitas maksimal 25%.
+- Emas kecil di area main selalu berarti Glint atau hadiah. Penanda status milik pemain yang menempel di atas Unlit (Burn dan sejenisnya) memakai `kept-cyan` dan `kept-white` ("api kaca biru"), bukan emas. Isian area api milik pemain (ledakan Lantern Bolt, zona Rite) boleh `kept-gold` dengan opasitas efektif maksimal 25% (diukur sebagai campuran di atas lantai pada render, bukan alpha shader). Angka damage tidak pernah emas (1.8). Emas di area main hanya: Glint, hadiah (peti Warden, level up, Memento), isian zona api pemain, kilau Rush penuh pada pemain.
 - Audit P2-d dilakukan per kepemilikan sprite dan VFX, bukan per tumpang tindih di layar: efek pemain yang digambar di atas Unlit tetap efek pemain.
 - Cahaya lingkungan hangat (lentera) memakai amber redup, bukan emas jenuh. Batas: saturasi cahaya lingkungan di bawah 60% dan tidak pernah dipakai sebagai warna objek kecil di area main.
 - Mode buta warna (milik QA dan UI): kode tetap dibedakan juga oleh bentuk dan nilai (inti pucat plus outline untuk bahaya, cincin kaki untuk pemain), bukan hanya hue.
 
 ### 1.4 Skala pixel dan ukuran sprite
 - **Satu skala pixel untuk semua sprite dan tekstur lingkungan.** [Wajib]
-- Skala layar [Asumsi, kalibrasi M1]: 1 piksel sprite = 3 piksel layar pada 1920x1080, 2 piksel layar pada 1280x720 dan 1366x768. Hanya kelipatan integer.
+- Skala layar [Dikunci di review M1]: 1 piksel sprite = 3 piksel layar pada 1920x1080, 2 piksel layar pada 1280x720 dan 1366x768. Hanya kelipatan integer. Rasio kecepatan vertikal layar pemain 0,80 juga dikunci.
 - Kerapatan texel lantai dan dekorasi sama dengan kerapatan piksel sprite di layar. [Wajib]
 - Kamera: tetap, miring sekitar 40 derajat dari horizontal, tidak berputar. [Saran untuk LP dan AD] Kamera ortografis agar skala pixel konstan di seluruh area main. Sprite aktor berupa billboard menghadap kamera.
 - **Rasa gerak terhadap kemiringan kamera** [Wajib secara rasa, implementasi milik LP dan GP, angka milik GD]: kamera miring membuat gerak ke atas dan bawah layar tampak lebih lambat (faktor kedalaman sekitar 0.63 sampai 0.67). Arah yang diputuskan:
@@ -134,10 +134,13 @@ Aturan bentuk:
 
 ### 1.8 VFX dan telegraf
 - Telegraf area: isian `danger-red` opasitas 25 sampai 35% dengan tepi solid tegas. Isian tumbuh dari tengah ke tepi selama waktu telegraf, sehingga pemain membaca kapan serangan kena.
+- **Telegraf bertumpuk** [Wajib]: beberapa isian yang tumpang tindih tampil seperti satu isian (opasitas gabungan maksimal 35%), tidak makin pekat.
+- **Pemain tidak pernah tersembunyi** [Wajib]: bila isian telegraf atau proyektil musuh menutupi pemain, siluet tembus pemain (outline `kept-white` atau `kept-cyan` 1 px plus cincin kaki) digambar di atas lapis bahaya. Lapis bahaya tetap di atas efek pemain (P2-f).
 - Telegraf terjang: mata dan outline musuh berkedip `danger-red` saat ancang-ancang, plus garis arah tipis bila serangannya lurus.
 - Peledak: berkedip makin cepat sebelum meledak.
 - Efek pemain dibatasi opasitas dan ukurannya agar tidak menutupi bahaya. Efek pemain digambar di bawah lapis bahaya.
-- Angka damage: dari pemain = `bone` kecil, kritikal = `kept-gold`. Damage yang diterima pemain = kilat merah tipis di tepi layar plus suara, bukan angka besar di atas pemain. Angka damage bisa dimatikan.
+- Zona milik pemain: isian emas maksimal 25% efektif; jejak berulang (misalnya Smolder Boots) maksimal 15% tanpa tepi. Tepi zona boleh 1 px `kept-cyan` solid, **tidak putus-putus**: garis putus-putus milik bahasa telegraf bahaya.
+- Angka damage: dari pemain = `bone` kecil, kritikal = `kept-cyan` dengan outline `ink` (bukan emas, agar tidak berbaur dengan Glint), boleh dengan set digit 1 px lebih besar atau satu piksel kilau sebagai pembeda bentuk, tanpa skala non-integer. Jumlah angka di layar dibatasi (angka biasa terlama dibuang lebih dulu) dan tidak digambar di dalam kotak sprite pemain. Damage yang diterima pemain = kilat merah tipis di tepi layar plus suara, bukan angka besar di atas pemain. Angka damage bisa dimatikan.
 - Kematian Unlit: pecah menjadi motes gelap yang memudar cepat (kurang dari 0.3 detik), tidak menumpuk di lantai.
 - Kematian pemain: Kept pecah menjadi serpihan kaca biru dan cyan, layar melambat sebentar.
 
@@ -343,3 +346,13 @@ Sumber dan alasan: `docs/reviews/M0-cd.md`.
 | 3.1 | Riser 6 detik (bukan sekitar 5) |
 | 4.3 | Kata terlarang ditambah Keepsake, Unkindled, Ashen, Hollow |
 | 4.4 | Kapitalisasi Temper, Fuse, The Keeping, Crack |
+
+## 7. Perubahan versi 1.2 (review rasa M1, 2026-11-17)
+
+Sumber dan alasan: `docs/reviews/M1-cd.md`.
+
+| Bagian | Perubahan |
+|---|---|
+| 1.3 | Isian zona api pemain diukur efektif di render (maks 25%); daftar tertutup arti emas di area main; angka damage tidak emas |
+| 1.4 | Kamera, skala (2x di 720p dan 768p, 3x di 1080p), dan rasio gerak vertikal 0,80 dikunci setelah kalibrasi M1 |
+| 1.8 | Telegraf bertumpuk tidak makin pekat; siluet tembus pemain di atas lapis bahaya; zona pemain tanpa tepi putus-putus, jejak maks 15%; angka kritikal `kept-cyan`, batas jumlah angka |

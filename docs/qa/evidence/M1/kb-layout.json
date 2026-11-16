@@ -1,0 +1,18 @@
+{
+  "07-glazier": [
+    {
+      "kind": "clipped",
+      "what": "span.card-flavor \"Dry twigs saved for the festival bonfire\""
+    },
+    {
+      "kind": "clipped",
+      "what": "span.card-flavor \"A coal from the hearth at home, still wa\""
+    }
+  ],
+  "08-glazier-after": [
+    {
+      "kind": "clipped",
+      "what": "span.card-flavor \"A coal from the hearth at home, still wa\""
+    }
+  ]
+}

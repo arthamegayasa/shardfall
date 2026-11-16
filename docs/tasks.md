@@ -7,8 +7,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | Milestone | Status | Catatan |
 |---|---|---|
 | M0 Konsep dan pilar | SELESAI | Semua dokumen SETUJU / SETUJU DENGAN CATATAN, pilar dan style guide v1.1 dikunci CD |
-| M1 Prototipe main loop | BERJALAN | Dimulai 2026-11-17 |
-| M2 Vertical slice HD-2D | BELUM | |
+| M1 Prototipe main loop | SELESAI | Run 10 Pulse playable, determinisme terbukti, 17 e2e lulus, review LP LOLOS |
+| M2 Vertical slice HD-2D | BERJALAN | Brief: docs/m2-creative-brief.md |
 | M3 Konten penuh | BELUM | |
 | M4 Polish dan QA | BELUM | |
 | M5 Rilis | BELUM | |
@@ -39,16 +39,30 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 
 | ID | Tugas | Pemilik | Reviewer | Status |
 |---|---|---|---|---|
-| M1-00 | Jawab pertanyaan GP, perbaikan review M0 di gdd dan data-schema | GD | LP | BERJALAN |
-| M1-01 | Kerangka proyek, kontrak, pipeline data, CI, deploy Pages | LP | QA | BERJALAN |
-| M1-02 | Data M1 (CSV) dan model balance | GD | LP | BELUM |
-| M1-03 | Core loop sim | GP | LP, QA | BELUM |
-| M1-04 | HUD, toko, level-up, akhir run | UI | LP, CD | BELUM |
-| M1-05 | Placeholder berskala benar | AD | CD, LP | BELUM |
-| M1-06 | SFX placeholder | AU | CD, LP | BELUM |
-| M1-07 | Arena prototipe | LD | CD, LP | BELUM |
-| M1-08 | String table awal | WR | CD | BELUM |
-| M1-09 | Review kode, uji build, catatan rasa main | LP, QA, CD | Producer | BELUM |
+| M1-00 | Jawab pertanyaan GP, perbaikan review M0 di gdd dan data-schema | GD | LP | SELESAI |
+| M1-01 | Kerangka proyek, kontrak, pipeline data, CI, deploy Pages | LP | QA | SELESAI |
+| M1-02 | Data M1 (CSV) dan model balance | GD | LP | SELESAI |
+| M1-03 | Core loop sim | GP | LP, QA | SELESAI |
+| M1-04 | HUD, toko, level-up, akhir run | UI | LP, CD | SELESAI |
+| M1-05 | Placeholder berskala benar | AD | CD, LP | SELESAI |
+| M1-06 | SFX placeholder | AU | CD, LP | SELESAI |
+| M1-07 | Arena prototipe | LD | CD, LP | SELESAI |
+| M1-08 | String table awal | WR | CD | SELESAI |
+| M1-09 | Review kode, uji build, catatan rasa main | LP, QA, CD | Producer | SELESAI (LP LOLOS, QA LOLOS setelah favicon diperbaiki, CD SETUJU DENGAN CATATAN) |
+
+## Tugas M2
+
+| ID | Tugas | Pemilik | Reviewer | Status |
+|---|---|---|---|---|
+| M2-01 | Data slice: kepadatan, Glint, Warden, boss, tuning bot | GD | CD, LP | BERJALAN |
+| M2-02 | Pipeline render HD-2D dan lingkungan diorama | LP | CD, QA | BERJALAN |
+| M2-03 | Aset final slice, VFX, ikon, potret Glazier | AD | CD, LP | BERJALAN |
+| M2-04 | Musik bioma 1 (Pulse, toko, boss), overlay Warden, SFX final | AU | CD, LP | BERJALAN |
+| M2-05 | Event dampak, knockback, Warden affix, pola boss, BUG-001, MAYOR M1 | GP | LP, QA | BERJALAN |
+| M2-06 | UI final slice, ikon, pengaturan, remap | UI | CD, LP | BERJALAN |
+| M2-07 | arena_market final | LD | CD | BERJALAN |
+| M2-08 | Teks slice, baris Glazier, perbaikan string | WR | CD | BERJALAN |
+| M2-09 | Integrasi dan review LP, uji performa dan keterbacaan QA, putusan HD-2D CD | LP, QA, CD | Producer | BELUM |
 
 ## Keputusan
 
@@ -69,3 +83,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | 2026-11-17 | Kamera pitch asin(0.625) = 38.68 derajat, 1 u = 16 px lebar dan 10 px kedalaman, arena 32 x 20 u | LP | docs/reviews/M0-lp.md |
 | 2026-11-17 | @types/node disetujui. @vitest/coverage-v8 tidak dipakai | Producer | Hemat dependensi |
 | 2026-11-17 | Perbaikan dokumen kecil dari review M0 untuk WR, AD, AU, LD, UI, QA dikerjakan sebagai langkah pertama tugas M1 masing-masing, bukan putaran terpisah | Producer | Hemat waktu, tidak menghalangi M1 |
+| 2026-11-17 | Keluar M1: butir test-plan 13.1 berbasis gambar (CW-2, CW-4, 8.3, 8.4, 8.6), uji 1 detik proksi, DV-6, A-06 langkah 3 dikecualikan dari M1 dan wajib diuji di M2 | Producer | Bergantung pada visual final M2 |
+| 2026-11-17 | Favicon 404 (BUG-002) diperbaiki Producer dengan ikon inline di index.html | Producer | Integrasi kecil |
+| 2026-11-17 | Profil default build: `run_a` (10 Pulse, Warden P5, boss P10) | Producer | run_a_m1 tidak punya Warden dan boss |
+| 2026-11-17 | Unduh WebKit Playwright terbaru diizinkan | Producer | Alat tes gratis |
+| 2026-11-17 | Opsi bahasa di Settings: tidak di 1.0 (EN saja di UI, `?lang=id` tetap tersedia) | Producer | Hemat scope |

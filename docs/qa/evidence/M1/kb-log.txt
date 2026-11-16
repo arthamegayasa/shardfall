@@ -1,0 +1,15 @@
+title focus order (ArrowDown): title-new-run > title-settings > title-credits > title-credits > title-credits
+run started from the UI (random seed), pulse 1
+E-04 KeyD: moved 129.6 css px along x
+E-04 KeyA: moved 126.0 css px along x
+E-04 KeyS: moved 103.7 css px along y
+E-04 KeyW: moved 103.7 css px along y
+E-05 Rite cooldown text after cast: "12"
+Pulse 1 real time: {"seconds":18.409,"riteCasts":0,"maxEnemies":15,"glintStart":0,"glintEnd":13,"hpEnd":30,"keyChanges":42}
+after Pulse 1: phase shop, level 1, hp 30/30, glint 13
+Glazier: glint 13, affordable offers [false,false,false,false]
+no affordable offer after Pulse 1 (buy step not exercised by keyboard here)
+reroll with R: glint 13 -> 11, offers changed
+Pulse 2 keyboard 4 s: {"seconds":4.075,"riteCasts":0,"maxEnemies":7,"glintStart":11,"glintEnd":11,"hpEnd":30,"keyChanges":7}
+E-15 saved {"t":1731,"g":11,"h":"cbd63e25"} resumed {"t":1731,"g":11,"h":"cbd63e25"}
+settings rows reachable with ArrowDown: 5 (settings-tab-graphics, setting-quality, setting-screenShake, setting-fullscreen, settings-back)

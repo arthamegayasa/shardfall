@@ -1,0 +1,80 @@
+{
+  "browserName": "chromium",
+  "headless": true,
+  "peak": {
+    "phase": "pulse",
+    "enemiesMin": 95,
+    "enemiesAvg": 114.7,
+    "enemiesMax": 120,
+    "countsEnd": {
+      "enemies": 90,
+      "enemyShots": 5,
+      "playerShots": 13,
+      "pickups": 150,
+      "dangerAreas": 4,
+      "playerZones": 0
+    },
+    "frames": 448,
+    "frameMs": {
+      "avg": 22.73,
+      "p95": 33.4,
+      "p99": 33.4,
+      "max": 33.5
+    },
+    "fpsAvg": 44,
+    "perfHook": {
+      "frameMs": {
+        "avg": 22.72149999999989,
+        "p95": 33.39999999999998,
+        "p99": 33.400000000001455,
+        "max": 83.39999999999998
+      },
+      "simTickMs": {
+        "avg": 0.11833333422740301,
+        "p95": 0.20000004768371582
+      },
+      "drawCalls": 6,
+      "triangles": 824,
+      "eventOverflow": 0,
+      "poolOverflow": 0
+    }
+  },
+  "peak-boss": {
+    "phase": "pulse",
+    "enemiesMin": 98,
+    "enemiesAvg": 113.6,
+    "enemiesMax": 120,
+    "countsEnd": {
+      "enemies": 90,
+      "enemyShots": 5,
+      "playerShots": 13,
+      "pickups": 150,
+      "dangerAreas": 6,
+      "playerZones": 0
+    },
+    "frames": 437,
+    "frameMs": {
+      "avg": 22.58,
+      "p95": 33.4,
+      "p99": 33.4,
+      "max": 33.4
+    },
+    "fpsAvg": 44.3,
+    "perfHook": {
+      "frameMs": {
+        "avg": 22.24916666666667,
+        "p95": 33.400000000001455,
+        "p99": 33.400000000001455,
+        "max": 66.69999999999891
+      },
+      "simTickMs": {
+        "avg": 0.11266666660706202,
+        "p95": 0.20000004768371582
+      },
+      "drawCalls": 6,
+      "triangles": 820,
+      "eventOverflow": 0,
+      "poolOverflow": 0
+    }
+  }
+}

@@ -1,0 +1,8 @@
+browser firefox 157.0
+1 title in 980 ms, webgl2 true
+3 KeyD moved 2.55 u
+9 fps over 5 s of Pulse 1: 88.3 (443 frames)
+4 after Pulse 1: phase shop, glint 17, hp 21
+4 bought one item with Digit1, Pulse 2 started with B
+8 D-5 vs Node: identical (20 checkpoints)
+problems: []

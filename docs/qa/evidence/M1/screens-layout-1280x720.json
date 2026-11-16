@@ -1,0 +1,17 @@
+{
+  "pulse-peak:counts": [
+    "{\"enemies\":82,\"enemyShots\":4,\"playerShots\":10,\"pickups\":13,\"dangerAreas\":3,\"playerZones\":0}"
+  ],
+  "glazier": [
+    {
+      "kind": "clipped",
+      "what": "span.card-flavor \"A child's marble. A little of the sky is\""
+    }
+  ],
+  "warden-reward": [
+    {
+      "kind": "clipped",
+      "what": "span.card-flavor \"Dry twigs saved for the festival bonfire\""
+    }
+  ]
+}
