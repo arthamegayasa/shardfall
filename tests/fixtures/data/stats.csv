@@ -1,0 +1,4 @@
+id,base,min,max,unit,display_key,show_in_ui
+damage_pct,0,-50,,pct,stat.damage_pct,1
+armor,0,-5,20,flat,stat.armor,1
+move_speed,0,-50,100,pct,stat.move_speed,1

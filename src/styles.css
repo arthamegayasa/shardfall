@@ -1,0 +1,39 @@
+/* Base page layout (LP). Screen styles live in src/ui (UI Programmer). */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #14121c;
+}
+
+#game {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+#ui-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  color: #ede6d8;
+}
+
+#ui-root > * {
+  pointer-events: auto;
+}
+
+#ui-root .ui-layer {
+  pointer-events: none;
+}
+
+.fatal {
+  margin: 2rem;
+}

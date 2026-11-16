@@ -1,0 +1,4 @@
+id,name_key,desc_key,content_tier,tags,archetype,kind,targeting,dmg,dmg2,cooldown,range,speed,radius,proj_radius,count,pierce,knockback,params,unlock_silt
+test_bolt,weapon.test_bolt.name,weapon.test_bolt.desc,A,flame,bolt_explode,projectile,nearest,5,3,1,6,12,1,,1,0,0,,0
+test_shard,weapon.test_shard.name,weapon.test_shard.desc,A,shard|edge,projectile,projectile,nearest,3,,0.5,6,15,,,2,1,0.5,fan_every_n=3,0
+test_late,weapon.test_late.name,weapon.test_late.desc,B,echo,ring_echo,area,self,4,,2,3,0,2,,1,0,0,,10

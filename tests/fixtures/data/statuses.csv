@@ -1,0 +1,3 @@
+id,duration,tick,params
+burn,2,0.5,dps_frac=0.25
+slow,1.5,,

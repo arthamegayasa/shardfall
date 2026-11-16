@@ -1,0 +1,10 @@
+weapon_id,tier,params,effects
+test_bolt,2,dmg_add=2,
+test_bolt,3,dmg_add=2,
+test_bolt,4,dmg_add=3,
+test_shard,2,,
+test_shard,3,count_add=1,
+test_shard,4,fan_count=3,
+test_late,2,,
+test_late,3,,
+test_late,4,,

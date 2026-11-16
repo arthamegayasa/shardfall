@@ -1,0 +1,4 @@
+profile,pulse,enemy_id,count,start_frac,end_frac,group_min,group_max,sectors
+run_a_m1,1,test_swarmer,12,0,0.9,3,4,
+run_a_m1,2,test_swarmer,10,0,0.9,3,4,n|s
+run_a_m1,2,test_charger,3,0.2,0.8,1,1,

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "arena_test",
+  "arena": {
+    "boundary": [
+      [-8, -5],
+      [8, -5],
+      [10, -3],
+      [10, 3],
+      [8, 5],
+      [-8, 5],
+      [-10, 3],
+      [-10, -3]
+    ],
+    "lip": 0.5,
+    "rim": { "height": 0.25, "colorToken": "dust", "opacity": 0.5 },
+    "projectileMargin": 2,
+    "floor": { "baseToken": "floor-mid", "altToken": "floor-lit", "tileId": "tile-floor" }
+  },
+  "playerStart": { "default": [0, 1], "boss": [0, 3] },
+  "pulseOrigin": [0, 0],
+  "safeZones": [],
+  "spawn": { "playerSafeRadius": 4, "interiorMinPlayerDist": 6, "zones": [] },
+  "bossStage": {
+    "shape": { "type": "circle", "center": [0, -2], "radius": 3 },
+    "landmarkId": "test",
+    "floorRingContrastMax": 0.2
+  },
+  "lighting": { "edgeFade": { "startOutside": 1, "endOutside": 4 }, "points": [] },
+  "obstacles": [],
+  "decor": [],
+  "ambient": { "particles": [] }
+}

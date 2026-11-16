@@ -37,7 +37,7 @@ Sebagian besar aturan [Wajib] dipaksa otomatis oleh TypeScript, ESLint, atau skr
 }
 ```
 
-Tiga file: `tsconfig.json` (src kecuali sim, tests, `art/**/*.ts`), `tsconfig.sim.json` (`src/sim`, `src/core`, `src/content` tanpa DOM), `tsconfig.tools.json` (`tools/`, `art/**/*.ts`, lingkungan Node dengan `@types/node`). Semua tool ditulis `.ts`; tool `.mjs` yang ada dipindah ke `.ts` di M1.
+Tiga file di atas `tsconfig.base.json` (opsi bersama): `tsconfig.json` (src, tests, file konfigurasi; `art/**/*.ts` menyusul setelah AD memakai `src/core/math`, M1-05), `tsconfig.sim.json` (`src/sim`, `src/core`, `src/content` tanpa DOM), `tsconfig.tools.json` (`tools/`, `art/**/*.ts`, lingkungan Node dengan `@types/node`). Semua tool ditulis `.ts`; tool `.mjs` yang ada dipindah ke `.ts` di M1.
 
 ### 1.2 Akibat `erasableSyntaxOnly` (agar tool jalan langsung di Node 24) [Wajib] (otomatis)
 - Tidak ada `enum` dan `const enum`. Pakai objek `as const` plus tipe turunan:

@@ -1,0 +1,2 @@
+id,name_key,desc_key,content_tier,archetype,cooldown,dmg,radius,params
+test_flare,rite.test_flare.name,rite.test_flare.desc,A,throw_zone,10,10,2,max_range=5;zone_s=2

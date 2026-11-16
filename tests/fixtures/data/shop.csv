@@ -1,0 +1,15 @@
+key,value
+slots,3
+weapon_chance,0.5
+class_tag_weight,2
+owned_tag_weight,1.5
+merge_push_chance,0.25
+sell_frac,0.5
+reroll_base_add,1
+reroll_t_div,2
+reroll_step,1
+bad_luck_shops,2
+bad_luck_min_t,3
+warden_chest_choices,2
+warden_chest_min_rarity,fine
+boss_chest_min_rarity,fine

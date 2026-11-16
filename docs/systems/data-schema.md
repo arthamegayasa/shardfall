@@ -1,39 +1,59 @@
 # Skema Data CSV
 
-Pemilik: Game Designer (isi dan arti kolom). Lead Programmer boleh menyesuaikan format teknis (nama file, tipe, struktur JSON) dengan catatan di `docs/tech/`. Status: usulan M0 versi 1, 2026-11-16.
+Pemilik: Game Designer (isi dan arti kolom). Format teknis (dialek CSV, bentuk JSON, tipe) milik Lead Programmer di `docs/tech/architecture.md` versi 2 bagian 9; bila berbeda, architecture yang berlaku. Status: versi 2, 2026-11-17 (perbaikan review M0 dan jawaban `docs/specs/gd-answers-m0.md`).
 Terkait: `docs/gdd.md`, `docs/systems/effect-primitives.md`.
+
+## 0. Perubahan versi 2
+
+| Hal | Versi 1 | Versi 2 |
+|---|---|---|
+| Tingkat konten | kolom `tier` | kolom `content_tier` (`A`, `B`, `C`). `tier` di `weapon_tiers.csv` tetap berarti tier senjata |
+| Tag | `Flame`, `source_tag:Flame` | id huruf kecil: `flame`, `shard`, `edge`, `echo`, `ward`, `trade`. Nama tampil lewat `tag.<id>.name` |
+| Istilah | Keepsake, `keepsakes.csv` | **Memento**, `mementos.csv`, kunci string `memento.*`, kolom `memento_price`, unlock `memento_pack` |
+| `config.csv` | `tick_rate`, `glint_merge_value`, `pulse_dur_*`, `spawn_min_dist` | dihapus. Tambah `pulse_clear_s`, `player_vertical_screen_ratio`, radius per ukuran, kunci telegraf minimum, dan lainnya (3.1) |
+| `biomes.csv` | `palette_id` | dihapus (palet dicari lewat id bioma di `art/palette.json`). `arena_id` memakai id LD |
+| `wave_spawns.csv` | tanpa sektor | kolom opsional `sectors` |
+| `waves.csv` | profil `run_a`, `run_b`, `run_c` | tambah `run_a_m1` (prototipe M1) |
+| Bentuk JSON | objek berkunci id | array berurutan, architecture 9.4 |
 
 ## 1. Konvensi
 
+Dialek lengkap: architecture 9.2. Ringkasan untuk penulis data:
+
 | Aturan | Nilai |
 |---|---|
-| Lokasi | `content/data/<tabel>.csv`, hasil konversi `content/data/<tabel>.json` (atau satu bundle, keputusan LP) |
-| Encoding | UTF-8 tanpa BOM, baris pertama header |
-| Pemisah kolom | koma. Nilai yang berisi koma dibungkus tanda kutip ganda |
+| Lokasi | `content/data/<tabel>.csv`, dibangun `tools/data/build-data.ts` menjadi `content/generated/game-data.json` |
+| Encoding | UTF-8 tanpa BOM, baris pertama header `snake_case` |
+| Pemisah | koma; sel berisi koma dibungkus kutip ganda |
 | Desimal | titik (`0.25`), tanpa pemisah ribuan |
-| Daftar dalam sel | dipisah `\|` (contoh `Flame\|Edge`) |
+| Daftar dalam sel | dipisah `\|` (contoh `flame\|edge`) |
 | Parameter dalam sel | `kunci=nilai;kunci=nilai` |
+| Syarat efek | `nama:nilai` dipisah `\|` |
 | Boolean | `0` atau `1` |
-| Sel kosong | pakai default kolom |
-| Komentar | baris yang diawali `#` diabaikan |
-| Id | `snake_case`, unik per tabel, tidak berubah setelah dipakai |
-| Teks | Tidak ada teks tampil di CSV data. Kolom `*_key` merujuk string table Writer di `content/strings/` |
-| Tingkat konten | Kolom `tier` berisi `A`, `B`, atau `C` (tingkat minimum). Build untuk tingkat X memuat baris dengan tier <= X |
-| Persen | Disimpan sebagai angka persen untuk stat (`damage_pct=8` berarti +8%), dan sebagai fraksi untuk peluang dan pengali (`chance=0.08`, `dmg_frac=0.4`) |
+| Sel kosong | default kolom |
+| Komentar | baris diawali `#` diabaikan |
+| Id | `snake_case`, unik per tabel, tidak berubah setelah dipakai. Berlaku juga untuk tag, bioma (`biome_market`), arena (`arena_proto`) |
+| Teks | Tidak ada teks tampil di CSV. Kolom `*_key` merujuk string table Writer |
+| Tingkat konten | `content_tier` = tingkat minimum. Build tingkat X memuat baris dengan `content_tier` <= X |
+| Persen | Stat berjenis `pct` ditulis sebagai poin persen (`damage_pct=8` = +8%). Peluang dan pengali sebagai pecahan (`chance=0.08`, `dmg_frac=0.4`) |
+| Satuan | Ditentukan skema per kolom: waktu detik, jarak u, kecepatan u/s, sudut derajat. Tidak ada piksel di data |
+| Urutan baris | Urutan baris = index padat dan urutan pool untuk pengundian RNG. Mengubah urutan baris mengubah hasil seed. Kolom `sort` hanya untuk tampilan |
 
-Validasi minimal di pipeline (usulan untuk `tools/`):
-1. Semua rujukan id ada (senjata awal kelas, owner efek, enemy di wave_spawns, pattern boss, target unlock).
-2. Enum valid (trigger, action, condition, tag, rarity, tier, role).
+Validasi minimal (dijalankan build data, architecture 9.3):
+1. Semua rujukan id ada (senjata awal, owner efek, enemy di `wave_spawns`, pattern boss, target unlock, arena bioma).
+2. Enum valid (trigger, action, condition, tag, rarity, `content_tier`, role, sektor).
 3. Kunci `params` dikenal untuk aksi atau arketipe itu.
 4. Angka dalam rentang `stats.csv` (min, max).
-5. Setiap senjata dan Keepsake punya minimal 1 tag (P1-b).
-6. Laporan P1-a: persentase Keepsake dengan `is_flat=1` di pool toko per tingkat.
+5. Setiap senjata dan Memento punya minimal 1 tag (P1-b).
+6. Laporan P1-a: persentase Memento `is_flat=1` di pool toko per tingkat.
+7. `telegraph_s` musuh, affix, dan pola boss tidak di bawah kunci `telegraph_min_*_s` yang sesuai (P2-e).
+8. Sumber `convert` tidak boleh menjadi target `convert` lain (mencegah siklus, effect-primitives 6.5).
 
 ## 2. Daftar tabel
 
 | Tabel | Isi | Dipakai oleh |
 |---|---|---|
-| `config.csv` | Konstanta global skalar | semua |
+| `config.csv` | Konstanta balance global skalar | semua |
 | `stats.csv` | Definisi stat pemain | stat, UI |
 | `classes.csv` | Kelas | pilih kelas, run |
 | `rites.csv` | Rite | kombat |
@@ -41,7 +61,7 @@ Validasi minimal di pipeline (usulan untuk `tools/`):
 | `weapon_tiers.csv` | Bonus per tier per senjata | kombat |
 | `rarity.csv` | Harga dan pengali per rarity | toko, kombat |
 | `rarity_weights.csv` | Bobot rarity per threat | toko, level-up, peti |
-| `keepsakes.csv` | Keepsake | toko, peti |
+| `mementos.csv` | Memento | toko, peti |
 | `effects.csv` | Semua efek primitif | mesin efek |
 | `synergies.csv` | Ambang tag | mesin efek, UI |
 | `levelup.csv` | Kartu level-up | level-up |
@@ -51,11 +71,13 @@ Validasi minimal di pipeline (usulan untuk `tools/`):
 | `affixes.csv` | Affix Warden | AI |
 | `bosses.csv` | Fase boss | AI boss |
 | `boss_patterns.csv` | Pola serangan boss | AI boss |
-| `biomes.csv` | Bioma | run, render |
+| `biomes.csv` | Bioma | run, render, audio |
 | `waves.csv` | Slot Pulse per profil run | run, spawner |
 | `wave_spawns.csv` | Komposisi spawn per Pulse | spawner |
 | `difficulty.csv` | Crack 0 sampai 5 | run |
 | `meta_unlocks.csv` | Unlock Silt | meta |
+
+Tabel minimum M1 (M1-02): `config`, `stats`, `classes`, `rites`, `weapons`, `weapon_tiers`, `rarity`, `rarity_weights`, `mementos`, `effects`, `synergies`, `levelup`, `shop`, `statuses`, `enemies`, `biomes`, `waves`, `wave_spawns`. Tabel lain boleh kosong (hanya header) sampai M2.
 
 ## 3. Kolom per tabel
 
@@ -63,17 +85,80 @@ Validasi minimal di pipeline (usulan untuk `tools/`):
 
 | Kolom | Tipe | Arti |
 |---|---|---|
-| `key` | string | Nama konstanta |
+| `key` | id | Nama konstanta, harus dideklarasikan di skema |
 | `value` | number | Nilai |
 | `notes` | string | Catatan (tidak dibaca game) |
 
-Kunci awal: `tick_rate` 60, `player_base_speed` 4.5, `pickup_radius_base` 1.6, `glint_fly_speed` 12, `glint_floor_cap` 150, `glint_merge_value` 5, `pulse_end_collect_frac` 0.5, `iframes_hurt` 0.5, `iframes_dodge` 0.2, `player_radius` 0.35, `armor_k` 15, `armor_max_reduction` 0.85, `guard_min_frac` 0.25, `proc_growth` 0.2, `enemy_hp_lin` 0.12, `enemy_hp_quad` 0.006, `enemy_dmg_lin` 0.07, `price_growth` 0.08, `xp_base` 15, `xp_per_level` 10, `spawn_mark_s` 0.8, `spawn_min_dist` 4, `warden_spawn_frac` 0.25, `warden_overtime_haste_s` 20, `boss_enrage_s` 120, `boss_enrage_gap_mult` 0.6, `boss_trickle_every_s` 4, `boss_trickle_count` 2, `pulse_dur_base` 20, `pulse_dur_step` 2.5, `pulse_dur_max` 40, `extra_projectile_spread_deg` 12, `weapon_slots` 6, `leech_heal_cap_per_s` 6.
+Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, bukan di sini.
+
+| Kunci | Nilai awal | Arti | Sumber |
+|---|---|---|---|
+| `player_base_speed` | 4.5 | u/s horizontal | GDD 5.1 |
+| `player_vertical_screen_ratio` | 0.8 | Kecepatan layar vertikal pemain relatif horizontal (rentang kalibrasi 0.75 sampai 0.85) | CD K7, architecture 7.1 |
+| `player_radius` | 0.35 | u | GDD 5.1 |
+| `pickup_radius_base` | 1.6 | u | GDD 4.2 |
+| `glint_fly_speed` | 12 | u/s | GDD 4.2 |
+| `glint_collect_dist_add` | 0.2 | Butir terpungut pada jarak `player_radius` + nilai ini | jawaban GD |
+| `glint_floor_cap` | 150 | Butir di lantai sebelum aturan gabung | GDD 4.2 |
+| `pulse_end_collect_frac` | 0.5 | Pungutan otomatis akhir Pulse | GDD 3.3 |
+| `pulse_clear_s` | 1.0 | Durasi fase `pulseClear` | GDD 3.3 |
+| `iframes_hurt` | 0.5 | Kebal setelah kehilangan HP | GDD 5.3 |
+| `iframes_dodge` | 0.2 | Kebal setelah dodge | GDD 5.3 |
+| `iframes_block` | 0.2 | Kebal setelah Barrier menyerap | Q05 |
+| `knockback_s` | 0.1 | Waktu sebar dorongan | Q08 |
+| `armor_k` | 15 | Konstanta rumus armor | GDD 5.3 |
+| `armor_max_reduction` | 0.85 | | GDD 5.3 |
+| `guard_min_frac` | 0.25 | | GDD 5.2 |
+| `proc_growth` | 0.2 | `proc_scale(t)` | GDD 5.2 |
+| `burn_dps_nonhit` | 2 | DPS Burn per tumpukan dari sumber non-hit, dikali `proc_scale` | Q07 |
+| `enemy_hp_lin` | 0.12 | `hp(t)` | GDD 5.5 |
+| `enemy_hp_quad` | 0.006 | `hp(t)` | GDD 5.5 |
+| `enemy_dmg_lin` | 0.07 | `dm(t)` | GDD 5.3 |
+| `price_growth` | 0.08 | | GDD 4.3 |
+| `xp_base` | 15 | | GDD 11.1 |
+| `xp_per_level` | 10 | | GDD 11.1 |
+| `extra_projectile_spread_deg` | 12 | | GDD 5.2 |
+| `weapon_slots` | 6 | | GDD 4.4 |
+| `leech_heal_cap_per_s` | 6 | | GDD 5.1 |
+| `spawn_mark_s` | 0.8 | Telegraf spawn | GDD 3.2 |
+| `spawn_grace_s` | 0.3 | Tanpa damage kontak dan serangan setelah keluar | Q16 |
+| `spawn_group_spread` | 0.5 | Radius sebar anggota grup (u) | Q15 |
+| `spawn_mark_diam_small` | 1.0 | u | arena-design 5.3 |
+| `spawn_mark_diam_medium` | 1.5 | u | arena-design 5.3 |
+| `spawn_mark_diam_large` | 2.0 | u | arena-design 5.3 |
+| `spawn_mark_diam_warden` | 3.0 | u | arena-design 5.3 |
+| `spawn_quiet_end_s` | 2 | Tanpa telegraf spawn baru di detik terakhir Pulse | GDD 3.2 |
+| `enemy_radius_small` | 0.3 | u | Q20 |
+| `enemy_radius_medium` | 0.4 | u | Q20 |
+| `enemy_radius_large` | 0.6 | u | Q20 |
+| `enemy_radius_warden` | 0.9 | u | Q20 |
+| `enemy_radius_boss` | 1.6 | u | Q20 |
+| `enemy_shot_radius` | 0.2 | u | Q20 |
+| `player_shot_radius` | 0.15 | u | Q20 |
+| `telegraph_min_projectile_s` | 0.4 | P2-e | GDD 14.1 |
+| `telegraph_min_charge_s` | 0.6 | P2-e | GDD 14.1 |
+| `telegraph_min_area_s` | 0.8 | P2-e | GDD 14.1 |
+| `telegraph_min_boss_s` | 1.0 | P2-e | GDD 14.1 |
+| `music_pressure_frac` | 0.6 | Fraksi `alive_cap` untuk tekanan musik | Q21 |
+| `music_pressure_release_frac` | 0.5 | | Q21 |
+| `warden_spawn_frac` | 0.25 | | GDD 15.1 |
+| `warden_overtime_haste_s` | 20 | | GDD 3.3 |
+| `boss_entry_s` | 2.0 | Telegraf panggung boss | Q35 |
+| `boss_enrage_s` | 120 | | GDD 3.3 |
+| `boss_enrage_gap_mult` | 0.6 | | GDD 3.3 |
+| `boss_trickle_every_s` | 4 | | GDD 3.3 |
+| `boss_trickle_count` | 2 | | GDD 3.3 |
+| `boss_trickle_max_alive` | 24 | | Q35 |
+| `death_slowmo_s` | 1.0 | | Q38 |
+| `victory_delay_s` | 1.5 | | Q38 |
+
+Kunci yang dihapus di versi 2: `tick_rate` (konstanta LP), `glint_merge_value` (aturan gabung baru), `pulse_dur_base`, `pulse_dur_step`, `pulse_dur_max` (durasi dari `waves.csv`), `spawn_min_dist` (sumber tunggal: `spawn.playerSafeRadius` di JSON arena).
 
 ### 3.2 `stats.csv`
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `armor` |
+| `id` | id | `armor` |
 | `base` | number | `0` |
 | `min` | number | `-10` |
 | `max` | number | kosong = tanpa batas |
@@ -81,15 +166,17 @@ Kunci awal: `tick_rate` 60, `player_base_speed` 4.5, `pickup_radius_base` 1.6, `
 | `display_key` | string | `stat.armor` |
 | `show_in_ui` | 0/1 | `1` |
 
+`move_speed` dan `pickup_radius_pct` adalah bonus persen (dasar 0); nilai fisik = konstanta dasar di `config.csv` x (1 + stat / 100). Urutan komposisi stat: effect-primitives 6.5.
+
 ### 3.3 `classes.csv`
 
 | Kolom | Tipe | Contoh (`lantern`) |
 |---|---|---|
-| `id` | string | `lantern` |
+| `id` | id | `lantern` |
 | `name_key`, `desc_key` | string | `class.lantern.name` |
-| `tier` | A/B/C | `A` |
+| `content_tier` | A/B/C | `A` |
 | `accent` | enum `blue`, `cyan`, `gold` | `gold` |
-| `tag` | tag | `Flame` |
+| `tag` | id tag | `flame` |
 | `start_weapon` | id senjata | `lantern_bolt` |
 | `rite_id` | id rite | `flare_lantern` |
 | `max_hp` | number | `30` |
@@ -103,22 +190,23 @@ Pasif kelas ditulis di `effects.csv` dengan `owner` = id kelas.
 
 | Kolom | Tipe | Contoh (`flare_lantern`) |
 |---|---|---|
-| `id` | string | `flare_lantern` |
+| `id` | id | `flare_lantern` |
 | `name_key`, `desc_key` | string | |
+| `content_tier` | A/B/C | `A` |
 | `archetype` | enum `throw_zone`, `ring`, `dash` | `throw_zone` |
 | `cooldown` | s | `12` |
 | `dmg` | number (proc) | `20` |
 | `radius` | u | `3` |
-| `params` | params | `max_range=6;flight_s=0.35;zone_s=4;zone_tick=0.5;slow=30;status=burn` |
+| `params` | params | `max_range=6;flight_s=0.35;zone_radius=3;zone_s=4;zone_tick=0.5;slow=30;status=burn` |
 
 ### 3.5 `weapons.csv`
 
 | Kolom | Tipe | Contoh (`splinter_shot`) |
 |---|---|---|
-| `id` | string | `splinter_shot` |
+| `id` | id | `splinter_shot` |
 | `name_key`, `desc_key` | string | |
-| `tier` | A/B/C | `A` |
-| `tags` | daftar tag | `Shard` |
+| `content_tier` | A/B/C | `A` |
+| `tags` | daftar id tag | `shard` |
 | `archetype` | enum `bolt_explode`, `projectile`, `arc`, `orbit`, `chain`, `boomerang`, `ring_echo`, `coin` | `projectile` |
 | `kind` | enum source_kind | `projectile` |
 | `targeting` | enum `nearest`, `self`, `nearest_dir` | `nearest` |
@@ -127,21 +215,24 @@ Pasif kelas ditulis di `effects.csv` dengan `owner` = id kelas.
 | `cooldown` | s | `0.7` |
 | `range` | u | `7` |
 | `speed` | u/s | `14` |
-| `radius` | u | kosong |
+| `radius` | u (area atau orbit) | kosong |
+| `proj_radius` | u, kosong = `player_shot_radius` | kosong |
 | `count` | int | `1` |
 | `pierce` | int | `0` |
 | `knockback` | u | `0` |
 | `params` | params | kosong (mis. Chain Spark `jumps=3;jump_range=2.8;burn_chance=0.2`) |
 | `unlock_silt` | int | `0` |
 
+Stat yang berlaku per arketipe: GDD 6.3.
+
 ### 3.6 `weapon_tiers.csv`
 
-Satu baris per senjata per tier II sampai IV (tier I = baris `weapons.csv`). Pengali umum ada di `rarity.csv`; tabel ini hanya bonus khusus.
+Satu baris per senjata per tier II sampai IV (tier I = baris `weapons.csv`). Pengali umum ada di `rarity.csv`; tabel ini hanya bonus khusus. Digabung saat build menjadi `tiers[0..3]`.
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
 | `weapon_id` | id senjata | `splinter_shot` |
-| `tier` | 2, 3, 4 | `4` |
+| `tier` | 2, 3, 4 (tier senjata) | `4` |
 | `params` | params (kumulatif terhadap tier sebelumnya) | `fan_every_n=3;fan_count=3` |
 | `effects` | daftar owner efek | kosong |
 
@@ -149,10 +240,10 @@ Satu baris per senjata per tier II sampai IV (tier I = baris `weapons.csv`). Pen
 
 | Kolom | Tipe | Plain | Fine | Rare | Fabled |
 |---|---|---|---|---|---|
-| `id` | string | `plain` | `fine` | `rare` | `fabled` |
+| `id` | id | `plain` | `fine` | `rare` | `fabled` |
 | `order` | int | 0 | 1 | 2 | 3 |
 | `color_token` | string | `rarity-plain` | `rarity-fine` | `rarity-rare` | `rarity-fabled` |
-| `keepsake_price` | int | 14 | 28 | 50 | 85 |
+| `memento_price` | int | 14 | 28 | 50 | 85 |
 | `weapon_price` | int | 16 | 34 | 70 | 130 |
 | `weapon_dmg_mult` | number | 1.0 | 1.5 | 2.2 | 3.2 |
 | `weapon_cd_mult` | number | 1.00 | 0.95 | 0.90 | 0.85 |
@@ -164,22 +255,22 @@ Satu baris per senjata per tier II sampai IV (tier I = baris `weapons.csv`). Pen
 | `t_min`, `t_max` | int | `1`, `3` |
 | `plain`, `fine`, `rare`, `fabled` | number | `78`, `20`, `2`, `0` |
 
-### 3.9 `keepsakes.csv`
+### 3.9 `mementos.csv`
 
 | Kolom | Tipe | Contoh (`prism_lens`) |
 |---|---|---|
-| `id` | string | `prism_lens` |
-| `name_key`, `desc_key`, `flavor_key` | string | `keepsake.prism_lens.name` |
-| `tier` | A/B/C | `A` |
+| `id` | id | `prism_lens` |
+| `name_key`, `desc_key`, `flavor_key` | string | `memento.prism_lens.name` |
+| `content_tier` | A/B/C | `A` |
 | `rarity` | id rarity | `rare` |
-| `tags` | daftar tag | `Shard` |
+| `tags` | daftar id tag | `shard` |
 | `max_stack` | int | `1` |
 | `unlock` | `default` atau id `meta_unlocks` | `default` |
 | `is_flat` | 0/1 (kuota P1-a) | `0` |
 | `price_override` | int, kosong = dari rarity | kosong |
 | `sort` | int | `7` |
 
-Efek ditulis di `effects.csv` dengan `owner` = id Keepsake.
+Efek ditulis di `effects.csv` dengan `owner` = id Memento.
 
 ### 3.10 `effects.csv`
 
@@ -187,8 +278,8 @@ Definisi lengkap tiap kolom dan enum di `effect-primitives.md`.
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `prism_lens_1` |
-| `owner` | id Keepsake, kelas, atau `syn_<tag>_<n>` | `prism_lens` |
+| `id` | id | `prism_lens_1` |
+| `owner` | id Memento, kelas, atau `syn_<tag>_<n>` | `prism_lens` |
 | `trigger` | enum | `on_hit` |
 | `conditions` | daftar `nama:nilai` | `source_kind:projectile\|every_nth:5@global` |
 | `chance` | 0 sampai 1 | kosong (1) |
@@ -205,20 +296,22 @@ Parameter pemicu ikut di `params` (`interval` untuk `periodic`, `distance` untuk
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `tag` | enum tag | `Flame` |
+| `tag` | id tag | `flame` |
 | `threshold` | 2, 4, 6 | `4` |
-| `tier` | A/B/C (tingkat tempat tag aktif) | `A` |
-| `owner` | string | `syn_flame_4` |
+| `content_tier` | A/B/C (tingkat tempat tag aktif) | `A` |
+| `owner` | id | `syn_flame_4` |
 | `desc_key` | string | `syn.flame.4` |
+
+Urutan tag (`GameData.tags`): `flame`, `shard`, `edge`, `echo`, `ward`, `trade`.
 
 ### 3.12 `levelup.csv`
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `card_damage` |
+| `id` | id | `card_damage` |
 | `stat` | id stat | `damage_pct` |
 | `plain`, `fine`, `rare`, `fabled` | number | `5`, `8`, `12`, `18` |
-| `tier` | A/B/C | `A` |
+| `content_tier` | A/B/C | `A` |
 | `weight` | number | `1` |
 | `desc_key` | string | `card.damage` |
 
@@ -237,12 +330,13 @@ Format kunci dan nilai seperti `config.csv`.
 | `reroll_base_add` | 1 |
 | `reroll_t_div` | 2 |
 | `reroll_step` | 1 |
-| `lock_free` | 1 |
 | `bad_luck_shops` | 3 |
 | `bad_luck_min_t` | 6 |
 | `warden_chest_choices` | 3 |
 | `warden_chest_min_rarity` | `fine` |
 | `boss_chest_min_rarity` | `rare` |
+
+`lock_free` dihapus (kunci selalu gratis, aturan GDD 4.4).
 
 ### 3.14 `statuses.csv`
 
@@ -259,12 +353,13 @@ Unlit biasa, Warden, dan boss di satu tabel.
 
 | Kolom | Tipe | Contoh (`charger`) |
 |---|---|---|
-| `id` | string | `charger` |
+| `id` | id | `charger` |
 | `name_key` | string | `unlit.charger` |
-| `tier` | A/B/C | `A` |
+| `content_tier` | A/B/C | `A` |
 | `role` | enum `swarmer`, `charger`, `shooter`, `tank`, `exploder`, `summoner`, `mote`, `lobber`, `warden`, `boss` | `charger` |
 | `behavior` | enum arketipe AI (sama dengan role untuk Unlit biasa, mis. `warden_hound`, `boss_lantern`) | `charger` |
 | `size_class` | enum `small`, `medium`, `large`, `warden`, `boss` | `medium` |
+| `radius` | u, kosong = `enemy_radius_<size_class>` | kosong |
 | `hp` | number (t1) | `16` |
 | `speed` | u/s | `2.0` |
 | `contact_dmg` | number | `3` |
@@ -281,8 +376,8 @@ Unlit biasa, Warden, dan boss di satu tabel.
 
 | Kolom | Tipe | Contoh (`blinking`) |
 |---|---|---|
-| `id` | string | `blinking` |
-| `tier` | A/B/C | `B` |
+| `id` | id | `blinking` |
+| `content_tier` | A/B/C | `B` |
 | `telegraph_s` | s | `0.8` |
 | `params` | params | `interval=6;min_dist=3` |
 | `desc_key` | string | `affix.blinking` |
@@ -304,10 +399,10 @@ Unlit biasa, Warden, dan boss di satu tabel.
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `ember_rain_5` |
+| `id` | id | `ember_rain_5` |
 | `boss_id` | id enemy | `boss_lantern` |
 | `archetype` | enum `target_circles`, `ring_gap`, `summon`, `lanes`, `spiral`, `blink_slam`, `lines`, `cone`, `charge_lane` | `target_circles` |
-| `telegraph_s` | s (min 1.0 untuk serangan besar, 0.6 untuk cone) | `1.0` |
+| `telegraph_s` | s (min `telegraph_min_boss_s`, cone min `telegraph_min_charge_s`) | `1.0` |
 | `dmg` | number | `10` |
 | `params` | params | `count=5;radius=1.5;spread=3` |
 
@@ -315,12 +410,13 @@ Unlit biasa, Warden, dan boss di satu tabel.
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `biome_market` |
-| `name_key` | string | `biome.market` |
-| `tier` | A/B/C | `A` |
-| `arena_id` | id dari LD | `arena_market` |
-| `palette_id` | id dari AD | `palette_market` |
+| `id` | id | `biome_market` |
+| `name_key` | string | `biome.biome_market.name` |
+| `content_tier` | A/B/C | `A` |
+| `arena_id` | id arena LD | `arena_market` (M1: `arena_proto`) |
 | `music_id` | id dari AU | `music_market` |
+
+Id bioma: `biome_market`, `biome_cloister`, `biome_vineyard`. Arena: `arena_market`, `arena_cloister`, `arena_vineyard`, `arena_proto`. Palet dan cahaya dicari lewat id bioma di `art/palette.json` (milik AD).
 
 ### 3.20 `waves.csv`
 
@@ -328,16 +424,16 @@ Satu baris per slot Pulse per profil run.
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `profile` | enum `run_a`, `run_b`, `run_c` | `run_a` |
-| `pulse` | int | `5` |
+| `profile` | enum `run_a_m1`, `run_a`, `run_b`, `run_c` | `run_a` |
+| `pulse` | int, mulai 1 | `5` |
 | `kind` | enum `normal`, `warden`, `boss` | `warden` |
 | `biome` | id bioma | `biome_market` |
 | `threat` | int 1 sampai 20 | `5` |
-| `duration_s` | s, kosong untuk boss | `32` |
+| `duration_s` | s, kosong untuk boss (sumber tunggal durasi Pulse) | `32` |
 | `warden_id` | id enemy | `warden_hound` |
 | `boss_id` | id enemy | kosong |
-| `alive_cap` | int | `70` |
-| `final` | 0/1 | `0` |
+| `alive_cap` | int, maks 120 | `70` |
+| `final` | 0/1 (Pulse terakhir; selesai = menang) | `0` |
 
 ### 3.21 `wave_spawns.csv`
 
@@ -350,8 +446,9 @@ Satu baris per slot Pulse per profil run.
 | `start_frac` | 0 sampai 1 | `0.3` |
 | `end_frac` | 0 sampai 1 | `0.9` |
 | `group_min`, `group_max` | int | `1`, `1` (swarmer `3`, `6`) |
+| `sectors` | daftar sektor `n`, `s`, `e`, `w`, `ne`, `se`, `sw`, `nw`; kosong = semua | kosong |
 
-Untuk Pulse boss, baris tetesan memakai `start_frac=0` dan jadwal dari `config.csv` (`boss_trickle_*`); kolom `count` diabaikan.
+Kunci gabungan `(profile, pulse)` harus ada di `waves.csv`. Untuk Pulse boss, baris tetesan memakai `start_frac=0` dan jadwal dari `config.csv` (`boss_trickle_*`); kolom `count` diabaikan.
 
 ### 3.22 `difficulty.csv`
 
@@ -370,24 +467,21 @@ Untuk Pulse boss, baris tetesan memakai `start_frac=0` dan jadwal dari `config.c
 | `pulse_end_collect_frac` | 0 sampai 1 | `0.5` |
 | `silt_mult` | number | `1.75` |
 
-Kolom ditulis sebagai nilai kumulatif per level agar game tidak perlu menjumlah.
+Kolom ditulis sebagai nilai kumulatif per level agar game tidak perlu menjumlah. Tingkat A dan B hanya memakai baris level 0.
 
 ### 3.23 `meta_unlocks.csv`
 
 | Kolom | Tipe | Contoh |
 |---|---|---|
-| `id` | string | `pack_keepsake_1` |
-| `kind` | enum `class`, `weapon`, `keepsake_pack` | `keepsake_pack` |
+| `id` | id | `pack_memento_1` |
+| `kind` | enum `class`, `weapon`, `memento_pack` | `memento_pack` |
 | `targets` | daftar id | `dust_hourglass\|lucky_button\|haggler_seal` |
 | `cost_silt` | int | `20` |
-| `tier` | A/B/C | `B` |
+| `content_tier` | A/B/C | `B` |
 | `cost_silt_b` | int, biaya bila build B (isi paket lebih sedikit) | kosong (paket 2: `10`) |
 
 Crack tidak ada di tabel ini; Crack n terbuka setelah menang di Crack n minus 1.
 
-## 4. Bentuk JSON (usulan, LP boleh mengubah)
+## 4. Bentuk JSON
 
-- Satu objek per tabel, dikunci `id` (atau kunci gabungan seperti `run_a:5`).
-- `params` dan `stat_mods` diurai menjadi objek, daftar `|` menjadi array, angka menjadi number.
-- `effects.csv` dikelompokkan per `owner` agar mesin efek memuat efek sebuah Keepsake dalam satu langkah.
-- Baris dengan tier di atas target build dibuang saat build, sehingga bundle A tidak memuat konten B dan C.
+Final di architecture 9.4: satu bundle `content/generated/game-data.json`, setiap tabel menjadi array dalam urutan baris CSV, `params` menjadi objek, daftar menjadi array, `weapon_tiers.csv` digabung ke senjata (`tiers[0..3]`), `waves.csv` dan `wave_spawns.csv` digabung menjadi `profiles[profile][i].spawns[]`, `effectsByOwner` dibangun saat load, baris di atas `contentTier` build dibuang saat build. Konversi satuan (detik ke tick, derajat ke putaran) di `buildGameData`.

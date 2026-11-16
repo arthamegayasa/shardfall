@@ -1,0 +1,47 @@
+{
+  "name": "shardfall",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shardfall: browser arena-survival roguelike (HD-2D style).",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run data && vite build",
+    "build:e2e": "npm run data && vite build --mode e2e",
+    "preview": "vite preview",
+    "data": "node tools/data/build-data.ts",
+    "data:build": "node tools/data/build-data.ts",
+    "data:check": "node tools/data/build-data.ts --check",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.sim.json && tsc -p tsconfig.tools.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run build:e2e && playwright test",
+    "art:check": "node tools/art/check-sprites.mjs --no-preview",
+    "art:preview": "node tools/art/check-sprites.mjs",
+    "art:concepts": "node tools/art/build-concepts.mjs",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run data:check"
+  },
+  "dependencies": {
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.6",
+    "@types/three": "0.187.0",
+    "eslint": "10.14.0",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  }
+}

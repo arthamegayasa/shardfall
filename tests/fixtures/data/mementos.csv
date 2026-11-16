@@ -1,0 +1,3 @@
+id,name_key,desc_key,flavor_key,content_tier,rarity,tags,max_stack,unlock,is_flat,price_override,sort
+test_charm,memento.test_charm.name,memento.test_charm.desc,,A,plain,flame,2,default,1,,1
+test_lens,memento.test_lens.name,memento.test_lens.desc,memento.test_lens.flavor,A,fine,shard,1,default,0,25,2

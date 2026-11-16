@@ -1,0 +1,3 @@
+id,order,color_token,memento_price,weapon_price,weapon_dmg_mult,weapon_cd_mult
+plain,0,rarity-plain,10,12,1,1
+fine,1,rarity-fine,20,24,1.5,0.9

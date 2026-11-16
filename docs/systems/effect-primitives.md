@@ -1,11 +1,13 @@
 # Efek Primitif
 
-Pemilik: Game Designer. Status: draf M0 versi 1, 2026-11-16. Reviewer: LP (kelayakan), GP (implementasi).
-Terkait: `docs/gdd.md` bagian 8, 9, 10; `docs/systems/data-schema.md` (tabel `effects.csv`).
+Pemilik: Game Designer. Status: versi 2, 2026-11-17 (perbaikan review M0 dan `docs/specs/gd-answers-m0.md`). Reviewer: LP (kelayakan), GP (implementasi).
+Terkait: `docs/gdd.md` bagian 5, 8, 9, 10; `docs/systems/data-schema.md` (tabel `effects.csv`); `docs/tech/architecture.md` 8.5 (`procDepth`, pool aksi tertunda).
+
+Perubahan versi 2: istilah Memento, tag huruf kecil, urutan komposisi stat (6.5), aturan Burn lengkap (6.6), pengaman rekursi memakai `procDepth` tanpa pengecualian, Flame 4 `allow_proc=1` (6.2), parameter yang hilang (6.7).
 
 ## 1. Tujuan
 
-Semua Keepsake, ambang sinergi, dan pasif kelas dibangun dari satu set kecil blok yang bisa digabung. GP cukup mengimplementasikan 16 pemicu, 15 syarat, dan 16 aksi; konten baru cukup ditambah lewat CSV tanpa kode baru. Senjata dan Rite tetap punya kode arketipe sendiri (8 senjata, 3 Rite), tetapi serangan mereka memancarkan event yang sama sehingga efek bisa menempel.
+Semua Memento, ambang sinergi, dan pasif kelas dibangun dari satu set kecil blok yang bisa digabung. GP cukup mengimplementasikan 16 pemicu, 15 syarat, dan 16 aksi; konten baru cukup ditambah lewat CSV tanpa kode baru. Senjata dan Rite tetap punya kode arketipe sendiri (8 senjata, 3 Rite), tetapi serangan mereka memancarkan event yang sama sehingga efek bisa menempel.
 
 ## 2. Bentuk satu efek
 
@@ -24,47 +26,47 @@ effect = {
 | `chance` | 0 sampai 1 | 1 | Peluang setelah syarat lolos |
 | `icd` | detik | 0 | Jeda internal per pemilik efek |
 | `max_per_pulse` | int | 0 (tanpa batas) | Batas pemicu per Pulse |
-| `allow_proc` | 0 atau 1 | lihat 6.2 | Boleh dipicu oleh damage proc |
-| `stack_mode` | `value`, `chance`, `none` | `value` | Cara salinan Keepsake bertumpuk (6.3) |
+| `allow_proc` | 0 atau 1 | lihat 6.2 | Boleh dipicu oleh hit atau kill proc (kedalaman 1) |
+| `stack_mode` | `value`, `chance`, `none` | `value` | Cara salinan Memento bertumpuk (6.3) |
 | `action` | enum | | Bagian 5 |
 | `params` | `kunci=nilai;kunci=nilai` | | Parameter aksi |
 
-Pemilik efek (owner) adalah Keepsake, ambang sinergi, atau kelas. Satu pemilik boleh punya beberapa efek (contoh: Glass Aegis punya 2).
+Pemilik efek (owner) adalah Memento, ambang sinergi, atau kelas. Satu pemilik boleh punya beberapa efek (contoh: Glass Aegis punya 2).
 
 ## 3. Pemicu
 
 | Pemicu | Kapan | Konteks yang tersedia |
 |---|---|---|
-| `passive` | Selalu, selama dimiliki. Syarat bersifat kontinu dan dievaluasi ulang tiap tick (contoh `time_since_hurt`, `has_barrier`) | pemain |
-| `on_hit` | Damage pemain mengenai Unlit | sumber (senjata, tag, kind, is_proc, is_rite), target, damage, crit |
+| `passive` | Selalu, selama dimiliki. Syarat bersifat kontinu; stat dihitung ulang hanya saat nilai syarat berganti (architecture 8.5) | pemain |
+| `on_hit` | Damage pemain mengenai Unlit | sumber (senjata, tag, kind, procDepth, is_rite), target, damage, crit |
 | `on_crit` | Seperti `on_hit`, hanya bila kritikal | sama |
-| `on_kill` | Unlit mati oleh damage pemain | posisi, status target, hit pembunuh, crit, jenis target |
+| `on_kill` | Unlit mati oleh damage pemain | posisi, status target, hit pembunuh, crit, jenis target, procDepth |
 | `on_hurt` | Pemain kehilangan HP (setelah armor) | damage, sumber |
 | `on_block` | Barrier menyerap hit | muatan tersisa |
 | `on_dodge` | Pemain menghindari hit | sumber |
-| `on_pickup` | Pemain memungut satu butir Glint | nilai butir |
+| `on_pickup` | Pemain memungut satu butir Glint (bukan pungutan otomatis akhir Pulse) | nilai butir |
 | `on_rite` | Rite dirapal | rite id, arah |
 | `on_area` | Efek area milik pemain meledak (senjata, Rite, atau proc) | posisi, radius, damage, tag |
 | `on_projectile_end` | Proyektil pemain habis karena jangkauan atau tembus | posisi, arah, damage, tag |
-| `periodic` | Tiap `interval` detik selama Pulse (param `interval`) | pemain |
-| `on_distance` | Tiap `distance` u ditempuh pemain (param `distance`) | posisi |
-| `on_pulse_start` | Awal Pulse | threat |
-| `on_pulse_end` | Akhir Pulse sebelum fase toko | threat, unhurt |
+| `periodic` | Tiap `interval` detik selama fase `pulse` (param `interval`) | pemain |
+| `on_distance` | Tiap `distance` u lantai ditempuh pemain, termasuk dash Rite (param `distance`) | posisi |
+| `on_pulse_start` | Awal Pulse, setelah reset awal Pulse | threat |
+| `on_pulse_end` | Tick timer 0, setelah Unlit larut, sebelum pungutan otomatis | threat, unhurt |
 | `on_shop_start` | Fase toko dibuka | Glint tersimpan |
 
 ## 4. Syarat
 
 | Syarat | Nilai | Lolos bila |
 |---|---|---|
-| `source_tag` | tag | Sumber hit membawa tag itu |
-| `source_kind` | `projectile`, `melee`, `area`, `chain`, `contact`, `zone`, `dot` | Jenis serangan sumber cocok |
+| `source_tag` | id tag (`flame`, `shard`, `edge`, `echo`, `ward`, `trade`) | Sumber hit membawa tag itu |
+| `source_kind` | `projectile`, `melee`, `area`, `chain`, `contact`, `zone`, `dot` | Jenis serangan sumber cocok (sama dengan `HitKind` architecture 6.1) |
 | `source_weapon` | id senjata | Sumber dari senjata itu |
 | `target_has_status` | `burn`, `slow`, `mark` | Target punya status itu |
 | `target_within` | u | Target dalam jarak itu dari pemain |
 | `target_hp_below` | 0 sampai 1 | HP target (sesudah hit) di bawah fraksi itu |
 | `target_hp_full` | 1 | HP target penuh sebelum hit |
 | `target_is` | `normal`, `warden`, `boss`, `not_boss` | Jenis target |
-| `every_nth` | `n` atau `n@scope` (scope: `global`, `per_weapon`, `per_target`) | Pemicu ke-n untuk scope itu. Penghitung reset di awal Pulse |
+| `every_nth` | `n` atau `n@scope` (scope: `global`, `per_weapon`, `per_target`; tanpa scope = `global`) | Pemicu ke-n untuk scope itu. Penghitung reset di awal Pulse. Maks 4 efek `per_target` per run (architecture 8.1) |
 | `player_hp_below` | 0 sampai 1 | HP pemain di bawah fraksi |
 | `time_since_hurt` | detik | Pemain tidak terluka selama minimal sekian detik |
 | `has_barrier` | 1 | Pemain punya minimal 1 muatan Barrier |
@@ -76,81 +78,121 @@ Pemilik efek (owner) adalah Keepsake, ambang sinergi, atau kelas. Satu pemilik b
 
 | Aksi | Parameter | Catatan |
 |---|---|---|
-| `stat_mod` | `stat`, `op` (`add`, `mult`, `min`), `value` | Hanya untuk `passive`. `min` mengambil nilai terkecil yang bukan nol (dipakai untuk waktu isi ulang) |
-| `buff` | `stats` (`stat:nilai\|stat:nilai`), `duration`, `max_stacks`, `refresh` (0/1) | Stat sementara. Tumpukan baru menyegarkan durasi bila `refresh=1` |
+| `stat_mod` | `stat`, `op` (`add`, `mult`, `min`), `value` | Hanya untuk `passive`. Urutan komposisi 6.5. `min` mengambil nilai terkecil yang bukan nol (dipakai untuk waktu isi ulang) |
+| `buff` | `stats` (`stat:nilai\|stat:nilai`), `duration`, `max_stacks`, `refresh` (0/1) | Stat sementara, masuk sebagai `add`. Tumpukan baru menyegarkan durasi bila `refresh=1` |
 | `hit_mod` | `mode` (`bonus`, `vuln`, `force_crit`, `crit_mult_add`), `value` | Mengubah hit yang sedang dihitung. Hanya untuk `on_hit`. Lihat urutan 6.1 |
-| `apply_status` | `status` (`burn`, `slow`, `mark`, `knockback`), `stacks`, `duration`, `value` | `value`: persen Slow, persen Mark, jarak knockback. Burn memakai 30% damage hit pemicu per detik, atau `dps` bila sumbernya bukan hit |
+| `apply_status` | `status` (`burn`, `slow`, `mark`, `knockback`), `stacks`, `duration`, `value`, `dps` | `value`: persen Slow, persen Mark, jarak knockback. Burn dari hit memakai 30% hit pemicu; dari sumber non-hit memakai `dps` atau `burn_dps_nonhit` (6.6) |
 | `status_rule` | `status`, `rule` (`dmg_mult`, `spread_chance`, `spread_range`, `add_mark`), `value` | Mengubah aturan global sebuah status. Hanya untuk `passive` |
-| `spawn_projectile` | `pattern` (`aimed`, `seek_other`, `ring`, `fan`, `split`, `toughest`), `count`, `dmg` atau `dmg_frac`, `speed`, `range`, `pierce`, `origin` (`player`, `target`, `point`), `tags`, `kind` | `dmg` = damage proc (dikali `proc_scale`), `dmg_frac` = fraksi damage hit pemicu |
-| `spawn_area` | `shape` (`circle`, `ring`), `radius`, `dmg` atau `dmg_frac`, `delay`, `status`, `knockback`, `origin` | Ledakan sekali. Memicu `on_area` |
-| `spawn_zone` | `radius`, `duration`, `tick`, `dmg`, `status`, `origin`, `max_alive` | Zona lantai yang bertahan |
-| `execute` | | Membunuh target. Selalu dipasangkan dengan syarat `target_is` |
-| `heal` | `amount`, `max_per_sec` | |
+| `spawn_projectile` | `pattern` (`aimed`, `seek_other`, `ring`, `fan`, `split`, `toughest`), `count`, `dmg` atau `dmg_frac`, `speed`, `range`, `pierce`, `origin` (`player`, `target`, `point`), `tags`, `kind`, `seek_range` | `dmg` = damage proc (dikali `proc_scale`), `dmg_frac` = fraksi damage akhir hit pemicu (sesudah crit dan guard) |
+| `spawn_area` | `shape` (`circle`, `ring`), `radius`, `dmg` atau `dmg_frac`, `delay`, `status`, `knockback`, `origin` | Ledakan sekali. Memicu `on_area`. Hit-nya berjenis `area` |
+| `spawn_zone` | `radius`, `duration`, `tick`, `dmg`, `status`, `origin`, `max_alive` | Zona lantai yang bertahan. Hit-nya berjenis `zone`. Maks 24 zona hidup global |
+| `execute` | | Membunuh target, mengabaikan guard. Selalu dipasangkan dengan syarat `target_is` |
+| `heal` | `amount`, `max_per_sec` | Jatah per detik sim per sumber |
 | `gain_barrier` | `charges` | Mengisi sampai `max(barrier_max, 1)` |
-| `gain_glint` | `mode` (`direct`, `drop`, `same`, `interest`, `formula`), `amount`, `div`, `cap`, `base`, `per_t` | `same` = butir yang dipungut dihitung dua kali. `interest` = floor(Glint tersimpan / `div`), maks `cap`. `formula` = `base + per_t x t` |
-| `repeat` | `what` (`area`, `rite`, `hit`), `delay`, `power`, `target` (`same`, `nearest_other`), `range` | Salinan selalu berstatus proc |
-| `trigger_weapons` | `scope` (`all` atau tag), `power` | Semua senjata dalam scope langsung menyerang sekali, tanpa mereset cooldown |
+| `gain_glint` | `mode` (`direct`, `drop`, `same`, `interest`, `formula`), `amount`, `div`, `cap`, `base`, `per_t` | `drop` dan `same` lewat butir (memberi XP); `direct`, `interest`, `formula` langsung ke saldo (tanpa XP). `same` = butir yang dipungut dihitung dua kali. `interest` = floor(Glint tersimpan / `div`), maks `cap`. `formula` = `base + per_t x t` |
+| `repeat` | `what` (`area`, `rite`, `hit`), `delay`, `power`, `target` (`same`, `nearest_other`), `range` | Salinan selalu proc (kedalaman 1). Masuk pool aksi tertunda |
+| `trigger_weapons` | `scope` (`all` atau id tag), `power` | Semua senjata dalam scope langsung menyerang sekali, tanpa mereset cooldown |
 | `shop_mod` | `field` (`slots`, `price_mult`, `reroll_delta`, `free_rerolls`), `value` | Hanya untuk `passive`. Dibaca oleh toko |
-| `convert` | `from` (`armor`, `held_glint`, stat lain), `to` (stat), `ratio`, `cap` | Hanya untuk `passive`. `to += from x ratio`, maksimal `cap` |
+| `convert` | `from` (`armor`, `held_glint`, stat lain), `to` (stat), `ratio`, `cap` | Hanya untuk `passive`. Urutan 6.5 |
 
 ## 6. Aturan mesin
 
 ### 6.1 Urutan evaluasi satu hit
 
-1. Bangun konteks hit (sumber, target, damage dasar).
+1. Bangun konteks hit (sumber, target, damage dasar, `procDepth`).
 2. Efek `hit_mod` dengan `mode=force_crit` dievaluasi.
-3. Gulir kritikal (kecuali sudah dipaksa).
+3. Gulir kritikal (kecuali sudah dipaksa). Semua hit boleh kritikal kecuali tick Burn.
 4. Efek `hit_mod` lain (`bonus`, `vuln`, `crit_mult_add`) dievaluasi dan dijumlah ke Σbonus dan Σrentan.
-5. Hitung damage akhir (gdd.md 5.2), terapkan ke target.
-6. Efek `on_hit` lain dan `on_crit` (status, proyektil, area, execute) dievaluasi.
-7. Bila target mati: efek `on_kill`.
+5. Hitung `hit` sesudah Σbonus dan Σrentan. Simpan nilai ini sebagai dasar Burn (6.6).
+6. Terapkan crit dan guard (gdd.md 5.2), kurangi HP target.
+7. Efek `on_hit` lain dan `on_crit` (status, proyektil, area, execute) dievaluasi.
+8. Bila target mati: efek `on_kill`.
 
-Urutan antar pemilik tetap dan deterministik: pasif kelas, lalu Keepsake menurut urutan didapat, lalu sinergi menurut urutan tag Flame, Shard, Edge, Echo, Ward, Trade dan ambang naik. Di dalam satu pemilik: urutan baris di `effects.csv`.
+Urutan antar pemilik tetap dan deterministik: pasif kelas, lalu Memento menurut urutan didapat, lalu sinergi menurut urutan tag `flame`, `shard`, `edge`, `echo`, `ward`, `trade` dan ambang naik. Di dalam satu pemilik: urutan baris di `effects.csv`.
 
 ### 6.2 Pengaman rekursi
 
-- Damage dari aksi efek (`spawn_projectile`, `spawn_area`, `spawn_zone`, `repeat`, Burn) berstatus **proc**.
-- Hit proc hanya memicu efek dengan `allow_proc=1`. Default: `hit_mod` dan `apply_status` = 1, aksi lain = 0.
-- Kedalaman rantai maksimal 1: efek yang dipicu oleh proc tidak pernah memicu efek lain lagi, apa pun `allow_proc`-nya.
-- Rite bukan proc (Rite memicu `on_hit` biasa), tetapi damage Rite memakai rumus damage proc.
-- [Asumsi, angka milik LP] Batas performa: maksimal 200 proyektil proc hidup dan 24 zona hidup; spawn di atas batas dilewati.
+Mengikuti `procDepth` architecture 8.5, tanpa pengecualian:
+- Hit senjata, Rite, dan kontak = kedalaman 0. Damage dari aksi efek (`spawn_projectile`, `spawn_area`, `spawn_zone`, `repeat`) dan tick Burn = proc.
+- Efek dipicu oleh kejadian kedalaman 0, atau kedalaman 1 bila `allow_proc=1`. Aksi yang dipicu dari kedalaman 0 menghasilkan kedalaman 1; dari kedalaman 1 menghasilkan kedalaman 2, yang tidak memicu apa pun.
+- Default `allow_proc`: `hit_mod` dan `apply_status` = 1, aksi lain = 0.
+- **Kill** membawa kedalaman hit pembunuhnya. Kill oleh tick Burn = kedalaman 1, jadi hanya `on_kill` ber-`allow_proc=1` yang jalan.
+- **`execute`**: kill dihitung sebagai kill oleh hit pemicunya (kedalaman dan status crit hit itu).
+- **`syn_flame_4` memakai `allow_proc=1`.** Api menjalar paling banyak dua langkah: kill senjata pada Unlit terbakar meledak (kedalaman 1), kill oleh ledakan itu pada Unlit terbakar meledak sekali lagi (kedalaman 2), lalu berhenti.
+- Rite bukan proc (memicu `on_hit` biasa), tetapi damage Rite memakai rumus damage proc (`proc_scale`).
+- Unlit yang mati oleh ledakan exploder (damage musuh) menjatuhkan Glint, tetapi tidak memicu `on_kill`.
+- Batas performa (diterima LP): maksimal 200 proyektil proc hidup dan 24 zona hidup; spawn di atas batas dilewati secara deterministik dan dihitung overflow.
 
-### 6.3 Tumpukan Keepsake
+### 6.3 Tumpukan Memento
 
 | `stack_mode` | Arti |
 |---|---|
 | `value` | Nilai `stat_mod` dan `value` dikali jumlah salinan |
 | `chance` | `chance` dikali jumlah salinan (maks 1) |
-| `none` | Salinan tambahan tidak mengubah apa pun (dipakai untuk Keepsake unik) |
+| `none` | Salinan tambahan tidak mengubah apa pun (dipakai untuk Memento unik) |
 
 ### 6.4 RNG dan determinisme
 
-- Semua `chance` dan pilihan target acak memakai aliran RNG `combat` milik simulasi.
+- Semua `chance`, gulir crit, dodge, dan pilihan target acak memakai aliran RNG `combat`.
 - `periodic` memakai timer simulasi yang mulai dari 0 di awal Pulse.
-- Target "terdekat" diputus seri dengan id entitas terkecil.
+- Target "terdekat" diputus seri dengan slot terkecil (architecture 4.2).
+
+### 6.5 Urutan komposisi stat (final)
+
+Stat final pemain dihitung ulang hanya saat inputnya berubah (inventaris, buff, kartu, syarat `passive` kontinu yang berganti nilai). Untuk setiap stat, berurutan:
+
+1. **Dasar**: `base` dari `stats.csv`. Untuk `max_hp`: `max_hp` kelas.
+2. **Tambah**: `v = dasar + Σadd`. Σadd berisi `stat_mods` kelas, kartu level-up, `stat_mod op=add` (dikali salinan bila `stack_mode=value`), dan semua buff aktif.
+3. **Kali**: `v = v x Π(mult)` untuk semua `stat_mod op=mult`.
+4. **Min**: bila ada `stat_mod op=min`, `v` = nilai terkecil yang bukan nol di antara `v` dan semua nilai `min` (contoh `barrier_recharge`: dasar 0 berarti tidak mengisi ulang; Ward 2 memberi 14, Ward 4 memberi 10, hasil 10).
+5. **Jepit**: `v = clamp(v, min, max)` dari `stats.csv`.
+6. **Convert**: setelah langkah 1 sampai 5 selesai untuk semua stat, setiap `convert` menambah `min(cap, nilai_sumber x ratio)` ke stat target. Nilai sumber = nilai stat sesudah langkah 5 (atau Glint tersimpan untuk `held_glint`). Sumber `convert` tidak boleh menjadi target `convert` lain (divalidasi build data).
+7. **Jepit ulang** stat target `convert`.
+
+Stat persen (`damage_pct`, `attack_speed_pct`, `move_speed`, dll.) disimpan sebagai poin persen. Pemakaian di rumus: gdd.md 5.2 dan 5.6.
+
+### 6.6 Burn
+
+- **Dasar dari hit**: `dps` per tumpukan = `dps_frac` (0.3) x `hit` dari langkah 5 di 6.1 (sesudah Σbonus dan Σrentan, sebelum crit dan guard).
+- **Dasar non-hit** (zona Rite Flare, bara Smolder Boots, nova Flame 6 dengan dmg 0): `dps = burn_dps_nonhit x proc_scale(t)` per tumpukan (`config.csv`, awal 2), kecuali aksi memberi param `dps` (dikali `proc_scale`).
+- **Tick**: tiap 0.5 s sejak aplikasi pertama; tiap tick memberi `dps x 0.5` per tumpukan, dikali pengali `status_rule dmg_mult` (pasif `lantern` x1.3). Σbonus dan Σrentan tidak diterapkan ulang. Tidak kritikal, mengabaikan guard.
+- **Tumpukan**: aplikasi baru menambah tumpukan bila di bawah `burn_max_stacks`; bila penuh, tumpukan terlemah diganti bila yang baru lebih kuat. Setiap aplikasi menyegarkan durasi semua tumpukan target ke 3 s.
+- Hit tick Burn berjenis `dot`, kedalaman 1.
+
+### 6.7 Parameter yang ditetapkan
+
+| Pemilik | Parameter |
+|---|---|
+| `prism_lens` | `every_nth:5` scope `global` |
+| `splinter_comb` | `seek_other`: Unlit terdekat selain target dalam `seek_range=6`; tanpa tembakan bila tidak ada. `dmg_frac=0.5` dari damage akhir hit pemicu |
+| Shard 2 | 2 serpih, 12 u/s, jangkauan 3 u, ke 2 Unlit terdekat lain dalam 4 u, sisanya arah acak (aliran `combat`), `dmg_frac=0.4` |
+| `smolder_boots` | `distance=3`, zona radius 1, 2 s, `max_alive=6`, Burn non-hit |
+| Bara dan zona | Hit berjenis `zone` |
+| Edge 4 | Tebasan `kind=melee`, `allow_proc` default 0 |
 
 ## 7. Contoh pengodean
 
 Format baris mengikuti `effects.csv` (data-schema.md). Kolom yang kosong memakai default.
 
-| id | owner | trigger | conditions | chance | icd | stack_mode | action | params |
-|---|---|---|---|---|---|---|---|---|
-| `coal_locket_1` | `coal_locket` | on_hit | | 0.08 | | chance | apply_status | status=burn;stacks=1;duration=3 |
-| `kindling_jar_1` | `kindling_jar` | on_hit | target_has_status:burn | | | none | hit_mod | mode=vuln;value=0.2 |
-| `headsman_hook_1` | `headsman_hook` | on_hit | target_is:normal\|target_hp_below:0.12 | | | none | execute | |
-| `glass_aegis_1` | `glass_aegis` | on_pulse_start | | | | none | gain_barrier | charges=1 |
-| `glass_aegis_2` | `glass_aegis` | on_block | | | | none | spawn_area | shape=circle;radius=3;dmg=10;knockback=1;origin=player |
-| `patched_cloak_1` | `patched_cloak` | passive | time_since_hurt:4 | | | none | stat_mod | stat=hp_regen;op=add;value=2 |
-| `syn_flame_4` | `syn_flame_4` | on_kill | target_has_status:burn | | | none | spawn_area | shape=circle;radius=1.5;dmg=6;status=burn;origin=target |
-| `syn_shard_4` | `syn_shard_4` | on_projectile_end | source_tag:Shard | | | none | spawn_projectile | pattern=split;count=3;dmg_frac=0.4;origin=point |
-| `syn_shard_6` | `syn_shard_6` | periodic | | | | none | spawn_projectile | interval=2;pattern=toughest;count=1;dmg=25;pierce=99;speed=20 |
-| `syn_echo_2` | `syn_echo_2` | on_area | | | | none | repeat | what=area;delay=0.5;power=0.35 |
-| `syn_ward_2a` | `syn_ward_2` | passive | | | | none | stat_mod | stat=barrier_max;op=add;value=1 |
-| `syn_ward_2b` | `syn_ward_2` | passive | | | | none | stat_mod | stat=barrier_recharge;op=min;value=14 |
-| `syn_trade_2` | `syn_trade_2` | on_shop_start | | | | none | gain_glint | mode=interest;div=8;cap=12 |
-| `syn_trade_6a` | `syn_trade_6` | passive | | | | none | convert | from=held_glint;to=damage_pct;ratio=0.1;cap=50 |
-| `class_lantern_1` | `lantern` | passive | | | | none | status_rule | status=burn;rule=dmg_mult;value=1.3 |
-| `class_blade_1` | `blade` | on_kill | target_within:2.5 | | | none | heal | amount=1;max_per_sec=3 |
+| id | owner | trigger | conditions | chance | icd | allow_proc | stack_mode | action | params |
+|---|---|---|---|---|---|---|---|---|---|
+| `coal_locket_1` | `coal_locket` | on_hit | | 0.08 | | | chance | apply_status | status=burn;stacks=1;duration=3 |
+| `kindling_jar_1` | `kindling_jar` | on_hit | target_has_status:burn | | | | none | hit_mod | mode=vuln;value=0.2 |
+| `torch_glove_1` | `torch_glove` | on_hit | source_tag:edge | | | | none | apply_status | status=burn;stacks=1;duration=3 |
+| `headsman_hook_1` | `headsman_hook` | on_hit | target_is:normal\|target_hp_below:0.12 | | | | none | execute | |
+| `glass_aegis_1` | `glass_aegis` | on_pulse_start | | | | | none | gain_barrier | charges=1 |
+| `glass_aegis_2` | `glass_aegis` | on_block | | | | | none | spawn_area | shape=circle;radius=3;dmg=10;knockback=1;origin=player |
+| `patched_cloak_1` | `patched_cloak` | passive | time_since_hurt:4 | | | | none | stat_mod | stat=hp_regen;op=add;value=2 |
+| `syn_flame_4` | `syn_flame_4` | on_kill | target_has_status:burn | | | 1 | none | spawn_area | shape=circle;radius=1.5;dmg=6;status=burn;origin=target |
+| `syn_shard_4` | `syn_shard_4` | on_projectile_end | source_tag:shard | | | | none | spawn_projectile | pattern=split;count=3;dmg_frac=0.4;origin=point |
+| `syn_shard_6` | `syn_shard_6` | periodic | | | | | none | spawn_projectile | interval=2;pattern=toughest;count=1;dmg=25;pierce=99;speed=20 |
+| `syn_echo_2` | `syn_echo_2` | on_area | | | | | none | repeat | what=area;delay=0.5;power=0.35 |
+| `syn_ward_2a` | `syn_ward_2` | passive | | | | | none | stat_mod | stat=barrier_max;op=add;value=1 |
+| `syn_ward_2b` | `syn_ward_2` | passive | | | | | none | stat_mod | stat=barrier_recharge;op=min;value=14 |
+| `syn_trade_2` | `syn_trade_2` | on_shop_start | | | | | none | gain_glint | mode=interest;div=8;cap=12 |
+| `syn_trade_6a` | `syn_trade_6` | passive | | | | | none | convert | from=held_glint;to=damage_pct;ratio=0.1;cap=50 |
+| `class_lantern_1` | `lantern` | passive | | | | | none | status_rule | status=burn;rule=dmg_mult;value=1.3 |
+| `class_blade_1` | `blade` | on_kill | target_within:2.5 | | | | none | heal | amount=1;max_per_sec=3 |
 
 ## 8. Pemetaan semua pemilik
 
@@ -159,11 +201,11 @@ Ringkasan agar GP bisa mengecek cakupan. Teks efek lengkap di gdd.md.
 | Pemilik | Pemicu dan aksi |
 |---|---|
 | Flame 2 | on_hit: apply_status burn (chance 0.1) |
-| Flame 4 | on_kill + target_has_status burn: spawn_area |
+| Flame 4 | on_kill + target_has_status burn: spawn_area, `allow_proc=1` |
 | Flame 6 | passive: status_rule burn add_mark; periodic 6: spawn_area radius 4, status burn, dmg 0 |
 | Shard 2 | on_kill + source_kind projectile: spawn_projectile split 2 |
-| Shard 4 | on_projectile_end + source_tag Shard: spawn_projectile split 3 |
-| Shard 6 | periodic 2: spawn_projectile toughest |
+| Shard 4 | on_projectile_end + source_tag shard: spawn_projectile split 3 |
+| Shard 6 | periodic 2: spawn_projectile toughest (Unlit dengan HP tertinggi di arena) |
 | Edge 2 | on_hit + target_within 2.5: hit_mod bonus 0.25; apply_status knockback 0.5 |
 | Edge 4 | on_crit: spawn_projectile aimed, range 3, pierce 99, dmg_frac 0.5, kind melee |
 | Edge 6 | on_crit: buff attack_speed_pct 5 dan move_speed 3, 3 s, maks 10 |
@@ -179,6 +221,6 @@ Ringkasan agar GP bisa mengecek cakupan. Teks efek lengkap di gdd.md.
 | Kelas `lantern` | passive: status_rule burn dmg_mult 1.3 |
 | Kelas `bell` | passive: status_rule knockback add_mark 2 |
 | Kelas `blade` | on_kill + target_within 2.5: heal 1 |
-| Keepsake 1 sampai 30 | Kolom "Primitif" di gdd.md bagian 9 |
+| Memento 1 sampai 30 | Kolom "Primitif" di gdd.md bagian 9 |
 
-Semua 30 Keepsake, 18 ambang sinergi, dan 3 pasif kelas tercakup oleh 16 pemicu, 15 syarat, dan 16 aksi di atas.
+Semua 30 Memento, 18 ambang sinergi, dan 3 pasif kelas tercakup oleh 16 pemicu, 15 syarat, dan 16 aksi di atas.

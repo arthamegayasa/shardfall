@@ -1,0 +1,16 @@
+{
+  // Pure program: no DOM, no Node, no Vite types. Enforces architecture 4.2.
+  // The DOM-facing contracts (render, ui, e2e) are excluded; sim and content must not import them.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": []
+  },
+  "include": ["src/sim/**/*.ts", "src/core/**/*.ts", "src/content/**/*.ts"],
+  "exclude": [
+    "src/core/dom.ts",
+    "src/core/contracts/render.ts",
+    "src/core/contracts/ui.ts",
+    "src/core/contracts/e2e.ts"
+  ]
+}

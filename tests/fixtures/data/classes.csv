@@ -1,0 +1,2 @@
+id,name_key,desc_key,content_tier,accent,tag,start_weapon,rite_id,max_hp,stat_mods,unlock_silt,sort
+test_lamp,class.test_lamp.name,class.test_lamp.desc,A,gold,flame,test_bolt,test_flare,20,damage_pct=5,0,1

@@ -1,0 +1,9 @@
+{
+  // Node tools. TODO(AD, M1-05): add "art/**/*.ts" and tools/art once moved to .ts.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"]
+  },
+  "include": ["tools/**/*.ts"]
+}

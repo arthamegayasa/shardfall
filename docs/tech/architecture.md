@@ -1,6 +1,6 @@
 # Shardfall: Arsitektur Teknis
 
-Pemilik: Lead Programmer (LP). Status: **versi 2, 2026-11-16, hasil review M0 (M0-11b)**. Sumber kebenaran tunggal untuk M1.
+Pemilik: Lead Programmer (LP). Status: **versi 2.1, 2026-11-17: kontrak dibekukan di kode oleh M1-01 (lihat bagian 6 dan 19)**. Sumber kebenaran tunggal untuk M1.
 Dokumen terkait: `docs/tech/coding-standards.md` (aturan kode), `docs/reviews/M0-lp.md` (putusan review dan arahan perbaikan per pemilik), `docs/pillars.md`, `docs/style-guide.md`, `docs/gdd.md` dan `docs/systems/*.md` (GD: isi dan arti data), `docs/levels/arena-design.md` (LD), `docs/art-pipeline.md` (AD), `docs/audio-direction.md` dan `docs/audio-list.md` (AU), `docs/ui/ui-spec.md` (UI), `docs/qa/test-plan.md` (QA).
 
 Penanda: **[Beku M1]** bagian yang dibekukan untuk M1: perubahan hanya lewat LP, dikumpulkan dan diputuskan sekali per putaran, lalu dicatat di bagian 19. **[Wajib]** tidak boleh dilanggar tanpa persetujuan LP. **[Saran]** boleh disesuaikan pemilik wilayah dengan alasan tertulis. **[Asumsi]** dikalibrasi di M1 atau M2.
@@ -247,7 +247,7 @@ Arah import yang diizinkan [Wajib]:
 
 | Modul | Boleh import |
 |---|---|
-| `core` | tidak ada (hanya dirinya) |
+| `core` | tidak ada (hanya dirinya). Pengecualian M1-01: `core/contracts` boleh `import type` `GameData` dari `src/content/game-data.ts` (tipe saja, 19) |
 | `content` | `core` |
 | `sim` | `core`, `content` |
 | `render` | `core`, `content`, `three` |
@@ -262,6 +262,27 @@ Render dan UI menerima data art (definisi sprite, palet) dari app lewat dependen
 ---
 
 ## 6. Kontrak antar modul [Beku M1]
+
+**Status M1-01 (2026-11-17): DIBEKUKAN untuk M1.** Kode kontrak ada di:
+
+| File | Isi |
+|---|---|
+| `src/core/ids.ts`, `src/core/constants.ts` | 6.1 id bermerek, konstanta teknis, satuan dan kamera |
+| `src/core/contracts/source.ts` | 6.1 `SourceKind`, `encodeSource`, `HitKind` |
+| `src/core/contracts/input.ts`, `commands.ts` | 6.2 `InputFrame` (dengan `aimX`, `aimY` titik bidik Rite), `Command` (termasuk `shop.merge`, `reward.pick`), `DebugCommand`, `RejectReason` |
+| `src/core/contracts/sim.ts` | 6.3 `SimConfig`, `Sim`, `LoadResult`, `CreateSim` |
+| `src/core/contracts/world-view.ts` | 6.4 `WorldView` dan semua view pool, `RunPhase` (termasuk `reward`), `RunPhaseCode` |
+| `src/core/contracts/events.ts`, `src/core/event-buffer.ts` | 6.5 `SimEventType`, `SimEventReader`, payload bit `EnemyDamaged`, buffer SoA berprioritas |
+| `src/core/contracts/render.ts` | 6.6 `Renderer`, `Projector`, `RenderAssets`, `RenderFrame`, `CreateRenderer` |
+| `src/core/contracts/ui.ts` | 6.7 `Ui`, `UiDeps`, `AppActions`, `ScreenId`, `MetaView`, `CreateUi` |
+| `src/core/contracts/audio.ts` | 6.8 `AudioSystem`, `CreateAudio` |
+| `src/content/game-data.ts` | 6.9 `GameData` (tipe baris diturunkan dari skema di `src/content/tables/`) |
+| `src/core/contracts/arena.ts` | 6.10 `ArenaDef` |
+| `src/core/contracts/save.ts`, `settings.ts` | 6.11 `RunSave`, `MetaSave`, `Settings`, `ActionId`, kunci localStorage. Default di `src/app/settings.ts` |
+| `src/core/contracts/e2e.ts` | 6.12 `E2eHooks`, `window.__shardfall` |
+| `src/core/contracts/replay.ts`, `sprite.ts`, `palette.ts`, `strings.ts` | 4.5 replay, 10 `SpriteSheetDef`, palet, string table |
+
+Kontrak tanpa DOM diekspor `src/core/index.ts`. Kontrak yang memakai tipe DOM (`render.ts`, `ui.ts`, `e2e.ts`) diekspor terpisah lewat `src/core/dom.ts`, hanya untuk `render`, `ui`, dan `app`; `tsconfig.sim.json` mengecualikannya dan ESLint melarang `sim`, `content`, `audio` meng-import-nya. Factory ditulis sebagai tipe (`CreateSim`, `CreateRenderer`, ...) karena `declare function` tidak bisa diimplementasikan di file lain.
 
 Semua di `src/core/contracts/`. LP menulis versi kodenya di blok pembuka M1 persis seperti di bawah (nama boleh dirapikan, arti tidak).
 
@@ -765,7 +786,7 @@ export interface Renderer {
   dispose(): void;
 }
 
-export declare function createRenderer(canvas: HTMLCanvasElement, assets: RenderAssets): Renderer;
+export type CreateRenderer = (canvas: HTMLCanvasElement, assets: RenderAssets, data: GameData) => Renderer;  // M1-01: + data (19)
 ```
 
 ### 6.7 UI
@@ -850,7 +871,7 @@ export interface AudioSystem {
   dispose(): void;
 }
 
-export declare function createAudio(): AudioSystem;
+export type CreateAudio = (data: GameData) => AudioSystem;  // M1-01: + data (19)
 ```
 
 ### 6.9 Data (GameData)
@@ -1422,6 +1443,8 @@ Unit test sim memakai fixture kecil. Tes data asli hanya validitas, referensi, d
 
 Selama skrip atau tool milik peran lain belum ada di M1, `check` melewatinya dengan pesan jelas (bukan gagal diam-diam), dan LP menyalakannya begitu tool tersedia.
 
+**Keadaan M1-01:** `check` = `typecheck`, `lint`, `test`, `data:check` (brief M1-01). `art:check` masih menjalankan `tools/art/check-sprites.mjs` sampai AD memindah tool ke `.ts` (M1-05), lalu masuk `check` bersama `format:check`, `build`, `bundle:check`, dan `audio:check`. `data:build` adalah alias `data`. CI menjalankan `typecheck`, `lint`, `test`, `data:check` saja; e2e hanya lokal (brief M1-01, menggantikan 15.3 untuk M1).
+
 ### 15.2 tsconfig
 - `tsconfig.json`: `src/` (kecuali yang hanya di sim config), `tests/`, `art/**/*.ts`, file konfigurasi. Lib DOM.
 - `tsconfig.sim.json`: `src/sim`, `src/core`, `src/content`. Lib ES2023 tanpa DOM.
@@ -1483,3 +1506,4 @@ Selama skrip atau tool milik peran lain belum ada di M1, `check` melewatinya den
 |---|---|---|---|
 | 2026-11-16 | 1 | Draf awal M0 | |
 | 2026-11-16 | 2 | Review M0 (M0-11b): Memento, konvensi id bioma dan arena, kompensasi gerak vertikal, pass akhir bilinear untuk bloom dan blur, satuan 16 px per u, pitch asin(0,625), skala dari kotak wajib LD, fase `reward`, kolom event `c`, event baru, K1 sampai K11, Settings final, hook e2e final, format arena dan CSV final, skrip final. Detail per peran di `docs/reviews/M0-lp.md` | Menyelaraskan semua dokumen M0 sebelum M1 |
+| 2026-11-17 | 2.1 | M1-01, kontrak dibekukan di kode (daftar file di awal bagian 6). Penyesuaian: (1) `CreateRenderer` dan `CreateAudio` menerima `GameData` agar index padat di `WorldView` dan event bisa dipetakan ke id sprite, VFX, dan cue; (2) `core/contracts` boleh `import type` `GameData` dari `src/content` (pengecualian arah import, tipe saja); (3) kontrak ber-DOM dipisah ke `src/core/dom.ts`; (4) factory ditulis sebagai tipe; (5) `PaletteDef.point` menerima `rangeU` atau `radiusPx` sampai AD memigrasi palet; (6) tiga konstanta tambahan: `MAX_FRAME_DELTA_MS`, `REF_ORIGIN_X/Y`, `ARENA_MAX_HALF_W_U/D_U`; (7) kunci GameData diturunkan otomatis dari nama kolom CSV: camelCase plus akhiran satuan (`cooldown` jadi `cooldownTicks`, `speed` jadi `speedUPerTick`, `range` jadi `rangeU`), `final` jadi `isFinal` | Integrasi blok pembuka M1 |

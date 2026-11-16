@@ -17,3 +17,15 @@ Setiap aset dan dependensi wajib tercatat di sini.
 
 | Paket | Lisensi | Kegunaan |
 |---|---|---|
+| `three` 0.187.0 (runtime) | MIT | Render WebGL2 |
+| `typescript` 6.0.3 (dev) | Apache-2.0 | Typecheck. Versi 7 belum didukung typescript-eslint |
+| `vite` 8.3.5 (dev) | MIT | Dev server, build, import JSON |
+| `vitest` 5.1.0 (dev) | MIT | Unit, data, determinisme |
+| `@playwright/test` 1.64.1 (dev) | Apache-2.0 | E2E dan screenshot |
+| `eslint` 10.14.0 (dev) | MIT | Lint |
+| `typescript-eslint` 8.72.1 (dev) | MIT | Aturan lint TypeScript |
+| `@eslint/js` 10.0.1 (dev) | MIT | Aturan lint dasar |
+| `globals` 17.14.0 (dev) | MIT | Daftar global browser dan Node untuk lint |
+| `prettier` 3.9.10 (dev) | MIT | Format kode |
+| `@types/three` 0.187.0 (dev) | MIT | Tipe three.js |
+| `@types/node` 26.6.6 (dev) | MIT | Tipe Node untuk `tools/` dan tes |

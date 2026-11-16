@@ -1,0 +1,5 @@
+id,owner,trigger,conditions,chance,icd,max_per_pulse,allow_proc,stack_mode,action,params
+test_charm_1,test_charm,on_hit,source_kind:projectile,0.1,,,,chance,apply_status,status=burn;stacks=1;duration=2
+test_lens_1,test_lens,on_hit,every_nth:4@global,,,,,none,spawn_projectile,"pattern=split;count=2;dmg_frac=0.5"
+syn_flame_2a,syn_flame_2,passive,,,,,,none,stat_mod,stat=damage_pct;op=add;value=5
+class_test_lamp_1,test_lamp,on_kill,target_within:2,,0.5,,1,none,heal,amount=1

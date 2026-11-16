@@ -1,0 +1,3 @@
+id,stat,plain,fine,rare,fabled,content_tier,weight,desc_key
+card_damage,damage_pct,4,6,9,12,A,1,card.damage
+card_armor,armor,1,2,3,4,A,1,card.armor

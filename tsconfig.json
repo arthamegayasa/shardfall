@@ -1,0 +1,16 @@
+{
+  // Browser program: all of src/, tests/, config files. Lib DOM.
+  // src/sim, src/core, src/content are checked again without DOM by tsconfig.sim.json.
+  // TODO(AD, M1-05): add "art/**/*.ts" once generators use src/core/math and pass the strict flags.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "eslint.config.js"
+  ]
+}
