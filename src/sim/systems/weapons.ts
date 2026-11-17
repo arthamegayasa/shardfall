@@ -440,6 +440,28 @@ export function updateOrbits(ctx: SimCtx): void {
 }
 
 /** Cooldowns and firing for every weapon slot. Once per tick in the pulse phase. */
+/**
+ * Copies of the same weapon share a target and a cooldown, so without a stagger they fire on the
+ * same tick and their shots overlap exactly (player report: "the second weapon changes nothing").
+ * A later copy holds its shot until every earlier copy is at least 1/n of a cooldown past firing,
+ * which spreads n copies evenly over one cooldown. Fire rate per copy is unchanged; no new state.
+ */
+function waitsForTwin(ctx: SimCtx, slot: number, wi: number): boolean {
+  const run = ctx.run;
+  let copies = 0;
+  for (let s = 0; s < run.weaponIndex.length; s++) if (run.weaponIndex[s] === wi) copies++;
+  if (copies < 2) return false;
+  for (let s = 0; s < slot; s++) {
+    if (run.weaponIndex[s] !== wi) continue;
+    const t =
+      ctx.sd.weapons[wi]?.tiers[Math.min(WEAPON_MAX_TIER, Math.max(1, run.weaponTier[s]!)) - 1];
+    if (t === undefined) continue;
+    const cd = weaponCooldown(ctx, t);
+    if (run.weaponCd[s]! > cd - Math.floor(cd / copies)) return true;
+  }
+  return false;
+}
+
 export function updateWeapons(ctx: SimCtx): void {
   const run = ctx.run;
   for (let slot = 0; slot < run.weaponIndex.length; slot++) {
@@ -449,6 +471,7 @@ export function updateWeapons(ctx: SimCtx): void {
       run.weaponCd[slot] = run.weaponCd[slot]! - 1;
       continue;
     }
+    if (waitsForTwin(ctx, slot, wi)) continue;
     if (fireWeapon(ctx, slot, 1)) {
       const w = ctx.sd.weapons[wi];
       const t = w?.tiers[Math.min(WEAPON_MAX_TIER, Math.max(1, run.weaponTier[slot]!)) - 1];

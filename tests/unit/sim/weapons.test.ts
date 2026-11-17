@@ -133,3 +133,29 @@ describe('Rite (K04)', () => {
     expect(p.riteCharges).toBe(1);
   });
 });
+
+describe('duplicate weapons (player report: a second copy looked like no change)', () => {
+  it('two copies of the same weapon fire on different ticks, so both shots are visible', () => {
+    const h = harness();
+    h.start();
+    h.quiet();
+    h.send({ type: 'debug.grant', kind: 'weapon', id: 'lantern_bolt', tier: 1 });
+    h.step();
+    const lantern = idOf(h.data.weapons, 'lantern_bolt');
+    const slots = h.sim.view.shop.inventory.filter((s) => s.weaponIndex === lantern).length;
+    expect(slots).toBe(2);
+    h.send({ type: 'debug.setHp', hp: 999 });
+    h.send({ type: 'debug.spawn', enemyId: 'tank', x: 3, y: 0, count: 1 });
+    h.clearLog();
+    h.step(400);
+    const shots = h.of(SimEventType.WeaponFired).filter((e) => e.a === lantern);
+    const bySlot = new Map<number, number[]>();
+    for (const e of shots) bySlot.set(e.c, [...(bySlot.get(e.c) ?? []), e.tick]);
+    expect(bySlot.size).toBe(2);
+    const [a, b] = [...bySlot.values()];
+    // No tick where both copies fire together.
+    expect((a ?? []).filter((t) => (b ?? []).includes(t))).toEqual([]);
+    // Same fire rate per copy: the stagger only shifts the phase.
+    expect(Math.abs((a?.length ?? 0) - (b?.length ?? 0))).toBeLessThanOrEqual(1);
+  });
+});
