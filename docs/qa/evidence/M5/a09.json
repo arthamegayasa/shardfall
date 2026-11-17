@@ -1,0 +1,89 @@
+[
+  {
+    "event": "player hit",
+    "sign": "HP bar white flash, red screen edge",
+    "region": "#ui-root .bar-hp",
+    "box": [
+      12,
+      12,
+      256,
+      34
+    ],
+    "meanAbsDiff": 20.8
+  },
+  {
+    "event": "player hit (whole screen)",
+    "meanAbsDiff": 6.28
+  },
+  {
+    "event": "level up",
+    "sign": "Lv line blinks gold",
+    "region": "#ui-root .hud-lv",
+    "box": [
+      12,
+      44,
+      274,
+      26
+    ],
+    "meanAbsDiff": 36.27
+  },
+  {
+    "event": "level up (state)",
+    "level": 38
+  },
+  {
+    "event": "Memento gained (grant, HUD)",
+    "sign": "see screenshot",
+    "meanAbsDiff": 0.07
+  },
+  {
+    "event": "Pulse near its end",
+    "sign": "timer state",
+    "region": "#ui-root .timer",
+    "box": [
+      584,
+      32,
+      112,
+      44
+    ],
+    "meanAbsDiff": 39.99
+  },
+  {
+    "event": "Pulse near its end (ticks to 0:06)",
+    "ticks": 839
+  },
+  {
+    "event": "warden arrival",
+    "sign": "name banner",
+    "region": "#ui-root .hud-banner",
+    "box": [
+      470,
+      78,
+      340,
+      78
+    ],
+    "meanAbsDiff": 44.52
+  },
+  {
+    "event": "warden arrival (banner)",
+    "ticks": 447,
+    "text": "Brass Collarthe Thrice-Leaping"
+  },
+  {
+    "event": "boss arrival",
+    "sign": "name banner",
+    "region": "#ui-root .hud-banner",
+    "box": [
+      506,
+      78,
+      268,
+      78
+    ],
+    "meanAbsDiff": 44.29
+  },
+  {
+    "event": "boss arrival (banner)",
+    "ticks": 116,
+    "text": "Paper Sunthe Light-Eater"
+  }
+]

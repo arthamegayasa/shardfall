@@ -1,0 +1,303 @@
+== final (tests/out/qa/m5/test-e2e-final.log)
+  ok  1 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 101), replay matches in Node (38.8s)
+  ok  2 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 202), replay matches in Node (24.8s)
+  ok  3 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 303), replay matches in Node (15.3s)
+  ok  4 [chromium] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (2.9s)
+  ok  5 [chromium] › tests\e2e\determinism.spec.ts:70:1 › D-8: a browser run recorded from live keyboard input replays in Node (9.8s)
+  x   6 [chromium] › tests\e2e\full-run.spec.ts:91:1 › plays a full run through the UI to victory, with autosave and Continue (44.6s)
+  ok  7 [chromium] › tests\e2e\full-run.spec.ts:283:1 › loses a run and shows the run end screen (4.3s)
+  ok  8 [chromium] › tests\e2e\full-run.spec.ts:307:1 › goToScreen, spawnStress, and replays work through the hooks (3.9s)
+  ok  9 [chromium] › tests\e2e\keyboard-play.spec.ts:59:1 › keyboard only: title to Pulse 1 (real time), Temper, Glazier, Pulse 2, Continue, defeat, retry (44.0s)
+  -  10 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu
+  -  11 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome
+  -  12 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge
+  -  13 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox
+  -  14 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback
+  ok 15 [chromium] › tests\e2e\meta-unlock.spec.ts:10:1 › The Keeping unlocks the second class and the class select starts it (6.0s)
+  ok 16 [chromium] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1920x1080 (13.4s)
+  ok 17 [chromium] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1280x720 (13.0s)
+  ok 18 [chromium] › tests\e2e\screens.spec.ts:125:1 › stress: peak enemy count, live loop, frame time (Chromium headless: indicative only) (30.7s)
+  ok 19 [chromium] › tests\e2e\smoke.spec.ts:6:1 › boots the e2e build, renders the canvas, and steps the sim (1.9s)
+  ok 20 [chromium] › tests\e2e\m3-a11y.spec.ts:89:3 › keyboard and settings › A-01 remap: Rite to K, persists, conflict swap, reset, physical key codes (8.1s)
+  ok 21 [chromium] › tests\e2e\m3-a11y.spec.ts:188:3 › keyboard and settings › A-06 pause anywhere: Esc and P in Pulse, Temper, Glazier, Warden; hidden tab (E-16) (28.2s)
+  ok 22 [chromium] › tests\e2e\m3-a11y.spec.ts:284:3 › keyboard and settings › A-07 every screen by keyboard: focus reaches each control, focus is visible, Esc goes back (1.7m)
+  ok 23 [chromium] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and persist (2.4s)
+  ok 24 [chromium] › tests\e2e\m3-a11y.spec.ts:446:3 › keyboard and settings › E-17: resizing during a Pulse keeps integer pixel scale, the HUD, and no errors (2.5s)
+  ok 25 [chromium] › tests\e2e\m3-a11y.spec.ts:481:1 › E-16 and A-06 step 3: a minimized (hidden) window pauses the run, and it resumes (8.9s)
+  ok 26 [chromium] › tests\e2e\m3-a11y.spec.ts:537:1 › A-11: prefers-reduced-motion turns Reduce Effects on at first launch only (1.1s)
+  ok 27 [chromium] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 0: no clipped, overlapping, or offscreen text (6.9s)
+  ok 28 [chromium] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 1: no clipped, overlapping, or offscreen text (6.8s)
+  ok 29 [chromium] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 2: no clipped, overlapping, or offscreen text (7.2s)
+  ok 30 [chromium] › tests\e2e\m3-a11y.spec.ts:625:3 › effects on the GPU › A-02 step 4 frames: Pulse open, Rite, hits, boss phase, Pulse close (Reduce Effects off and on) (34.4s)
+  ok 31 [chromium] › tests\e2e\m3-a11y.spec.ts:677:3 › effects on the GPU › A-03: damage numbers off draws none; on never covers the player sprite (20 frames, diff) (5.8s)
+  -  32 [chromium] › tests\e2e\m3-a11y.spec.ts:708:1 › A-12: Temper, Glazier, Pause, Settings have no timer (60 s each)
+  -  33 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, low, P-DEV
+  -  34 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, medium, P-DEV
+  -  35 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, high, P-DEV
+  ok 36 [chromium] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.6m)
+  ok 37 [chromium] › tests\e2e\m3-visual.spec.ts:60:1 › M3 glance frames (1920x1080, High) (3.4s)
+  ok 38 [chromium] › tests\e2e\m3-visual.spec.ts:173:1 › M3 peak scene per quality, Reduce Effects, damage numbers off, colour vision modes (6.6s)
+  ok 39 [chromium] › tests\e2e\m3-visual.spec.ts:196:1 › M3 draw order: enemy shots under the Rite stay visible (8.6, P2-f) (1.3s)
+  ok 40 [chromium] › tests\e2e\m3-visual.spec.ts:231:1 › CW-4 UI colour audit: danger red and magenta only on low HP and boss warnings; poor prices dim (4.5s)
+  ok 41 [chromium] › tests\e2e\m5-a11y.spec.ts:78:1 › A-08 captures: text leaves and focus on six screens (1280x720, Normal text) (5.3s)
+  ok 42 [chromium] › tests\e2e\m5-a11y.spec.ts:167:1 › A-09: with Master at 0 every informative sound has a visual sign (4.5s)
+  ok 43 [chromium] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (1.9m)
+  ok 44 [chromium] › tests\e2e\m5-release.spec.ts:462:1 › BUG-008 retest: the boss banner of an abandoned run never shows in the next run (16.0s)
+  ok 45 [chromium] › tests\e2e\m5-release.spec.ts:515:1 › BUG-009 retest: back from The Keeping, focus returns to The Keeping and input is not locked (3.7s)
+  -  46 [chromium] › tests\e2e\m5-release.spec.ts:628:1 › BUG-006 retest: fresh Edge profiles, sim runs within 100 ms of the Pulse screen
+  -  47 [chromium] › tests\e2e\m5-release.spec.ts:846:1 › M5 release play: one full run per class with real keys, Continue, Silt unlocks, Low and Reduce Effects
+  -  48 [chromium] › tests\e2e\m5-release.spec.ts:972:1 › D-8 soak: live runs with real keys at 4x replay in Node with every checkpoint matching
+  ok 49 [chromium] › tests\e2e\smoke-chrome.spec.ts:14:1 › smoke: Google Chrome (13.9s)
+  ok 50 [chromium] › tests\e2e\smoke-firefox.spec.ts:9:1 › smoke: Firefox (Playwright build) (15.0s)
+  ok 51 [chromium] › tests\e2e\smoke-msedge.spec.ts:15:1 › smoke: Microsoft Edge (14.2s)
+  ok 52 [chromium] › tests\e2e\smoke-webkit.spec.ts:28:1 › smoke: WebKit (Playwright build, Safari proxy) (14.2s)
+    - Timeout 10000ms exceeded while waiting on the predicate
+  1 failed
+  12 skipped
+  39 passed (13.3m)
+EXIT 1
+== chromium (tests/out/qa/m5/test-e2e-chromium.log)
+  ok  1 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 101), replay matches in Node (16.8s)
+  ok  2 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 202), replay matches in Node (23.9s)
+  ok  3 [chromium] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 303), replay matches in Node (15.1s)
+  x   4 [chromium] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (3.1s)
+  ok  5 [chromium] › tests\e2e\determinism.spec.ts:67:1 › D-8: a browser run recorded from live keyboard input replays in Node (9.8s)
+  ok  6 [chromium] › tests\e2e\full-run.spec.ts:91:1 › plays a full run through the UI to victory, with autosave and Continue (35.0s)
+  ok  7 [chromium] › tests\e2e\full-run.spec.ts:283:1 › loses a run and shows the run end screen (4.3s)
+  ok  8 [chromium] › tests\e2e\full-run.spec.ts:307:1 › goToScreen, spawnStress, and replays work through the hooks (3.8s)
+  ok  9 [chromium] › tests\e2e\keyboard-play.spec.ts:59:1 › keyboard only: title to Pulse 1 (real time), Temper, Glazier, Pulse 2, Continue, defeat, retry (43.2s)
+  -  10 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu
+  -  11 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome
+  -  12 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge
+  -  13 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox
+  -  14 [chromium] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback
+  ok 15 [chromium] › tests\e2e\meta-unlock.spec.ts:10:1 › The Keeping unlocks the second class and the class select starts it (5.2s)
+  ok 16 [chromium] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1920x1080 (12.9s)
+  ok 17 [chromium] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1280x720 (13.7s)
+  ok 18 [chromium] › tests\e2e\screens.spec.ts:125:1 › stress: peak enemy count, live loop, frame time (Chromium headless: indicative only) (30.5s)
+  ok 19 [chromium] › tests\e2e\smoke.spec.ts:6:1 › boots the e2e build, renders the canvas, and steps the sim (1.5s)
+  ok 20 [chromium] › tests\e2e\m3-a11y.spec.ts:89:3 › keyboard and settings › A-01 remap: Rite to K, persists, conflict swap, reset, physical key codes (7.6s)
+  ok 21 [chromium] › tests\e2e\m3-a11y.spec.ts:188:3 › keyboard and settings › A-06 pause anywhere: Esc and P in Pulse, Temper, Glazier, Warden; hidden tab (E-16) (27.7s)
+  ok 22 [chromium] › tests\e2e\m3-a11y.spec.ts:284:3 › keyboard and settings › A-07 every screen by keyboard: focus reaches each control, focus is visible, Esc goes back (1.4m)
+  x  23 [chromium] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and persist (3.4s)
+  ok 24 [chromium] › tests\e2e\m3-a11y.spec.ts:438:3 › keyboard and settings › E-17: resizing during a Pulse keeps integer pixel scale, the HUD, and no errors (3.5s)
+  ok 25 [chromium] › tests\e2e\m3-a11y.spec.ts:473:1 › E-16 and A-06 step 3: a minimized (hidden) window pauses the run, and it resumes (8.7s)
+  ok 26 [chromium] › tests\e2e\m3-a11y.spec.ts:529:1 › A-11: prefers-reduced-motion turns Reduce Effects on at first launch only (922ms)
+  ok 27 [chromium] › tests\e2e\m3-a11y.spec.ts:562:5 › text size A-05 › A-05 text scale 0: no clipped, overlapping, or offscreen text (6.6s)
+  ok 28 [chromium] › tests\e2e\m3-a11y.spec.ts:562:5 › text size A-05 › A-05 text scale 1: no clipped, overlapping, or offscreen text (6.4s)
+  ok 29 [chromium] › tests\e2e\m3-a11y.spec.ts:562:5 › text size A-05 › A-05 text scale 2: no clipped, overlapping, or offscreen text (6.9s)
+  ok 30 [chromium] › tests\e2e\m3-a11y.spec.ts:617:3 › effects on the GPU › A-02 step 4 frames: Pulse open, Rite, hits, boss phase, Pulse close (Reduce Effects off and on) (33.6s)
+  ok 31 [chromium] › tests\e2e\m3-a11y.spec.ts:669:3 › effects on the GPU › A-03: damage numbers off draws none; on never covers the player sprite (20 frames, diff) (5.0s)
+  ok 32 [chromium] › tests\e2e\m3-a11y.spec.ts:700:1 › A-12: Temper, Glazier, Pause, Settings have no timer (60 s each) (4.3m)
+  -  33 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, low, P-DEV
+  -  34 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, medium, P-DEV
+  -  35 [chromium] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, high, P-DEV
+  x  36 [chromium] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.7m)
+  ok 37 [chromium] › tests\e2e\m3-visual.spec.ts:60:1 › M3 glance frames (1920x1080, High) (4.2s)
+  ok 38 [chromium] › tests\e2e\m3-visual.spec.ts:173:1 › M3 peak scene per quality, Reduce Effects, damage numbers off, colour vision modes (5.9s)
+  ok 39 [chromium] › tests\e2e\m3-visual.spec.ts:196:1 › M3 draw order: enemy shots under the Rite stay visible (8.6, P2-f) (1.3s)
+  ok 40 [chromium] › tests\e2e\m3-visual.spec.ts:231:1 › CW-4 UI colour audit: danger red and magenta only on low HP and boss warnings; poor prices dim (4.4s)
+  ok 41 [chromium] › tests\e2e\m5-a11y.spec.ts:78:1 › A-08 captures: text leaves and focus on six screens (1280x720, Normal text) (5.1s)
+  ok 42 [chromium] › tests\e2e\m5-a11y.spec.ts:167:1 › A-09: with Master at 0 every informative sound has a visual sign (4.2s)
+  ok 43 [chromium] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (1.6m)
+  ok 44 [chromium] › tests\e2e\m5-release.spec.ts:462:1 › BUG-008 retest: the boss banner of an abandoned run never shows in the next run (15.6s)
+  ok 45 [chromium] › tests\e2e\m5-release.spec.ts:515:1 › BUG-009 retest: back from The Keeping, focus returns to The Keeping and input is not locked (3.6s)
+  x  46 [chromium] › tests\e2e\m5-release.spec.ts:628:1 › BUG-006 retest: fresh Edge profiles, sim runs within 100 ms of the Pulse screen (1.4m)
+  ok 47 [chromium] › tests\e2e\m5-release.spec.ts:846:1 › M5 release play: one full run per class with real keys, Continue, Silt unlocks, Low and Reduce Effects (1.6m)
+  ok 48 [chromium] › tests\e2e\smoke-chrome.spec.ts:14:1 › smoke: Google Chrome (13.8s)
+  ok 49 [chromium] › tests\e2e\smoke-firefox.spec.ts:9:1 › smoke: Firefox (Playwright build) (15.1s)
+  ok 50 [chromium] › tests\e2e\smoke-msedge.spec.ts:15:1 › smoke: Microsoft Edge (14.0s)
+  ok 51 [chromium] › tests\e2e\smoke-webkit.spec.ts:28:1 › smoke: WebKit (Playwright build, Safari proxy) (14.4s)
+  4 failed
+  8 skipped
+  39 passed (19.8m)
+EXIT 1
+== chrome (tests/out/qa/m5/test-e2e-chrome.log)
+  ok  1 [chrome] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 101), replay matches in Node (28.2s)
+  ok  2 [chrome] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 202), replay matches in Node (27.3s)
+  ok  3 [chrome] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 303), replay matches in Node (21.5s)
+  ok  4 [chrome] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (1.0s)
+  ok  5 [chrome] › tests\e2e\determinism.spec.ts:70:1 › D-8: a browser run recorded from live keyboard input replays in Node (6.6s)
+  ok  6 [chrome] › tests\e2e\full-run.spec.ts:91:1 › plays a full run through the UI to victory, with autosave and Continue (19.5s)
+  ok  7 [chrome] › tests\e2e\full-run.spec.ts:283:1 › loses a run and shows the run end screen (1.8s)
+  ok  8 [chrome] › tests\e2e\full-run.spec.ts:307:1 › goToScreen, spawnStress, and replays work through the hooks (1.1s)
+  ok  9 [chrome] › tests\e2e\keyboard-play.spec.ts:59:1 › keyboard only: title to Pulse 1 (real time), Temper, Glazier, Pulse 2, Continue, defeat, retry (35.6s)
+  -  10 [chrome] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu
+  -  11 [chrome] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome
+  -  12 [chrome] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge
+  -  13 [chrome] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox
+  -  14 [chrome] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback
+  ok 15 [chrome] › tests\e2e\meta-unlock.spec.ts:10:1 › The Keeping unlocks the second class and the class select starts it (1.1s)
+  ok 16 [chrome] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1920x1080 (10.3s)
+  ok 17 [chrome] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1280x720 (9.8s)
+  ok 18 [chrome] › tests\e2e\screens.spec.ts:125:1 › stress: peak enemy count, live loop, frame time (Chromium headless: indicative only) (27.4s)
+  ok 19 [chrome] › tests\e2e\smoke.spec.ts:6:1 › boots the e2e build, renders the canvas, and steps the sim (629ms)
+  ok 20 [chrome] › tests\e2e\m3-a11y.spec.ts:89:3 › keyboard and settings › A-01 remap: Rite to K, persists, conflict swap, reset, physical key codes (8.3s)
+  ok 21 [chrome] › tests\e2e\m3-a11y.spec.ts:188:3 › keyboard and settings › A-06 pause anywhere: Esc and P in Pulse, Temper, Glazier, Warden; hidden tab (E-16) (28.1s)
+  ok 22 [chrome] › tests\e2e\m3-a11y.spec.ts:284:3 › keyboard and settings › A-07 every screen by keyboard: focus reaches each control, focus is visible, Esc goes back (1.5m)
+  ok 23 [chrome] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and persist (2.5s)
+  ok 24 [chrome] › tests\e2e\m3-a11y.spec.ts:446:3 › keyboard and settings › E-17: resizing during a Pulse keeps integer pixel scale, the HUD, and no errors (2.6s)
+  ok 25 [chrome] › tests\e2e\m3-a11y.spec.ts:481:1 › E-16 and A-06 step 3: a minimized (hidden) window pauses the run, and it resumes (8.9s)
+  ok 26 [chrome] › tests\e2e\m3-a11y.spec.ts:537:1 › A-11: prefers-reduced-motion turns Reduce Effects on at first launch only (1.2s)
+  ok 27 [chrome] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 0: no clipped, overlapping, or offscreen text (7.1s)
+  ok 28 [chrome] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 1: no clipped, overlapping, or offscreen text (6.9s)
+  ok 29 [chrome] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 2: no clipped, overlapping, or offscreen text (7.4s)
+  ok 30 [chrome] › tests\e2e\m3-a11y.spec.ts:625:3 › effects on the GPU › A-02 step 4 frames: Pulse open, Rite, hits, boss phase, Pulse close (Reduce Effects off and on) (29.4s)
+  ok 31 [chrome] › tests\e2e\m3-a11y.spec.ts:677:3 › effects on the GPU › A-03: damage numbers off draws none; on never covers the player sprite (20 frames, diff) (5.3s)
+  -  32 [chrome] › tests\e2e\m3-a11y.spec.ts:708:1 › A-12: Temper, Glazier, Pause, Settings have no timer (60 s each)
+  -  33 [chrome] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, low, P-DEV
+  -  34 [chrome] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, medium, P-DEV
+  -  35 [chrome] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, high, P-DEV
+  ok 36 [chrome] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.6m)
+  ok 37 [chrome] › tests\e2e\m3-visual.spec.ts:60:1 › M3 glance frames (1920x1080, High) (3.5s)
+  ok 38 [chrome] › tests\e2e\m3-visual.spec.ts:173:1 › M3 peak scene per quality, Reduce Effects, damage numbers off, colour vision modes (7.1s)
+  ok 39 [chrome] › tests\e2e\m3-visual.spec.ts:196:1 › M3 draw order: enemy shots under the Rite stay visible (8.6, P2-f) (1.4s)
+  ok 40 [chrome] › tests\e2e\m3-visual.spec.ts:231:1 › CW-4 UI colour audit: danger red and magenta only on low HP and boss warnings; poor prices dim (4.6s)
+  ok 41 [chrome] › tests\e2e\m5-a11y.spec.ts:78:1 › A-08 captures: text leaves and focus on six screens (1280x720, Normal text) (5.4s)
+  ok 42 [chrome] › tests\e2e\m5-a11y.spec.ts:167:1 › A-09: with Master at 0 every informative sound has a visual sign (4.5s)
+  ok 43 [chrome] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (1.5m)
+  ok 44 [chrome] › tests\e2e\m5-release.spec.ts:462:1 › BUG-008 retest: the boss banner of an abandoned run never shows in the next run (16.0s)
+  ok 45 [chrome] › tests\e2e\m5-release.spec.ts:515:1 › BUG-009 retest: back from The Keeping, focus returns to The Keeping and input is not locked (3.8s)
+  -  46 [chrome] › tests\e2e\m5-release.spec.ts:628:1 › BUG-006 retest: fresh Edge profiles, sim runs within 100 ms of the Pulse screen
+  -  47 [chrome] › tests\e2e\m5-release.spec.ts:846:1 › M5 release play: one full run per class with real keys, Continue, Silt unlocks, Low and Reduce Effects
+  -  48 [chrome] › tests\e2e\m5-release.spec.ts:972:1 › D-8 soak: live runs with real keys at 4x replay in Node with every checkpoint matching
+  ok 49 [chrome] › tests\e2e\smoke-chrome.spec.ts:14:1 › smoke: Google Chrome (13.7s)
+  x  50 [chrome] › tests\e2e\smoke-firefox.spec.ts:9:1 › smoke: Firefox (Playwright build) (1ms)
+  ok 51 [chrome] › tests\e2e\smoke-msedge.spec.ts:15:1 › smoke: Microsoft Edge (14.0s)
+  ok 52 [chrome] › tests\e2e\smoke-webkit.spec.ts:28:1 › smoke: WebKit (Playwright build, Safari proxy) (14.3s)
+  1 failed
+  12 skipped
+  39 passed (11.2m)
+EXIT 1
+== msedge (tests/out/qa/m5/test-e2e-msedge.log)
+  ok  1 [msedge] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 101), replay matches in Node (28.3s)
+  ok  2 [msedge] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 202), replay matches in Node (20.1s)
+  ok  3 [msedge] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 303), replay matches in Node (27.5s)
+  ok  4 [msedge] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (1.1s)
+  ok  5 [msedge] › tests\e2e\determinism.spec.ts:70:1 › D-8: a browser run recorded from live keyboard input replays in Node (6.7s)
+  ok  6 [msedge] › tests\e2e\full-run.spec.ts:91:1 › plays a full run through the UI to victory, with autosave and Continue (19.6s)
+  ok  7 [msedge] › tests\e2e\full-run.spec.ts:283:1 › loses a run and shows the run end screen (1.9s)
+  ok  8 [msedge] › tests\e2e\full-run.spec.ts:307:1 › goToScreen, spawnStress, and replays work through the hooks (1.2s)
+  ok  9 [msedge] › tests\e2e\keyboard-play.spec.ts:59:1 › keyboard only: title to Pulse 1 (real time), Temper, Glazier, Pulse 2, Continue, defeat, retry (34.7s)
+  -  10 [msedge] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu
+  -  11 [msedge] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome
+  -  12 [msedge] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge
+  -  13 [msedge] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox
+  -  14 [msedge] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback
+  ok 15 [msedge] › tests\e2e\meta-unlock.spec.ts:10:1 › The Keeping unlocks the second class and the class select starts it (1.2s)
+  ok 16 [msedge] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1920x1080 (10.7s)
+  ok 17 [msedge] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1280x720 (10.0s)
+  ok 18 [msedge] › tests\e2e\screens.spec.ts:125:1 › stress: peak enemy count, live loop, frame time (Chromium headless: indicative only) (27.4s)
+  ok 19 [msedge] › tests\e2e\smoke.spec.ts:6:1 › boots the e2e build, renders the canvas, and steps the sim (626ms)
+  ok 20 [msedge] › tests\e2e\m3-a11y.spec.ts:89:3 › keyboard and settings › A-01 remap: Rite to K, persists, conflict swap, reset, physical key codes (8.3s)
+  ok 21 [msedge] › tests\e2e\m3-a11y.spec.ts:188:3 › keyboard and settings › A-06 pause anywhere: Esc and P in Pulse, Temper, Glazier, Warden; hidden tab (E-16) (28.2s)
+  ok 22 [msedge] › tests\e2e\m3-a11y.spec.ts:284:3 › keyboard and settings › A-07 every screen by keyboard: focus reaches each control, focus is visible, Esc goes back (1.5m)
+  ok 23 [msedge] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and persist (2.6s)
+  ok 24 [msedge] › tests\e2e\m3-a11y.spec.ts:446:3 › keyboard and settings › E-17: resizing during a Pulse keeps integer pixel scale, the HUD, and no errors (2.8s)
+  ok 25 [msedge] › tests\e2e\m3-a11y.spec.ts:481:1 › E-16 and A-06 step 3: a minimized (hidden) window pauses the run, and it resumes (9.0s)
+  ok 26 [msedge] › tests\e2e\m3-a11y.spec.ts:537:1 › A-11: prefers-reduced-motion turns Reduce Effects on at first launch only (1.4s)
+  ok 27 [msedge] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 0: no clipped, overlapping, or offscreen text (7.4s)
+  ok 28 [msedge] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 1: no clipped, overlapping, or offscreen text (7.3s)
+  ok 29 [msedge] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 2: no clipped, overlapping, or offscreen text (7.5s)
+  ok 30 [msedge] › tests\e2e\m3-a11y.spec.ts:625:3 › effects on the GPU › A-02 step 4 frames: Pulse open, Rite, hits, boss phase, Pulse close (Reduce Effects off and on) (31.7s)
+  ok 31 [msedge] › tests\e2e\m3-a11y.spec.ts:677:3 › effects on the GPU › A-03: damage numbers off draws none; on never covers the player sprite (20 frames, diff) (5.4s)
+  -  32 [msedge] › tests\e2e\m3-a11y.spec.ts:708:1 › A-12: Temper, Glazier, Pause, Settings have no timer (60 s each)
+  -  33 [msedge] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, low, P-DEV
+  -  34 [msedge] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, medium, P-DEV
+  -  35 [msedge] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, high, P-DEV
+  ok 36 [msedge] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.6m)
+  ok 37 [msedge] › tests\e2e\m3-visual.spec.ts:60:1 › M3 glance frames (1920x1080, High) (3.5s)
+  ok 38 [msedge] › tests\e2e\m3-visual.spec.ts:173:1 › M3 peak scene per quality, Reduce Effects, damage numbers off, colour vision modes (7.4s)
+  ok 39 [msedge] › tests\e2e\m3-visual.spec.ts:196:1 › M3 draw order: enemy shots under the Rite stay visible (8.6, P2-f) (1.5s)
+  ok 40 [msedge] › tests\e2e\m3-visual.spec.ts:231:1 › CW-4 UI colour audit: danger red and magenta only on low HP and boss warnings; poor prices dim (4.6s)
+  ok 41 [msedge] › tests\e2e\m5-a11y.spec.ts:78:1 › A-08 captures: text leaves and focus on six screens (1280x720, Normal text) (5.5s)
+  ok 42 [msedge] › tests\e2e\m5-a11y.spec.ts:167:1 › A-09: with Master at 0 every informative sound has a visual sign (4.6s)
+  ok 43 [msedge] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (1.5m)
+  ok 44 [msedge] › tests\e2e\m5-release.spec.ts:462:1 › BUG-008 retest: the boss banner of an abandoned run never shows in the next run (16.0s)
+  ok 45 [msedge] › tests\e2e\m5-release.spec.ts:515:1 › BUG-009 retest: back from The Keeping, focus returns to The Keeping and input is not locked (3.8s)
+  -  46 [msedge] › tests\e2e\m5-release.spec.ts:628:1 › BUG-006 retest: fresh Edge profiles, sim runs within 100 ms of the Pulse screen
+  -  47 [msedge] › tests\e2e\m5-release.spec.ts:846:1 › M5 release play: one full run per class with real keys, Continue, Silt unlocks, Low and Reduce Effects
+  -  48 [msedge] › tests\e2e\m5-release.spec.ts:972:1 › D-8 soak: live runs with real keys at 4x replay in Node with every checkpoint matching
+  ok 49 [msedge] › tests\e2e\smoke-chrome.spec.ts:14:1 › smoke: Google Chrome (13.9s)
+  x  50 [msedge] › tests\e2e\smoke-firefox.spec.ts:9:1 › smoke: Firefox (Playwright build) (1ms)
+  ok 51 [msedge] › tests\e2e\smoke-msedge.spec.ts:15:1 › smoke: Microsoft Edge (13.9s)
+  ok 52 [msedge] › tests\e2e\smoke-webkit.spec.ts:28:1 › smoke: WebKit (Playwright build, Safari proxy) (14.0s)
+  1 failed
+  12 skipped
+  39 passed (11.3m)
+EXIT 1
+== firefox (tests/out/qa/m5/test-e2e-firefox.log)
+  ok  1 [firefox] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 101), replay matches in Node (30.0s)
+  ok  2 [firefox] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 202), replay matches in Node (22.4s)
+  ok  3 [firefox] › tests\e2e\browser-bot.spec.ts:100:3 › E-13: browser bot with real keys finishes a run (seed 303), replay matches in Node (30.7s)
+  ok  4 [firefox] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (2.5s)
+  x   5 [firefox] › tests\e2e\determinism.spec.ts:70:1 › D-8: a browser run recorded from live keyboard input replays in Node (8.4s)
+  ok  6 [firefox] › tests\e2e\full-run.spec.ts:91:1 › plays a full run through the UI to victory, with autosave and Continue (22.7s)
+  ok  7 [firefox] › tests\e2e\full-run.spec.ts:283:1 › loses a run and shows the run end screen (3.2s)
+  ok  8 [firefox] › tests\e2e\full-run.spec.ts:307:1 › goToScreen, spawnStress, and replays work through the hooks (2.5s)
+  ok  9 [firefox] › tests\e2e\keyboard-play.spec.ts:59:1 › keyboard only: title to Pulse 1 (real time), Temper, Glazier, Pulse 2, Continue, defeat, retry (37.5s)
+  -  10 [firefox] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu
+  -  11 [firefox] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome
+  -  12 [firefox] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge
+  -  13 [firefox] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox
+  -  14 [firefox] › tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback
+  ok 15 [firefox] › tests\e2e\meta-unlock.spec.ts:10:1 › The Keeping unlocks the second class and the class select starts it (2.3s)
+  x  16 [firefox] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1920x1080 (3.0m)
+  x  17 [firefox] › tests\e2e\screens.spec.ts:41:3 › screenshot set 1280x720 (3.0m)
+  x  18 [firefox] › tests\e2e\screens.spec.ts:125:1 › stress: peak enemy count, live loop, frame time (Chromium headless: indicative only) (2.0m)
+  ok 19 [firefox] › tests\e2e\smoke.spec.ts:6:1 › boots the e2e build, renders the canvas, and steps the sim (2.5s)
+  ok 20 [firefox] › tests\e2e\m3-a11y.spec.ts:89:3 › keyboard and settings › A-01 remap: Rite to K, persists, conflict swap, reset, physical key codes (11.7s)
+  x  21 [firefox] › tests\e2e\m3-a11y.spec.ts:188:3 › keyboard and settings › A-06 pause anywhere: Esc and P in Pulse, Temper, Glazier, Warden; hidden tab (E-16) (31.9s)
+  ok 22 [firefox] › tests\e2e\m3-a11y.spec.ts:284:3 › keyboard and settings › A-07 every screen by keyboard: focus reaches each control, focus is visible, Esc goes back (1.6m)
+  ok 23 [firefox] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and persist (4.6s)
+  x  24 [firefox] › tests\e2e\m3-a11y.spec.ts:446:3 › keyboard and settings › E-17: resizing during a Pulse keeps integer pixel scale, the HUD, and no errors (30.9s)
+  x  25 [firefox] › tests\e2e\m3-a11y.spec.ts:481:1 › E-16 and A-06 step 3: a minimized (hidden) window pauses the run, and it resumes (3.5s)
+  ok 26 [firefox] › tests\e2e\m3-a11y.spec.ts:537:1 › A-11: prefers-reduced-motion turns Reduce Effects on at first launch only (4.7s)
+  x  27 [firefox] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 0: no clipped, overlapping, or offscreen text (2.0m)
+  x  28 [firefox] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 1: no clipped, overlapping, or offscreen text (2.0m)
+  x  29 [firefox] › tests\e2e\m3-a11y.spec.ts:570:5 › text size A-05 › A-05 text scale 2: no clipped, overlapping, or offscreen text (2.0m)
+  ok 30 [firefox] › tests\e2e\m3-a11y.spec.ts:625:3 › effects on the GPU › A-02 step 4 frames: Pulse open, Rite, hits, boss phase, Pulse close (Reduce Effects off and on) (34.5s)
+  ok 31 [firefox] › tests\e2e\m3-a11y.spec.ts:677:3 › effects on the GPU › A-03: damage numbers off draws none; on never covers the player sprite (20 frames, diff) (6.8s)
+  -  32 [firefox] › tests\e2e\m3-a11y.spec.ts:708:1 › A-12: Temper, Glazier, Pause, Settings have no timer (60 s each)
+  -  33 [firefox] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, low, P-DEV
+  -  34 [firefox] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, medium, P-DEV
+  -  35 [firefox] › tests\e2e\m3-perf.spec.ts:25:3 › peak 120 Unlit, high, P-DEV
+  x  36 [firefox] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.2m)
+  ok 37 [firefox] › tests\e2e\m3-visual.spec.ts:60:1 › M3 glance frames (1920x1080, High) (5.1s)
+  ok 38 [firefox] › tests\e2e\m3-visual.spec.ts:173:1 › M3 peak scene per quality, Reduce Effects, damage numbers off, colour vision modes (18.0s)
+  ok 39 [firefox] › tests\e2e\m3-visual.spec.ts:196:1 › M3 draw order: enemy shots under the Rite stay visible (8.6, P2-f) (3.0s)
+  ok 40 [firefox] › tests\e2e\m3-visual.spec.ts:231:1 › CW-4 UI colour audit: danger red and magenta only on low HP and boss warnings; poor prices dim (6.3s)
+  ok 41 [firefox] › tests\e2e\m5-a11y.spec.ts:78:1 › A-08 captures: text leaves and focus on six screens (1280x720, Normal text) (6.7s)
+  ok 42 [firefox] › tests\e2e\m5-a11y.spec.ts:167:1 › A-09: with Master at 0 every informative sound has a visual sign (5.1s)
+  ok 43 [firefox] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (2.3m)
+  ok 44 [firefox] › tests\e2e\m5-release.spec.ts:462:1 › BUG-008 retest: the boss banner of an abandoned run never shows in the next run (18.0s)
+  ok 45 [firefox] › tests\e2e\m5-release.spec.ts:515:1 › BUG-009 retest: back from The Keeping, focus returns to The Keeping and input is not locked (5.4s)
+  -  46 [firefox] › tests\e2e\m5-release.spec.ts:628:1 › BUG-006 retest: fresh Edge profiles, sim runs within 100 ms of the Pulse screen
+  -  47 [firefox] › tests\e2e\m5-release.spec.ts:846:1 › M5 release play: one full run per class with real keys, Continue, Silt unlocks, Low and Reduce Effects
+  -  48 [firefox] › tests\e2e\m5-release.spec.ts:972:1 › D-8 soak: live runs with real keys at 4x replay in Node with every checkpoint matching
+  x  49 [firefox] › tests\e2e\smoke-chrome.spec.ts:14:1 › smoke: Google Chrome (1ms)
+  ok 50 [firefox] › tests\e2e\smoke-firefox.spec.ts:9:1 › smoke: Firefox (Playwright build) (14.8s)
+  x  51 [firefox] › tests\e2e\smoke-msedge.spec.ts:15:1 › smoke: Microsoft Edge (2ms)
+  ok 52 [firefox] › tests\e2e\smoke-webkit.spec.ts:28:1 › smoke: WebKit (Playwright build, Safari proxy) (14.4s)
+    - Expected  - 1
+    - Array []
+    - Expected  - 1
+    - Array []
+    - Timeout 5000ms exceeded while waiting on the predicate
+  13 failed
+  12 skipped
+  27 passed (26.3m)
+EXIT 1
+== reruns after test fixes
+tests/out/qa/m5/run-fix3.log:  ok 1 [chromium] › tests\e2e\determinism.spec.ts:26:1 › D-5: Chromium and Node give identical hashes for the same seed and input (3.1s)
+tests/out/qa/m5/run-fix3.log:  ok 2 [chromium] › tests\e2e\m3-a11y.spec.ts:375:3 › keyboard and settings › A-10 and E-14: settings from pause apply at once, keep the sim hash, and pers
+tests/out/qa/m5/run-fix3.log:  ok 3 [chromium] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.6m)
+tests/out/qa/m5/run-fix3.log:  3 passed (1.8m)
+tests/out/qa/m5/run-ff-rerun.log:  ok 1 [firefox] › tests\e2e\determinism.spec.ts:70:1 › D-8: a browser run recorded from live keyboard input replays in Node (9.3s)
+tests/out/qa/m5/run-ff-rerun.log:  ok 2 [firefox] › tests\e2e\m3-play.spec.ts:100:1 › M3 keyboard play: one Pulse and one shop per class, Silt unlock path (1.6m)
+tests/out/qa/m5/run-ff-rerun.log:  2 passed (1.9m)
+tests/out/qa/m5/run-fullrun.log:  ok 1 [chromium] › tests\e2e\full-run.spec.ts:94:1 › plays a full run through the UI to victory, with autosave and Continue (35.8s)
+tests/out/qa/m5/run-fullrun.log:  ok 2 [chromium] › tests\e2e\full-run.spec.ts:94:1 › plays a full run through the UI to victory, with autosave and Continue (34.6s)
+tests/out/qa/m5/run-fullrun.log:  ok 3 [chromium] › tests\e2e\full-run.spec.ts:94:1 › plays a full run through the UI to victory, with autosave and Continue (34.5s)
+tests/out/qa/m5/run-fullrun.log:  ok 4 [chromium] › tests\e2e\full-run.spec.ts:94:1 › plays a full run through the UI to victory, with autosave and Continue (34.2s)
+tests/out/qa/m5/run-fullrun.log:  4 passed (2.5m)

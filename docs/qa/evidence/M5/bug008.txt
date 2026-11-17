@@ -1,0 +1,3 @@
+boss banner: "Paper Sunthe Light-Eater" at tick 1083
+player path, banners in the first 4 s of the new run: ["Pulse 1",""]
+hook path, banners in Pulse 7 of run seed 41: ["Pulse 7",""]

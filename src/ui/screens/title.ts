@@ -81,7 +81,7 @@ export function createTitleScreen(ctx: UiContext): Screen {
     const foot = put(
       h(doc, 'div', 'title-foot'),
       h(doc, 'p', 'title-controls', controls),
-      h(doc, 'p', 'title-credit', t('ui.title.credit_line')),
+      h(doc, 'p', 'title-credit', t('ui.title.credit_line', { version: __APP_VERSION__ })),
     );
     const notice = saveLost ? h(doc, 'p', 'title-notice', t('ui.title.save_lost')) : null;
     // Silt balance top right while Silt exists (tiers B and C, ui-spec S01).

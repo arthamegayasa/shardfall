@@ -1,6 +1,6 @@
 # Credits dan Lisensi
 
-Setiap aset dan dependensi wajib tercatat di sini.
+Setiap aset dan dependensi wajib tercatat di sini. Lisensi proyek: hak cipta proyek (all rights reserved) sampai Dok memilih lisensi terbuka (Keputusan 2026-11-16).
 
 ## Aset
 
@@ -29,6 +29,12 @@ Setiap aset dan dependensi wajib tercatat di sini.
 | `src/audio/cues/cues.json` (101 resep SFX, UI, riser termasuk `ui.unlock` M3 dan Rite `sfx.rite.impact.bell`, `sfx.rite.impact.blade` M4; 5 stinger lama deprecated), `src/audio/cues/routes.json` | Tim Shardfall (AU), resep sintesis ditulis tangan (M1-06, M2-04) | Buatan tim, hak cipta proyek | Dirender DSP `src/audio/synth/` saat boot (Web Worker), tanpa sampel rekaman |
 | `src/audio/music/instruments.json` (18 instrumen), `mus.title`, `mus.biome1.pulse`, `mus.overlay.unlit`, `mus.shop`, `mus.biome1.boss`, `mus.end`, 8 `mus.stinger.*` (`src/audio/music/*.json`) | Tim Shardfall (AU), melodi, kontramelodi, dan progresi orisinal (audio-direction 5, 14) | Buatan tim, hak cipta proyek | Uji orisinalitas dengar A-6 butuh pendengar manusia, tetap terbuka |
 | `audio/preview/sfx/*.wav`, `audio/preview/music/*.wav`, `audio/preview/stingers/*.wav` | Dibuat oleh `tools/audio/render-cues.ts` (Tim Shardfall, AU) | Buatan tim, hak cipta proyek | Hanya review, di-gitignore, bisa dibuat ulang |
+| `src/audio/synth/*` (DSP, impuls reverb `ir.ts`), `src/audio/music/song.ts` | Tim Shardfall (AU), kode | Buatan tim, hak cipta proyek | Sintesis suara dan impuls reverb dibuat dari kode saat runtime, tanpa sampel atau IR rekaman |
+| Favicon inline di `index.html` (SVG data URL, belah ketupat cyan dan emas) | Tim Shardfall (Producer, BUG-002) | Buatan tim, hak cipta proyek | Ikon tab browser, tanpa file gambar |
+| `content/strings/en.json`, `content/strings/id.json`, `docs/narrative/*` | Tim Shardfall (WR) | Buatan tim, hak cipta proyek | Semua teks dalam game (Inggris) dan terjemahan Indonesia, lore, nama |
+| `content/data/*.csv`, `content/build.json`, `content/levels/*.json` | Tim Shardfall (GD, LD) | Buatan tim, hak cipta proyek | Data balance dan isi, arena (4 file: 1 aktif di 1.0, 3 draf Tingkat C dan prototipe) |
+| `docs/qa/evidence/**/*.png`, `docs/reviews/evidence/**/*.png`, `docs/ui/screens/**/*.png` | Tangkapan layar game ini (Tim Shardfall: QA, CD, UI) | Buatan tim, hak cipta proyek | Bukti review dan QA, bukan bagian build |
+| Font cadangan UI (`ui-monospace`, Cascadia Mono, Consolas, `monospace`) | Font sistem milik pemain | Tidak didistribusikan | Hanya dirujuk lewat CSS bila font pixel belum siap; tidak ada file font di repo atau build |
 
 ## Dependensi
 
@@ -46,3 +52,29 @@ Setiap aset dan dependensi wajib tercatat di sini.
 | `prettier` 3.9.10 (dev) | MIT | Format kode |
 | `@types/three` 0.187.0 (dev) | MIT | Tipe three.js |
 | `@types/node` 26.6.6 (dev) | MIT | Tipe Node untuk `tools/` dan tes |
+
+Versi dan lisensi di atas dicek dari `node_modules/<paket>/package.json` dan file LICENSE masing-masing (M5-01). Hanya `three` yang menjadi dependensi runtime.
+
+### Kode pihak ketiga di build rilis
+
+| Paket | Lisensi | Yang masuk `dist/` |
+|---|---|---|
+| `three` 0.187.0 | MIT | Pustaka render (diminify) |
+| `vite` 8.3.5 | MIT | Helper runtime kecil (modulepreload, pemuat chunk) |
+| `rolldown` 1.2.19 (dependensi `vite`) | MIT | Helper runtime bundler |
+
+Minifier membuang komentar lisensi, jadi `vite build` menulis `dist/third-party-licenses.txt` berisi teks lisensi ketiganya (`vite.config.ts`, `thirdPartyLicenses`). `bundle:check` gagal bila file itu tidak ada.
+
+### Dependensi transitif (dev saja, tidak didistribusikan)
+
+Dari `package-lock.json` (M5-01): 176 paket. MIT 127, Apache-2.0 19, MPL-2.0 12, BSD-2-Clause 6, ISC 6, BlueOak-1.0.0 3, BSD-3-Clause 2, 0BSD 1. Satu-satunya lisensi copyleft lemah adalah MPL-2.0 pada `lightningcss` dan biner per platformnya: alat minify CSS milik Vite saat build, kodenya tidak masuk build. Tidak ada GPL, AGPL, atau lisensi tanpa izin.
+
+## Audit kredit M5-01
+
+Dikerjakan LP atas nama AD dan AU, 2026-11-17.
+
+- `art/`: 93 file di `art/sprites` (35 sprite aktor, FX, dan kode generator; 58 ikon), `art/palette.json`, `art/tiles/tile-floor.json`, 6 file `art/concept`, 7 file `art/atlas/preview`. Semua tercatat di tabel aset, semua buatan tim. 12 file sprite berstatus `placeholder` dan 5 `concept`: itu status kualitas art, bukan masalah lisensi.
+- `audio/`: `audio/music` dan `audio/sfx` hanya berisi `.gitkeep`; `audio/preview` dibuat ulang dari resep dan di-gitignore. Semua suara dan musik di game disintesis dari `src/audio/cues/cues.json` (101 resep), `src/audio/music/*.json` (18 instrumen, 6 lagu, 8 stinger) oleh kode tim.
+- Font: hanya "Shardfall Pixel" buatan tim; font sistem tidak didistribusikan. Ikon: 58 ikon buatan tim plus favicon inline.
+- Pemindaian repo (di luar `node_modules`, `dist`, `tests/out`, `audio/preview`) untuk png, jpg, gif, svg, webp, wav, ogg, mp3, ttf, otf, woff, ico, glb, gltf: hanya konsep, preview atlas, dan tangkapan layar tim. Tidak ada aset pihak ketiga yang tidak tercatat.
+- Tetap terbuka untuk manusia: uji orisinalitas dengar musik (A-6) dan cek web atau merek dagang nama "Shardfall" oleh Dok.

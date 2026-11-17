@@ -58,7 +58,10 @@ test('D-5: Chromium and Node give identical hashes for the same seed and input',
     `${EVIDENCE}/d5-${browserName}.json`,
     `${JSON.stringify({ browser, node }, null, 1)}\n`,
   );
-  expect(browser.tick).toBe(TICKS);
+  // Since BUG-013 (M4-03) the sim tick stands still in Temper and the Glazier, so after 3600 steps
+  // the tick is below 3600 once the run reaches a choice phase; it must still match Node exactly.
+  expect(browser.tick).toBe(node['tick']);
+  expect(browser.checkpoints).toHaveLength(TICKS / 60);
   expect(browser.checkpoints).toEqual(node['checkpoints']);
   expect(browser.hash).toBe(node['hash']);
   expect(problems).toEqual([]);

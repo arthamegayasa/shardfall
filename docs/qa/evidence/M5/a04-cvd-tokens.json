@@ -1,0 +1,50 @@
+{
+ "none": {
+  "danger-core vs floor-mid": 6.4,
+  "danger-core vs floor-lit": 4.88,
+  "kept-white vs floor-lit": 5.59,
+  "kept-cyan vs floor-lit": 3.79,
+  "dE00 kept-cyan vs danger-magenta": 70.9,
+  "dE00 shot sprites kept vs danger (mean colour)": 57.8,
+  "dE00 lantern bolt vs danger shot": 54.9,
+  "dE00 rarity plain vs fine": 24.1,
+  "dE00 rarity fine vs rare": 52.7,
+  "dE00 rarity rare vs fabled": 64.8
+ },
+ "protan": {
+  "danger-core vs floor-mid": 6.28,
+  "danger-core vs floor-lit": 4.84,
+  "kept-white vs floor-lit": 5.72,
+  "kept-cyan vs floor-lit": 4.25,
+  "dE00 kept-cyan vs danger-magenta": 31.8,
+  "dE00 shot sprites kept vs danger (mean colour)": 24.2,
+  "dE00 lantern bolt vs danger shot": 21.9,
+  "dE00 rarity plain vs fine": 13.3,
+  "dE00 rarity fine vs rare": 52.6,
+  "dE00 rarity rare vs fabled": 64.0
+ },
+ "deutan": {
+  "danger-core vs floor-mid": 6.48,
+  "danger-core vs floor-lit": 4.92,
+  "kept-white vs floor-lit": 5.51,
+  "kept-cyan vs floor-lit": 3.5,
+  "dE00 kept-cyan vs danger-magenta": 21.4,
+  "dE00 shot sprites kept vs danger (mean colour)": 17.0,
+  "dE00 lantern bolt vs danger shot": 18.0,
+  "dE00 rarity plain vs fine": 9.5,
+  "dE00 rarity fine vs rare": 51.1,
+  "dE00 rarity rare vs fabled": 69.1
+ },
+ "tritan": {
+  "danger-core vs floor-mid": 6.33,
+  "danger-core vs floor-lit": 4.84,
+  "kept-white vs floor-lit": 5.6,
+  "kept-cyan vs floor-lit": 3.95,
+  "dE00 kept-cyan vs danger-magenta": 76.5,
+  "dE00 shot sprites kept vs danger (mean colour)": 76.6,
+  "dE00 lantern bolt vs danger shot": 72.5,
+  "dE00 rarity plain vs fine": 31.5,
+  "dE00 rarity fine vs rare": 19.2,
+  "dE00 rarity rare vs fabled": 54.3
+ }
+}

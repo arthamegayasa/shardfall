@@ -388,8 +388,16 @@ test.describe('keyboard and settings', () => {
     await expect.poll(() => screen(page)).toBe('settings');
     // Graphics: quality one step left. Audio: master one step left. Access: every toggle once.
     const change = async (tab: string, row: string): Promise<void> => {
-      await reach(page, `settings-tab-${tab}`);
-      await page.keyboard.press('Enter');
+      // Tabs by E (documented tab key, M5): reach() tries Right first, which on a slider row changes
+      // the value instead of moving focus, so it can miss the tab bar. Reachability of every
+      // control is covered by the A-07 search in m5-release.spec.ts.
+      const active = (): Promise<string> =>
+        page.evaluate(
+          () => document.querySelector<HTMLElement>('#ui-root .tab.is-active')?.dataset['ui'] ?? '',
+        );
+      for (let i = 0; i < 6 && (await active()) !== `settings-tab-${tab}`; i++)
+        await page.keyboard.press('KeyE');
+      expect(await active()).toBe(`settings-tab-${tab}`);
       await reach(page, `setting-${row}`);
       await page.keyboard.press('ArrowRight');
       await page.waitForTimeout(80);

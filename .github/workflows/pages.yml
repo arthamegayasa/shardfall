@@ -28,6 +28,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Release gate: no test hooks, no source maps, base path, license notices (docs/tech/build.md).
+      - run: npm run bundle:check
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

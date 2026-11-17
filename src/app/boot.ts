@@ -108,6 +108,34 @@ async function loadStrings(lang: string | null): Promise<StringTable> {
   }
 }
 
+/** Strings of the current boot, for reportBootFailure (English until boot has loaded them). */
+let bootStrings: StringTable | null = null;
+
+/**
+ * Friendly full-screen message instead of a blank page (M5-01). Only the first one shows; the
+ * page stays usable for reading and reloading.
+ */
+function showFatal(doc: Document, key: string): void {
+  const uiRoot = doc.querySelector<HTMLElement>('#ui-root');
+  if (uiRoot === null || uiRoot.querySelector('.fatal') !== null) return;
+  const en: StringTable = {};
+  const strings = bootStrings ?? (Object.values(stringModules)[0] as StringTable | undefined) ?? en;
+  const msg = doc.createElement('p');
+  msg.className = 'fatal';
+  msg.setAttribute('role', 'alert');
+  msg.textContent = formatString(strings, key, undefined, { dev: __DEV_TOOLS__ });
+  uiRoot.appendChild(msg);
+}
+
+/** main.ts: boot threw. Show a readable message (the error itself still reaches the console). */
+export function reportBootFailure(doc: Document): void {
+  try {
+    showFatal(doc, 'ui.error.boot');
+  } catch {
+    // The page is already broken; the original error is what matters.
+  }
+}
+
 function hasWebGl2(doc: Document): boolean {
   try {
     return doc.createElement('canvas').getContext('webgl2') !== null;
@@ -122,12 +150,10 @@ export async function boot(doc: Document): Promise<void> {
   assert(canvas !== null && uiRoot !== null, 'index.html must contain #game and #ui-root');
   const lang = new URLSearchParams(window.location.search).get('lang');
   const strings = await loadStrings(lang);
+  bootStrings = strings;
   if (lang === 'id') doc.documentElement.lang = 'id';
   if (!hasWebGl2(doc)) {
-    const msg = doc.createElement('p');
-    msg.className = 'fatal';
-    msg.textContent = formatString(strings, 'ui.error.webgl2', undefined, { dev: __DEV_TOOLS__ });
-    uiRoot.appendChild(msg);
+    showFatal(doc, 'ui.error.webgl2');
     return;
   }
 
@@ -139,7 +165,15 @@ export async function boot(doc: Document): Promise<void> {
   let meta: MetaSave = loadMeta(store, firstClass);
   const assets = loadArtAssets();
   const sim = createSim({ data, debugCommands: __DEV_TOOLS__ });
-  const renderer = createRenderer(canvas, assets, data);
+  let renderer: Renderer;
+  try {
+    renderer = createRenderer(canvas, assets, data);
+  } catch (err) {
+    // WebGL2 exists but the context could not be created (blocklisted GPU, lost context, limits).
+    log.error('renderer could not start', err);
+    showFatal(doc, 'ui.error.webgl2');
+    return;
+  }
   // src/audio is a lazy chunk (bundle budget, LP M2-09): loaded on the first gesture or when idle.
   const audio = createLazyAudio(data, () => import('../audio/index.ts'));
   const recorder = __DEV_TOOLS__

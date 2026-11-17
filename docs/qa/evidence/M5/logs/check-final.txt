@@ -1,0 +1,39 @@
+> shardfall@1.0.0 check
+> npm run data:check && npm run art:check && npm run levels:check && npm run audio:check && npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build && npm run bundle:check
+> shardfall@1.0.0 data:check
+> node tools/data/build-data.ts --check
+0 error(s), 0 warning(s); contentHash 977ff134, tier B
+strings: 0 error(s), 0 warning(s)
+> shardfall@1.0.0 art:check
+> node tools/art/check-sprites.ts --no-preview
+93 sprites, 0 failing
+> shardfall@1.0.0 levels:check
+> node tools/levels/check-arena.ts
+4 arena(s), 0 error(s), 0 warning(s)
+> shardfall@1.0.0 audio:check
+> node tools/audio/validate.ts
+audio:check ok: 14 songs, audio data gzip 11.5 KB (target 15 KB)
+> shardfall@1.0.0 format:check
+> prettier --check .
+All matched files use Prettier code style!
+> shardfall@1.0.0 typecheck
+> tsc -p tsconfig.json && tsc -p tsconfig.sim.json && tsc -p tsconfig.tools.json
+> shardfall@1.0.0 lint
+> eslint .
+> shardfall@1.0.0 test
+> vitest run
+ Test Files  71 passed (71)
+      Tests  654 passed (654)
+> shardfall@1.0.0 build
+> npm run data && vite build
+> shardfall@1.0.0 data
+> node tools/data/build-data.ts
+0 error(s), 0 warning(s); contentHash 977ff134, tier B
+strings: 0 error(s), 0 warning(s)
+[32m✓ built in 326ms[39m
+> shardfall@1.0.0 bundle:check
+> node tools/bundle/check-bundle.ts
+initial JS gzip 276.4 KB (target 300.0 KB, fail 400.0 KB)
+first page gzip 282.9 KB (target 400.0 KB, fail 600.0 KB)
+lazy chunks and workers gzip 42.9 KB (loaded after the first page)
+EXIT 0

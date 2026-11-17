@@ -1,0 +1,209 @@
+{
+  "rows": [
+    {
+      "screen": "title",
+      "entry": "title-new-run",
+      "visible": 4,
+      "reached": 4,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "3/3",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "class-select",
+      "entry": "class-lantern",
+      "visible": 5,
+      "reached": 5,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "8/8",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "settings-graphics",
+      "entry": "settings-tab-graphics",
+      "visible": 8,
+      "reached": 8,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "11/11",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "settings-audio",
+      "entry": "settings-tab-audio",
+      "visible": 12,
+      "reached": 12,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "15/15",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "settings-access",
+      "entry": "settings-tab-access",
+      "visible": 13,
+      "reached": 13,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "16/16",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "settings-controls",
+      "entry": "settings-tab-controls",
+      "visible": 34,
+      "reached": 34,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "59/67",
+      "reversalFails": [
+        "bind-moveUp-1 ArrowLeft -> settings-reset-controls back settings-back",
+        "settings-tab-graphics ArrowLeft -> settings-reset-controls back settings-back",
+        "bind-moveDown-1 ArrowLeft -> settings-reset-controls back settings-back",
+        "bind-pause-1 ArrowLeft -> settings-reset-controls back settings-back",
+        "bind-rite-1 ArrowLeft -> settings-reset-controls back settings-back",
+        "bind-moveLeft-1 ArrowLeft -> settings-reset-controls back settings-back",
+        "bind-pause-2 ArrowDown -> bind-merge-1 back bind-stats-1",
+        "bind-moveRight-1 ArrowLeft -> settings-reset-controls back settings-back"
+      ],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "archive",
+      "entry": "keeping-unlock_blade",
+      "visible": 8,
+      "reached": 8,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "9/9",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "credits",
+      "entry": "credits-back",
+      "visible": 1,
+      "reached": 1,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "0/0",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "pause",
+      "entry": "pause-resume",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "2/2",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "level-up",
+      "entry": "temper-card-1",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "2/2",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "glazier",
+      "entry": "shop-begin",
+      "visible": 19,
+      "reached": 19,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "33/37",
+      "reversalFails": [
+        "shop-offer-1 ArrowLeft -> shop-reroll back shop-sell",
+        "shop-offer-2 ArrowLeft -> shop-reroll back shop-sell",
+        "shop-offer-4 ArrowLeft -> shop-reroll back shop-sell",
+        "shop-offer-3 ArrowLeft -> shop-reroll back shop-sell"
+      ],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "warden-reward",
+      "entry": "reward-card-1",
+      "visible": 3,
+      "reached": 3,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "2/2",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    },
+    {
+      "screen": "run-lost",
+      "entry": "end-again",
+      "visible": 4,
+      "reached": 4,
+      "missing": [],
+      "cannotReturnToEntry": [],
+      "directionIssues": [],
+      "reversals": "3/3",
+      "reversalFails": [],
+      "leaves": [],
+      "valueRestoreFailed": []
+    }
+  ],
+  "bug010": {
+    "reportSteps": [
+      "shop-begin",
+      "shop-slot-6",
+      "shop-slot-3",
+      "shop-slot-6",
+      "shop-begin",
+      "shop-begin",
+      "shop-stats"
+    ],
+    "lockSteps": [
+      "shop-lock-3",
+      "shop-slot-4",
+      "shop-lock-3"
+    ],
+    "lockPath": [
+      "Tab",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowRight"
+    ]
+  }
+}

@@ -116,12 +116,21 @@ test('M3 keyboard play: one Pulse and one shop per class, Silt unlock path', asy
     await expect.poll(async () => (await snap(page)).phase).toBe('pulse');
 
     let midShot = false;
+    let topUps = 0;
     const p1 = await keyboardPulse(page, 40_000, async (ms) => {
       if (!midShot && ms > 9000) {
         midShot = true;
         await page.screenshot({ path: `${M3_OUT}/play-${cls}-pulse1-mid.png` });
       }
+      // Shortcut (labelled, M5): this test checks the keyboard flow, not survival. Since M4 the
+      // scripted dodger can fall in Pulse 1 (Chorister), so HP is topped up below 40 percent.
+      const s = await snap(page);
+      if (s.phase === 'pulse' && s.hp < s.maxHp * 0.4) {
+        topUps++;
+        await page.evaluate((hp) => window.__shardfall?.send({ type: 'debug.setHp', hp }), s.maxHp);
+      }
     });
+    if (topUps > 0) log.push(`${cls} Pulse 1: HP topped up ${topUps} times (shortcut)`);
     log.push(`${cls} Pulse 1 real time: ${JSON.stringify(p1)}`);
     await toGlazier(page, cls);
     await shot(page, `${cls}-glazier`);
@@ -168,6 +177,9 @@ test('M3 keyboard play: one Pulse and one shop per class, Silt unlock path', asy
     await page.keyboard.press('Escape');
     const before = await meta(page);
     await abandon(page);
+    // The run end shown from a Pulse keeps its 500 ms input lock (ui-spec 8.4, intended); on slower
+    // browsers (Firefox, M5) the keys below could land inside it, so wait it out first.
+    await page.waitForTimeout(550);
     await shot(page, `${cls}-run-end`);
     const after = await meta(page);
     const shown = (await page.locator('#ui-root').textContent()) ?? '';

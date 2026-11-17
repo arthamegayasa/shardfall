@@ -1,0 +1,42 @@
+## good bot, run_b, class lantern, contentHash 977ff134: 120 runs
+win 96/120 (80%), timeouts 0
+death Pulse: P4 x17, P5 x1, P10 x6
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 14.4, sim minutes (wins) 8.5
+Warden kill s: median 21.6 (n 103, min 10.8, max 39.0); boss kill s: median 43.0 (n 96, min 24.2, max 96.6)
+purchases median 26.5 (wins 27), rerolls median 13, final level median 16, max alive 81, poolOverflow max 0
+## good bot, run_b, class bell, contentHash 977ff134: 120 runs
+win 94/120 (78%), timeouts 0
+death Pulse: P4 x21, P10 x3, P12 x1, P15 x1
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 15.3, sim minutes (wins) 9.5
+Warden kill s: median 32.9 (n 99, min 14.8, max 77.3); boss kill s: median 83.5 (n 94, min 31.8, max 295.0)
+purchases median 23 (wins 24), rerolls median 14, final level median 16, max alive 111, poolOverflow max 0
+## good bot, run_b, class blade, contentHash 977ff134: 120 runs
+win 102/120 (85%), timeouts 0
+death Pulse: P4 x4, P15 x14
+Silt per run: median 41.0, losses 22.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 14.5, sim minutes (wins) 8.6
+Warden kill s: median 19.4 (n 116, min 9.9, max 44.9); boss kill s: median 38.7 (n 102, min 25.6, max 64.5)
+purchases median 26 (wins 26), rerolls median 14, final level median 16, max alive 99, poolOverflow max 0
+## naive bot, run_b, class lantern, contentHash 977ff134: 60 runs
+win 15/60 (25%), timeouts 0
+death Pulse: P3 x3, P4 x26, P5 x6, P6 x4, P10 x5, P12 x1
+Silt per run: median 8.0, losses 3.0, wins 41.0
+median Pulse reached 5; median est. run minutes (wins) 19.7, sim minutes (wins) 13.8
+Warden kill s: median 58.1 (n 31, min 27.1, max 94.4); boss kill s: median 280.6 (n 15, min 78.0, max 616.4)
+purchases median 6 (wins 34), rerolls median 0, final level median 5, max alive 89, poolOverflow max 0
+## naive bot, run_b, class bell, contentHash 977ff134: 60 runs
+win 16/60 (27%), timeouts 0
+death Pulse: P2 x1, P3 x6, P4 x26, P6 x5, P7 x1, P8 x3, P10 x2
+Silt per run: median 3.0, losses 3.0, wins 41.0
+median Pulse reached 4; median est. run minutes (wins) 24.9, sim minutes (wins) 19.1
+Warden kill s: median 94.5 (n 27, min 49.1, max 102.7); boss kill s: median 589.3 (n 16, min 82.4, max 1129.9)
+purchases median 5 (wins 33.5), rerolls median 0, final level median 4, max alive 84, poolOverflow max 0
+## naive bot, run_b, class blade, contentHash 977ff134: 60 runs
+win 41/60 (68%), timeouts 0
+death Pulse: P4 x14, P6 x3, P7 x1, P10 x1
+Silt per run: median 41.0, losses 3.0, wins 41.0
+median Pulse reached 15; median est. run minutes (wins) 20.1, sim minutes (wins) 14.2
+Warden kill s: median 67.2 (n 46, min 35.6, max 102.7); boss kill s: median 292.8 (n 41, min 76.7, max 622.4)
+purchases median 33 (wins 34), rerolls median 0, final level median 18, max alive 85, poolOverflow max 0

@@ -1,0 +1,71 @@
+{
+ "title": {
+  "texts": 10,
+  "minBody": 5.81,
+  "minDim": null,
+  "fails": [],
+  "focus": {
+   "ui": "title-new-run",
+   "ratio": 7.38,
+   "goldPixels": 2144
+  }
+ },
+ "level-up": {
+  "texts": 14,
+  "minBody": 4.69,
+  "minDim": null,
+  "fails": [],
+  "focus": {
+   "ui": "temper-card-1",
+   "ratio": 8.69,
+   "goldPixels": 6096
+  }
+ },
+ "glazier": {
+  "texts": 47,
+  "minBody": 4.75,
+  "minDim": 4.59,
+  "fails": [],
+  "focus": {
+   "ui": "shop-begin",
+   "ratio": 9.8,
+   "goldPixels": 1548
+  }
+ },
+ "run-lost": {
+  "texts": 21,
+  "minBody": 4.98,
+  "minDim": null,
+  "fails": [],
+  "focus": {
+   "ui": "end-again",
+   "ratio": 10.65,
+   "goldPixels": 1216
+  }
+ },
+ "settings-access": {
+  "texts": 38,
+  "minBody": 5.28,
+  "minDim": null,
+  "fails": [],
+  "focus": {
+   "ui": "settings-tab-access",
+   "ratio": 9.67,
+   "goldPixels": 1600
+  }
+ },
+ "pulse-peak": {
+  "texts": 7,
+  "minBody": 4.61,
+  "minDim": null,
+  "fails": [],
+  "focus": null
+ },
+ "pulse-peak-edge": {
+  "texts": 6,
+  "minBody": 4.61,
+  "minDim": null,
+  "fails": [],
+  "focus": null
+ }
+}

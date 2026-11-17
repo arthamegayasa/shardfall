@@ -1,0 +1,48 @@
+Continue: before reload Pulse 1 shop glint 17 hash 0fab68c1; after Continue Pulse 1 shop glint 17 hash 0fab68c1
+lantern: {"class":"lantern","end":"defeat","pulse":4,"tick":5568,"silt":"0 -> 3","drawCalls":19,"continued":true,"nodeReplay":null}
+  0.0s pulse 1 pulse hp 30/30 glint 0 lv 1
+  4.1s pulse 1 pulseClear hp 30/30 glint 17 lv 1
+  4.4s pulse 1 shop hp 30/30 glint 17 lv 1
+  -- reload and Continue --
+  0.0s pulse 1 shop hp 30/30 glint 17 lv 1
+  0.7s pulse 2 pulse hp 30/30 glint 17 lv 1
+  5.9s pulse 2 pulseClear hp 30/30 glint 34 lv 2
+  6.2s pulse 2 levelUp hp 30/30 glint 34 lv 2
+  7.0s pulse 2 shop hp 30/30 glint 34 lv 2
+  7.9s pulse 3 pulse hp 30/30 glint 11 lv 2
+  13.7s pulse 3 pulseClear hp 5.999999999999997/30 glint 44 lv 2
+  13.9s pulse 3 shop hp 5.999999999999997/30 glint 44 lv 2
+  14.9s pulse 4 pulse hp 30/30 glint 20 lv 2
+  20.5s pulse 4 defeat hp 0/30 glint 38 lv 3
+grantSilt 3 (run gave 3, unlock_blade costs 6)
+bought unlock_blade in The Keeping: meta {"v":1,"silt":0,"unlocked":["blade","unlock_blade"],"mementosFound":[],"highestDifficultyWon":-1,"lastClassId":"lantern","runs":1}
+settings after reload: graphics {"quality":"low","screenShake":100,"fullscreen":false}, reduceEffects true, live reduce-effects class true, identical true
+blade: {"class":"blade","end":"defeat","pulse":4,"tick":5692,"silt":"0 -> 3","drawCalls":10,"continued":false,"nodeReplay":{"ticks":6385,"mismatchAt":-1,"finalHash":"6c999956","contentHash":"977ff134"}}
+  0.0s pulse 1 pulse hp 38/38 glint 0 lv 1
+  4.2s pulse 1 pulseClear hp 38/38 glint 18 lv 1
+  4.4s pulse 1 shop hp 38/38 glint 18 lv 1
+  5.4s pulse 2 pulse hp 38/38 glint 0 lv 1
+  10.6s pulse 2 pulseClear hp 25.470588235294116/38 glint 26 lv 2
+  10.9s pulse 2 levelUp hp 25.470588235294116/38 glint 26 lv 2
+  11.7s pulse 2 shop hp 25.470588235294116/38 glint 26 lv 2
+  12.6s pulse 3 pulse hp 38/38 glint 3 lv 2
+  18.4s pulse 3 pulseClear hp 36.76470588235294/38 glint 35 lv 2
+  18.6s pulse 3 shop hp 36.76470588235294/38 glint 35 lv 2
+  19.6s pulse 4 pulse hp 38/38 glint 14 lv 2
+  25.7s pulse 4 defeat hp 0/38 glint 48 lv 3
+grantSilt 57 (run gave 3, unlock_bell costs 60)
+bought unlock_bell in The Keeping: meta {"v":1,"silt":0,"unlocked":["bell","blade","unlock_bell","unlock_blade"],"mementosFound":["coal_locket","tuning_fork"],"highestDifficultyWon":-1,"lastClassId":"blade","runs":2}
+bell: {"class":"bell","end":"defeat","pulse":4,"tick":5860,"silt":"0 -> 3","drawCalls":10,"continued":false,"nodeReplay":{"ticks":6811,"mismatchAt":-1,"finalHash":"e4a2010f","contentHash":"977ff134"}}
+  0.0s pulse 1 pulse hp 32/32 glint 0 lv 1
+  4.2s pulse 1 pulseClear hp 20.75/32 glint 16 lv 1
+  4.5s pulse 1 shop hp 20.75/32 glint 16 lv 1
+  5.2s pulse 2 pulse hp 32/32 glint 16 lv 1
+  10.4s pulse 2 pulseClear hp 3.125/32 glint 55 lv 2
+  10.6s pulse 2 levelUp hp 3.125/32 glint 55 lv 2
+  11.4s pulse 2 shop hp 3.125/32 glint 55 lv 2
+  12.6s pulse 3 pulse hp 32/32 glint 9 lv 2
+  18.4s pulse 3 pulseClear hp 18.5/32 glint 56 lv 3
+  18.7s pulse 3 levelUp hp 18.5/32 glint 56 lv 3
+  19.4s pulse 3 shop hp 18.5/32 glint 56 lv 3
+  20.7s pulse 4 pulse hp 32/32 glint 8 lv 3
+  27.5s pulse 4 defeat hp 0/32 glint 30 lv 3

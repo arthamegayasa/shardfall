@@ -1,0 +1,128 @@
+[
+  {
+    "label": "edge cold, waited",
+    "simRunsAfterMs": 532,
+    "maxMainThreadGapMs": 64,
+    "maxFrameGapMs": 504,
+    "tickAtPulsePhase": 19,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge cold, waited",
+    "simRunsAfterMs": 500,
+    "maxMainThreadGapMs": 65,
+    "maxFrameGapMs": 504,
+    "tickAtPulsePhase": 18,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge cold, waited",
+    "simRunsAfterMs": 499,
+    "maxMainThreadGapMs": 69,
+    "maxFrameGapMs": 508,
+    "tickAtPulsePhase": 18,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge cold, waited",
+    "simRunsAfterMs": 503,
+    "maxMainThreadGapMs": 73,
+    "maxFrameGapMs": 516,
+    "tickAtPulsePhase": 18,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge cold, quick",
+    "simRunsAfterMs": 508,
+    "maxMainThreadGapMs": 70,
+    "maxFrameGapMs": 552,
+    "tickAtPulsePhase": 15,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge cold, quick",
+    "simRunsAfterMs": 480,
+    "maxMainThreadGapMs": 64,
+    "maxFrameGapMs": 533,
+    "tickAtPulsePhase": 19,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge warm, reload",
+    "simRunsAfterMs": 7,
+    "maxMainThreadGapMs": 58,
+    "maxFrameGapMs": 39,
+    "tickAtPulsePhase": 3,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge warm, reload",
+    "simRunsAfterMs": 10,
+    "maxMainThreadGapMs": 62,
+    "maxFrameGapMs": 39,
+    "tickAtPulsePhase": 4,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge warm GPU process, new context",
+    "simRunsAfterMs": 15,
+    "maxMainThreadGapMs": 51,
+    "maxFrameGapMs": 47,
+    "tickAtPulsePhase": 4,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge warm GPU process, new context",
+    "simRunsAfterMs": 8,
+    "maxMainThreadGapMs": 68,
+    "maxFrameGapMs": 47,
+    "tickAtPulsePhase": 4,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge gpu flags cold, waited",
+    "simRunsAfterMs": 526,
+    "maxMainThreadGapMs": 63,
+    "maxFrameGapMs": 503,
+    "tickAtPulsePhase": 19,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "edge gpu flags cold, waited",
+    "simRunsAfterMs": 526,
+    "maxMainThreadGapMs": 59,
+    "maxFrameGapMs": 523,
+    "tickAtPulsePhase": 18,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "chromium gpu flags cold, waited",
+    "simRunsAfterMs": 423,
+    "maxMainThreadGapMs": 64,
+    "maxFrameGapMs": 417,
+    "tickAtPulsePhase": 18,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  },
+  {
+    "label": "chromium gpu flags cold, waited",
+    "simRunsAfterMs": 431,
+    "maxMainThreadGapMs": 69,
+    "maxFrameGapMs": 417,
+    "tickAtPulsePhase": 19,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Laptop GPU (0x0000256",
+    "problems": []
+  }
+]

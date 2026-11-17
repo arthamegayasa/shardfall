@@ -63,6 +63,9 @@ async function endPulse(page: Page): Promise<void> {
   for (let i = 0; i < 40; i++) {
     const s = await snap(page);
     if (s.phase !== 'pulse' && s.phase !== 'pulseClear') return;
+    // A Warden Pulse runs on in overtime until the Warden falls (up to 75 s since M4-04); the Kept
+    // stands still meanwhile, so keep it alive like the rest of this fast-forwarded flow (QA M5).
+    if (s.phase === 'pulse') await send(page, { type: 'debug.setHp', hp: s.maxHp });
     await step(page, 30);
   }
   throw new Error('Pulse did not end');

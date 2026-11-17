@@ -1,0 +1,35 @@
+== chromium-gpu
+browser chromium-gpu 156.0.8078.4
+url http://127.0.0.1:4180/shardfall/
+title in 773 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+== chrome
+browser chrome 157.0.8103.40
+url http://127.0.0.1:4180/shardfall/
+title in 774 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+== msedge
+browser msedge 157.0.4341.60
+url http://127.0.0.1:4180/shardfall/
+title in 869 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+== firefox
+browser firefox 157.0
+url http://127.0.0.1:4180/shardfall/
+title in 1299 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems ["console.warning: [JavaScript Warning: \"WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.\" {file: \"http://127.0.0.1:4180/shardfall/assets/index-DqENpJrR.js\" line: 4983}]","console.warning: [JavaScript Warning: \"BiquadFilterNode channel count changes may produce audio glitches.\"]","console.warning: [JavaScript Warning: \"BiquadFilterNode channel count changes may produce audio glitches.\"]"]
+== webkit-fallback
+browser webkit-fallback 27.2
+url http://127.0.0.1:4180/shardfall/
+title in 919 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 4, outside base path []
+problems ["console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')"]

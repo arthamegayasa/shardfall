@@ -1,6 +1,6 @@
 # Shardfall: Checklist Aksesibilitas
 
-Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.1 (2026-11-17): hook dan lokasi tes diselaraskan dengan architecture v2.2; hasil audit M1 di `docs/qa/M1-report.md`.
+Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.2 (2026-11-17, M5): A-07 langkah 3 kini diukur dengan pencarian keterjangkauan per layar (`tests/e2e/m5-release.spec.ts`, A-07 by search: semua kontrol dari fokus awal lewat panah, Tab, Shift+Tab, tanpa jebakan, arah dan balik dicek), A-08 dengan `tests/e2e/m5-a11y.spec.ts` + `tests/e2e/support/m5_contrast.py`, A-09 langkah 1 dengan `m5-a11y.spec.ts`, A-04 langkah 3 dan 5 dengan `tests/e2e/support/m5_cvd.py` dan `m5_glance_cvd.py`. Hasil terakhir di `docs/qa/M5-report.md`. Versi 1.1: hook dan lokasi tes diselaraskan dengan architecture v2.2; hasil audit M1 di `docs/qa/M1-report.md`.
 Implementasi: UI Programmer (pengaturan, menu, fokus), Art Director (palet mode buta warna, efek), Gameplay Programmer (jeda, efek di sim), Audio Director (volume). QA menguji.
 Dokumen terkait: `docs/qa/test-plan.md` (hook tes, format bukti), `docs/style-guide.md` (1.3, 1.7, 1.8, 2.3), `docs/pillars.md` (Pilar 2).
 

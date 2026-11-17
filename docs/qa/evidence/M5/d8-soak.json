@@ -1,0 +1,56 @@
+[
+  {
+    "seed": 7001,
+    "class": "bell",
+    "end": "defeat",
+    "pulse": 4,
+    "steps": 6812,
+    "mismatchAt": -1,
+    "finalSame": true
+  },
+  {
+    "seed": 7002,
+    "class": "lantern",
+    "end": "defeat",
+    "pulse": 10,
+    "steps": 23039,
+    "mismatchAt": -1,
+    "finalSame": true
+  },
+  {
+    "seed": 7003,
+    "class": "blade",
+    "end": "defeat",
+    "pulse": 4,
+    "steps": 9128,
+    "mismatchAt": -1,
+    "finalSame": true
+  },
+  {
+    "seed": 7004,
+    "class": "bell",
+    "end": "pulse",
+    "pulse": 1,
+    "steps": 4,
+    "mismatchAt": -1,
+    "finalSame": true
+  },
+  {
+    "seed": 7005,
+    "class": "lantern",
+    "end": "pulse",
+    "pulse": 1,
+    "steps": 4,
+    "mismatchAt": -1,
+    "finalSame": true
+  },
+  {
+    "seed": 7006,
+    "class": "blade",
+    "end": "defeat",
+    "pulse": 4,
+    "steps": 8064,
+    "mismatchAt": -1,
+    "finalSame": true
+  }
+]

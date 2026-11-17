@@ -1,0 +1,501 @@
+{
+ "method": "Machado 2009 deuteranopia severity 1.0 on the 5 glance frames of m3-visual.spec.ts (contentHash 977ff134), 480x270, blur 0.6, shuffled; fresh proxy subagent per session, same prompt as M3, no colour named; pass = player and nearest threat within 30 px",
+ "deutan_session_1": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-1-peak",
+    "b": "glance-4-stack",
+    "c": "glance-5-late",
+    "d": "glance-3-boss",
+    "e": "glance-2-warden"
+   }
+  },
+  "answers": {
+   "a": {
+    "player": [
+     240,
+     147
+    ],
+    "threat": [
+     240,
+     122
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "glowing blue hero inside enemy ring; yellow fan warning just above it"
+   },
+   "b": {
+    "player": [
+     240,
+     145
+    ],
+    "threat": [
+     240,
+     150
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "hero at centre of white ring; yellow X warning centred on hero"
+   },
+   "c": {
+    "player": [
+     238,
+     152
+    ],
+    "threat": [
+     205,
+     135
+    ],
+    "conf": [
+     2,
+     2
+    ],
+    "note": "busy white cluster with yellow beam warnings converging; hard to separate hero"
+   },
+   "d": {
+    "player": [
+     240,
+     183
+    ],
+    "threat": [
+     238,
+     140
+    ],
+    "conf": [
+     3,
+     4
+    ],
+    "note": "small figure inside ring markers below the large blue boss"
+   },
+   "e": {
+    "player": [
+     240,
+     143
+    ],
+    "threat": [
+     258,
+     176
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "blue-marked hero; dark enemy with yellow strip warning just below-right"
+   }
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-1-peak",
+     "player_err": 3.0,
+     "threat_err": 16.4,
+     "pass": true
+    },
+    "b": {
+     "scene": "glance-4-stack",
+     "player_err": 5.0,
+     "threat_err": 13.3,
+     "pass": true
+    },
+    "c": {
+     "scene": "glance-5-late",
+     "player_err": 2.8,
+     "threat_err": 38.1,
+     "pass": false
+    },
+    "d": {
+     "scene": "glance-3-boss",
+     "player_err": 4.5,
+     "threat_err": 47.5,
+     "pass": false
+    },
+    "e": {
+     "scene": "glance-2-warden",
+     "player_err": 7.0,
+     "threat_err": 4.5,
+     "pass": true
+    }
+   },
+   "both_correct": 3
+  }
+ },
+ "deutan_session_2": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-4-stack",
+    "b": "glance-5-late",
+    "c": "glance-2-warden",
+    "d": "glance-3-boss",
+    "e": "glance-1-peak"
+   }
+  },
+  "answers": {
+   "a": {
+    "player": [
+     240,
+     147
+    ],
+    "threat": [
+     239,
+     120
+    ]
+   },
+   "b": {
+    "player": [
+     238,
+     150
+    ],
+    "threat": [
+     205,
+     137
+    ]
+   },
+   "c": {
+    "player": [
+     240,
+     145
+    ],
+    "threat": [
+     262,
+     172
+    ]
+   },
+   "d": {
+    "player": [
+     240,
+     183
+    ],
+    "threat": [
+     238,
+     140
+    ]
+   },
+   "e": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     240,
+     115
+    ]
+   }
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-4-stack",
+     "player_err": 3.0,
+     "threat_err": 39.2,
+     "pass": false
+    },
+    "b": {
+     "scene": "glance-5-late",
+     "player_err": 2.0,
+     "threat_err": 37.4,
+     "pass": false
+    },
+    "c": {
+     "scene": "glance-2-warden",
+     "player_err": 5.0,
+     "threat_err": 3.1,
+     "pass": true
+    },
+    "d": {
+     "scene": "glance-3-boss",
+     "player_err": 4.5,
+     "threat_err": 47.5,
+     "pass": false
+    },
+    "e": {
+     "scene": "glance-1-peak",
+     "player_err": 4.0,
+     "threat_err": 9.4,
+     "pass": true
+    }
+   },
+   "both_correct": 2
+  }
+ },
+ "control_normal_vision": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-2-warden",
+    "b": "glance-4-stack",
+    "c": "glance-1-peak",
+    "d": "glance-5-late",
+    "e": "glance-3-boss"
+   }
+  },
+  "answers": {
+   "a": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     257,
+     176
+    ],
+    "conf": [
+     4,
+     3
+    ]
+   },
+   "b": {
+    "player": [
+     240,
+     145
+    ],
+    "threat": [
+     240,
+     145
+    ],
+    "conf": [
+     4,
+     4
+    ]
+   },
+   "c": {
+    "player": [
+     240,
+     148
+    ],
+    "threat": [
+     240,
+     118
+    ],
+    "conf": [
+     3,
+     4
+    ]
+   },
+   "d": {
+    "player": [
+     238,
+     150
+    ],
+    "threat": [
+     230,
+     138
+    ],
+    "conf": [
+     3,
+     3
+    ]
+   },
+   "e": {
+    "player": [
+     240,
+     183
+    ],
+    "threat": [
+     232,
+     176
+    ],
+    "conf": [
+     3,
+     3
+    ]
+   }
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-2-warden",
+     "player_err": 4.0,
+     "threat_err": 5.5,
+     "pass": true
+    },
+    "b": {
+     "scene": "glance-4-stack",
+     "player_err": 5.0,
+     "threat_err": 16.8,
+     "pass": true
+    },
+    "c": {
+     "scene": "glance-1-peak",
+     "player_err": 2.0,
+     "threat_err": 12.4,
+     "pass": true
+    },
+    "d": {
+     "scene": "glance-5-late",
+     "player_err": 2.0,
+     "threat_err": 15.2,
+     "pass": true
+    },
+    "e": {
+     "scene": "glance-3-boss",
+     "player_err": 4.5,
+     "threat_err": 14.0,
+     "pass": true
+    }
+   },
+   "both_correct": 5
+  }
+ }
+}

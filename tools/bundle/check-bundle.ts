@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // bundle:check (architecture.md 13): gzip size of every file in dist/ against the budget, and no test
 // hooks in the production build (window.__shardfall, the hooks chunk). Run after `npm run build`.
+// Release checks (M5-01): no source maps, no unreplaced build constants, the /shardfall/ base path
+// for the GitHub Pages build, and the third-party license notices next to the page.
 // Usage: node tools/bundle/check-bundle.ts [distDir]
 //
 // Initial files are the ones index.html loads itself (module script, modulepreload, stylesheet).
@@ -21,6 +23,11 @@ const TOTAL_FAIL = 600 * KB;
 
 const root = resolve(import.meta.dirname, '..', '..');
 const dist = resolve(root, process.argv[2] ?? 'dist');
+/** The release build (dist/) is served from GitHub Pages under this path (vite.config.ts base). */
+const PAGES_BASE = '/shardfall/';
+const isRelease = relative(root, dist) === 'dist';
+/** Build-time constants that vite.config.ts `define` must replace everywhere. */
+const BUILD_CONSTANTS = ['__E2E__', '__DEV_TOOLS__', '__APP_VERSION__'];
 if (!existsSync(dist)) {
   console.error(`bundle:check: ${relative(root, dist)} does not exist; run npm run build first`);
   process.exit(1);
@@ -57,7 +64,8 @@ if (!existsSync(indexPath)) {
   console.error('bundle:check: dist/index.html missing');
   process.exit(1);
 }
-const initial = initialFiles(readFileSync(indexPath, 'utf8'));
+const indexHtml = readFileSync(indexPath, 'utf8');
+const initial = initialFiles(indexHtml);
 
 const fmt = (n: number): string => `${(n / KB).toFixed(1)} KB`;
 let js = 0;
@@ -67,24 +75,42 @@ const errors: string[] = [];
 const files = walk(dist).map((f) => relative(dist, f).replaceAll('\\', '/'));
 for (const want of initial)
   if (!files.includes(want)) errors.push(`index.html loads ${want}, which is not in dist/`);
+if (isRelease) {
+  for (const m of indexHtml.matchAll(/(?:src|href)=["'](\/[^"']*)["']/gi)) {
+    const url = m[1] ?? '';
+    if (!url.startsWith(PAGES_BASE)) errors.push(`index.html loads ${url} outside ${PAGES_BASE}`);
+  }
+  if (!files.includes('third-party-licenses.txt'))
+    errors.push('third-party-licenses.txt missing (vite.config.ts thirdPartyLicenses)');
+}
 for (const rel of files) {
-  if (rel.endsWith('.map') || rel.startsWith('.vite/')) continue;
+  if (rel.endsWith('.map')) {
+    if (isRelease) errors.push(`${rel}: source maps are not published in the release build`);
+    continue;
+  }
+  if (rel.startsWith('.vite/')) continue;
+  if (/(^|\/)(preview|hd2d)\.html$/.test(rel) || rel.includes('/dev/'))
+    errors.push(`${rel} is a dev or test page`);
   const buf = readFileSync(join(dist, rel));
   const gz = gzipSync(buf, { level: 9 }).length;
   const isInitial = initial.has(rel);
   const isWorker = /worker[^/]*\.js$/.test(rel);
+  const isCode = /\.(js|css|html)$/.test(rel);
   if (isInitial) {
     total += gz;
     if (rel.endsWith('.js')) js += gz;
-  } else {
+  } else if (isCode) {
     later += gz;
   }
-  const label = isInitial ? '' : isWorker ? '  (worker)' : '  (lazy)';
+  const label = isInitial ? '' : isWorker ? '  (worker)' : isCode ? '  (lazy)' : '  (file)';
   console.log(`${fmt(gz).padStart(10)}  ${rel}${label}`);
   if (rel.endsWith('.js') || rel.endsWith('.html')) {
     const text = buf.toString('utf8');
     if (text.includes('__shardfall')) errors.push(`${rel} contains "__shardfall" (test hooks)`);
     if (/(^|\/)hooks-[^/]*\.js$/.test(rel)) errors.push(`${rel} is the e2e hooks chunk`);
+    if (isRelease && text.includes('sourceMappingURL')) errors.push(`${rel} links a source map`);
+    for (const c of BUILD_CONSTANTS)
+      if (text.includes(c)) errors.push(`${rel} contains the unreplaced build constant ${c}`);
   }
 }
 console.log(`initial JS gzip ${fmt(js)} (target ${fmt(JS_TARGET)}, fail ${fmt(JS_FAIL)})`);
