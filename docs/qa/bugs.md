@@ -18,14 +18,14 @@ Aturan tingkat dan status: `docs/qa/test-plan.md` bagian 14.
 | BUG-003 | Teks flavor kartu Memento terpotong elipsis di the Glazier dan hadiah Warden | MINOR | DITUTUP (M3) | M1 | ui | UI | `tests/e2e/screens.spec.ts`, `m3-play.spec.ts` (pemindai layout) |
 | BUG-004 | Hook `goToScreen('confirm')` gagal: berakhir di layar `pause` | MINOR | DITUTUP (M3) | M1 | build | LP | Jalur keyboard di `tests/e2e/screens.spec.ts` |
 | BUG-005 | Baris Memento di ringkasan build menjorok dibanding baris senjata | MINOR | DITUTUP (M3) | M1 | ui | UI | Screenshot `docs/qa/evidence/M3/play-bell-run-end-build.png` |
-| BUG-006 | Frame arena pertama di profil browser baru menahan loop sekitar 0,4 s setelah HUD Pulse tampil; tombol yang ditekan saat itu hilang (penyebab smoke Edge flaky) | MINOR | TERBUKA | M3 | render, perf | LP (usulan) | `tests/e2e/support/smoke.ts` (menunggu sim berjalan, mencatat jeda) |
-| BUG-007 | Market Cur saat ancang-ancang berwarna merah dengan luminans sama dengan lantai: hilang di grayscale, kontras 1,0:1 | MAYOR | TERBUKA | M3 | render, asset | AD (usulan), LP bila lewat shader | `tests/e2e/m3-visual.spec.ts` + `tests/e2e/support/m3_analyze.py` |
-| BUG-008 | Banner boss atau Warden dari run sebelumnya tetap tampil di run baru | MINOR | TERBUKA | M3 | ui | UI (usulan) | Screenshot saja |
-| BUG-009 | Layar akhir run mengunci input 500 ms juga saat kembali dari The Keeping, dan fokus kembali ke Try Again | MINOR | TERBUKA | M3 | ui | UI (usulan) | `tests/e2e/m3-play.spec.ts` (mencatat fokus, menunggu kunci) |
-| BUG-010 | A-07: urutan fokus panah di the Glazier antara grid inventaris dan kolom kunci tidak mengikuti urutan visual | MAYOR | TERBUKA | M3 | a11y, ui | UI (usulan) | `tests/e2e/m3-a11y.spec.ts` (A-07, laporan `missing`) |
+| BUG-006 | Frame arena pertama di profil browser baru menahan loop sekitar 0,4 s setelah HUD Pulse tampil; tombol yang ditekan saat itu hilang (penyebab smoke Edge flaky) | MINOR | MENUNGGU UJI ULANG | M3 | render, perf | AD (M4-01) | `tests/e2e/support/smoke.ts` (menunggu sim berjalan, mencatat jeda), `tests/render/m4-polish.test.ts` (pre-warm) |
+| BUG-007 | Market Cur saat ancang-ancang berwarna merah dengan luminans sama dengan lantai: hilang di grayscale, kontras 1,0:1 | MAYOR | MENUNGGU UJI ULANG | M3 | render, asset | AD (M4-01) | `tests/e2e/m3-visual.spec.ts` + `tests/e2e/support/m3_analyze.py`, `tests/render/m4-polish.test.ts`, `tests/render/entity-layers.test.ts` (windup) |
+| BUG-008 | Banner boss atau Warden dari run sebelumnya tetap tampil di run baru | MINOR | MENUNGGU UJI ULANG | M3 | ui | UI | `tests/unit/ui/hud-transient.test.ts` (BUG-008) |
+| BUG-009 | Layar akhir run mengunci input 500 ms juga saat kembali dari The Keeping, dan fokus kembali ke Try Again | MINOR | MENUNGGU UJI ULANG | M3 | ui | UI | `tests/unit/ui/focus-nav.test.ts` (BUG-009), `tests/e2e/m3-play.spec.ts` |
+| BUG-010 | A-07: urutan fokus panah di the Glazier antara grid inventaris dan kolom kunci tidak mengikuti urutan visual | MAYOR | MENUNGGU UJI ULANG | M3 | a11y, ui | UI | `tests/unit/ui/focus-nav.test.ts` (BUG-010), `tests/e2e/m3-a11y.spec.ts` (A-07) |
 | BUG-011 | Ukuran teks Largest di 1280x720 dan 1366x768: monogram ikon cadangan ("CP") menumpuk dengan nama, efek, dan hotkey kartu | MAYOR | DITUTUP (M3) | M3 | ui, a11y | AD (ikon B) | `tests/e2e/m3-a11y.spec.ts` (A-05 skala 2) |
-| BUG-012 | Affix `brood` (Tingkat B) tidak bisa muncul di build Tingkat B: tidak ada Warden B yang memilikinya dan pool acak hanya aktif di Crack 2 ke atas | MINOR | TERBUKA | M3 | data | GD (usulan) | `tests/unit/qa/content-b.test.ts` (affix Crack 2) |
-| BUG-013 | Tick sim terus bertambah selama pemain diam di Temper dan the Glazier (3600 tick per 60 s); layar tidak berpindah dan tidak ada timer | MINOR | TERBUKA | M3 | sim | GP (usulan), LP | `tests/e2e/m3-a11y.spec.ts` (A-12, `QA_LONG=1`) |
+| BUG-012 | Affix `brood` (Tingkat B) tidak bisa muncul di build Tingkat B: tidak ada Warden B yang memilikinya dan pool acak hanya aktif di Crack 2 ke atas | MINOR | MENUNGGU UJI ULANG | M3 | data | GD | `tests/unit/qa/content-b.test.ts` (affix Warden dan pool Crack 2) |
+| BUG-013 | Tick sim terus bertambah selama pemain diam di Temper dan the Glazier (3600 tick per 60 s); layar tidak berpindah dan tidak ada timer | MINOR | MENUNGGU UJI ULANG | M3 | sim | GP | `tests/unit/sim/choice-idle.test.ts`, `tests/e2e/m3-a11y.spec.ts` (A-12, `QA_LONG=1`) |
 
 Area: `sim`, `render`, `ui`, `audio`, `data`, `save`, `perf`, `a11y`, `compat`, `build`, `asset`.
 
@@ -221,6 +221,8 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Catatan perbaikan (diisi programmer):** usul QA, keputusan LP: kompilasi program shader HD-2D lebih awal (di layar judul atau pilih kelas), atau tahan HUD dan timer sampai frame arena pertama selesai. Tes smoke sudah diubah QA agar menunggu fase `pulse` dan tick bertambah sebelum menekan tombol, dan mencatat jedanya.
 
+Perbaikan M4-01 (AD, 2026-11-17): renderer membangun arena pertama (`data.arenas[0]` dan biomanya) saat layar judul idle (`requestIdleCallback`, batas 600 ms), lalu merendernya sekali ke target scene offscreen: program shader dikompilasi, tekstur dan shadow map dekor diunggah. `setArena` memakai lingkungan itu bila arena dan bioma sama (`src/render/pipeline/prewarm.ts`, `renderer.ts`). Uji ulang QA: profil Edge baru, ukur jeda tick 14 di frame arena pertama; target di bawah 100 ms. Batas: bila pemain menekan Enter sebelum layar judul idle, pre-warm dilewati (perilaku lama).
+
 **Uji ulang (diisi QA):**
 
 ### BUG-007: Market Cur saat ancang-ancang berwarna merah dengan luminans sama dengan lantai
@@ -248,12 +250,14 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Catatan perbaikan (diisi programmer):** usul QA, keputusan AD dan CD: pertahankan badan gelap `unlit-body` dan beri tanda ancang-ancang lewat rim, mata, atau outline merah, atau naikkan luminans tint jelas di atas lantai.
 
+Perbaikan M4-01 (AD, 2026-11-17): tint badan merah dihapus. Saat ancang-ancang (semua Unlit dan Warden, boss memakai pose fase sendiri) outline `ink` 1 px diganti `danger-magenta` yang berdenyut ke campuran 50% `danger-core` tiap 4 tick, lewat atribut per instans `iOutline` di shader sprite (texel warna kunci `ink` saja). Badan tetap `unlit-body` (2,2:1 terhadap lantai). Kontras outline: 2,2:1 terhadap `floor-mid`, 1,7:1 terhadap `floor-lit` (hex mentah), fase terang lebih tinggi; screenshot preview 1280x720 terukur sekitar 2,2:1 terhadap lantai polos. Uji ulang QA: `m3_analyze.py` pada adegan puncak, `unlit_below_1_5` dan crop Market Cur ancang-ancang.
+
 **Uji ulang (diisi QA):**
 
 ### BUG-008: Banner boss atau Warden dari run sebelumnya tetap tampil di run baru
 
 - Tingkat: MINOR
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: `dist-e2e` lokal 2026-11-17, Chromium Playwright dengan GPU, 1920x1080
 - Seed: 31 (boss), lalu 41 (run baru)
@@ -271,14 +275,14 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Bukti:** `docs/qa/evidence/M3/glance-4-stack.png`.
 
-**Catatan perbaikan (diisi programmer):**
+**Catatan perbaikan (diisi programmer):** UI M4-02, 2026-11-17: banner dan elemen sesaat HUD diukur dalam tick sim, dan `run.start` mengembalikan tick ke 0, jadi `untilTick` dari run lama (contoh 20000) membuat banner tampil lagi di run baru. HUD kini mendeteksi jam sim yang mundur (`runRestarted`) dan membersihkan banner, petunjuk kontrol, getar Rite, dan status HP rendah; `bannerShown` juga menolak banner yang berakhir lebih dari 2,5 detik di depan tick sekarang (`src/ui/presenters/hud-transient.ts`, `src/ui/screens/hud.ts`). Tes unit dua kasus. Probe browser: banner "Paper Sun, the Light-Eater" di Pulse 15 seed 31, Abandon, run baru seed 41 sampai Pulse 7: banner kosong.
 
 **Uji ulang (diisi QA):**
 
 ### BUG-009: Layar akhir run mengunci input 500 ms juga saat kembali dari The Keeping
 
 - Tingkat: MINOR
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: `dist-e2e` lokal 2026-11-17, Chromium Playwright, 1920x1080
 
@@ -295,14 +299,14 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Bukti:** `docs/qa/evidence/M3/play-log.txt` (baris "focus after returning from The Keeping: end-again").
 
-**Catatan perbaikan (diisi programmer):**
+**Catatan perbaikan (diisi programmer):** UI M4-02, 2026-11-17: `choiceLockApplies('archive')` kini false, jadi masuk ke akhir run dari The Keeping tidak memasang kunci 500 ms (kunci tetap berlaku saat layar muncul dari Pulse atau Abandon). UiContext mendapat `returning()`; akhir run mengingat tombol terakhir yang difokus dan memulihkannya saat kembali (`src/ui/menu-keys.ts`, `src/ui/screens/run-end.ts`, `src/ui/ui-root.ts`). Tes unit di `focus-nav.test.ts`. Probe browser: The Keeping, Esc, fokus `end-keeping`, panah kanan lalu Enter langsung membuka Title.
 
 **Uji ulang (diisi QA):**
 
 ### BUG-010: Urutan fokus panah di the Glazier tidak mengikuti urutan visual (A-07)
 
 - Tingkat: MAYOR (butir aksesibilitas wajib A-07, accessibility.md bagian format)
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: `dist-e2e` lokal 2026-11-17, Chromium Playwright, 1920x1080
 - Seed: seed hook 1 (`goToScreen('glazier')`)
@@ -319,7 +323,7 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Bukti:** urutan di `docs/qa/M3-report.md` bagian 5 (A-07), `docs/qa/evidence/M3/a11y-results.json`.
 
-**Catatan perbaikan (diisi programmer):**
+**Catatan perbaikan (diisi programmer):** UI M4-02, 2026-11-17: navigasi spasial (`src/ui/focus-nav.ts`) kini (1) memilih kandidat yang segaris dengan fokus (beam) sebelum kandidat menyamping yang lebih dekat, sehingga `shop-slot-6` bawah ke Begin Pulse, bukan `shop-lock-3`; (2) mengingat langkah terakhir yang keluar grup sehingga membaliknya kembali ke elemen asal (`shop-lock-3` kanan ke `shop-slot-4`, kiri kembali ke `shop-lock-3`); (3) melewati elemen tersembunyi. Tes unit memakai geometri Glazier 1080p dari screenshot QA, termasuk cek keterjangkauan: setiap kontrol bisa dicapai dari setiap kontrol dengan panah saja. Catatan untuk uji ulang: jalan A-07 di `m3-a11y.spec.ts` (dari titik masuk Tab, kanan 14, kiri 14, bawah 14, atas 14) secara struktur tidak bisa mencapai baris ke-2 sampai ke-4 kolom kunci dan baris bawah grid slot pada urutan spasial apa pun, karena tiap siklus berakhir di kolom tawaran dan Tab selalu masuk ke grup slot di slot 1. Probe dengan jalan yang sama masih melaporkan `missing` 6 elemen itu, walau semuanya tercapai lewat panah (contoh: tawaran 3, kanan, kunci 3, kanan, slot 4). Usul QA: cek keterjangkauan BFS per layar, atau tambah langkah bawah lalu kanan per baris.
 
 **Uji ulang (diisi QA):**
 
@@ -349,7 +353,7 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 ### BUG-012: Affix `brood` tidak bisa muncul di build Tingkat B
 
 - Tingkat: MINOR (konten scope B yang tidak terjangkau, bukan crash)
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: data tier B, contentHash 2008c1b6
 
@@ -368,12 +372,14 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 
 **Catatan perbaikan (diisi programmer):** keputusan GD (scope): pindahkan `brood` ke tier C, beri ke Warden B, atau buka Crack di B.
 
+GD, 2026-11-17 (M4-03): `brood` dipindah ke tier C (`content/data/affixes.csv`). Pemakainya hanya Warden C `warden_bulwark` dan pool acak Crack 2 ke atas, keduanya pasca 1.0 (scope dikunci di B). Memberikannya ke Warden B akan mempertebal Warden P4 tanpa data playtest. Build B kini tidak memuat `brood`; pool acak B = `volley`, `veiled`, `blinking`. Kode affix tidak berubah. `npm run data:check` 0 error. Alasan lengkap: `docs/balance-report.md` 9.2. QA: ulangi `content-b.test.ts` (uji Crack 2 kini memakai pool tanpa `brood`; cakupan `brood` di C lewat data C).
+
 **Uji ulang (diisi QA):**
 
 ### BUG-013: Tick sim terus bertambah selama pemain diam di Temper dan the Glazier
 
 - Tingkat: MINOR (A-12 [Saran]; tidak ada efek terlihat yang ditemukan)
-- Status: TERBUKA
+- Status: MENUNGGU UJI ULANG
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: `dist-e2e` lokal 2026-11-17, Chromium Playwright, 1920x1080
 - Seed: acak dari UI
@@ -391,6 +397,8 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 **Bukti:** `docs/qa/evidence/M3/a11y-results.json` (A-12).
 
 **Catatan perbaikan (diisi programmer):** GP atau LP memutuskan: bila disengaja, QA mengubah cek A-12 menjadi "layar tidak berubah"; bila tidak, hentikan step sim di fase pilihan.
+
+GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "tidak terluka N s" (`effects/conditions.ts`) dan cooldown efek memakai `world.tick`, jadi diam di toko bisa mengisinya. Perbaikan di `src/sim/create-sim.ts` `step()`: di fase `levelUp`, `shop`, dan `reward` step tetap berjalan (perintah diproses, replay tetap menghitung step) tetapi `world.tick` dan `runStats.runTicks` tidak naik. Deterministik: hasil hanya bergantung pada urutan step dan perintah; diam 0 atau 60 s di Temper dan toko kini memberi Pulse berikutnya yang identik (hash sama). Tes regresi `tests/unit/sim/choice-idle.test.ts` (5 kasus, merah sebelum perbaikan). Golden replay `golden-22.json` diregenerasi (`QA_UPDATE_GOLDEN=1`): input dan perintah identik, hanya checkpoint dan hash akhir berubah karena tick tidak lagi naik di fase pilihan; seed 11 dan 33 tidak berubah. Cek tick A-12 dikembalikan dari `expect.soft` ke `expect` (maksud tes asli kini terpenuhi). Efek samping: waktu run di layar akhir tidak lagi menghitung waktu di Temper dan toko. QA: jalankan ulang A-12 dengan `QA_LONG=1`.
 
 **Uji ulang (diisi QA):**
 

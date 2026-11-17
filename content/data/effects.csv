@@ -31,16 +31,16 @@ magpie_tin_1,magpie_tin,on_pickup,,0.15,,,,chance,gain_glint,mode=same,B
 haggler_seal_1,haggler_seal,passive,,,,,,none,shop_mod,field=price_mult;value=0.9,B
 haggler_seal_2,haggler_seal,passive,,,,,,none,shop_mod,field=reroll_delta;value=-1,B
 grinding_wheel_1,grinding_wheel,on_hit,every_nth:4@per_weapon,,,,,none,hit_mod,mode=force_crit;value=1,B
-# Mementos tier C
+# Mementos tier C (music_box and patched_cloak rows are tier B since GD M4-04, P1-c)
 pyre_bell_1,pyre_bell,passive,,,,,,none,status_rule,status=burn;rule=spread_chance;value=0.1,C
 pyre_bell_2,pyre_bell,passive,,,,,,none,status_rule,status=burn;rule=spread_range;value=2.5,C
 wick_charm_1,wick_charm,on_hurt,,,3,,,none,spawn_area,shape=circle;radius=3;dmg=10;status=burn;origin=player,C
 cracked_mirror_1,cracked_mirror,on_dodge,,,,,,none,spawn_projectile,pattern=ring;count=8;dmg=6;speed=10;range=6;origin=player;tags=shard,C
 cracked_mirror_2,cracked_mirror,on_block,,,,,,none,spawn_projectile,pattern=ring;count=8;dmg=6;speed=10;range=6;origin=player;tags=shard,C
-music_box_1,music_box,on_kill,,0.1,,,,none,repeat,what=hit;delay=0;power=1;target=nearest_other;range=4,C
+music_box_1,music_box,on_kill,,0.1,,,,none,repeat,what=hit;delay=0;power=1;target=nearest_other;range=4,B
 folded_letter_1,folded_letter,passive,,,,,,value,stat_mod,stat=rite_haste;op=add;value=10,C
 echo_shell_1,echo_shell,passive,,,,,,none,stat_mod,stat=rite_charges;op=add;value=1,C
-patched_cloak_1,patched_cloak,passive,time_since_hurt:4,,,,,none,stat_mod,stat=hp_regen;op=add;value=2,C
+patched_cloak_1,patched_cloak,passive,time_since_hurt:4,,,,,none,stat_mod,stat=hp_regen;op=add;value=2,B
 ledger_page_1,ledger_page,on_pulse_end,unhurt_this_pulse:1,,,,,none,gain_glint,mode=formula;base=10;per_t=3,C
 # Synergies tier A
 syn_flame_2,syn_flame_2,on_hit,,0.1,,,,none,apply_status,status=burn;stacks=1;duration=3,A

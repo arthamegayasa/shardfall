@@ -25,6 +25,11 @@ export interface UiContext {
   /** Input lock when a choice screen appears (ui-spec 8.4). */
   lockInput(ms: number): void;
   inputLocked(): boolean;
+  /**
+   * True inside enter() when the screen is shown again after a menu it opened (pause, settings,
+   * The Keeping): the screen keeps its last focus instead of the initial one (ui-spec 8.2).
+   */
+  returning(): boolean;
   /** Latest WorldView (still valid while the loop is held, e.g. on the pause screen). */
   view(): WorldView | null;
   /** True when the key event matches one of the action's two bindings. */

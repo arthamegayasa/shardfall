@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   KEEPING_TABS,
   mementoArchive,
+  mementoUnlock,
   nextKeepingTab,
 } from '../../../src/ui/presenters/keeping.ts';
+import type { GameData, MetaUnlockDef } from '../../../src/content/index.ts';
 import { fixtureGameData } from '../../support/fixture-data.ts';
 
 const data = fixtureGameData('A');
@@ -43,5 +45,24 @@ describe('The Keeping Memento archive model (ui-spec S09)', () => {
     expect(nextKeepingTab('kept', 1)).toBe('mementos');
     expect(nextKeepingTab('mementos', 1)).toBe('kept');
     expect(nextKeepingTab('kept', -1)).toBe('mementos');
+  });
+});
+
+describe('The Keeping detail Unlock (wireframe 09)', () => {
+  const pack = {
+    id: 'pack_lens',
+    kind: 'memento_pack',
+    targets: ['test_lens'],
+    costSilt: 20,
+    contentTier: 'B',
+    costSiltB: null,
+  } as unknown as MetaUnlockDef;
+  const cls = { ...pack, id: 'unlock_x', kind: 'class', targets: ['test_lens'] } as MetaUnlockDef;
+  const withPack: GameData = { ...data, metaUnlocks: [cls, pack] };
+
+  it('finds the Silt pack that opens a Memento, never a class or weapon row', () => {
+    expect(mementoUnlock(withPack, 'test_lens')?.id).toBe('pack_lens');
+    expect(mementoUnlock(withPack, 'test_charm')).toBeUndefined();
+    expect(mementoUnlock(data, 'test_lens')).toBeUndefined();
   });
 });

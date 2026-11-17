@@ -125,8 +125,8 @@ Tabel `simple` (event ke daftar cue), `silent` (event yang sengaja diam), dan ta
 | `sfx.rite.cast.lantern` | A | `RiteCast` Rite `flare_lantern` | 3 | 400 ms | 1 / - | -12 | Lemparan: whoosh noise bandpass naik 400 Hz ke 2 kHz, denting `glass_bell` A5 kecil (lentera berayun) |
 | `sfx.rite.impact.lantern` | A | `RiteLanded` `flare_lantern` (posisi mendarat) | 3 | 900 ms | 1 / - | -10 | Ledakan hangat: noise lowpass menyapu turun, sub 90 ke 48 Hz, `glass_bell` D5, A5, E6, pecahan kaca 4 sampai 7.5 kHz. Tanpa tritone (milik pemain) |
 | `sfx.rite.zone.lantern` | B | Zona api `flare_lantern` aktif 4 s | 5 | loop 4 s | 1 / - | -26 | Derak api lembut: klik noise lowpass 3 kHz acak 6 per detik, dengung noise lowpass 300 Hz. `mode: live` |
-| `sfx.rite.cast.bell` | B | `RiteCast` `great_toll` | 3 | 900 ms | 1 / - | -10 | Dentang `glass_bell` rendah D3 dan A3 dengan sapuan noise melebar |
-| `sfx.rite.cast.blade` | B | `RiteCast` `glass_step` | 3 | 250 ms | 1 / - | -12 | Sabetan kaca cepat: noise bandpass 600 Hz ke 5 kHz dalam 150 ms, butir kaca tinggi |
+| `sfx.rite.impact.bell` | B | `RiteLanded` `great_toll` (posisi pemain; `RiteCast` diam karena cincin terjadi di tick yang sama) | 3 | 1400 ms | 1 / - | -10 | Dentang `glass_bell` rendah D3 dan A3 plus nada atas D4, dentum sub 70 ke 45 Hz (dorongan), sapuan noise bandpass 300 Hz ke 1,8 kHz yang melebar seperti cincin. Room 0,35. M4-03 (dulu rencana `sfx.rite.cast.bell`) |
+| `sfx.rite.impact.blade` | B | `RiteLanded` `glass_step` (akhir dash; `RiteCast` diam) | 3 | 350 ms | 1 / - | -12 | Sabetan kaca cepat: noise bandpass 600 Hz ke 5 kHz dalam 160 ms, denting `glass_bell` E6 kecil (tanda 3 kritikal pasti), 8 butir kaca 5 sampai 9 kHz. Room 0,1. M4-03 (dulu rencana `sfx.rite.cast.blade`) |
 | `ui.rite.denied` | A | `RiteRejected` (tombol Rite ditekan saat cooldown) | U | 90 ms | 1 / 150 | -22 | Klik tumpul triangle 220 Hz 60 ms. Bukan suara bahaya |
 
 ---
@@ -371,3 +371,10 @@ Pemetaan Tingkat A (gdd 2.3) ke cue:
 
 - Cue baru `ui.unlock` (B): 99 resep. Dipetakan dari tekanan kedua pembelian di The Keeping.
 - `AudioSystem.unlock()`: bila `resume()` pertama masih tertunda (aktivasi ketat ala Safari), panggilan `unlock()` berikutnya dari gesture baru memanggil `resume()` lagi; panggilan mana pun yang selesai lebih dulu menuntaskan boot. Tes regresi di `tests/unit/audio/audio-system.test.ts`.
+
+## 15. Status M4 (M4-03)
+
+- Cue baru `sfx.rite.impact.bell` (Great Toll) dan `sfx.rite.impact.blade` (Glass Step), Tingkat B: 101 resep. Polish CD M3 butir 12: Rite Chorister dan Vintner tidak lagi memakai whoosh lemparan Festival Flare.
+- `routes.json` `rites.byId` baru (override per Rite, pola sama dengan `deathById` dan `affixById`), fallback tetap `byArchetype`; `ring` dan `dash` kini juga menunjuk cue baru. Dipicu `RiteLanded` per Rite; `RiteCast` untuk keduanya diam karena cincin dan dash selesai di tick cast (tanpa suara dobel).
+- Level preview: Great Toll puncak -10 dBFS, RMS -29; Glass Step puncak -12, RMS -28 (Festival Flare dampak: -10 dan -30). Anggaran buffer boot 7,36 dari 8 MB.
+- Masih belum didengar manusia (uji telinga sisa untuk Dok). `ui.unlock` sudah ada sejak M3.

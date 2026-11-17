@@ -155,6 +155,7 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
         if (!enteringFromMenu) lockUntil = now() + ms;
       },
       inputLocked: () => now() < lockUntil,
+      returning: () => enteringFromMenu,
       view: () => lastView,
       matches: (action: ActionId, e: KeyboardEvent) =>
         isBound(deps.settings().keybinds, action, e.code),

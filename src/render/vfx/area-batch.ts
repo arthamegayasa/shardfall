@@ -1,5 +1,6 @@
 // Instanced ground areas: telegraphs and spawn rings (L4) and player zones (L3). AD.
 // Fixed capacity, typed arrays allocated once, no allocation per frame (coding-standards 5).
+// M4 (AD): optional merged fills (player zones): stacked circles read as one fill (shaders/area.ts).
 
 import {
   BufferAttribute,
@@ -10,7 +11,12 @@ import {
   Mesh,
   ShaderMaterial,
 } from 'three';
-import { AREA_FRAGMENT, AREA_INSTANCE_ATTRIBUTES, AREA_VERTEX } from '../shaders/index.ts';
+import {
+  AREA_FRAGMENT,
+  AREA_INSTANCE_ATTRIBUTES,
+  AREA_MERGE_MAX,
+  AREA_VERTEX,
+} from '../shaders/index.ts';
 
 /** Fill and edge colours in linear rgb plus alpha (from palette tokens, see telegraph-style.ts). */
 export interface AreaStyle {
@@ -41,7 +47,19 @@ export interface AreaBatch {
   dispose(): void;
 }
 
-export function createAreaBatch(capacity: number, renderOrder: number): AreaBatch {
+export interface AreaBatchOptions {
+  /**
+   * Merge overlapping circle fills into one (player zones, style-guide 1.8). Only the first
+   * AREA_MERGE_MAX instances take part; later ones draw unmerged.
+   */
+  readonly merge?: boolean;
+}
+
+export function createAreaBatch(
+  capacity: number,
+  renderOrder: number,
+  opts: AreaBatchOptions = {},
+): AreaBatch {
   const geo = new InstancedBufferGeometry();
   geo.setAttribute(
     'position',
@@ -62,9 +80,16 @@ export function createAreaBatch(capacity: number, renderOrder: number): AreaBatc
   const ed = make('aEdge', A.aEdge);
   const names: readonly string[] = ['aGeo', 'aShape', 'aMode', 'aFill', 'aEdge'];
   geo.instanceCount = 0;
+  const merge = opts.merge === true;
+  const mergeData = new Float32Array(AREA_MERGE_MAX * 4);
+  const mergeCount = { value: 0 };
   const material = new ShaderMaterial({
     vertexShader: AREA_VERTEX,
     fragmentShader: AREA_FRAGMENT,
+    uniforms: {
+      uMerge: { value: mergeData },
+      uMergeCount: mergeCount,
+    },
     // Flipped sprites and floor quads reverse winding; never cull.
     side: DoubleSide,
     transparent: true,
@@ -103,7 +128,14 @@ export function createAreaBatch(capacity: number, renderOrder: number): AreaBatc
       mo[i] = shape;
       mo[i + 1] = progress;
       mo[i + 2] = style.dashed ? 1 : 0;
-      mo[i + 3] = 0;
+      mo[i + 3] = n;
+      if (merge && n < AREA_MERGE_MAX) {
+        // Circles only (shape 0); other shapes never cover anything.
+        mergeData[i] = x;
+        mergeData[i + 1] = y;
+        mergeData[i + 2] = shape === 0 && style.fill[3] > 0 ? radius : 0;
+        mergeData[i + 3] = 0;
+      }
       fi[i] = style.fill[0];
       fi[i + 1] = style.fill[1];
       fi[i + 2] = style.fill[2];
@@ -117,6 +149,7 @@ export function createAreaBatch(capacity: number, renderOrder: number): AreaBatc
     },
     end() {
       geo.instanceCount = n;
+      mergeCount.value = merge ? Math.min(n, AREA_MERGE_MAX) : 0;
       if (n === 0) return;
       for (let k = 0; k < names.length; k++) {
         const a = geo.getAttribute(names[k] ?? '') as InstancedBufferAttribute;

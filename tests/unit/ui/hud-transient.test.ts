@@ -14,6 +14,8 @@ import {
   bannerHeld,
   bannerShown,
   createBanner,
+  createTransientClock,
+  runRestarted,
   createHint,
   HINT_TICKS,
   hintStart,
@@ -124,6 +126,26 @@ describe('HUD banners', () => {
     bannerHeld(b, 50, 5);
     expect(bannerShown(b, 60)).toBe(BannerKind.Held);
     expect(b.pulseNumber).toBe(5);
+  });
+});
+
+describe('HUD banner across runs (BUG-008)', () => {
+  it('never shows the previous run boss banner once the sim clock restarted', () => {
+    const b = createBanner();
+    // Boss arrives late in run 1 (tick 20000); run 2 starts at tick 0 and reaches Pulse 7.
+    bannerEvent(b, SimEventType.BossSpawned, 9, 20000, 15);
+    expect(bannerShown(b, 20010)).toBe(BannerKind.Boss);
+    expect(bannerShown(b, 0)).toBe(BannerKind.None);
+    expect(bannerShown(b, 4000)).toBe(BannerKind.None);
+  });
+
+  it('detects a new run from the run-relative clock going back', () => {
+    const c = createTransientClock();
+    expect(runRestarted(c, 100)).toBe(false);
+    expect(runRestarted(c, 20000)).toBe(false);
+    expect(runRestarted(c, 20000)).toBe(false);
+    expect(runRestarted(c, 0)).toBe(true);
+    expect(runRestarted(c, 1)).toBe(false);
   });
 });
 

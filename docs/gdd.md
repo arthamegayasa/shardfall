@@ -149,7 +149,7 @@ Di tick timer mencapai 0, berurutan:
 
 Awal setiap Pulse: pemain ditempatkan di `playerStart` arena (`[0, 0]` untuk Pulse biasa dan Warden, `[0, 5]` untuk boss), HP penuh (Crack 5: 50% HP yang hilang), muatan Rite penuh, Barrier sampai `barrier_max`, semua cooldown senjata siap. Status, buff, tumpukan Rush, penghitung `every_nth` dan `on_distance` direset.
 
-**Pulse Warden:** Warden muncul di 25% durasi dengan banner nama, di sektor terjauh dari pemain, dengan tanda spawn berdiameter 3 u. Warden tidak dihitung ke batas hidup. Bila timer habis dan Warden masih hidup (waktu tambahan), antrean spawn dibuang, Unlit yang ada tetap menyerang, timer diam di 0:00, dan Pulse baru berakhir saat Warden mati. Selama waktu tambahan, slot timer HUD menjadi bar HP Warden berlabel "Held" (CD K3); sim menyediakan `PulseView.warden` dan `PulseView.overtime` (architecture 6.4). Setelah 20 s waktu tambahan, Warden mendapat affix `hasted` sekali. Warden yang mati sebelum timer 0 tidak mengakhiri Pulse; Pulse lanjut normal sampai timer habis. Warden tidak pernah kabur; hadiahnya selalu bisa diraih.
+**Pulse Warden:** Warden muncul di 25% durasi dengan banner nama, di sektor terjauh dari pemain, dengan tanda spawn berdiameter 3 u. Warden tidak dihitung ke batas hidup. Bila timer habis dan Warden masih hidup (waktu tambahan), antrean spawn dibuang, Unlit yang ada tetap menyerang, timer diam di 0:00, dan Pulse baru berakhir saat Warden mati. Selama waktu tambahan, slot timer HUD menjadi bar HP Warden berlabel "Held" (CD K3); sim menyediakan `PulseView.warden` dan `PulseView.overtime` (architecture 6.4). Setelah 20 s waktu tambahan, Warden mendapat affix `hasted` sekali. Batas waktu tambahan (GD M4-04): setelah 60 s waktu tambahan (`warden_overtime_decay_s`) Warden meluruh, yaitu batas atas HP-nya turun linear dari HP maks ke 0 selama 15 s (`warden_overtime_decay_len_s`). Penyembuhan tidak bisa mengejar peluruhan. Di 0 Warden mati sebagai kill Warden biasa (peti hadiah dan Glint tetap diberikan, tanpa efek `on_kill`), jadi Pulse Warden paling lama 75 s melewati timer. Warden yang mati sebelum timer 0 tidak mengakhiri Pulse; Pulse lanjut normal sampai timer habis. Warden tidak pernah kabur; hadiahnya selalu bisa diraih.
 
 **Pulse boss:** telegraf panggung boss (radius 4 u) berjalan 2.0 s sejak Pulse mulai (`boss_entry_s`); boss tidak bisa dilukai dan tidak memberi damage sebelum keluar. Selama pertarungan, 2 swarmer muncul tiap 4 s sebagai sumber Glint kecil, dijeda selama ada 24 swarmer tetesan hidup. Setelah 120 s sejak boss keluar, boss mengamuk (jeda antar pola dikurangi 40%, telegraf tidak berubah). Saat boss mati, semua Glint di lantai dipungut otomatis.
 
@@ -241,7 +241,7 @@ Satu Unlit menjatuhkan satu butir bernilai kolom `glint` (tank = 1 butir bernila
 
 ### 4.2 Memungut
 
-- Radius tarik dasar 2.0 u (`pickup_radius_base`, naik dari 1.6 karena Pulse lebih padat menyebar Glint lebih luas). Glint di dalam radius tertarik dan melesat ke pemain: mulai 3 u/s (`glint_fly_speed_start`), dipercepat 60 u/s^2 (`glint_fly_accel`) sampai 20 u/s (`glint_fly_speed`). Dari tepi radius butir tiba dalam sekitar 0,3 s. Butir yang sudah tertarik tetap terbang sampai terpungut, pada jarak radius pemain + 0.2 u. Nada pungut naik beruntun (AU, `GlintCollected.b`).
+- Radius tarik dasar 2.25 u (`pickup_radius_base`; M2-01 1.6 ke 2.0 karena Pulse lebih padat menyebar Glint lebih luas; M4-03 2.0 ke 2.25 agar Glint tidak tercecer di akhir Pulse panjang, CD M3 polish 8). Glint di dalam radius tertarik dan melesat ke pemain: mulai 3 u/s (`glint_fly_speed_start`), dipercepat 60 u/s^2 (`glint_fly_accel`) sampai 20 u/s (`glint_fly_speed`). Dari tepi radius butir tiba dalam sekitar 0,3 s. Butir yang sudah tertarik tetap terbang sampai terpungut, pada jarak radius pemain + 0.2 u. Nada pungut naik beruntun (AU, `GlintCollected.b`).
 - Glint bertahan di lantai sampai akhir Pulse. Posisi jatuh dijepit minimal 0.5 u di dalam batas arena.
 - **Batas butir (menjaga nilai):** bila butir di lantai (yang belum tertarik) akan melebihi `glint_floor_cap` (150), atau pool pickup penuh, nilai Glint baru ditambahkan ke butir lantai terdekat dari titik jatuhnya (seri: slot terkecil). Tidak ada nilai yang hilang dan tidak ada entitas baru. Butir bernilai 5 atau lebih boleh tampil lebih besar (AD).
 - Akhir Pulse: 50% nilai sisa dipungut otomatis (Crack 5: 25%).
@@ -298,7 +298,7 @@ Tidak ada bunga di dasar permainan. Menyimpan Glint adalah gaya main yang dibuka
 | `range_pct` | 0% | min -50%, maks +100% | Jangkauan senjata |
 | `projectiles` | 0 | maks +4 | Proyektil tambahan untuk senjata proyektil |
 | `pierce` | 0 | maks +5 | Tembus tambahan untuk proyektil |
-| `pickup_radius_pct` | 0% (dasar 1.6 u) | maks +200% | Radius pungut Glint |
+| `pickup_radius_pct` | 0% (dasar 2.25 u) | maks +200% | Radius pungut Glint |
 | `luck` | 0 | min 0 | Menggeser rarity (bagian 13) |
 | `leech` | 0% | maks 30% | Peluang tiap hit non-proc memulihkan 1 HP (maks 6 HP/s; semua batas heal per detik dihitung per sumber per detik sim) |
 | `rite_haste` | 0% | maks 50% | Mengurangi cooldown Rite |
@@ -396,7 +396,7 @@ Aturan tembak: cooldown turun sampai 0 lalu menunggu; senjata menembak di tick p
 | `orbit_shards` | Orbit Shards | Shard, Ward | Pertahanan zona | A | 5 per kontak | (kontak ulang 0.5 s per target) | radius orbit 1.8 | 2 serpih mengorbit, 1 putaran per 1.6 s |
 | `chain_spark` | Chain Spark | Echo, Flame | Banyak target | A | 8 | 1.3 | 6 | Petir lompat 3 kali (jarak lompat 2.8 u), tiap hit 20% Burn |
 | `returning_glaive` | Returning Glaive | Edge, Echo | Tembus garis | A | 9 | 1.8 | 6 | Bilah terbang 9 u/s lalu kembali, tembus semua, kena sekali saat pergi dan sekali saat pulang |
-| `echo_bell` | Echo Bell | Echo, Ward | Kontrol kerumunan, starter kelas `bell` | B | 7 | 2.2 | radius 2.6 | Cincin di sekitar pemain, knockback 1.0 u, gema setelah 0.5 s dengan 50% damage |
+| `echo_bell` | Echo Bell | Echo, Ward | Kontrol kerumunan, starter kelas `bell` | B | 8 | 2.0 | radius 2.6 | Cincin di sekitar pemain, knockback 1.0 u, gema setelah 0.5 s dengan 50% damage |
 | `tithe_coin` | Tithe Coin | Trade, Shard | Ekonomi plus damage | B | 7 | 0.9 | 6 | Koin 12 u/s. Kill oleh koin menjatuhkan +1 Glint (batas per Pulse 5 + 5 x tier) |
 
 Jumlah senjata per tag: Flame 2, Shard 3, Edge 2, Echo 3, Ward 2, Trade 1.
@@ -501,7 +501,7 @@ Rite terasa sebagai tombol penyelamat (Toll, Step) atau alat ofensif terencana (
 
 Tingkat A memakai Flame, Shard, Edge. Tingkat B dan C memakai keenamnya.
 
-Distribusi tag di pool penuh (senjata + Memento, id berbeda): Flame 9, Shard 9, Edge 9, Echo 10, Ward 9, Trade 7. Setiap tag punya minimal 7 item, jadi ambang 6 bisa dicapai tetapi butuh komitmen. Di Tingkat A tiap tag punya 6 sampai 7 item, jadi ambang 6 adalah puncak langka.
+Distribusi tag di pool penuh (senjata + Memento, id berbeda): Flame 9, Shard 9, Edge 8, Echo 11, Ward 9, Trade 7. Tingkat B (rilis 1.0, semua unlock, 32 item): Flame 7, Shard 8, Edge 8, Echo 8, Ward 7, Trade 6, dan setiap tag punya minimal satu Memento Plain agar muncul di toko awal (GD M4-04, P1-c). Setiap tag punya minimal 7 item di pool penuh, jadi ambang 6 bisa dicapai tetapi butuh komitmen. Di Tingkat A tiap tag punya 6 sampai 7 item, jadi ambang 6 adalah puncak langka.
 
 ---
 
@@ -524,11 +524,11 @@ Aturan:
 | 6 | `glass_marble` | Glass Marble | Shard | Plain | 2 | A | Proyektil pierce +1 | passive: stat_mod pierce +1 | Ya |
 | 7 | `prism_lens` | Prism Lens | Shard | Rare | 1 | A | Tiap proyektil ke-5 pecah jadi 3 saat kena (40%) | on_hit, source_kind projectile, every_nth 5: spawn_projectile split 3 | |
 | 8 | `shard_pouch` | Shard Pouch | Shard | Fabled | 1 | A | Senjata proyektil +1 proyektil | passive: stat_mod projectiles +1 | Ya |
-| 9 | `splinter_comb` | Splinter Comb | Shard, Edge | Fine | 1 | A | Kritikal menembak serpih ke Unlit lain (50%) | on_crit: spawn_projectile seek_other | |
+| 9 | `splinter_comb` | Splinter Comb | Shard, Echo | Fine | 1 | A | Kritikal menembak serpih ke Unlit lain (50%) | on_crit: spawn_projectile seek_other | |
 | 10 | `whetstone` | Whetstone | Edge | Plain | 3 | A | Crit +5% | passive: stat_mod crit_chance +5 | Ya |
 | 11 | `duelist_ribbon` | Duelist Ribbon | Edge | Fine | 1 | A | Hit ke Unlit ber-HP penuh +50% damage | on_hit, target_hp_full: hit_mod bonus +0.5 | |
 | 12 | `headsman_hook` | Headsman Hook | Edge | Rare | 1 | A | Hit membunuh Unlit biasa di bawah 12% HP | on_hit, target_is normal, target_hp_below 0.12: execute | |
-| 13 | `tuning_fork` | Tuning Fork | Echo | Fine | 1 | B | Serangan area memberi Slow 30% 1.5 s | on_hit, source_kind area: apply_status slow | |
+| 13 | `tuning_fork` | Tuning Fork | Echo | Plain | 1 | B | Serangan area memberi Slow 30% 1.5 s | on_hit, source_kind area: apply_status slow | |
 | 14 | `rite_chime` | Rite Chime | Echo, Ward | Fine | 1 | B | Rite memberi 1 Barrier dan +25% attack speed 4 s | on_rite: gain_barrier 1, buff attack_speed_pct | |
 | 15 | `iron_thimble` | Iron Thimble | Ward | Plain | 5 | B | Armor +3 | passive: stat_mod armor +3 | Ya |
 | 16 | `glass_aegis` | Glass Aegis | Ward | Rare | 1 | B | 1 Barrier di awal Pulse. Barrier pecah melepas gelombang 3 u (10 dmg proc) | on_pulse_start: gain_barrier 1; on_block: spawn_area | |
@@ -541,10 +541,10 @@ Aturan:
 | 23 | `pyre_bell` | Pyre Bell | Flame, Echo | Rare | 1 | C | Tick Burn 10% peluang melompat ke Unlit terdekat (2.5 u) | status_rule burn spread_chance 0.1 | |
 | 24 | `wick_charm` | Wick Charm | Flame, Ward | Fine | 1 | C | Saat terluka, cincin api 3 u (10 dmg proc, Burn), jeda 3 s | on_hurt, icd 3: spawn_area burn | |
 | 25 | `cracked_mirror` | Cracked Mirror | Shard, Ward | Rare | 1 | C | Saat dodge atau Barrier menyerap, tembak 8 serpih melingkar (6 dmg proc) | on_dodge dan on_block: spawn_projectile ring 8 | |
-| 26 | `music_box` | Music Box | Echo | Rare | 1 | C | Kill 10% peluang mengulang hit pembunuh ke Unlit terdekat (4 u) | on_kill, chance 0.1: repeat hit | |
+| 26 | `music_box` | Music Box | Echo | Rare | 1 | B | Kill 10% peluang mengulang hit pembunuh ke Unlit terdekat (4 u) | on_kill, chance 0.1: repeat hit | |
 | 27 | `folded_letter` | Folded Letter | Echo | Plain | 3 | C | Cooldown Rite -10% | passive: stat_mod rite_haste +10 | Ya |
 | 28 | `echo_shell` | Echo Shell | Echo | Fabled | 1 | C | Rite punya 2 muatan | passive: stat_mod rite_charges +1 | |
-| 29 | `patched_cloak` | Patched Cloak | Ward | Fine | 1 | C | Setelah 4 s tanpa terluka, pulih 2 HP/s | passive, time_since_hurt 4: stat_mod hp_regen +2 | |
+| 29 | `patched_cloak` | Patched Cloak | Ward | Fine | 1 | B | Setelah 4 s tanpa terluka, pulih 2 HP/s | passive, time_since_hurt 4: stat_mod hp_regen +2 | |
 | 30 | `ledger_page` | Ledger Page | Trade | Rare | 1 | C | Menyelesaikan Pulse tanpa terluka memberi 10 + 3 x t Glint | on_pulse_end, unhurt_this_pulse: gain_glint | |
 
 Ringkasan:
@@ -681,7 +681,7 @@ Angka HP dan damage pada threat 1 (dikali `hp(t)` dan `dm(t)`).
 | `tank` | Tank | A | 60 | 1.2 | 7 | | 5 | 2 | 0.8 | Mengejar pelan, menjadi tembok yang memecah jalur. Tanpa serangan khusus |
 | `exploder` | Peledak | B | 8 | 3.0 | 0 | Ledakan 10 | 1 | 0 | 0 | Dalam 1.6 u: sumbu 0.8 s (kedip makin cepat, lingkaran merah tumbuh ke 1.8 u, gerak 50%). Meledak lalu mati. Ledakan juga melukai Unlit lain 20 dmg. Bila dibunuh sebelum sumbu habis: tidak meledak |
 | `summoner` | Pemanggil | B | 26 | 1.4 | 2 | | 3 | 0 | 0.3 | Menjaga jarak 6 sampai 8 u. Tiap 5 s: 3 lingkaran ungu kecil 0.8 s di sekitarnya, lalu 3 mote muncul. Maks 6 mote hidup per summoner |
-| `mote` | Panggilan | B | 3 | 3.3 | 2 | | 0 | 0 | 0 | Hanya dari summoner, affix `brood`, dan boss. Mengejar cepat |
+| `mote` | Panggilan | B | 3 | 3.3 | 2 | | 0 | 0 | 0 | Hanya dari summoner, affix `brood` (C), dan boss. Mengejar cepat |
 | `lobber` | Artileri zona | C | 14 | 1.3 | 2 | Lemparan 7 | 3 | 0 | 0.2 | Menjaga jarak 6 sampai 9 u. Tiap 3.5 s: lingkaran 1.6 u di posisi pemain terisi selama 1.0 s, lalu mendarat |
 
 Tingkat A: swarmer, charger, shooter, tank (satu untuk tiap sumbu: massa, ledakan arah, jarak jauh, ketahanan). M2-01: Lampmoth 2.6 ke 3.4 u/s (75% kecepatan pemain) agar kerumunan bisa memotong jalur kabur, kontak 3 ke 4; Hawker adalah sumber damage utama di Pulse biasa dan kini menembak tiap 2.2 s. Tingkat B: +exploder, summoner (6 jenis tempur + mote). Tingkat C: +lobber.
@@ -734,7 +734,7 @@ Hadiah Warden: 25 Glint sebagai 5 butir di lantai (bagian 4.1), lalu layar `rewa
 | `volley` | Setelah tiap rangkaian serangan, cincin 8 proyektil (dmg 4) | Cincin ungu menyala 0.6 s | A |
 | `veiled` | Cangkang menyerap damage sebesar 20% HP maks, tumbuh ulang setelah 6 s tanpa terkena damage | Cangkang ungu terlihat | B |
 | `blinking` | Tiap 6 s berpindah ke dekat pemain (tidak di atas pemain, minimal 3 u) | Lingkaran ungu di tujuan 0.8 s | B |
-| `brood` | Tiap 7 s memanggil 3 mote | Lingkaran ungu 0.8 s | B |
+| `brood` | Tiap 7 s memanggil 3 mote | Lingkaran ungu 0.8 s | C (M4-03, BUG-012: hanya Warden C dan Crack 2 ke atas memakainya) |
 | `tar_trail` | Meninggalkan genangan gelap 1 u selama 3 s yang memberi Slow 35% pada pemain | Zona terlihat sejak muncul | C |
 | `pulsing` | Tiap 5 s gelombang kejut 3 u (dmg 8) | Cincin merah tumbuh 0.8 s | C |
 | `bulwark` | Guard +4, kebal knockback | Tidak perlu | C |
@@ -814,9 +814,9 @@ Terbuka dari awal (B dan C): kelas `lantern`, 7 senjata (6 senjata A + `echo_bel
 | Kelas `bell` | 60 | B |
 | Senjata `tithe_coin` | 20 | B |
 | Paket Memento 1: `dust_hourglass`, `lucky_button`, `haggler_seal` | 20 | B |
-| Paket Memento 2: `grinding_wheel`, `pyre_bell`, `wick_charm` | 25 | B (B hanya berisi `grinding_wheel`, biaya 10) |
-| Paket Memento 3: `cracked_mirror`, `music_box`, `folded_letter` | 30 | C |
-| Paket Memento 4: `echo_shell`, `patched_cloak`, `ledger_page` | 40 | C |
+| Paket Memento 2: `grinding_wheel`, `music_box`, `patched_cloak` | 25 | B (GD M4-04: isi lengkap di B, biaya penuh) |
+| Paket Memento 3: `cracked_mirror`, `pyre_bell`, `folded_letter` | 30 | C |
+| Paket Memento 4: `echo_shell`, `wick_charm`, `ledger_page` | 40 | C |
 | Crack 1 sampai 5 | Tidak dibeli: Crack n terbuka setelah menang di Crack n minus 1 | C |
 
 Total C: 235 Silt, sekitar 6 sampai 10 run. Blade dibuka lebih murah dari Bell karena gaya dash paling mudah dipahami setelah Lamplighter.

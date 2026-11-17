@@ -3458,7 +3458,7 @@
    }
   }
  ],
- "contentHash": "2008c1b6",
+ "contentHash": "977ff134",
  "contentTier": "B",
  "format": "shardfall-game-data",
  "missingTables": [],
@@ -6406,18 +6406,6 @@
     },
     "random_pool": true,
     "telegraph_s": 0.8
-   },
-   {
-    "content_tier": "B",
-    "desc_key": "affix.brood",
-    "id": "brood",
-    "params": {
-     "count": 3,
-     "interval": 7,
-     "summon_id": "mote"
-    },
-    "random_pool": true,
-    "telegraph_s": 0.8
    }
   ],
   "biomes": [
@@ -6632,7 +6620,7 @@
    "low_hp_frac": 0.3,
    "music_pressure_frac": 0.6,
    "music_pressure_release_frac": 0.5,
-   "pickup_radius_base": 2,
+   "pickup_radius_base": 2.25,
    "player_base_speed": 4.5,
    "player_radius": 0.35,
    "player_shot_radius": 0.15,
@@ -6657,6 +6645,8 @@
    "telegraph_min_charge_s": 0.6,
    "telegraph_min_projectile_s": 0.4,
    "victory_delay_s": 1.5,
+   "warden_overtime_decay_len_s": 15,
+   "warden_overtime_decay_s": 60,
    "warden_overtime_haste_s": 20,
    "warden_spawn_frac": 0.25,
    "weapon_slots": 6,
@@ -7309,6 +7299,49 @@
     },
     "stack_mode": "none",
     "trigger": "on_hit"
+   },
+   {
+    "action": "repeat",
+    "allow_proc": null,
+    "chance": 0.1,
+    "conditions": [],
+    "content_tier": "B",
+    "icd": 0,
+    "id": "music_box_1",
+    "max_per_pulse": 0,
+    "owner": "music_box",
+    "params": {
+     "delay": 0,
+     "power": 1,
+     "range": 4,
+     "target": "nearest_other",
+     "what": "hit"
+    },
+    "stack_mode": "none",
+    "trigger": "on_kill"
+   },
+   {
+    "action": "stat_mod",
+    "allow_proc": null,
+    "chance": 1,
+    "conditions": [
+     {
+      "name": "time_since_hurt",
+      "value": "4"
+     }
+    ],
+    "content_tier": "B",
+    "icd": 0,
+    "id": "patched_cloak_1",
+    "max_per_pulse": 0,
+    "owner": "patched_cloak",
+    "params": {
+     "op": "add",
+     "stat": "hp_regen",
+     "value": 2
+    },
+    "stack_mode": "none",
+    "trigger": "passive"
    },
    {
     "action": "apply_status",
@@ -8367,7 +8400,7 @@
     "sort": 9,
     "tags": [
      "shard",
-     "edge"
+     "echo"
     ],
     "unlock": "default"
    },
@@ -8428,7 +8461,7 @@
     "max_stack": 1,
     "name_key": "memento.tuning_fork.name",
     "price_override": null,
-    "rarity": "fine",
+    "rarity": "plain",
     "sort": 13,
     "tags": [
      "echo"
@@ -8583,6 +8616,38 @@
      "echo"
     ],
     "unlock": "pack_memento_2"
+   },
+   {
+    "content_tier": "B",
+    "desc_key": "memento.music_box.desc",
+    "flavor_key": "memento.music_box.flavor",
+    "id": "music_box",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.music_box.name",
+    "price_override": null,
+    "rarity": "rare",
+    "sort": 26,
+    "tags": [
+     "echo"
+    ],
+    "unlock": "pack_memento_2"
+   },
+   {
+    "content_tier": "B",
+    "desc_key": "memento.patched_cloak.desc",
+    "flavor_key": "memento.patched_cloak.flavor",
+    "id": "patched_cloak",
+    "is_flat": false,
+    "max_stack": 1,
+    "name_key": "memento.patched_cloak.name",
+    "price_override": null,
+    "rarity": "fine",
+    "sort": 29,
+    "tags": [
+     "ward"
+    ],
+    "unlock": "pack_memento_2"
    }
   ],
   "meta_unlocks": [
@@ -8631,13 +8696,13 @@
    {
     "content_tier": "B",
     "cost_silt": 25,
-    "cost_silt_b": 10,
+    "cost_silt_b": null,
     "id": "pack_memento_2",
     "kind": "memento_pack",
     "targets": [
      "grinding_wheel",
-     "pyre_bell",
-     "wick_charm"
+     "music_box",
+     "patched_cloak"
     ]
    }
   ],
@@ -9471,10 +9536,10 @@
    {
     "archetype": "ring_echo",
     "content_tier": "B",
-    "cooldown": 2.2,
+    "cooldown": 2,
     "count": 1,
     "desc_key": "weapon.echo_bell.desc",
-    "dmg": 7,
+    "dmg": 8,
     "dmg2": null,
     "id": "echo_bell",
     "kind": "area",

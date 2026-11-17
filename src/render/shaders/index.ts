@@ -10,4 +10,4 @@ export {
   SpriteLight,
   spriteVertex,
 } from './sprite.ts';
-export { AREA_FRAGMENT, AREA_INSTANCE_ATTRIBUTES, AREA_VERTEX } from './area.ts';
+export { AREA_FRAGMENT, AREA_INSTANCE_ATTRIBUTES, AREA_MERGE_MAX, AREA_VERTEX } from './area.ts';

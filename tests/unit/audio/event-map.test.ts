@@ -100,6 +100,32 @@ describe('coverage of the build data', () => {
     }
   });
 
+  it('gives Great Toll and Glass Step their own cue from RiteLanded, not the lantern throw (CD M3 polish 12)', () => {
+    const cues = realCues();
+    const map = createEventMap(data, cues, routes, STINGER_IDS);
+    const out = createTriggerList(cues.cues.length);
+    const play = (type: number, riteId: string): string[] => {
+      out.reset();
+      map.map(events([{ type, a: data.index.rite(riteId), x: 2, b: 4.5, c: 3 }]), out, 10, LADDER);
+      const ids: string[] = [];
+      for (let i = 0; i < out.count; i++) ids.push(cues.cues[out.cue[i] ?? -1]?.id ?? '?');
+      return ids;
+    };
+    const toll = play(SimEventType.RiteLanded, 'great_toll');
+    const step = play(SimEventType.RiteLanded, 'glass_step');
+    const flare = play(SimEventType.RiteLanded, 'flare_lantern');
+    expect(toll).toEqual(['sfx.rite.impact.bell']);
+    expect(step).toEqual(['sfx.rite.impact.blade']);
+    expect(flare).toEqual(['sfx.rite.impact.lantern']);
+    // Ring and dash resolve on the cast tick: the landing is their only sound, no throw whoosh.
+    expect(play(SimEventType.RiteCast, 'great_toll')).toEqual([]);
+    expect(play(SimEventType.RiteCast, 'glass_step')).toEqual([]);
+    expect(play(SimEventType.RiteCast, 'flare_lantern')).toEqual(['sfx.rite.cast.lantern']);
+    const rites = describeCoverage(data, routes).filter((r) => r.table === 'rites');
+    expect(rites.find((r) => r.id === 'great_toll')).toMatchObject({ cue: 'sfx.rite.impact.bell', via: 'id' });
+    expect(rites.find((r) => r.id === 'glass_step')).toMatchObject({ cue: 'sfx.rite.impact.blade', via: 'id' });
+  });
+
   it('lists only live cues for boot warmup', () => {
     const cues = realCues();
     for (const w of liveWarmupPairs(data, routes)) {

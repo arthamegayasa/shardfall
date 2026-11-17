@@ -522,12 +522,16 @@ export function createSimInternals(config: SimConfig): SimInternals {
     const ph = world.phase;
     if (ph === 'pulse') pulseTick(input);
     else if (ph === 'pulseClear') updateClear(ctx, sc);
-    if (ctx.run.started && world.phase !== 'victory' && world.phase !== 'defeat')
+    // BUG-013: choice phases (Temper, the Glazier, Warden reward) have no clock. The step still
+    // runs (commands, replays count steps) but the run clock stands still, so idling there can
+    // neither charge tick-based effect cooldowns and "not hurt for N s" conditions nor grow run time.
+    const frozen = ph === 'levelUp' || ph === 'shop' || ph === 'reward';
+    if (!frozen && ctx.run.started && world.phase !== 'victory' && world.phase !== 'defeat')
       world.runStats.runTicks++;
     ensureStats(ctx, sc);
     syncFoes();
     updateSignals(ctx);
-    world.tick++;
+    if (!frozen) world.tick++;
   };
 
   const sim: Sim = {

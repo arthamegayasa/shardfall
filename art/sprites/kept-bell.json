@@ -11,7 +11,7 @@
   "outline": "ink",
   "mirror": true,
   "status": "concept",
-  "note": "Class bell (Chorister). Silhouette: pointed hood. Accent blue with cyan trim. M2: idle 2 and walk 4 (Tier B, simple).",
+  "note": "Class bell (Chorister). Silhouette: pointed hood. Accent blue with cyan trim. M2: idle 2 and walk 4 (Tier B, simple). M4: cast 2 (bell raised overhead, then rung with cyan glints) and hit 2 (eyes shut, recoil squash).",
   "animations": {
     "idle": {
       "ticksPerFrame": 16,
@@ -142,6 +142,102 @@
           "..bBcc",
           "..bccw",
           "...hh.",
+          "...hh.",
+          "...hh."
+        ]
+      ]
+    },
+    "cast": {
+      "ticksPerFrame": 9,
+      "loop": false,
+      "frames": [
+        [
+          "....gg",
+          "...gww",
+          "..e..b",
+          "..ebbB",
+          "...bBB",
+          "..bBBc",
+          "..bcee",
+          "..beke",
+          "..bwee",
+          "..bcgg",
+          ".bBBBc",
+          "bcBBBc",
+          "bcbgBc",
+          ".cbBBc",
+          ".bBBBc",
+          ".bBBcc",
+          "..bBcc",
+          "..bccw",
+          "...hh.",
+          "...hh."
+        ],
+        [
+          ".c..gg",
+          "c..gww",
+          ".ce..b",
+          "..ebbB",
+          "...bBB",
+          "..bBBc",
+          "..bcee",
+          "..beke",
+          "..bwee",
+          "..bcgg",
+          ".bBBBc",
+          "bcBBBc",
+          "bcbgBc",
+          ".cbBBc",
+          ".bBBBc",
+          ".bBBcc",
+          "..bBcc",
+          "..bccw",
+          "...hh.",
+          "...hh."
+        ]
+      ]
+    },
+    "hit": {
+      "ticksPerFrame": 4,
+      "loop": false,
+      "frames": [
+        [
+          "......",
+          ".....b",
+          "....bB",
+          "...bBB",
+          "..bBBc",
+          "..bcee",
+          "..bkke",
+          "..bwee",
+          "..bcgg",
+          ".bBBBc",
+          "bcBBBc",
+          "ecbgBc",
+          "ecbBBc",
+          ".bBBBc",
+          ".bBBcc",
+          "..bBcc",
+          "...hh.",
+          "...hh."
+        ],
+        [
+          ".....b",
+          "....bB",
+          "...bBB",
+          "..bBBc",
+          "..bcee",
+          "..bkke",
+          "..bwee",
+          "..bcgg",
+          ".bBBBc",
+          "bcBBBc",
+          "ecbgBc",
+          "ecbBBc",
+          ".bBBBc",
+          ".bBBcc",
+          "..bBcc",
+          "..bccw",
           "...hh.",
           "...hh."
         ]

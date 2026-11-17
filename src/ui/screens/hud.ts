@@ -11,14 +11,19 @@ import { enemyNameKey } from '../presenters/content.ts';
 import { createHudModel, fillHudModel, pendingBossType, TimerMode } from '../presenters/hud.ts';
 import {
   BannerKind,
+  bannerClear,
   bannerEvent,
   bannerHeld,
   bannerShown,
   createBanner,
+  createTransientClock,
   createHint,
   hintStart,
   hintStep,
+  HIT_FLASH_TICKS,
+  LEVEL_FLASH_TICKS,
   moveKeysText,
+  runRestarted,
   RITE_DENIED_TICKS,
 } from '../presenters/hud-transient.ts';
 import { glintIcon, iconBox } from './components.ts';
@@ -38,6 +43,7 @@ export function createHudScreen(ctx: UiContext): Screen {
   const model = createHudModel();
   const banner = createBanner();
   const hint = createHint();
+  const clock = createTransientClock();
   let lowHp = false;
 
   // Top left: HP and level.
@@ -123,6 +129,10 @@ export function createHudScreen(ctx: UiContext): Screen {
   let pHint = false;
   let deniedUntil = 0;
   let pDenied = false;
+  let levelUntil = 0;
+  let pLevelFlash = false;
+  let hitUntil = 0;
+  let pHit = false;
   let bossHintPulse = -1;
   let bossHint = -1;
 
@@ -158,7 +168,7 @@ export function createHudScreen(ctx: UiContext): Screen {
     pHp = pMax = pHpFrac = pLevel = pXp = pPulse = pSecs = pFoeType = pFoeFrac = pGlint = NaN;
     pRiteSecs = pRiteFrac = pRiteCharges = pRiteIndex = NaN;
     pMode = -1;
-    pLow = pFinal = pEnraged = pRiteReady = pPending = pDenied = false;
+    pLow = pFinal = pEnraged = pRiteReady = pPending = pDenied = pLevelFlash = pHit = false;
     el.classList.remove(
       'is-low',
       'is-final',
@@ -167,6 +177,8 @@ export function createHudScreen(ctx: UiContext): Screen {
       'is-enraged',
       'is-pending',
       'has-hint',
+      'is-level-up',
+      'is-hit',
     );
     rite.classList.remove('is-ready', 'is-denied');
     riteKey.textContent = ctx.keyHint('rite');
@@ -200,6 +212,13 @@ export function createHudScreen(ctx: UiContext): Screen {
     },
     update(view: WorldView, events: SimEventReader) {
       const tick = view.tick;
+      if (runRestarted(clock, tick)) {
+        // New run (BUG-008): nothing timed by the old run's clock may carry over.
+        bannerClear(banner);
+        hint.active = false;
+        deniedUntil = levelUntil = hitUntil = 0;
+        lowHp = false;
+      }
       const pulseNumber = view.pulse.index + 1;
       let riteCast = false;
       for (let i = 0; i < events.count; i++) {
@@ -213,6 +232,8 @@ export function createHudScreen(ctx: UiContext): Screen {
             hintStart(hint, tick, view.player.x, view.player.y);
         } else if (type === SimEventType.RiteCast) riteCast = true;
         else if (type === SimEventType.RiteRejected) deniedUntil = tick + RITE_DENIED_TICKS;
+        else if (type === SimEventType.PlayerLeveledUp) levelUntil = tick + LEVEL_FLASH_TICKS;
+        else if (type === SimEventType.PlayerDamaged) hitUntil = tick + HIT_FLASH_TICKS;
         bannerEvent(banner, type, a, tick, pulseNumber);
       }
       if (view.pulse.index !== bossHintPulse) {
@@ -311,6 +332,16 @@ export function createHudScreen(ctx: UiContext): Screen {
       if (denied !== pDenied) {
         pDenied = denied;
         rite.classList.toggle('is-denied', denied);
+      }
+      const levelFlash = tick < levelUntil;
+      if (levelFlash !== pLevelFlash) {
+        pLevelFlash = levelFlash;
+        el.classList.toggle('is-level-up', levelFlash);
+      }
+      const hit = tick < hitUntil;
+      if (hit !== pHit) {
+        pHit = hit;
+        el.classList.toggle('is-hit', hit);
       }
       const shown = bannerShown(banner, tick);
       if (shown !== pBanner) showBanner(shown);

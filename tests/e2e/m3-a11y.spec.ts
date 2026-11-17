@@ -710,7 +710,8 @@ test('A-12: Temper, Glazier, Pause, Settings have no timer (60 s each)', async (
     const b = await snap(page);
     log.push(`${what}: screen ${a.screen} -> ${b.screen}, tick ${a.tick} -> ${b.tick}`);
     expect(b.screen).toBe(a.screen);
-    expect.soft(b.tick, `${what}: sim tick while idle`).toBe(a.tick);
+    // BUG-013 fixed (M4-03): choice phases freeze the sim clock, so the tick is a hard check again.
+    expect(b.tick, `${what}: sim tick while idle`).toBe(a.tick);
   };
   await page.evaluate(() => {
     const h = window.__shardfall;

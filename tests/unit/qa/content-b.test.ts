@@ -339,6 +339,14 @@ describe('QA M3: content tier B on real data', () => {
     const patterns = new Set(
       data.bossPhases.filter((p) => bosses.has(p.bossId)).flatMap((p) => p.cycle),
     );
+    // Boss patterns late in a phase cycle only show when that phase lasts long enough. The coverage
+    // builds (HP full, all unlocks) can kill the boss before them, so extra seeds run until every
+    // pattern appeared (same approach as the Crack random pool test below; GD M4-03).
+    for (let seed = 14; seed <= 25 && [...patterns].some((p) => !seen.patterns.has(p)); seed++) {
+      const classId = CLASSES[seed % CLASSES.length] ?? '';
+      const r = coverageRun(classId, seed, ALL_UNLOCKS, seen);
+      rows.push(`${classId.padEnd(8)} seed ${seed} ${r.phase} (extra seed for boss patterns)`);
+    }
     console.log(
       [
         `[QA M3-02 coverage] ${PROFILE}, contentHash ${data.meta.contentHash}`,

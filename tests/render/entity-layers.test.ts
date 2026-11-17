@@ -6,7 +6,13 @@
 import { DataTexture } from 'three';
 import type { InstancedBufferAttribute, InstancedBufferGeometry, Mesh } from 'three';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { DAMAGE_RANK_SHIFT, SimEventType } from '../../src/core/index.ts';
+import {
+  DAMAGE_HIT_KIND_SHIFT,
+  DAMAGE_RANK_SHIFT,
+  EnemyRank,
+  HitKind,
+  SimEventType,
+} from '../../src/core/index.ts';
 import type { Settings } from '../../src/core/index.ts';
 import type { RenderFrame } from '../../src/core/dom.ts';
 import { SpriteLight } from '../../src/render/shaders/index.ts';
@@ -16,6 +22,11 @@ import {
   PLAYER_HIT_FLASH_ALPHA,
 } from '../../src/render/sprites/entity-layers.ts';
 import type { EntityLayers } from '../../src/render/sprites/entity-layers.ts';
+import {
+  BIG_FOE_HIT_FLASH_ALPHA,
+  UNLIT_HIT_FLASH_ALPHA,
+} from '../../src/render/sprites/actor-flash.ts';
+import { DASH_AFTERIMAGES } from '../../src/render/vfx/effects.ts';
 import { linearRgb } from '../../src/render/vfx/telegraph-style.ts';
 import { createPreviewScene, eventsOf, playerOf, PREVIEW_DATA } from './fake-scene.ts';
 import type { PreviewScene } from './fake-scene.ts';
@@ -126,31 +137,66 @@ describe('entity layers', () => {
     expect(f[3]).toBeGreaterThan(0);
   });
 
-  it('flashes hit Unlit with bone and leaves others unflashed', () => {
-    layers.update(frame(scene, 1));
+  it('flashes impact-hit Unlit with a partial bone tint; zone and Burn ticks never flash', () => {
+    const kind = (k: number, rank: number = EnemyRank.Normal): number =>
+      (k << DAMAGE_HIT_KIND_SHIFT) | (rank << DAMAGE_RANK_SHIFT);
+    const en = scene.world.enemies as unknown as { hitFlashTicks: Int32Array };
+    // Slot 2 (swarmer at -7.5, -2.4) hit by a projectile; slot 10 (tank at -4, 6.5) by a zone tick;
+    // slot 11 (Warden at 6, 4.5) by a melee hit; slot 0 by a Burn tick only.
+    en.hitFlashTicks[11] = 2;
+    en.hitFlashTicks[0] = 2;
+    layers.update(
+      frame(
+        scene,
+        1,
+        eventsOf([
+          [SimEventType.EnemyDamaged, -7.5, -2.4, 5, kind(HitKind.Projectile)],
+          [SimEventType.EnemyDamaged, -4, 6.5, 2, kind(HitKind.Zone)],
+          [SimEventType.EnemyDamaged, 6, 4.5, 9, kind(HitKind.Melee, EnemyRank.Warden)],
+          [SimEventType.EnemyDamaged, -9, -3, 1, kind(HitKind.Dot)],
+        ]),
+      ),
+    );
     const flash = attr(actors, 'iFlash');
-    // Instance 0 is the player; enemy slot i is instance i + 1. Slot 2 has hitFlashTicks.
-    expect(flash[(2 + 1) * 4 + 3]).toBe(1);
+    // Instance 0 is the player; enemy slot i is instance i + 1.
+    const bone = linearRgb(art.palette, 'bone');
+    expect(flash[(2 + 1) * 4]).toBeCloseTo(bone[0], 4);
+    expect(flash[(2 + 1) * 4 + 3]).toBe(UNLIT_HIT_FLASH_ALPHA);
+    expect(flash[(10 + 1) * 4 + 3]).toBe(0);
+    expect(flash[(11 + 1) * 4 + 3]).toBeCloseTo(BIG_FOE_HIT_FLASH_ALPHA, 6);
     expect(flash[(0 + 1) * 4 + 3]).toBe(0);
     expect(flash[0 * 4 + 3]).toBe(0);
+    expect(UNLIT_HIT_FLASH_ALPHA).toBeLessThanOrEqual(0.5);
+    expect(BIG_FOE_HIT_FLASH_ALPHA).toBeLessThanOrEqual(0.35);
+    // The flash holds while the sim flash runs, then ends.
+    layers.update(frame(scene, 1 + 1 / 60));
+    expect(attr(actors, 'iFlash')[(2 + 1) * 4 + 3]).toBe(UNLIT_HIT_FLASH_ALPHA);
+    en.hitFlashTicks[2] = 0;
+    layers.update(frame(scene, 1 + 2 / 60));
+    expect(attr(actors, 'iFlash')[(2 + 1) * 4 + 3]).toBe(0);
   });
 
-  it('shows the windup pose with a danger-red pulse while an Unlit winds up', () => {
+  it('shows the windup pose with a bright magenta outline and keeps the dark body (BUG-007)', () => {
     // Slot 6 is the charger with aiState Windup.
     expect(scene.world.enemies.aiState[6]).toBe(AiAnim.Windup);
     const windup = anim('unlit-charger', 'windup').map((f) => f.x);
-    const red = linearRgb(art.palette, 'danger-red');
-    let pulsed = false;
+    const magenta = linearRgb(art.palette, 'danger-magenta');
+    const reds: number[] = [];
     for (let t = 0; t < 0.2; t += 1 / 60) {
       layers.update(frame(scene, t));
       expect(windup).toContain(attr(actors, 'iRect')[7 * 4]);
-      const f = attr(actors, 'iFlash');
-      if ((f[7 * 4 + 3] ?? 0) > 0) {
-        pulsed = true;
-        expect(f[7 * 4]).toBeCloseTo(red[0], 4);
-      }
+      // No body tint: the dark unlit-body value stays (three value layers).
+      expect(attr(actors, 'iFlash')[7 * 4 + 3]).toBe(0);
+      const o = attr(actors, 'iOutline');
+      expect(o[7 * 4 + 3]).toBe(1);
+      reds.push(Number((o[7 * 4 + 1] ?? 0).toFixed(4)));
     }
-    expect(pulsed).toBe(true);
+    // Pulses between magenta and magenta mixed toward the pale core.
+    expect(reds).toContain(Number(magenta[1].toFixed(4)));
+    expect(new Set(reds).size).toBe(2);
+    // Units not winding up keep their ink outline.
+    expect(attr(actors, 'iOutline')[(0 + 1) * 4 + 3]).toBe(0);
+    expect(attr(actors, 'iOutline')[3]).toBe(0);
   });
 
   it('rises young Unlit out of the floor with a reverse dissolve', () => {
@@ -182,7 +228,7 @@ describe('entity layers', () => {
           out.push({ dissolve: params[i * 4 + 2] ?? 0, flash: flash[i * 4 + 3] ?? 0 });
       return out;
     };
-    expect(ghostOf()).toEqual([{ dissolve: 0, flash: 1 }]);
+    expect(ghostOf()).toEqual([{ dissolve: 0, flash: UNLIT_HIT_FLASH_ALPHA }]);
     layers.update(frame(scene, 1.25));
     const later = ghostOf();
     expect(later).toHaveLength(1);
@@ -205,6 +251,119 @@ describe('entity layers', () => {
     expect(mode[4 + 2]).toBe(0); // never dashed
     expect(edge[3]).toBe(0); // trail: no edge
     expect(attr(zones, 'aFill')[4 + 3]).toBeLessThanOrEqual(0.25);
+    // Zones are merged: instance index in aMode.w for the merge test in the area shader.
+    expect(mode[3]).toBe(0);
+    expect(mode[4 + 3]).toBe(1);
+  });
+
+  it('caps damage numbers near the player at 4, dropping the oldest normal ones', () => {
+    // Player feet at (0, 1). Twelve hits within 2 u, two of them crits.
+    const near = eventsOf(
+      Array.from({ length: 12 }, (_, i) => {
+        const crit = i === 1 || i === 2 ? 1 : 0;
+        return [SimEventType.EnemyDamaged, -1 + i * 0.15, 1.5, 7, crit] as const;
+      }),
+    );
+    layers.update(frame(scene, 1, near));
+    const crit = new Set(anim('fx-digits', 'crit').map((f) => f.x));
+    const normal7 = anim('fx-digits', 'normal')[7]?.x;
+    const rects = attr(effects, 'iRect');
+    let normals = 0;
+    let crits = 0;
+    for (let i = 0; i < count(effects); i++) {
+      const rx = rects[i * 4] ?? -1;
+      if (rx === normal7) normals++;
+      else if (crit.has(rx)) crits++;
+    }
+    expect(crits).toBe(2);
+    expect(normals).toBe(2);
+  });
+
+  it('draws each Rite archetype as what happens: lantern flight, toll ring, dash afterimages', () => {
+    const data = {
+      ...PREVIEW_DATA,
+      rites: [
+        { archetype: 'throw_zone', params: { flight_s: 0.35, zone_radius: 3 } },
+        { archetype: 'ring', params: {} },
+        { archetype: 'dash', params: {} },
+      ],
+    } as unknown as typeof PREVIEW_DATA;
+    const l = createEntityLayers(texture, art.manifest, art.palette, data);
+    l.resize({ pixelScale: 3, width: 640, height: 360, originX: 0, originY: 0 });
+    const objs = l.sceneObjects as Mesh[];
+    const fx = objs[2] as Mesh;
+    const fxEffects = objs[4] as Mesh;
+    const flare = anim(
+      'fx-flare',
+      Object.keys(art.manifest.sprites['fx-flare']?.animations ?? {})[0] ?? '',
+    );
+    const flareX = flare[0]?.x;
+    const flights = (): number => {
+      const r = attr(fxEffects, 'iRect');
+      const p = attr(fxEffects, 'iPos');
+      let n = 0;
+      // A flight carries the flare from the player (x 0) toward the aim point (x 5).
+      for (let i = 0; i < count(fxEffects); i++)
+        if (r[i * 4] === flareX && (p[i * 3] ?? 0) > 0.5) n++;
+      return n;
+    };
+    // Great Toll: RiteLanded at the player with the real radius, then RiteCast at the aim point.
+    l.update(frame(scene, 2));
+    const baseRings = count(fx);
+    l.update(
+      frame(
+        scene,
+        2.01,
+        eventsOf([
+          [SimEventType.RiteLanded, 0, 1, 1, 4.5],
+          [SimEventType.RiteCast, 5, 5, 1, 0],
+        ]),
+      ),
+    );
+    l.update(frame(scene, 2.01 + 0.25));
+    expect(flights()).toBe(0);
+    const shape = attr(fx, 'aShape');
+    const geo = attr(fx, 'aGeo');
+    let biggest = 0;
+    for (let i = 0; i < count(fx); i++)
+      if (geo[i * 4] === 0 && geo[i * 4 + 1] === 1) biggest = Math.max(biggest, shape[i * 4] ?? 0);
+    expect(count(fx)).toBeGreaterThan(baseRings);
+    expect(biggest).toBeGreaterThan(4.5 * 0.9);
+    expect(biggest).toBeLessThanOrEqual(4.5);
+    // Nothing was drawn at the aim point (5, 5).
+    for (let i = 0; i < count(fx); i++) expect(geo[i * 4]).not.toBe(5);
+
+    // Glass Step: the player was drawn at (0, 1) last frame and lands at (4, 1).
+    const cyan = linearRgb(art.palette, 'kept-cyan');
+    l.update(frame(scene, 3));
+    l.update(
+      frame(
+        scene,
+        3.01,
+        eventsOf([
+          [SimEventType.RiteLanded, 4, 1, 2, 0.6],
+          [SimEventType.RiteCast, 6, 1, 2, 0],
+        ]),
+      ),
+    );
+    l.update(frame(scene, 3.11));
+    expect(flights()).toBe(0);
+    const pos = attr(fxEffects, 'iPos');
+    const fl = attr(fxEffects, 'iFlash');
+    const after: number[] = [];
+    for (let i = 0; i < count(fxEffects); i++)
+      if (Math.abs((fl[i * 4] ?? 0) - cyan[0]) < 1e-4 && (fl[i * 4 + 3] ?? 0) > 0.5)
+        after.push(pos[i * 3] ?? 0);
+    expect(after).toHaveLength(DASH_AFTERIMAGES);
+    for (const x of after) {
+      expect(x).toBeGreaterThan(0);
+      expect(x).toBeLessThan(4);
+    }
+
+    // Festival Flare keeps its lantern flight to the aim point.
+    l.update(frame(scene, 4, eventsOf([[SimEventType.RiteCast, 5, 5, 0, 0]])));
+    l.update(frame(scene, 4.1));
+    expect(flights()).toBe(1);
   });
 
   it('draws crits with the cyan 4x6 digit set', () => {

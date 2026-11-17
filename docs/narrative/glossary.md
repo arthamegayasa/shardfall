@@ -1,8 +1,12 @@
 # Shardfall: Glosarium
 
-Pemilik: Writer (WR). Reviewer: Creative Director (CD). Status: versi 3 (2026-11-17, tugas M2-08). Versi 2: perbaikan review M0 CD dan tugas M1-08.
+Pemilik: Writer (WR). Reviewer: Creative Director (CD). Status: versi 4 (2026-11-17, tugas M4-03). Versi 3: tugas M2-08. Versi 2: perbaikan review M0 CD dan tugas M1-08.
 Dasar: `docs/vision.md` bagian 5, `docs/style-guide.md` bagian 4.3 dan 4.4, `docs/narrative/lore-premise.md`, keputusan CD di `docs/reviews/M0-cd.md` (K1, K2).
 Teks game yang dipakai build ada di `content/strings/en.json` (EN) dan `content/strings/id.json` (ID). Catatan kunci dan parameter: `docs/narrative/string-table.md`.
+
+Perubahan versi 4 (M4-03, review CD M3 bagian 4):
+- Nama Tingkat B dan C di bagian 8 dan 9 naik dari Usulan menjadi **Kerja**. Cek web tetap wajib sebelum dikunci di M5.
+- Unlit `exploder`: Cracker menjadi **Squib** (ID tetap Petasan). Affix `pulsing`: Pulsing menjadi **Quaking** (ID: Bergetar). Id data tetap.
 
 Perubahan versi 3 (M2-08):
 - Nama konten Tingkat A di bagian 6 dan 7 naik dari Usulan menjadi **Kerja** (disetujui CD, `docs/reviews/M1-cd.md` K1). Cek web tetap wajib di M3 sebelum dikunci. "Held" juga Kerja.
@@ -177,55 +181,57 @@ Skala risiko: **Rendah** = kata umum, tidak dikenal sebagai istilah khas game. *
 | Temper, Fuse, The Keeping, Crack | Istilah kerajinan kaca dan kata umum | Rendah | Inti |
 | The Moth Market, Vesper Steps, Stillfire Vineyard | Tidak dikenal sebagai lokasi game lain | Rendah | Cek ulang di M3 |
 | Lamplighter, Chorister, Vintner | Nama profesi umum | Rendah | Inti |
-| Hand Bell, Prayer Chime, Chapel Pane, Haggler's Seal | Gabungan kata umum | Rendah | Usulan, cek web M3 |
-| Cracker, Crier, Midge, Pitcher | Kata umum. "Cracker" berbeda dari istilah kesulitan "Crack" dan bermakna petasan | Rendah | Usulan, cek web M3 |
-| Velvet Cowl, Iron Yoke, Vesper Bell, Rootmother | Gabungan kata umum. "Rootmother" kata gabungan, perlu cek web | Rendah sampai sedang | Usulan, cek web M3 |
-| Great Toll, Glass Step | Gabungan kata umum | Rendah | Usulan |
+| Hand Bell, Prayer Chime, Chapel Pane, Haggler's Seal | Gabungan kata umum | Rendah | Kerja, cek web sebelum M5 |
+| Squib, Crier, Midge, Pitcher | Kata umum. Squib menggantikan Cracker (hinaan rasial dalam slang Amerika, CD M3). Squib juga istilah di Harry Potter, tetapi kata Inggris umum yang jauh lebih tua | Rendah | Kerja, cek web sebelum M5 |
+| Velvet Cowl, Iron Yoke, Vesper Bell, Rootmother | Gabungan kata umum. "Rootmother" kata gabungan, perlu cek web. "Unbowed" (Iron Yoke) dikenal dari moto keluarga di Game of Thrones; satu kata umum, bukan nama | Rendah sampai sedang | Kerja, cek web sebelum M5 |
+| Great Toll, Glass Step | Gabungan kata umum | Rendah | Kerja |
+| Quaking (affix) | Kata umum, menggantikan Pulsing agar tidak bentrok dengan istilah Pulse | Rendah | Kerja |
 
 Contoh nama di style guide 4.1 ("Ember Ring", "Ferry Token", "Unsent Letter") sengaja tidak dipakai agar contoh gaya tidak menjadi konten.
 
 Motif "keep" kini hanya muncul di Kept, The Keeping, dan Light Kept. Penggantian Keepsake dengan Memento menurunkan kepadatan kata "keep" sesuai harapan.
 
-## 9. Nama konten Tingkat B dan C (usulan Writer, M2-08)
+## 9. Nama konten Tingkat B dan C (Writer M2-08, disetujui CD M3: status Kerja)
 
-Id tetap dari GD (`docs/gdd.md`). Semua berstatus **Usulan** sampai CD menyetujui. Teks lengkap di string table.
+Id tetap dari GD (`docs/gdd.md`). CD menyetujui semua nama di `docs/reviews/M3-cd.md` bagian 4 (status **Kerja**, cek web sebelum dikunci di M5), dengan dua penggantian: Cracker menjadi Squib, affix Pulsing menjadi Quaking. Teks lengkap di string table.
 
 | Jenis | Id | Nama EN | Nama ID | Nama kerja GD | Tk | Status |
 |---|---|---|---|---|---|---|
-| Rite | `great_toll` | Great Toll | Dentang Agung | Great Toll | B | Usulan (tetap) |
-| Rite | `glass_step` | Glass Step | Langkah Kaca | Glass Step | B | Usulan (tetap) |
-| Senjata | `echo_bell` | Hand Bell | Lonceng Tangan | Echo Bell | B | Usulan |
-| Memento | `tuning_fork` | Tuning Fork | Garpu Tala | Tuning Fork | B | Usulan (tetap) |
-| Memento | `rite_chime` | Prayer Chime | Genta Doa | Rite Chime | B | Usulan |
-| Memento | `iron_thimble` | Iron Thimble | Bidal Besi | Iron Thimble | B | Usulan (tetap) |
-| Memento | `glass_aegis` | Chapel Pane | Kaca Kapel | Glass Aegis | B | Usulan |
-| Memento | `collector_pin` | Collector Pin | Peniti Kolektor | Collector Pin | B | Usulan (tetap) |
-| Memento | `dust_hourglass` | Dust Hourglass | Jam Pasir Debu | Dust Hourglass | B | Usulan (tetap) |
-| Memento | `lucky_button` | Lucky Button | Kancing Mujur | Lucky Button | B | Usulan (tetap) |
-| Memento | `magpie_tin` | Magpie Tin | Kaleng Murai | Magpie Tin | B | Usulan (tetap) |
-| Memento | `haggler_seal` | Haggler's Seal | Segel Penawar | Haggler Seal | B | Usulan |
-| Memento | `grinding_wheel` | Grinding Wheel | Roda Asah | Grinding Wheel | B | Usulan (tetap) |
-| Memento | `pyre_bell` | Pyre Bell | Lonceng Unggun | Pyre Bell | C | Usulan (tetap) |
-| Memento | `wick_charm` | Wick Charm | Jimat Sumbu | Wick Charm | C | Usulan (tetap) |
-| Memento | `cracked_mirror` | Cracked Mirror | Cermin Retak | Cracked Mirror | C | Usulan (tetap) |
-| Memento | `music_box` | Music Box | Kotak Musik | Music Box | C | Usulan (tetap) |
-| Memento | `folded_letter` | Folded Letter | Surat Terlipat | Folded Letter | C | Usulan (tetap) |
-| Memento | `echo_shell` | Echo Shell | Kerang Gema | Echo Shell | C | Usulan (tetap) |
-| Memento | `patched_cloak` | Patched Cloak | Jubah Tambalan | Patched Cloak | C | Usulan (tetap) |
-| Memento | `ledger_page` | Ledger Page | Halaman Buku Utang | Ledger Page | C | Usulan (tetap) |
-| Unlit | `exploder` | Cracker | Petasan | exploder | B | Usulan |
-| Unlit | `summoner` | Crier | Penyeru | summoner | B | Usulan |
-| Unlit | `mote` | Midge | Agas | mote | B | Usulan |
-| Unlit | `lobber` | Pitcher | Kendi | lobber | C | Usulan |
-| Warden | `warden_choir` | Velvet Cowl, the Hymn-Thief | Tudung Beludru, Si Pencuri Kidung | warden_choir | B | Usulan |
-| Warden | `warden_bulwark` | Iron Yoke, the Unbowed | Kuk Besi, Si Tak Tunduk | warden_bulwark | C | Usulan |
-| Boss | `boss_bell` | Vesper Bell, the Ever-Ringing | Lonceng Senja, Si Tak Henti Berdentang | boss_bell | C | Usulan |
-| Boss | `boss_vine` | Rootmother, the Unpruned | Induk Akar, Si Tak Terpangkas | boss_vine | C | Usulan |
-| Affix | `hasted` ... `bulwark` | Hasted, Volley, Veiled, Blinking, Brood, Tar Trail, Pulsing, Bulwark | Tergesa, Berondong, Bercangkang, Berkedip, Berkawanan, Jejak Ter, Berdenyut, Benteng | id GD | A, B, C | Usulan |
+| Rite | `great_toll` | Great Toll | Dentang Agung | Great Toll | B | Kerja (tetap) |
+| Rite | `glass_step` | Glass Step | Langkah Kaca | Glass Step | B | Kerja (tetap) |
+| Senjata | `echo_bell` | Hand Bell | Lonceng Tangan | Echo Bell | B | Kerja |
+| Memento | `tuning_fork` | Tuning Fork | Garpu Tala | Tuning Fork | B | Kerja (tetap) |
+| Memento | `rite_chime` | Prayer Chime | Genta Doa | Rite Chime | B | Kerja |
+| Memento | `iron_thimble` | Iron Thimble | Bidal Besi | Iron Thimble | B | Kerja (tetap) |
+| Memento | `glass_aegis` | Chapel Pane | Kaca Kapel | Glass Aegis | B | Kerja |
+| Memento | `collector_pin` | Collector Pin | Peniti Kolektor | Collector Pin | B | Kerja (tetap) |
+| Memento | `dust_hourglass` | Dust Hourglass | Jam Pasir Debu | Dust Hourglass | B | Kerja (tetap) |
+| Memento | `lucky_button` | Lucky Button | Kancing Mujur | Lucky Button | B | Kerja (tetap) |
+| Memento | `magpie_tin` | Magpie Tin | Kaleng Murai | Magpie Tin | B | Kerja (tetap) |
+| Memento | `haggler_seal` | Haggler's Seal | Segel Penawar | Haggler Seal | B | Kerja |
+| Memento | `grinding_wheel` | Grinding Wheel | Roda Asah | Grinding Wheel | B | Kerja (tetap) |
+| Memento | `pyre_bell` | Pyre Bell | Lonceng Unggun | Pyre Bell | C | Kerja (tetap) |
+| Memento | `wick_charm` | Wick Charm | Jimat Sumbu | Wick Charm | C | Kerja (tetap) |
+| Memento | `cracked_mirror` | Cracked Mirror | Cermin Retak | Cracked Mirror | C | Kerja (tetap) |
+| Memento | `music_box` | Music Box | Kotak Musik | Music Box | B | Kerja (tetap) |
+| Memento | `folded_letter` | Folded Letter | Surat Terlipat | Folded Letter | C | Kerja (tetap) |
+| Memento | `echo_shell` | Echo Shell | Kerang Gema | Echo Shell | C | Kerja (tetap) |
+| Memento | `patched_cloak` | Patched Cloak | Jubah Tambalan | Patched Cloak | B | Kerja (tetap) |
+| Memento | `ledger_page` | Ledger Page | Halaman Buku Utang | Ledger Page | C | Kerja (tetap) |
+| Unlit | `exploder` | Squib | Petasan | exploder | B | Kerja (diganti CD M3, dulu Cracker) |
+| Unlit | `summoner` | Crier | Penyeru | summoner | B | Kerja |
+| Unlit | `mote` | Midge | Agas | mote | B | Kerja |
+| Unlit | `lobber` | Pitcher | Kendi | lobber | C | Kerja |
+| Warden | `warden_choir` | Velvet Cowl, the Hymn-Thief | Tudung Beludru, Si Pencuri Kidung | warden_choir | B | Kerja |
+| Warden | `warden_bulwark` | Iron Yoke, the Unbowed | Kuk Besi, Si Tak Tunduk | warden_bulwark | C | Kerja |
+| Boss | `boss_bell` | Vesper Bell, the Ever-Ringing | Lonceng Senja, Si Tak Henti Berdentang | boss_bell | C | Kerja |
+| Boss | `boss_vine` | Rootmother, the Unpruned | Induk Akar, Si Tak Terpangkas | boss_vine | C | Kerja |
+| Affix | `hasted` ... `bulwark` | Hasted, Volley, Veiled, Blinking, Brood, Tar Trail, Quaking, Bulwark | Tergesa, Berondong, Bercangkang, Berkedip, Berkawanan, Jejak Ter, Bergetar, Benteng | id GD | A, B, C | Kerja (Quaking diganti CD M3, dulu Pulsing) |
 
 Alasan singkat:
 - Nama kerja GD dipertahankan bila sudah orisinal dan bernada benda konkret. Diganti hanya bila ada masalah: "Echo Bell" (kata tag di nama senjata kelas awal terasa teknis; "Hand Bell" benda nyata Chorister), "Rite Chime" (memakai istilah sistem Rite di nama benda), "Glass Aegis" (Aegis dipakai menonjol di beberapa franchise), "Haggler Seal" (posesif lebih alami).
-- Unlit tetap mengikuti aturan lore: bentuk yang ditelan, sedikit salah, tanpa kata api atau emas. Cracker (petasan festival yang mendesis lalu meledak, cocok dengan telegraf sumbu), Crier (penyeru pasar yang memanggil), Midge (agas kecil, berpasangan dengan Lampmoth), Pitcher (kendi yang melempar, makna ganda).
+- Unlit tetap mengikuti aturan lore: bentuk yang ditelan, sedikit salah, tanpa kata api atau emas. Squib (petasan kecil yang mendesis lalu meletup, cocok dengan telegraf sumbu; "damp squib" berarti gagal meletup, pas dengan baris "Fell it first and it fizzles out." Menggantikan Cracker, yang juga hinaan rasial dalam slang Amerika), Crier (penyeru pasar yang memanggil), Midge (agas kecil, berpasangan dengan Lampmoth), Pitcher (kendi yang melempar, makna ganda).
+- Affix `pulsing` tampil sebagai Quaking (ID: Bergetar): "Pulse" adalah istilah inti gelombang, jadi Warden "Pulsing" membingungkan pembacaan cepat banner.
 - "Mote" tidak dipakai sebagai nama tampil karena "motes" sudah berarti partikel gelap saat Unlit hancur (bagian 2).
 - Warden memakai benda yang ia telan: tudung beludru penyanyi kor (Choir), kuk besi kuli kebun (Bulwark). Boss bioma 2 dan 3 memakai landmark dan lore bioma: lonceng yang masih berdentang (intro Vesper Steps), sulur induk yang tumbuh liar (Stillfire Vineyard, benang ke Pruning Hook dan Vintner).
 - Kata "Vesper" dipakai di bioma dan boss bioma 2, sama seperti pola The Moth Market dan Paper Sun.

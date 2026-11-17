@@ -64,3 +64,51 @@ export function playerBoxPushPx(
   if (!overlapX || !overlapY) return 0;
   return dx >= 0 ? PLAYER_BOX.halfW - (dx - halfWidthPx) : -PLAYER_BOX.halfW - (dx + halfWidthPx);
 }
+
+/** Near-player limit (CD M3 polish 9): at most this many numbers within NEAR_PLAYER_RADIUS_U. */
+export const NEAR_PLAYER_MAX = 4;
+export const NEAR_PLAYER_RADIUS_U = 2;
+
+/**
+ * Drop live numbers (live[i] = 0) until at most `max` lie within radiusU (world u) of the player:
+ * the oldest normal number goes first, crits only when no normal number is left near the player.
+ * Ties break by the lower slot index. Returns how many were dropped. No allocation.
+ */
+export function capNearPlayer(
+  live: Uint8Array,
+  isCrit: ArrayLike<number>,
+  born: ArrayLike<number>,
+  x: ArrayLike<number>,
+  y: ArrayLike<number>,
+  playerX: number,
+  playerY: number,
+  radiusU = NEAR_PLAYER_RADIUS_U,
+  max = NEAR_PLAYER_MAX,
+): number {
+  const r2 = radiusU * radiusU;
+  const near = (i: number): boolean => {
+    const dx = (x[i] ?? 0) - playerX;
+    const dy = (y[i] ?? 0) - playerY;
+    return dx * dx + dy * dy <= r2;
+  };
+  let count = 0;
+  for (let i = 0; i < live.length; i++) if (live[i] === 1 && near(i)) count++;
+  let dropped = 0;
+  while (count > max) {
+    let oldestNormal = -1;
+    let oldestCrit = -1;
+    for (let i = 0; i < live.length; i++) {
+      if (live[i] !== 1 || !near(i)) continue;
+      const t = born[i] ?? 0;
+      if (isCrit[i] === 1) {
+        if (oldestCrit < 0 || t < (born[oldestCrit] ?? 0)) oldestCrit = i;
+      } else if (oldestNormal < 0 || t < (born[oldestNormal] ?? 0)) oldestNormal = i;
+    }
+    const drop = oldestNormal >= 0 ? oldestNormal : oldestCrit;
+    if (drop < 0) break;
+    live[drop] = 0;
+    count--;
+    dropped++;
+  }
+  return dropped;
+}

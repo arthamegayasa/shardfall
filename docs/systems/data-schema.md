@@ -114,7 +114,7 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `player_base_speed` | 4.5 | u/s horizontal | GDD 5.1 |
 | `player_vertical_screen_ratio` | 0.8 | Kecepatan layar vertikal pemain relatif horizontal (rentang kalibrasi 0.75 sampai 0.85) | CD K7, architecture 7.1 |
 | `player_radius` | 0.35 | u | GDD 5.1 |
-| `pickup_radius_base` | 2.0 | u, radius tarik (M2-01: dari 1.6) | GDD 4.2 |
+| `pickup_radius_base` | 2.25 | u, radius tarik (M2-01: dari 1.6; M4-03: dari 2.0) | GDD 4.2 |
 | `glint_fly_speed` | 20 | u/s, kecepatan puncak butir yang tertarik (M2-01: dari 12) | GDD 4.2 |
 | `glint_fly_speed_start` | 3 | u/s, kecepatan saat butir mulai tertarik (M2-01, opsional, default 12) | GDD 4.2 |
 | `glint_fly_accel` | 60 | u/s^2, percepatan ke pemain sampai `glint_fly_speed`. GameData tanpa konversi tick: sim membagi dengan `TICK_RATE`^2 (M2-01, opsional, default 0 = kecepatan tetap) | GDD 4.2, CD M1 4.2 |
@@ -164,6 +164,8 @@ Konstanta teknis (`TICK_RATE`, satuan, kamera, kapasitas pool) ada di kode LP, b
 | `music_pressure_release_frac` | 0.5 | | Q21 |
 | `warden_spawn_frac` | 0.25 | | GDD 15.1 |
 | `warden_overtime_haste_s` | 20 | | GDD 3.3 |
+| `warden_overtime_decay_s` | 60 | Detik waktu tambahan sebelum Warden meluruh; 0 = tanpa batas (default) | GDD 3.3, GD M4-04 |
+| `warden_overtime_decay_len_s` | 15 | Lama peluruhan: batas atas HP Warden turun linear dari maks ke 0 | GDD 3.3, GD M4-04 |
 | `boss_entry_s` | 2.0 | Telegraf panggung boss | Q35 |
 | `boss_enrage_s` | 120 | | GDD 3.3 |
 | `boss_enrage_gap_mult` | 0.6 | | GDD 3.3 |
@@ -503,7 +505,7 @@ Kolom ditulis sebagai nilai kumulatif per level agar game tidak perlu menjumlah.
 | `targets` | daftar id | `dust_hourglass\|lucky_button\|haggler_seal` |
 | `cost_silt` | int | `20` |
 | `content_tier` | A/B/C | `B` |
-| `cost_silt_b` | int, biaya bila build B (isi paket lebih sedikit) | kosong (paket 2: `10`) |
+| `cost_silt_b` | int, biaya bila build B (isi paket lebih sedikit) | kosong (sejak GD M4-04 tidak ada paket yang memakainya) |
 
 Crack tidak ada di tabel ini; Crack n terbuka setelah menang di Crack n minus 1.
 

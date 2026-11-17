@@ -863,6 +863,132 @@
       ]
     },
     {
+      "id": "sfx.rite.impact.bell",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 1400,
+      "gainDb": -10,
+      "maxVoices": 1,
+      "send": {
+        "room": 0.35
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D3",
+          "attackMs": 2,
+          "decayMs": 1300,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2.5,
+            "indexEnd": 0.3,
+            "indexDecayMs": 600
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "A3",
+          "attackMs": 2,
+          "decayMs": 1100,
+          "gainDb": -4,
+          "fm": {
+            "ratio": 3.5,
+            "index": 2,
+            "indexEnd": 0.2,
+            "indexDecayMs": 500
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "D4",
+          "attackMs": 2,
+          "decayMs": 800,
+          "gainDb": -12
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": 70,
+          "freqEnd": 45,
+          "glideMs": 200,
+          "attackMs": 2,
+          "decayMs": 350,
+          "gainDb": -6
+        },
+        {
+          "kind": "noise",
+          "attackMs": 30,
+          "decayMs": 500,
+          "gainDb": -10,
+          "filter": {
+            "type": "bp",
+            "freq": 300,
+            "freqEnd": 1800,
+            "q": 0.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfx.rite.impact.blade",
+      "tier": "B",
+      "bus": "sfx",
+      "priority": 3,
+      "durationMs": 350,
+      "gainDb": -12,
+      "maxVoices": 1,
+      "pitchJitter": 0.03,
+      "send": {
+        "room": 0.1
+      },
+      "pan": "worldX",
+      "layers": [
+        {
+          "kind": "noise",
+          "attackMs": 2,
+          "decayMs": 160,
+          "filter": {
+            "type": "bp",
+            "freq": 600,
+            "freqEnd": 5000,
+            "q": 2
+          }
+        },
+        {
+          "kind": "tone",
+          "wave": "sine",
+          "freq": "E6",
+          "startMs": 20,
+          "attackMs": 2,
+          "decayMs": 240,
+          "gainDb": -10,
+          "fm": {
+            "ratio": 3.5,
+            "index": 1,
+            "indexEnd": 0.2,
+            "indexDecayMs": 150
+          }
+        },
+        {
+          "kind": "grains",
+          "count": 8,
+          "freqMin": 5000,
+          "freqMax": 9000,
+          "spreadMs": 150,
+          "grainMs": 30,
+          "grainMsMax": 80,
+          "wave": "sine",
+          "drop": 2,
+          "gainDb": -12
+        }
+      ]
+    },
+    {
       "id": "sfx.enemy.spawn",
       "tier": "A",
       "bus": "sfx",

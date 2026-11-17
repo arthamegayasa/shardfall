@@ -4,6 +4,7 @@
 //   node tools/balance/bot/run-bots.ts --bot good --profile run_a --seeds 1-40
 //   node tools/balance/bot/run-bots.ts --bot naive --seeds 1-40 --data tests/out/game-data-b.json --profile run_b --class blade
 //   add --json <file> to write per-run rows, --verbose for one line per run.
+//   P1-c: --class all rotates classes by seed, --all-unlocks opens every meta unlock.
 // Reports win rate, Pulse reached, run length (sim time plus an estimate of shop and Temper time),
 // Warden and boss fight length, Unlit alive (peak and last 6 s per Pulse), Glint picked up, purchases.
 
@@ -54,6 +55,8 @@ export interface RunRow {
   poolOverflow: number;
   /** Silt given at the run end (WorldView runStats.silt; 0 in content tier A). LP M2-09. */
   silt: number;
+  /** P1-c: tag with the highest count at the last shop (ties: first in data order; none if all 0). */
+  dominantTag: string;
 }
 
 function arg(args: string[], flag: string, def: string): string {
@@ -84,12 +87,21 @@ export function runOne(
   seed: number,
   classId: string,
   profile: string,
+  unlocked: readonly string[] = [],
 ): RunRow {
   const sim = createSim({ data });
   const bot = new BotPolicy(kind, data, seed, classId);
   const input = createInputFrame();
   const cmds: Command[] = [];
-  sim.enqueue({ type: 'run.start', seed, classId, profile, difficulty: 0 });
+  let lastShopTags: number[] = [];
+  sim.enqueue({
+    type: 'run.start',
+    seed,
+    classId,
+    profile,
+    difficulty: 0,
+    unlocked: [...unlocked],
+  });
   sim.step(input);
   const pulses: PulseStat[] = [];
   let cur: PulseStat | null = null;
@@ -148,6 +160,7 @@ export function runOne(
       if (v.phaseRevision !== lastPhaseRev) {
         lastPhaseRev = v.phaseRevision;
         if (v.phase === 'levelUp') levelPicks++;
+        if (v.phase === 'shop') lastShopTags = Array.from(v.shop.tagCounts);
         if (v.phase === 'reward') rewards++;
       }
       purchases += bot.choose(v, cmds);
@@ -197,7 +210,13 @@ export function runOne(
     maxAliveAll,
     poolOverflow: sim.poolOverflow,
     silt: v.runStats.silt,
+    dominantTag: dominantTag(data, lastShopTags),
   };
+}
+
+function dominantTag(data: GameData, tags: readonly number[]): string {
+  const best = Math.max(0, ...tags);
+  return best === 0 ? 'none' : (data.tags[tags.indexOf(best)]?.id ?? '?');
 }
 
 function median(xs: number[]): number {
@@ -244,6 +263,14 @@ export function summarize(rows: RunRow[], label: string): string {
   lines.push(
     `purchases median ${median(rows.map((r) => r.purchases))} (wins ${median(wins.map((r) => r.purchases))}), rerolls median ${median(rows.map((r) => r.rerolls))}, final level median ${median(rows.map((r) => r.level))}, max alive ${Math.max(...rows.map((r) => r.maxAliveAll))}, poolOverflow max ${Math.max(...rows.map((r) => r.poolOverflow))}`,
   );
+  const dom = new Map<string, number>();
+  for (const r of rows) dom.set(r.dominantTag, (dom.get(r.dominantTag) ?? 0) + 1);
+  lines.push(
+    `P1-c dominant tag at the last shop: ${[...dom.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, c]) => `${k} ${c} (${f((c / n) * 100, 0)}%)`)
+      .join(', ')}`,
+  );
   const maxP = Math.max(...rows.map((r) => r.pulses.length));
   lines.push('');
   lines.push(
@@ -268,10 +295,15 @@ function main(): void {
   const classId = arg(args, '--class', 'lantern');
   const [lo, hi] = arg(args, '--seeds', '1-40').split('-').map(Number);
   const data = loadData(dataPath);
+  // --class all rotates the classes by seed (seed % class count, as QA B-6); --all-unlocks opens
+  // every meta unlock (P1-c with the full pool).
+  const classes = classId === 'all' ? data.classes.map((c) => c.id) : [classId];
+  const unlocked = args.includes('--all-unlocks') ? data.metaUnlocks.map((u) => u.id) : [];
   const rows: RunRow[] = [];
   const t0 = performance.now();
   for (let seed = lo ?? 1; seed <= (hi ?? lo ?? 1); seed++) {
-    const r = runOne(data, kind, seed, classId, profile);
+    const cls = classes[seed % classes.length] ?? classId;
+    const r = runOne(data, kind, seed, cls, profile, unlocked);
     rows.push(r);
     if (args.includes('--verbose'))
       console.log(

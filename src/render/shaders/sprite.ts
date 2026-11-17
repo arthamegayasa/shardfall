@@ -15,6 +15,10 @@
 // - Dissolve: iParams.z 0..1 discards texels by a 4x4 ordered-dither threshold on the ATLAS texel, so
 //   the sprite breaks up in whole pixels; texels just above the threshold take the flash colour as a
 //   one-pixel breaking edge.
+//
+// M4 (AD, BUG-007): Outline recolour. iOutline.rgb replaces texels equal to the outline key colour
+// (uOutlineKey, the palette `ink` of the 1 px actor outline) by iOutline.a, after light and hit flash, so
+// a winding-up Unlit keeps its dark body and shows a bright danger outline (style-guide 1.8).
 
 /** Per-instance layout, in floats. Keep in sync with sprite-batch.ts. */
 export const SPRITE_INSTANCE_ATTRIBUTES = {
@@ -28,7 +32,12 @@ export const SPRITE_INSTANCE_ATTRIBUTES = {
   iParams: 4,
   /** Flash colour (linear rgb) and amount 0..1. */
   iFlash: 4,
+  /** Outline recolour (linear rgb) and amount 0..1 (0 = keep the ink outline). */
+  iOutline: 4,
 } as const;
+
+/** Max per-channel distance (linear) for a texel to count as the outline key colour. */
+export const OUTLINE_KEY_TOLERANCE = 0.004;
 
 /** Light modes for iParams.w. */
 export const SpriteLight = { None: 0, Unlit: 1, Kept: 2 } as const;
@@ -48,8 +57,10 @@ attribute vec4 iRect;
 attribute vec4 iOff;
 attribute vec4 iParams;
 attribute vec4 iFlash;
+attribute vec4 iOutline;
 varying vec2 vUv;
 varying vec4 vFlash;
+varying vec4 vOutline;
 varying float vAlpha;
 varying float vDissolve;
 varying vec3 vLight;
@@ -67,6 +78,7 @@ void main() {
   // Atlas row 0 is v = 0 (flipY false): the top of the rect is iRect.y.
   vUv = vec2(iRect.x + position.x * iRect.z, iRect.y + (1.0 - position.y) * iRect.w) / uAtlasSize;
   vFlash = iFlash;
+  vOutline = iOutline;
   vAlpha = iParams.y;
   vDissolve = iParams.z;
   vLight = vec3(1.0);
@@ -80,8 +92,10 @@ export const SPRITE_FRAGMENT = /* glsl */ `
 uniform sampler2D uAtlas;
 uniform vec2 uAtlasSize;
 uniform float uEmissiveGain;
+uniform vec3 uOutlineKey;
 varying vec2 vUv;
 varying vec4 vFlash;
+varying vec4 vOutline;
 varying float vAlpha;
 varying float vDissolve;
 varying vec3 vLight;
@@ -105,6 +119,9 @@ void main() {
   bool emissive = t.a < 0.9;
   c = emissive ? c * uEmissiveGain : c * vLight;
   c = mix(c, vFlash.rgb, vFlash.a);
+  if (vOutline.a > 0.0 && all(lessThan(abs(t.rgb - uOutlineKey), vec3(${OUTLINE_KEY_TOLERANCE.toFixed(4)})))) {
+    c = mix(c, vOutline.rgb, vOutline.a);
+  }
   if (vDissolve > 0.0) {
     float th = bayer4(vUv * uAtlasSize);
     if (th < vDissolve) discard;

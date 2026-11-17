@@ -113,11 +113,15 @@ const G: Readonly<Record<string, string>> = {
   '|': '..#..|..#..|..#..|..#..|..#..|..#..|..#..',
   '}': '##...|..#..|..#..|...#.|..#..|..#..|##...',
   '~': '.....|.....|.#...|#.#.#|...#.',
+  // Middle dot U+00B7: separator in the title credit line (M4-02).
+  '·': '.....|.....|.....|..#..',
 };
 
 /** First and last mapped character codes (printable ASCII). */
 const FIRST = 32;
 const LAST = 126;
+/** Characters beyond ASCII, one cmap segment each, glyphs after the ASCII ones. */
+const EXTRA = [0xb7] as const;
 
 export interface Rect {
   readonly x: number;
@@ -306,6 +310,7 @@ function nameTable(): number[] {
 export function buildPixelFontTtf(): Uint8Array {
   const chars: string[] = [];
   for (let c = FIRST; c <= LAST; c++) chars.push(String.fromCharCode(c));
+  for (const c of EXTRA) chars.push(String.fromCharCode(c));
   // Glyph 0 .notdef: a hollow box.
   const notdef: Rect[] = [
     { x: 0, y: 0, w: 5, h: 1 },
@@ -418,7 +423,7 @@ export function buildPixelFontTtf(): Uint8Array {
     .tag('SHRD')
     .u16(0x0040 | 0x0080) // REGULAR, USE_TYPO_METRICS
     .u16(FIRST)
-    .u16(LAST)
+    .u16(Math.max(LAST, ...EXTRA))
     .i16(ascent)
     .i16(-descent)
     .i16(0)
@@ -435,29 +440,29 @@ export function buildPixelFontTtf(): Uint8Array {
   const hmtx = new Writer();
   for (let i = 0; i < numGlyphs; i++) hmtx.u16(adv).i16(glyphs[i]?.xMin ?? 0);
 
-  const cmap = new Writer()
-    .u16(0)
-    .u16(1)
-    .u16(3)
-    .u16(1)
-    .u32(12)
-    // format 4, one segment FIRST..LAST -> glyph 1.., plus the 0xFFFF terminator
+  // cmap format 4: segment FIRST..LAST -> glyphs 1.., one segment per EXTRA code (glyphs after
+  // ASCII), plus the 0xFFFF terminator.
+  const segs: { start: number; end: number; delta: number }[] = [
+    { start: FIRST, end: LAST, delta: 1 - FIRST },
+    ...EXTRA.map((c, i) => ({ start: c, end: c, delta: LAST - FIRST + 2 + i - c })),
+    { start: 0xffff, end: 0xffff, delta: 1 },
+  ];
+  const segCount = segs.length;
+  const searchRange = 2 * 2 ** Math.floor(Math.log2(segCount));
+  const sub4 = new Writer()
     .u16(4)
-    .u16(32)
+    .u16(16 + 8 * segCount)
     .u16(0)
-    .u16(4)
-    .u16(4)
-    .u16(1)
-    .u16(0)
-    .u16(LAST)
-    .u16(0xffff)
-    .u16(0)
-    .u16(FIRST)
-    .u16(0xffff)
-    .i16(1 - FIRST)
-    .u16(1)
-    .u16(0)
-    .u16(0);
+    .u16(segCount * 2)
+    .u16(searchRange)
+    .u16(Math.floor(Math.log2(segCount)))
+    .u16(segCount * 2 - searchRange);
+  for (const sg of segs) sub4.u16(sg.end);
+  sub4.u16(0);
+  for (const sg of segs) sub4.u16(sg.start);
+  for (const sg of segs) sub4.i16(sg.delta);
+  for (let i = 0; i < segCount; i++) sub4.u16(0);
+  const cmap = new Writer().u16(0).u16(1).u16(3).u16(1).u32(12).raw(sub4.out());
 
   const post = new Writer()
     .u32(0x00030000)

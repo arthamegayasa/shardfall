@@ -10,6 +10,7 @@ import {
   Mesh,
   ShaderMaterial,
   Vector2,
+  Vector3,
 } from 'three';
 import type { Texture } from 'three';
 import type { AtlasFrameRect } from '../../core/index.ts';
@@ -27,6 +28,11 @@ export interface SpriteBatchOptions {
   readonly lighting?: SpriteLightingSource;
   /** Shared emissive gain uniform ({ value }), so one setter drives every batch. Default 1. */
   readonly emissiveGain?: { value: number };
+  /**
+   * Linear rgb of the 1 px actor outline (palette `ink`). Texels of this colour take the per-instance
+   * outline recolour (windup telegraph, BUG-007). Default black (only matches pure black texels).
+   */
+  readonly outlineKey?: readonly [number, number, number];
 }
 
 /** What a sprite batch needs from LP's SceneLighting (uniforms are shared objects, not copies). */
@@ -44,7 +50,8 @@ export interface SpriteBatch {
   /**
    * Add one sprite. (x, y) world floor u, h height u. anchorX/Y from the atlas entry.
    * dx, dy extra px offset (y up). flash rgb is linear. dissolve 0..1 breaks the sprite up in whole
-   * texels; light = SpriteLight mode (0 none, 1 Unlit, 2 Kept). Returns false when full.
+   * texels; light = SpriteLight mode (0 none, 1 Unlit, 2 Kept). outline rgb (linear) and amount
+   * recolour the ink outline texels (0 = keep). Returns false when full.
    */
   push(
     x: number,
@@ -63,6 +70,10 @@ export interface SpriteBatch {
     alpha: number,
     dissolve?: number,
     light?: number,
+    outlineR?: number,
+    outlineG?: number,
+    outlineB?: number,
+    outlineAmount?: number,
   ): boolean;
   end(): void;
   setResolution(width: number, height: number): void;
@@ -94,18 +105,22 @@ export function createSpriteBatch(
   const aOff = make(A.iOff);
   const aParams = make(A.iParams);
   const aFlash = make(A.iFlash);
+  const aOutline = make(A.iOutline);
   geo.setAttribute('iPos', aPos);
   geo.setAttribute('iRect', aRect);
   geo.setAttribute('iOff', aOff);
   geo.setAttribute('iParams', aParams);
   geo.setAttribute('iFlash', aFlash);
+  geo.setAttribute('iOutline', aOutline);
   geo.instanceCount = 0;
   const pos = aPos.array as Float32Array;
   const rectA = aRect.array as Float32Array;
   const off = aOff.array as Float32Array;
   const params = aParams.array as Float32Array;
   const flash = aFlash.array as Float32Array;
-  const attrs: readonly InstancedBufferAttribute[] = [aPos, aRect, aOff, aParams, aFlash];
+  const outline = aOutline.array as Float32Array;
+  const attrs: readonly InstancedBufferAttribute[] = [aPos, aRect, aOff, aParams, aFlash, aOutline];
+  const key = opts.outlineKey ?? [0, 0, 0];
 
   const material = new ShaderMaterial({
     vertexShader: spriteVertex(opts.lighting?.glsl ?? null),
@@ -115,6 +130,7 @@ export function createSpriteBatch(
       uEmissiveGain: opts.emissiveGain ?? { value: 1 },
       uAtlas: { value: atlas },
       uAtlasSize: { value: new Vector2(atlasW, atlasH) },
+      uOutlineKey: { value: new Vector3(key[0], key[1], key[2]) },
       uRes: { value: new Vector2(1, 1) },
       // Pull sprites a hair toward the camera so feet never z-fight the floor at the same depth.
       uDepthBias: { value: opts.depth ? 1e-5 : 0 },
@@ -159,6 +175,10 @@ export function createSpriteBatch(
       alpha,
       dissolve = 0,
       light = 0,
+      outlineR = 0,
+      outlineG = 0,
+      outlineB = 0,
+      outlineAmount = 0,
     ) {
       if (n >= cap) {
         overflow++;
@@ -186,6 +206,10 @@ export function createSpriteBatch(
       flash[p4 + 1] = fg;
       flash[p4 + 2] = fb;
       flash[p4 + 3] = fa;
+      outline[p4] = outlineR;
+      outline[p4 + 1] = outlineG;
+      outline[p4 + 2] = outlineB;
+      outline[p4 + 3] = outlineAmount;
       n++;
       return true;
     },

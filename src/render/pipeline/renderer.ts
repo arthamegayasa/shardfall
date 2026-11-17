@@ -33,6 +33,8 @@ import { createSpriteAtlas } from '../sprites/atlas-texture.ts';
 import { createEntityLayers } from '../sprites/entity-layers.ts';
 import { createSpriteBatch } from '../sprites/sprite-batch.ts';
 import { playerCoveredByDanger } from './danger-rules.ts';
+import { prewarmKey, scheduleIdle, takePrewarmed } from './prewarm.ts';
+import type { PrewarmSlot } from './prewarm.ts';
 import { createPulseLight, pulseClosed, pulseOpened, samplePulseLight } from './pulse-light.ts';
 import type { PulseLightSample } from './pulse-light.ts';
 import { defaultQuality, isSoftwareRenderer, qualityProfile, softwareCap } from './quality.ts';
@@ -128,6 +130,9 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
 
   let env: ArenaEnvironment | null = null;
   let currentArena: ArenaDef | null = null;
+  // BUG-006: the first arena, built and rendered offscreen while the title screen is idle.
+  const prewarmed: PrewarmSlot<ArenaEnvironment> = { key: null, value: null };
+  let disposed = false;
   // Software rasterizers (SwiftShader in headless CI, llvmpipe) cannot run the HD-2D passes in real
   // time: cap quality at Low and render the canvas at virtual resolution, upscaled by CSS (pixelated).
   const glInfo = gl.getContext().getExtension('WEBGL_debug_renderer_info');
@@ -342,7 +347,12 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
         env.dispose();
       }
       lighting.setBiome(biome, arena);
-      env = createArenaEnvironment(arena, palette, biome, lighting, assets.tiles);
+      env =
+        takePrewarmed(prewarmed, prewarmKey(arena.id, biomeId)) ??
+        createArenaEnvironment(arena, palette, biome, lighting, assets.tiles);
+      prewarmed.value?.dispose();
+      prewarmed.value = null;
+      prewarmed.key = null;
       scene.add(env.group);
       scene.background = new Color(biome.fog.color);
       gl.setClearColor(new Color(biome.fog.color), 1);
@@ -372,6 +382,9 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
       return frameStats;
     },
     dispose() {
+      disposed = true;
+      prewarmed.value?.dispose();
+      prewarmed.value = null;
       env?.dispose();
       post.dispose();
       entities.dispose();
@@ -381,5 +394,31 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
       gl.dispose();
     },
   };
+  /**
+   * BUG-006: build the first arena (data.arenas[0], the run's opening Vitrine) and render it once into
+   * the scene target, so its programs, textures, and shadow map are ready before the first Pulse frame.
+   * Skipped when a run already set an arena.
+   */
+  const prewarm = (): void => {
+    if (disposed || currentArena !== null) return;
+    const arena = data.arenas[0];
+    if (arena === undefined) return;
+    const biomeId = data.biomes.find((b) => b.arenaId === arena.id)?.id ?? '';
+    const b = palette.biomes.find((x) => x.contentId === biomeId) ?? defaultBiome;
+    lighting.setBiome(b, arena);
+    const warm = createArenaEnvironment(arena, palette, b, lighting, assets.tiles);
+    warm.setQuality(quality);
+    scene.add(warm.group);
+    warm.renderShadows(gl);
+    gl.setRenderTarget(post.sceneTarget);
+    gl.compile(scene, camera);
+    gl.render(scene, camera);
+    gl.setRenderTarget(null);
+    scene.remove(warm.group);
+    prewarmed.key = prewarmKey(arena.id, biomeId);
+    prewarmed.value = warm;
+  };
+  if (typeof window !== 'undefined') scheduleIdle(window, prewarm);
+
   return renderer;
 };

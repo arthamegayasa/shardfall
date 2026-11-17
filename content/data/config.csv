@@ -3,7 +3,7 @@ key,value,notes
 player_base_speed,4.5,u/s horizontal (GDD 5.1)
 player_vertical_screen_ratio,0.8,screen vertical speed relative to horizontal; calibrate 0.75 to 0.85 (CD K7)
 player_radius,0.35,u
-pickup_radius_base,2.0,u; magnet radius (M2-01: 1.6 to 2.0 since denser Pulses scatter Glint wider)
+pickup_radius_base,2.25,u; magnet radius (M2-01: 1.6 to 2.0 since denser Pulses scatter Glint wider; M4-03: 2.0 to 2.25 for less floor Glint late in long Pulses (CD M3 polish 8))
 glint_fly_speed,20,u/s; top speed of a magnetized piece (M2-01: 12 to 20)
 glint_fly_speed_start,3,u/s; speed when a piece is first pulled (M2-01)
 glint_fly_accel,60,u/s^2; acceleration toward the player until glint_fly_speed (M2-01; CD M1 4.2 dart with acceleration)
@@ -53,6 +53,8 @@ music_pressure_frac,0.6,fraction of alive_cap
 music_pressure_release_frac,0.5,
 warden_spawn_frac,0.25,
 warden_overtime_haste_s,20,
+warden_overtime_decay_s,60,overtime s before a holding Warden decays (GD M4-04: no endless held Pulse)
+warden_overtime_decay_len_s,15,s for the decay to take the Warden HP ceiling from max to 0; held Pulse lasts at most 75 s past the timer
 boss_entry_s,2.0,boss stage telegraph
 boss_enrage_s,120,
 boss_enrage_gap_mult,0.6,

@@ -19,6 +19,7 @@ import { pickLevelCard, rollLevelChoices, rollReward } from './progression.ts';
 import { openShop } from './shop.ts';
 import { dropSchedule, buildSchedule } from './spawner.ts';
 import { applyOvertimeHaste } from './affixes.ts';
+import { killEnemy } from './combat.ts';
 import { gainGlint, sweepPickups } from './pickups.ts';
 import { riteCooldown } from './player.ts';
 
@@ -344,11 +345,31 @@ export function updatePulseTimer(ctx: SimCtx): boolean {
       run.hasteApplied = true;
       applyOvertimeHaste(ctx, run.wardenSlot);
     }
+    decayOvertimeWarden(ctx);
     return false;
   }
   if (run.wardenType >= 0 && !run.wardenSpawned) return false;
   endPulse(ctx, run.diff?.pulseEndCollectFrac ?? cfg.pulseEndCollectFrac);
   return true;
+}
+
+/**
+ * Overtime limit (GDD 3.3, GD M4-04): after warden_overtime_decay_s of overtime the Warden's HP
+ * ceiling falls linearly from max HP to 0 over warden_overtime_decay_len_s, so a held Pulse always
+ * ends. Healing cannot outpace it. At 0 the Warden dies as a normal Warden kill (chest and Glint
+ * kept, Warden never flees), credited to no source and without on_kill effects.
+ */
+function decayOvertimeWarden(ctx: SimCtx): void {
+  const { run, cfg } = ctx;
+  const start = cfg.wardenOvertimeDecayTicks;
+  if (start <= 0 || run.overtimeTicks <= start) return;
+  const s = run.wardenSlot;
+  const e = ctx.world.enemies;
+  const len = Math.max(1, cfg.wardenOvertimeDecayLenTicks);
+  const ceiling = (e.maxHp[s] ?? 0) * Math.max(0, 1 - (run.overtimeTicks - start) / len);
+  if ((e.shield[s] ?? 0) > ceiling) e.shield[s] = ceiling;
+  if ((e.hp[s] ?? 0) > ceiling) e.hp[s] = ceiling;
+  if (ceiling <= 0) killEnemy(ctx, s, 0, false);
 }
 
 /** Next phase in the choice queue after pulseClear or a pick: reward, levelUp, shop (GDD 12). */

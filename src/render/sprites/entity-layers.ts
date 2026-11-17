@@ -9,6 +9,11 @@
 // per-instance light from LP's scene lighting (opts.lighting), emissive texels, Unlit hit flash,
 // windup red pulse, emerge and death dissolve, Rite zones growing with a cyan edge (CD K5), crit
 // digits in kept-cyan (CD K4) and the damage number cap (LP damage-cap.ts).
+//
+// M4 (AD, M4-01): Unlit hit flash is a partial bone tint (0.5, Warden and boss 0.35) armed only by
+// impact hits, never by zone or Burn ticks (actor-flash.ts, CD M3 polish 1). Windup keeps the dark body
+// and turns the ink outline bright danger magenta (BUG-007). Rite VFX per archetype and the near-player
+// damage number cap live in vfx/.
 
 import type { Object3D, Texture } from 'three';
 import {
@@ -43,6 +48,7 @@ import {
   frameIndexForProgress,
   isMoving,
 } from './frame-select.ts';
+import { createHitFlashTracker, unlitFlashAlpha, windupOutline } from './actor-flash.ts';
 import { createSpriteBatch } from './sprite-batch.ts';
 import type { SpriteLightingSource } from './sprite-batch.ts';
 import {
@@ -132,6 +138,9 @@ export const AiAnim = {
 /** Hit flash colours (art-direction 4): player kept-white, Unlit bone. Never red on the player. */
 const PLAYER_FLASH_TOKEN = 'kept-white';
 const UNLIT_FLASH_TOKEN = 'bone';
+/** Windup outline tokens (BUG-007): bright magenta pulsing toward the pale danger core. */
+const WINDUP_OUTLINE_TOKEN = 'danger-magenta';
+const WINDUP_OUTLINE_PULSE_TOKEN = 'danger-core';
 /** Burn flame sits this many px above the top of the Unlit sprite. */
 const BURN_GAP_PX = 1;
 /** Desync animation clocks between pool slots (ticks). */
@@ -149,9 +158,6 @@ const EMERGE_TICKS = 18;
 const PLAYER_DEATH_SEC = 0.8;
 /** Warden leap hop height in px while AiState Attack. */
 const WARDEN_HOP_PX = 7;
-/** Windup red pulse on the sprite (telegraph: outline and eyes blink danger-red, art-direction 5.1). */
-const WINDUP_PULSE_AMOUNT = 0.35;
-const WINDUP_PULSE_TICKS = 4;
 /** Rite zones grow from the centre over this time (CD M1 review AD item 3). */
 const ZONE_GROW_SEC = 0.2;
 /** Blob shadow radius per px of sprite width (u per px); 16 px across = 1 u. */
@@ -223,7 +229,10 @@ export function createEntityLayers(
 
   const [pfR, pfG, pfB] = linearRgb(palette, PLAYER_FLASH_TOKEN);
   const [ufR, ufG, ufB] = linearRgb(palette, UNLIT_FLASH_TOKEN);
-  const [drR, drG, drB] = linearRgb(palette, 'danger-red');
+  const windupA = linearRgb(palette, WINDUP_OUTLINE_TOKEN);
+  const windupB = linearRgb(palette, WINDUP_OUTLINE_PULSE_TOKEN);
+  const outlineRgb: [number, number, number] = [0, 0, 0];
+  const hitFlash = createHitFlashTracker();
   const styles = createAreaStyles(palette);
 
   const W = manifest.width;
@@ -235,6 +244,7 @@ export function createEntityLayers(
     depth: true,
     renderOrder: 2,
     emissiveGain,
+    outlineKey: linearRgb(palette, 'ink'),
     ...(lit === undefined ? {} : { lighting: lit }),
   });
   const effects = createSpriteBatch(atlasTexture, W, H, {
@@ -250,7 +260,7 @@ export function createEntityLayers(
     renderOrder: 1,
     emissiveGain,
   });
-  const zones = createAreaBatch(opts.areaCapacity ?? 64, 1);
+  const zones = createAreaBatch(opts.areaCapacity ?? 64, 1, { merge: true });
   const decals = createAreaBatch(1024, 1.5);
   const fxAreas = createAreaBatch(48, 1.6);
   const dangerAreas = createAreaBatch(opts.areaCapacity ?? 128, 0);
@@ -286,6 +296,9 @@ export function createEntityLayers(
   let lastTime = Number.NEGATIVE_INFINITY;
 
   let playerFacing = 0;
+  // Player feet drawn last frame: start of a Glass Step dash that lands this frame.
+  let lastPX = Number.NaN;
+  let lastPY = Number.NaN;
 
   const enemyRefFor = (typeIndex: number, rank: number): SpriteRef =>
     enemyRefs[typeIndex] ??
@@ -333,6 +346,7 @@ export function createEntityLayers(
       if (now < lastTime - 0.5) {
         vfx.clear();
         numbers.clear();
+        hitFlash.clear();
       }
       lastTime = now;
       actors.begin();
@@ -348,7 +362,16 @@ export function createEntityLayers(
       const pdx = p.x - p.prevX;
       const pX = p.prevX + pdx * a;
       const pY = p.prevY + (p.y - p.prevY) * a;
-      vfx.ingest(f.events, now, pX, pY);
+      vfx.ingest(
+        f.events,
+        now,
+        pX,
+        pY,
+        Number.isNaN(lastPX) ? pX : lastPX,
+        Number.isNaN(lastPY) ? pY : lastPY,
+      );
+      lastPX = pX;
+      lastPY = pY;
       const ps0 = vfx.player;
       // First frame starts from the sim facing; afterwards the sprite turns toward horizontal motion.
       playerFacing = facingFromMotion(pdx, playerFacing === 0 ? p.facing : playerFacing);
@@ -394,6 +417,8 @@ export function createEntityLayers(
         [flR, flG, flB] = linearRgb(palette, 'kept-cyan');
         flA = 0;
       }
+      if (prect !== undefined)
+        vfx.afterimages(prect, pref.entry.anchor.x, pref.entry.anchor.y, playerFacing, now);
       playerSprite.visible = prect !== undefined && pDissolve < 1;
       if (prect !== undefined && pDissolve < 1) {
         playerSprite.x = pX;
@@ -438,6 +463,7 @@ export function createEntityLayers(
         lastRef = new Array<SpriteRef | undefined>(slotCap);
       }
       const bossPhase2 = v.pulse.boss.active && v.pulse.boss.phase >= 2;
+      hitFlash.update(f.events, en);
       for (let i = 0; i < slotCap; i++) {
         const alive = i < en.highWater && en.alive[i] !== 0;
         const ser = en.serial[i] ?? 0;
@@ -477,16 +503,9 @@ export function createEntityLayers(
         const x = x0 + dx * a;
         const y = y0 + dy * a;
         const facing = en.facing[i] ?? 1;
-        let fr = ufR;
-        let fg = ufG;
-        let fb = ufB;
-        let fa = (en.hitFlashTicks[i] ?? 0) > 0 ? 1 : 0;
-        if (fa === 0 && ai === AiAnim.Windup && rank !== EnemyRank.Boss) {
-          fr = drR;
-          fg = drG;
-          fb = drB;
-          fa = Math.floor(c / WINDUP_PULSE_TICKS) % 2 === 0 ? WINDUP_PULSE_AMOUNT : 0;
-        }
+        const fa = hitFlash.flashing(i) ? unlitFlashAlpha(rank) : 0;
+        const oa = ai === AiAnim.Windup && rank !== EnemyRank.Boss ? 1 : 0;
+        if (oa > 0) windupOutline(c, windupA, windupB, outlineRgb);
         const age = en.ageTicks[i] ?? EMERGE_TICKS;
         const dissolve =
           ai === AiAnim.Emerging
@@ -505,13 +524,17 @@ export function createEntityLayers(
           facing,
           0,
           hop,
-          fr,
-          fg,
-          fb,
+          ufR,
+          ufG,
+          ufB,
           fa,
           1,
           dissolve,
           SpriteLight.Unlit,
+          outlineRgb[0],
+          outlineRgb[1],
+          outlineRgb[2],
+          oa,
         );
         pushShadow(x, y, rank === EnemyRank.Boss ? rect.w * 0.7 : rect.w);
         if (rank === EnemyRank.Warden)

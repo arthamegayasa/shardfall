@@ -2,11 +2,18 @@
 // Fixed ring of slots, no allocation per frame. M2: at most DAMAGE_NUMBER_CAP alive (LP damage-cap.ts:
 // the oldest normal number goes first, crits last), numbers are pushed sideways out of the player
 // sprite box, and crits use the larger kept-cyan 4x6 digit set (CD K4).
+// M4 (AD, CD M3 polish 9): at most NEAR_PLAYER_MAX numbers within NEAR_PLAYER_RADIUS_U of the player,
+// the oldest normal number dropped first, so hits do not pile up next to the player.
 
 import { DamageFlag, SimEventType } from '../../core/index.ts';
 import type { AtlasSpriteEntry, SimEventReader } from '../../core/index.ts';
 import type { SpriteBatch } from '../sprites/sprite-batch.ts';
-import { DAMAGE_NUMBER_CAP, pickDamageSlot, playerBoxPushPx } from '../pipeline/damage-cap.ts';
+import {
+  capNearPlayer,
+  DAMAGE_NUMBER_CAP,
+  pickDamageSlot,
+  playerBoxPushPx,
+} from '../pipeline/damage-cap.ts';
 import {
   DAMAGE_NUMBER_LIFE_SEC,
   damageAlpha,
@@ -74,6 +81,9 @@ export function createDamageNumbers(digits: AtlasSpriteEntry, capacity = 48): Da
     },
     draw(batch, timeSec, playerX, playerY) {
       if (!enabled) return;
+      expire(timeSec);
+      if (playerX !== undefined && playerY !== undefined)
+        capNearPlayer(live, isCrit, born, x, y, playerX, playerY);
       for (let i = 0; i < capacity; i++) {
         if (live[i] === 0) continue;
         const age = timeSec - (born[i] ?? 0);

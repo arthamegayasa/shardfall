@@ -69,6 +69,10 @@ export const configTable = defineKvTable({
     music_pressure_release_frac: frac(),
     warden_spawn_frac: frac(),
     warden_overtime_haste_s: sec(),
+    /** Overtime seconds before a holding Warden starts to decay (GDD 3.3, GD M4-04). 0 = never. */
+    warden_overtime_decay_s: col.seconds({ min: 0, default: 0 }),
+    /** Seconds for the decay to bring the Warden's HP ceiling from max HP to 0 (GD M4-04). */
+    warden_overtime_decay_len_s: col.seconds({ min: 0, default: 0 }),
     boss_entry_s: sec(),
     boss_enrage_s: sec(),
     boss_enrage_gap_mult: col.float({ min: 0 }),

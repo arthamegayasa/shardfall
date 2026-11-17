@@ -2,7 +2,7 @@
 // Layout is read only on a navigation key press, never per frame.
 
 import { findNeighbor, nextGroupIndex } from './focus-nav.ts';
-import type { Dir, NavRect } from './focus-nav.ts';
+import type { Dir, NavMemory, NavRect } from './focus-nav.ts';
 
 export interface FocusItem {
   readonly el: HTMLElement;
@@ -36,10 +36,13 @@ export interface FocusListOptions {
 export function createFocusList(opts: FocusListOptions): FocusList {
   let items: FocusItem[] = [];
   let index = -1;
+  /** Last arrow move that left a group; reversing it returns to its origin (BUG-010). */
+  let memory: NavMemory | null = null;
 
   const focus = (i: number, silent = false): void => {
     const next = items[i];
     if (next === undefined) return;
+    if (i !== index) memory = null;
     const prev = items[index];
     if (prev !== undefined && index !== i) {
       prev.el.tabIndex = -1;
@@ -90,6 +93,7 @@ export function createFocusList(opts: FocusListOptions): FocusList {
     reset() {
       items = [];
       index = -1;
+      memory = null;
     },
     focus,
     get index() {
@@ -99,9 +103,12 @@ export function createFocusList(opts: FocusListOptions): FocusList {
       return items.length;
     },
     move(dir) {
-      const next = findNeighbor(rects(), index, dir);
-      if (next < 0 || next === index) return false;
+      const from = index;
+      const r = rects();
+      const next = findNeighbor(r, from, dir, memory);
+      if (next < 0 || next === from) return false;
       focus(next);
+      memory = r[next]?.group !== r[from]?.group ? { from, to: next, dir } : null;
       return true;
     },
     cycleGroup(delta) {

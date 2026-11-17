@@ -31,6 +31,9 @@
   --tag-ward: #a39a8c;
   --tag-trade: #ffd966;
   --panel-bg: rgb(28 25 38 / 90%);
+  /* Plate under text that sits straight on the arena (A-08): ink 90% keeps dust at 5:1 or more
+     even over the brightest floor or lantern. */
+  --plate: rgb(20 18 28 / 90%);
   --frame: rgb(237 230 216 / 60%);
   --sheen: linear-gradient(170deg, rgb(242 251 255 / 7%) 0%, rgb(242 251 255 / 0%) 38%);
   --u: 2px;
@@ -1938,4 +1941,151 @@
 
 .sf-ui .end-new-unlock {
   color: var(--kept-gold);
+}
+
+/* ---- M4-02: accessibility and polish ---- */
+
+.sf-ui [hidden] {
+  display: none !important;
+}
+
+/* A-08: small text with no panel behind it gets a plate (worst case over a white arena: dust
+   5.1:1, bone 11:1, gold 9:1). Large headings keep 3:1 on the screen dim without one. */
+.sf-ui .screen-sub,
+.sf-ui .felled-by,
+.sf-ui .version-label,
+.sf-ui .title-silt,
+.sf-ui .title-controls,
+.sf-ui .title-credit,
+.sf-ui .title-notice,
+.sf-ui .shop-next,
+.sf-ui .shop-hp,
+.sf-ui .shop-glint,
+.sf-ui .keeping-silt,
+.sf-ui .info-line:not(:empty),
+.sf-ui .pulse-label,
+.sf-ui .lv-text,
+.sf-ui .timer,
+.sf-ui .hud-tr,
+.sf-ui .rite-key,
+.sf-ui .foe-head,
+.sf-ui .resume-countdown {
+  background-color: var(--plate);
+  padding-left: calc(var(--u) * 2);
+  padding-right: calc(var(--u) * 2);
+}
+
+/* A-08: tag counts were drawn in the tag colour (Echo blue 4.0:1 on a panel). The tag keeps its
+   colour on the chip shape; the count is body text. Preview counts stay gold. */
+.sf-ui .tag-row .tag-count,
+.sf-ui .tag-mini .tag-count {
+  color: var(--bone);
+}
+
+/* A-09: visual twin of the level-up cue (ui-spec S03 "bar berkedip emas sekali"). */
+.sf-ui .screen-hud.is-level-up .lv-text {
+  background-color: var(--kept-gold);
+  color: var(--ink);
+}
+
+.sf-ui .screen-hud.is-level-up .bar-xp {
+  --edge: var(--kept-gold);
+}
+
+/* A-09: visual twin of the hurt cue: the lost part of the HP bar shows white (ui-spec S03 chip). */
+.sf-ui .screen-hud.is-hit .bar-hp {
+  --edge: var(--kept-white);
+  background-color: rgb(242 251 255 / 70%);
+}
+
+/* Title foot (M4-02): run controls and the credit line, bottom left; build id stays bottom right. */
+.sf-ui .title-foot {
+  position: absolute;
+  left: calc(var(--u) * 8);
+  bottom: calc(var(--u) * 6);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .title-controls {
+  color: var(--bone);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .title-credit {
+  color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+/* Run end build list (CD M3 10): scrolls inside its panel with a mark when it does not fit. */
+.sf-ui .end-build {
+  min-height: 0;
+}
+
+.sf-ui .end-build-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--dust) transparent;
+}
+
+.sf-ui .end-build-scroll.is-focus {
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .end-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 3);
+  color: var(--kept-gold);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .end-more::before {
+  content: '';
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 4);
+  background: currentcolor;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.sf-ui .end-more.is-above::before {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.sf-ui .end-silt-total .num {
+  color: var(--kept-gold);
+}
+
+/* The Keeping detail panel (wireframe 09): Unlock under the text, right aligned. */
+.sf-ui .keeping-detail-info {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+}
+
+.sf-ui .keeping-detail-bar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Plates hug their text: block lines under a centred title shrink to fit and stay centred. */
+.sf-ui .title-block .screen-sub,
+.sf-ui .title-block .felled-by {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }

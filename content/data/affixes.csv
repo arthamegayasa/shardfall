@@ -1,10 +1,10 @@
 id,content_tier,telegraph_s,params,desc_key,random_pool
-# Warden affixes (data-schema 3.16, GDD 15.2). hasted is only added in overtime.
+# Warden affixes (data-schema 3.16, GDD 15.2). hasted is only added in overtime. M4-03: brood B to C (only Warden C and Crack 2+ use it; BUG-012).
 hasted,A,0,move_pct=35,affix.hasted,0
 volley,A,0.6,count=8;dmg=4;shot_speed=5.5;shot_life=2.5,affix.volley,1
 veiled,B,0,shell_frac=0.2;regrow_s=6,affix.veiled,1
 blinking,B,0.8,interval=6;min_dist=3,affix.blinking,1
-brood,B,0.8,interval=7;count=3;summon_id=mote,affix.brood,1
+brood,C,0.8,interval=7;count=3;summon_id=mote,affix.brood,1
 tar_trail,C,0,radius=1;duration=3;slow=35;drop_every=0.5,affix.tar_trail,1
 pulsing,C,0.8,interval=5;radius=3;dmg=8,affix.pulsing,1
 bulwark,C,0,guard_add=4;kb_immune=1,affix.bulwark,1

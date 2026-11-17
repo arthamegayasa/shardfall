@@ -11,7 +11,7 @@
   "outline": "ink",
   "mirror": true,
   "status": "concept",
-  "note": "Class blade (Vintner). Silhouette: broad shoulder plates, bare head. Accent cyan. M2: idle 2 and walk 4 (Tier B, simple).",
+  "note": "Class blade (Vintner). Silhouette: broad shoulder plates, bare head. Accent cyan. M2: idle 2 and walk 4 (Tier B, simple). M4: cast 2 (Glass Step crouch, 17 px, then glass hands) and hit 2 (eyes shut, recoil squash).",
   "animations": {
     "idle": {
       "ticksPerFrame": 16,
@@ -142,6 +142,96 @@
           "...bBBBc",
           "...bccBw",
           "....hh..",
+          "....hh..",
+          "....hh.."
+        ]
+      ]
+    },
+    "cast": {
+      "ticksPerFrame": 9,
+      "loop": false,
+      "frames": [
+        [
+          ".....bbb",
+          "....bbbb",
+          "....bbee",
+          "....beke",
+          "....beee",
+          ".....bee",
+          ".ccccbcg",
+          "cwcccBBc",
+          "cccccBBc",
+          ".eebBBBc",
+          "..ebBccc",
+          "..ebBBBc",
+          "...bBBcc",
+          "...bBBBc",
+          "...bccBw",
+          "....hh..",
+          "....hh.."
+        ],
+        [
+          ".....bbb",
+          "....bbbb",
+          "....bbee",
+          "....beke",
+          "....beee",
+          ".....bee",
+          ".ccccbcg",
+          "cwwccBBc",
+          "cccccBBc",
+          ".cwbBBBc",
+          "..cbBccc",
+          "..ebBBBc",
+          "...bBBcc",
+          "...bBBBc",
+          "...bccBw",
+          "....hh..",
+          "....hh.."
+        ]
+      ]
+    },
+    "hit": {
+      "ticksPerFrame": 4,
+      "loop": false,
+      "frames": [
+        [
+          "........",
+          ".....bbb",
+          "....bbbb",
+          "....bbee",
+          "....bkke",
+          "....beee",
+          ".....bee",
+          ".ccccbcg",
+          "cwcccBBc",
+          "cccccBBc",
+          "..ebBBBc",
+          "..ebBccc",
+          "..ebBBBc",
+          "...bBBBc",
+          "...bBBcc",
+          "...bBBBc",
+          "....hh..",
+          "....hh.."
+        ],
+        [
+          ".....bbb",
+          "....bbbb",
+          "....bbee",
+          "....bkke",
+          "....beee",
+          ".....bee",
+          ".ccccbcg",
+          "cwcccBBc",
+          "cccccBBc",
+          "..ebBBBc",
+          "..ebBccc",
+          "..ebBBBc",
+          "...bBBBc",
+          "...bBBcc",
+          "...bBBBc",
+          "...bccBw",
           "....hh..",
           "....hh.."
         ]

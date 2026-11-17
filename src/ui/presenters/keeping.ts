@@ -1,7 +1,7 @@
 // The Keeping models (ui-spec S09): the two tabs and the Memento archive with its found counter.
 // "Found" is MetaView.mementosFound, merged from the Mementos held at each run end (meta-store).
 
-import type { GameData } from '../../content/index.ts';
+import type { GameData, MetaUnlockDef } from '../../content/index.ts';
 import type { StringParams } from '../../core/index.ts';
 import type { IconRef } from '../icons.ts';
 import { mementoInfo, mementoRarityOrder } from './content.ts';
@@ -78,4 +78,9 @@ export function mementoArchive(data: GameData, mementosFound: readonly string[])
     });
   });
   return { entries, found, total: data.mementos.length };
+}
+
+/** The Silt pack that opens a Memento (meta_unlocks kind memento_pack), if any (wireframe 09). */
+export function mementoUnlock(data: GameData, mementoId: string): MetaUnlockDef | undefined {
+  return data.metaUnlocks.find((u) => u.kind === 'memento_pack' && u.targets.includes(mementoId));
 }

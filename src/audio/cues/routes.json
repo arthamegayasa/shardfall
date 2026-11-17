@@ -154,18 +154,28 @@
     "hurtBoss": "sfx.boss.hurt"
   },
   "rites": {
+    "byId": {
+      "great_toll": {
+        "cast": null,
+        "impact": "sfx.rite.impact.bell"
+      },
+      "glass_step": {
+        "cast": null,
+        "impact": "sfx.rite.impact.blade"
+      }
+    },
     "byArchetype": {
       "throw_zone": {
         "cast": "sfx.rite.cast.lantern",
         "impact": "sfx.rite.impact.lantern"
       },
       "ring": {
-        "cast": "sfx.rite.cast.lantern",
-        "impact": null
+        "cast": null,
+        "impact": "sfx.rite.impact.bell"
       },
       "dash": {
-        "cast": "sfx.rite.cast.lantern",
-        "impact": null
+        "cast": null,
+        "impact": "sfx.rite.impact.blade"
       }
     },
     "ready": "sfx.rite.ready",

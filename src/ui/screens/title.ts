@@ -3,6 +3,8 @@
 // dropped by app (boot.ts) and leaves us on the title: then ui.title.save_lost shows here.
 
 import { button, h, put } from '../dom.ts';
+import { keyLabel } from '../format.ts';
+import { moveKeysText } from '../presenters/hud-transient.ts';
 import { titleBlock } from './components.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
@@ -64,13 +66,30 @@ export function createTitleScreen(ctx: UiContext): Screen {
       'version-label',
       t('ui.title.version', { version: deps.data.meta.contentHash.slice(0, 8) }),
     );
+    // Bottom left (M4-02): credit and version line, and the run controls from the active bindings.
+    const kb = deps.settings().keybinds;
+    const controls = t('ui.title.controls', {
+      move: moveKeysText([
+        keyLabel(kb.moveUp[0]),
+        keyLabel(kb.moveLeft[0]),
+        keyLabel(kb.moveDown[0]),
+        keyLabel(kb.moveRight[0]),
+      ]),
+      rite: keyLabel(kb.rite[0]),
+      pause: keyLabel(kb.pause[0]),
+    });
+    const foot = put(
+      h(doc, 'div', 'title-foot'),
+      h(doc, 'p', 'title-controls', controls),
+      h(doc, 'p', 'title-credit', t('ui.title.credit_line')),
+    );
     const notice = saveLost ? h(doc, 'p', 'title-notice', t('ui.title.save_lost')) : null;
     // Silt balance top right while Silt exists (tiers B and C, ui-spec S01).
     const silt =
       deps.data.meta.contentTier !== 'A'
         ? h(doc, 'p', 'title-silt', t('ui.common.silt', { n: meta.silt }))
         : null;
-    put(el, put(safe, head, menu, notice, silt, version));
+    put(el, put(safe, head, menu, notice, silt, foot, version));
     focus.focus(0, true);
   };
 

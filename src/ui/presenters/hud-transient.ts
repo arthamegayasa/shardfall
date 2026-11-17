@@ -15,6 +15,10 @@ export const PULSE_BANNER_TICKS = Math.round(TICK_RATE * 1.2);
 export const HINT_TICKS = TICK_RATE * 6;
 /** Rite slot shake after RiteRejected. */
 export const RITE_DENIED_TICKS = Math.round(TICK_RATE * 0.25);
+/** Level row flashes gold on PlayerLeveledUp (ui-spec S03, A-09 visual twin of the level cue). */
+export const LEVEL_FLASH_TICKS = Math.round(TICK_RATE * 0.4);
+/** HP bar flashes on PlayerDamaged (A-09 visual twin of the hurt cue, next to the VFX edge flash). */
+export const HIT_FLASH_TICKS = Math.round(TICK_RATE * 0.3);
 /** Distance in world u that counts as "moved" for the hint. */
 export const HINT_MOVE_U = 1;
 
@@ -70,9 +74,37 @@ export function bannerHeld(b: Banner, tick: number, pulseNumber: number): void {
   b.pulseNumber = pulseNumber;
 }
 
-/** Visible banner kind at this tick (None once it expired). */
+/**
+ * Visible banner kind at this tick (None once it expired). A banner never lasts longer than
+ * BANNER_TICKS, so one that ends further away belongs to a run whose clock was later than this
+ * run's (run.start resets the tick to 0): it is stale and hidden (BUG-008).
+ */
 export function bannerShown(b: Banner, tick: number): BannerKind {
-  return tick < b.untilTick ? b.kind : BannerKind.None;
+  return tick < b.untilTick && b.untilTick - tick <= BANNER_TICKS ? b.kind : BannerKind.None;
+}
+
+/** Last sim tick the HUD saw, to notice a new run (the run-relative clock goes back). */
+export interface TransientClock {
+  lastTick: number;
+}
+
+export function createTransientClock(): TransientClock {
+  return { lastTick: -1 };
+}
+
+/** True once per new run: the tick went back since the last frame (BUG-008). */
+export function runRestarted(c: TransientClock, tick: number): boolean {
+  const restarted = c.lastTick >= 0 && tick < c.lastTick;
+  c.lastTick = tick;
+  return restarted;
+}
+
+/** Clears a banner (new run). */
+export function bannerClear(b: Banner): void {
+  b.kind = BannerKind.None;
+  b.untilTick = 0;
+  b.typeIndex = -1;
+  b.pulseNumber = 0;
 }
 
 export interface HintState {

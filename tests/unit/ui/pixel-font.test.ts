@@ -90,3 +90,43 @@ describe('team pixel font file', () => {
     expect(sum).toBe(0xb1b0afba);
   });
 });
+
+/** Glyph index for a code point from the font's cmap format 4 subtable. */
+function cmapGlyph(a: Uint8Array, code: number): number {
+  const view = new DataView(a.buffer);
+  const n = view.getUint16(4);
+  let cmap = -1;
+  for (let i = 0; i < n; i++) {
+    const o = 12 + i * 16;
+    if (String.fromCharCode(...a.subarray(o, o + 4)) === 'cmap') cmap = view.getUint32(o + 8);
+  }
+  const sub = cmap + view.getUint32(cmap + 8);
+  expect(view.getUint16(sub)).toBe(4);
+  const segX2 = view.getUint16(sub + 6);
+  const ends = sub + 14;
+  const starts = ends + segX2 + 2;
+  const deltas = starts + segX2;
+  for (let s = 0; s < segX2; s += 2) {
+    const end = view.getUint16(ends + s);
+    const start = view.getUint16(starts + s);
+    if (code >= start && code <= end) return (code + view.getInt16(deltas + s)) & 0xffff;
+  }
+  return 0;
+}
+
+describe('team pixel font separator (title credit line)', () => {
+  it('draws the middle dot as one centred pixel, like the period but raised', () => {
+    expect(hasGlyph('·')).toBe(true);
+    expect(glyphRows('·').filter((r) => r.includes('#'))).toEqual(['..#..']);
+  });
+
+  it('maps ASCII and the middle dot to their own glyphs in cmap', () => {
+    const a = buildPixelFontTtf();
+    expect(cmapGlyph(a, 0x20)).toBe(1);
+    expect(cmapGlyph(a, 0x41)).toBe(0x41 - 32 + 1);
+    expect(cmapGlyph(a, 0x7e)).toBe(95);
+    expect(cmapGlyph(a, 0xb7)).toBe(96);
+    expect(cmapGlyph(a, 0xb6)).toBe(0);
+    expect(cmapGlyph(a, 0x7f)).toBe(0);
+  });
+});

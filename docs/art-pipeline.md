@@ -288,7 +288,10 @@ Cara CD mereview: buka `art/atlas/preview/sprites.png` (baris 1 warna, baris 2 s
 
 - Cahaya: `createEntityLayers(..., { lighting: { glsl: SCENE_LIGHTING_GLSL, uniforms: sceneLighting.uniforms } })` (antarmuka LP di `src/render/shaders/lighting.ts`). Vertex shader memanggil `sfSpriteLight(kaki, minLevel)` sekali per instance: mode `SpriteLight.Kept` (min 0,7), `Unlit` (min 0), `None` (efek). Tanpa `lighting` sprite tampil warna palet.
 - Emisif: atlas game menulis alpha 200 (`EMISSIVE_ALPHA_BYTE`) untuk token emisif palet dan `emissive` per sprite; texel ini tidak diterangi dan dikali `entities.emissiveGain.value` (LP menaikkannya saat bloom aktif).
-- Kilat kena hit: `iFlash` (pemain `kept-white`, Unlit `bone`, ancang-ancang `danger-red` 35%, level up emas, Memento putih).
+- Kilat kena hit: `iFlash` (pemain `kept-white`, Unlit tint `bone` 0,5, Warden dan boss 0,35, level up emas, Memento putih). M4: kilat Unlit hanya dari hit benturan; tick zona dan Burn tidak berkedip (`src/render/sprites/actor-flash.ts` mencocokkan event `EnemyDamaged` ke slot).
+- Outline ancang-ancang (M4, BUG-007): `iOutline` mengganti texel warna kunci `ink` dengan `danger-magenta` yang berdenyut ke `danger-core`; badan Unlit tetap gelap.
+- Zona pemain (M4): alpha shader dihitung dari isian efektif di layar (`zoneFillAlpha`, Rite 20%, jejak 12%) karena blending linear membuat alpha 0,25 tampil sekitar 37%. Batch zona memakai `merge`: lingkaran yang bertumpuk tampil sebagai satu isian dan satu outline.
+- Rite per arketipe (M4): `throw_zone` terbang dan mendarat, `ring` cincin cyan tumbuh ke radius nyata dalam 0,25 s, `dash` 3 bayangan kaca cyan sepanjang jalur. Pose `cast` dan `hit` kelas B ada di `kept-bell` dan `kept-blade`.
 - Larut: `iParams.z` 0 sampai 1, ambang dither Bayer 4x4 pada texel atlas, tepi 1 texel memakai warna flash.
 - VFX: `src/render/vfx/effects.ts` (event ke partikel, terbang Rite, cincin lantai, hantu Unlit mati), `particles.ts` (pool SoA tetap 600, gerak dalam piksel layar bulat, hash deterministik, tanpa `Math.random`). Reduce Effects menurunkan semburan ke 30%. Lapis: dekal L1 (`decals`, `fxAreas`), efek L3; semua di bawah L4.
 - Preview: `npm run art:shot` merender arena `arena_market` asli (lingkungan dan cahaya LP) dengan dunia palsu dan garis waktu efek (`tests/render/preview/preview.ts`).

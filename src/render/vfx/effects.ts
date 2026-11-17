@@ -4,6 +4,12 @@
 // Colour code (style-guide 1.3): player effects blue/cyan/gold/white, Unlit remains are their own dark
 // violet. All effects live under the danger layer L4, so they never cover telegraphs or enemy shots.
 // Fixed capacities, no allocation per frame. Reduce effects scales bursts to 30% (art-direction 8.3).
+//
+// M4 (AD, M4-01, CD M3 polish 2): Rite VFX per archetype (rites.csv). throw_zone: lantern flight to the
+// aim point and landing burst. ring (Great Toll): a kept-cyan ring growing to the real radius around the
+// player in 0.25 s plus a second white ring. dash (Glass Step): three cyan glass afterimages of the
+// player along the real dash path. Only throw_zone draws anything at the aim point. Dying Unlit flash
+// with the same partial bone tint as live hits (0.5, Warden and boss 0.35).
 
 import {
   DAMAGE_HIT_KIND_SHIFT,
@@ -21,6 +27,7 @@ import type {
 import type { SpriteBatch } from '../sprites/sprite-batch.ts';
 import type { AtlasFrameRect } from '../../core/index.ts';
 import type { AreaBatch, AreaStyle } from './area-batch.ts';
+import { unlitFlashAlpha } from '../sprites/actor-flash.ts';
 import { createParticles, hash01, particleSpec } from './particles.ts';
 import type { ParticleLook } from './particles.ts';
 import { linearRgb } from './telegraph-style.ts';
@@ -55,6 +62,34 @@ const LOOK_IDS: readonly string[] = [
 export const RITE_FLIGHT_SEC = 0.35;
 /** Rite zone radius fallback (rites.csv flare_lantern zone_radius 3). */
 const RITE_ZONE_U = 3;
+/** Great Toll ring: grows to the Rite radius in about this time (CD M3 polish 2). */
+export const TOLL_GROW_SEC = 0.25;
+/** Glass Step afterimages along the dash path (CD M3 polish 2) and their life (s). */
+export const DASH_AFTERIMAGES = 3;
+export const AFTERIMAGE_LIFE_SEC = 0.32;
+const AFTERIMAGE_ALPHA = 0.75;
+const AFTERIMAGE_TINT = 0.65;
+
+/** How the render shows a Rite (rites.csv archetype). */
+export const RiteLook = { Throw: 0, Ring: 1, Dash: 2, Other: 3 } as const;
+export type RiteLook = (typeof RiteLook)[keyof typeof RiteLook];
+
+/** Rite look from a data row (GameData.rites[i]); rows without an archetype keep the lantern flight. */
+export function riteLookOf(row: unknown): RiteLook {
+  const a =
+    row !== null && typeof row === 'object'
+      ? (row as { archetype?: unknown }).archetype
+      : undefined;
+  if (a === 'ring') return RiteLook.Ring;
+  if (a === 'dash') return RiteLook.Dash;
+  if (a === 'throw_zone' || a === undefined) return RiteLook.Throw;
+  return RiteLook.Other;
+}
+
+/** Points along a dash for its afterimages: fractions 1/(n+1) .. n/(n+1) from start to end. */
+export function afterimageFraction(k: number, n: number): number {
+  return (k + 1) / (n + 1);
+}
 /** Player flash lengths (s). */
 export const LEVEL_FLASH_SEC = 0.18;
 export const MEMENTO_FLASH_SEC = 0.22;
@@ -78,12 +113,36 @@ export interface VfxPlayerState {
   flashB: number;
   /** Render time of the player's death (dissolve start), -1 while alive. */
   deadAt: number;
+  /** A Glass Step dash landed this frame and waits for the player's sprite (afterimages()). */
+  dashPending: boolean;
+  dashX0: number;
+  dashY0: number;
+  dashX1: number;
+  dashY1: number;
 }
 
 export interface VfxSystem {
   readonly player: VfxPlayerState;
-  /** Read this frame's events. playerX/Y = interpolated player feet (u). */
-  ingest(events: SimEventReader, timeSec: number, playerX: number, playerY: number): void;
+  /**
+   * Read this frame's events. playerX/Y = interpolated player feet (u); prevPlayerX/Y = the feet drawn
+   * last frame (start of a dash that lands this frame; defaults to playerX/Y).
+   */
+  ingest(
+    events: SimEventReader,
+    timeSec: number,
+    playerX: number,
+    playerY: number,
+    prevPlayerX?: number,
+    prevPlayerY?: number,
+  ): void;
+  /** Spawn the pending dash afterimages from the player's current sprite frame (no-op otherwise). */
+  afterimages(
+    rect: AtlasFrameRect,
+    anchorX: number,
+    anchorY: number,
+    flip: number,
+    timeSec: number,
+  ): void;
   /** A slot of the enemy pool just died or vanished: dissolve its last frame where it stood. */
   ghost(
     rect: AtlasFrameRect,
@@ -157,6 +216,11 @@ export function createVfx(
     flashG: 0,
     flashB: 0,
     deadAt: -1,
+    dashPending: false,
+    dashX0: 0,
+    dashY0: 0,
+    dashX1: 0,
+    dashY1: 0,
   };
   let reduced = false;
   let serial = 0;
@@ -189,6 +253,17 @@ export function createVfx(
   let rNext = 0;
   const ringStyle: RingStyle = { fill: [0, 0, 0, 0], edge: [0, 0, 0, 0], dashed: false };
 
+  // ---- Afterimages: cyan glass copies of the player sprite along a dash. ----
+  const AFTER = 8;
+  const aRect: (AtlasFrameRect | null)[] = new Array<AtlasFrameRect | null>(AFTER).fill(null);
+  const aAx = new Int16Array(AFTER);
+  const aAy = new Int16Array(AFTER);
+  const aFlip = new Int8Array(AFTER);
+  const aX = new Float32Array(AFTER);
+  const aY = new Float32Array(AFTER);
+  const aBorn = new Float64Array(AFTER);
+  let aNext = 0;
+
   // ---- Ghosts: the last frame of a dying Unlit, dissolving in whole texels. ----
   const GHOSTS = 128;
   const gRect: (AtlasFrameRect | null)[] = new Array<AtlasFrameRect | null>(GHOSTS).fill(null);
@@ -199,6 +274,7 @@ export function createVfx(
   const gY = new Float32Array(GHOSTS);
   const gBorn = new Float64Array(GHOSTS);
   const gLife = new Float32Array(GHOSTS);
+  const gFlashA = new Float32Array(GHOSTS);
   let gNext = 0;
 
   function ring(
@@ -283,7 +359,7 @@ export function createVfx(
 
   return {
     player,
-    ingest(ev, t, px, py) {
+    ingest(ev, t, px, py, prevPx = px, prevPy = py) {
       let sparks = 0;
       for (let e = 0; e < ev.count; e++) {
         const type = ev.type[e];
@@ -297,18 +373,39 @@ export function createVfx(
           if (sparks + n > SPARKS_PER_FRAME) continue;
           sparks += n;
           radial(LOOK.spark, burst(n), x, y, SPARK_PX_ABOVE_FEET, 70, 1, 0, 0, 0.15, t);
+        } else if (type === SimEventType.RiteLanded) {
+          // Ring and dash Rites resolve in the cast tick; throw_zone lands from its own flight below.
+          const look = riteLookOf(rites[ev.a[e] ?? 0]);
+          if (look === RiteLook.Ring) {
+            const b = ev.b[e] ?? 0;
+            const rr = b > 0 ? b : RITE_ZONE_U;
+            // Eased growth (1 - (1 - p)^2) reaches 94% of the radius at p = 0.75, so life = grow / 0.75.
+            ring(x, y, 0.4, rr, TOLL_GROW_SEC / 0.75, cyan, 1, 0.06, t);
+            ring(x, y, 0.3, rr * 0.8, 0.26, white, 0.9, 0, t + 0.06);
+            radial(LOOK.spark, burst(8), x, y, 4, 120, rr * 8, 0, 0, 0.2, t);
+          } else if (look === RiteLook.Dash) {
+            player.dashPending = true;
+            player.dashX0 = prevPx;
+            player.dashY0 = prevPy;
+            player.dashX1 = x;
+            player.dashY1 = y;
+            radial(LOOK.glassShard, burst(5), prevPx, prevPy, 8, 40, 3, 20, 120, 0.4, t);
+            ring(x, y, 0.2, 1.1, 0.2, cyan, 0.9, 0, t);
+          }
         } else if (type === SimEventType.RiteCast) {
           const row = rites[ev.a[e] ?? 0];
-          const i = fNext;
-          fNext = (fNext + 1) % FLIGHTS;
-          fx0[i] = px;
-          fy0[i] = py;
-          fx1[i] = x;
-          fy1[i] = y;
-          fBorn[i] = t;
-          fDur[i] = paramOf(row, 'flight_s') ?? RITE_FLIGHT_SEC;
-          fZone[i] = paramOf(row, 'zone_radius') ?? RITE_ZONE_U;
-          fLive[i] = 1;
+          if (riteLookOf(row) === RiteLook.Throw) {
+            const i = fNext;
+            fNext = (fNext + 1) % FLIGHTS;
+            fx0[i] = px;
+            fy0[i] = py;
+            fx1[i] = x;
+            fy1[i] = y;
+            fBorn[i] = t;
+            fDur[i] = paramOf(row, 'flight_s') ?? RITE_FLIGHT_SEC;
+            fZone[i] = paramOf(row, 'zone_radius') ?? RITE_ZONE_U;
+            fLive[i] = 1;
+          }
           player.castFrom = t;
           player.castUntil = t + RITE_CAST_SEC;
           // Release flash at the raised lantern plus a small cyan ring at the feet.
@@ -371,6 +468,24 @@ export function createVfx(
         }
       }
     },
+    afterimages(rect, ax, ay, flip, t) {
+      if (!player.dashPending) return;
+      player.dashPending = false;
+      const n = reduced ? 1 : DASH_AFTERIMAGES;
+      for (let k = 0; k < n; k++) {
+        const f = reduced ? 0.5 : afterimageFraction(k, n);
+        const i = aNext;
+        aNext = (aNext + 1) % AFTER;
+        aRect[i] = rect;
+        aAx[i] = ax;
+        aAy[i] = ay;
+        aFlip[i] = flip < 0 ? -1 : 1;
+        aX[i] = player.dashX0 + (player.dashX1 - player.dashX0) * f;
+        aY[i] = player.dashY0 + (player.dashY1 - player.dashY0) * f;
+        // The image nearest the start fades first, like a trail.
+        aBorn[i] = t - (n - 1 - k) * 0.04;
+      }
+    },
     ghost(rect, ax, ay, flip, x, y, rank, t) {
       const i = gNext;
       gNext = (gNext + 1) % GHOSTS;
@@ -383,6 +498,7 @@ export function createVfx(
       gY[i] = y;
       gBorn[i] = t;
       gLife[i] = GHOST_LIFE[rk] ?? 0.3;
+      gFlashA[i] = unlitFlashAlpha(rank);
       const mid = Math.round(rect.h / 2);
       const spread = Math.max(2, Math.round(rect.w / 3));
       radial(
@@ -454,10 +570,37 @@ export function createVfx(
           flash ? bR : rimR,
           flash ? bG : rimG,
           flash ? bB : rimB,
-          flash ? 1 : 0,
+          flash ? (gFlashA[i] ?? 0.5) : 0,
           1,
           dissolve,
           1,
+        );
+      }
+      // Dash afterimages: kept-cyan glass copies of the player, fading out.
+      for (let i = 0; i < AFTER; i++) {
+        const rect = aRect[i];
+        if (rect === null || rect === undefined) continue;
+        const age = t - (aBorn[i] ?? 0);
+        if (age >= AFTERIMAGE_LIFE_SEC) {
+          aRect[i] = null;
+          continue;
+        }
+        const fade = age <= 0 ? 1 : 1 - age / AFTERIMAGE_LIFE_SEC;
+        batch.push(
+          aX[i] ?? 0,
+          aY[i] ?? 0,
+          0,
+          rect,
+          aAx[i] ?? 0,
+          aAy[i] ?? 0,
+          aFlip[i] ?? 1,
+          0,
+          0,
+          cyan[0],
+          cyan[1],
+          cyan[2],
+          AFTERIMAGE_TINT,
+          AFTERIMAGE_ALPHA * fade,
         );
       }
       // Rite flights: lantern arc with a short cyan tail; landing burst when it arrives.
@@ -518,6 +661,8 @@ export function createVfx(
       fLive.fill(0);
       rLive.fill(0);
       gRect.fill(null);
+      aRect.fill(null);
+      player.dashPending = false;
       player.castUntil = 0;
       player.flashUntil = 0;
       player.deadAt = -1;

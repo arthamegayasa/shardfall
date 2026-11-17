@@ -2,6 +2,11 @@
 // One floor quad per area covers its bounding box; the fragment shader evaluates the shape in screen px
 // (16 px per u across, 10 px per u deep). Edges are exactly 1 virtual px (fwidth), fills are flat
 // alpha, no anti-aliasing, so telegraph edges stay crisp like sprites (art-direction 8.1).
+//
+// M4 (AD, M4-01, CD M3 polish 3): merged fills. A batch created with merge on (player zones) uploads
+// every circle it draws (uMerge, uMergeCount); a fill texel already covered by an earlier circle is
+// skipped and an edge texel inside another circle becomes fill, so stacked zones read as one fill with
+// one outline instead of growing denser (style-guide 1.8).
 
 /** Per-instance layout, in floats. Keep in sync with vfx/area-batch.ts. */
 export const AREA_INSTANCE_ATTRIBUTES = {
@@ -9,13 +14,16 @@ export const AREA_INSTANCE_ATTRIBUTES = {
   aGeo: 4,
   /** radius, p0, p1, p2 (AreaPoolView meaning). */
   aShape: 4,
-  /** shape (AreaShape), fill progress 0..1, dashed edge 0/1, unused. */
+  /** shape (AreaShape), fill progress 0..1, dashed edge 0/1, instance index (merged fills). */
   aMode: 4,
   /** Fill colour (linear rgb) and alpha. */
   aFill: 4,
   /** Edge colour (linear rgb) and alpha. */
   aEdge: 4,
 } as const;
+
+/** Max circles a merged batch can test against (uMerge array length). */
+export const AREA_MERGE_MAX = 64;
 
 export const AREA_VERTEX = /* glsl */ `
 attribute vec4 aGeo;
@@ -61,8 +69,19 @@ varying vec4 vMode;
 varying vec4 vFill;
 varying vec4 vEdge;
 
+uniform vec4 uMerge[${AREA_MERGE_MAX}];
+uniform int uMergeCount;
+
 const vec2 PX = vec2(16.0, 10.0);
 const float TAU = 6.283185307179586;
+
+// True when world point w is strictly inside circle j of the merged batch (xy centre, z radius).
+bool inMerged(int j, vec2 w) {
+  vec4 m = uMerge[j];
+  if (m.z <= 0.0) return false;
+  vec2 d = w - m.xy;
+  return dot(d, d) < m.z * m.z * 0.98;
+}
 
 // Signed turns from a to b in (-0.5, 0.5].
 float turnDiff(float a, float b) {
@@ -129,6 +148,23 @@ void main() {
 
   if (!inside) discard;
   if (edge && dashed && mod(along, 6.0) >= 3.0) edge = false;
+  if (uMergeCount > 0) {
+    int me = int(vMode.w + 0.5);
+    bool coveredBefore = false;
+    bool coveredOther = false;
+    for (int j = 0; j < ${AREA_MERGE_MAX}; j++) {
+      if (j >= uMergeCount) break;
+      if (j == me || !inMerged(j, vWorld)) continue;
+      coveredOther = true;
+      if (j < me) coveredBefore = true;
+    }
+    // An edge inside another zone is interior of the union: draw it as fill.
+    if (edge && coveredOther) {
+      edge = false;
+      filled = true;
+    }
+    if (!edge && coveredBefore) discard;
+  }
   vec4 c = vec4(0.0);
   if (filled) c = vFill;
   if (edge) c = vEdge;

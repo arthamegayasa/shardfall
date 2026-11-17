@@ -2,7 +2,8 @@
 // tabs (Q / E). Kept: one row per meta unlock with its icon, name, kind, and Silt price, and the
 // no-dialog purchase pattern (Unlock once, the row turns into "Press again" for 3 s, press again to
 // buy). Mementos: grid of every Memento with a found counter; found ones show their icon, unknown
-// ones a silhouette and "???"; the detail panel shows name, effect, tags, and flavor of the focus.
+// ones a silhouette and "???"; the detail panel shows name, effect, tags, and flavor of the focus,
+// plus "Unlock  20 Silt" when a Silt pack opens that Memento (wireframe 09, same Press again rule).
 
 import { classUnlock, unlockCost, unlockStatus } from '../../content/index.ts';
 import type { MetaUnlockDef } from '../../content/index.ts';
@@ -11,7 +12,12 @@ import { button, h, put } from '../dom.ts';
 import { Cue } from '../cues.ts';
 import { iconBox, panel, tagChips, titleBlock } from './components.ts';
 import type { IconRef } from '../icons.ts';
-import { KEEPING_TABS, mementoArchive, nextKeepingTab } from '../presenters/keeping.ts';
+import {
+  KEEPING_TABS,
+  mementoArchive,
+  mementoUnlock,
+  nextKeepingTab,
+} from '../presenters/keeping.ts';
 import type { KeepingTab, MementoArchiveEntry } from '../presenters/keeping.ts';
 import type { Screen, UiContext } from './types.ts';
 
@@ -19,10 +25,11 @@ import type { Screen, UiContext } from './types.ts';
 const CONFIRM_MS = 3000;
 /** Class portrait box in UI units (24 x 24 sprite at 1x). */
 const PORTRAIT_UNITS = 24;
-/** Focus groups: list or grid, bottom bar, tab buttons. */
+/** Focus groups: list or grid, bottom bar, tab buttons, detail panel Unlock. */
 const GROUP_BODY = 0;
 const GROUP_BAR = 1;
 const GROUP_TABS = 2;
+const GROUP_DETAIL = 3;
 
 export function createKeepingScreen(ctx: UiContext): Screen {
   const { doc, t, deps } = ctx;
@@ -165,6 +172,14 @@ export function createKeepingScreen(ctx: UiContext): Screen {
     return tabs;
   };
 
+  /** Unlock, Press again, or Owned label of an unlock row or button. */
+  const priceText = (u: MetaUnlockDef, status: string): string =>
+    status === 'owned'
+      ? t('ui.keeping.owned')
+      : armed === u.id
+        ? t('ui.common.press_again')
+        : `${t('ui.keeping.unlock')}  ${t('ui.common.silt', { n: unlockCost(deps.data, u) })}`;
+
   /** Kept tab: one row per meta unlock, plus the focus index to start on (-1 for none). */
   const keptBody = (meta: MetaSave): { body: HTMLElement; first: number } => {
     const list = panel(ctx, 'keeping-list');
@@ -173,7 +188,6 @@ export function createKeepingScreen(ctx: UiContext): Screen {
     if (rows.length === 0) list.appendChild(h(doc, 'p', 'info-text', t('ui.keeping.empty')));
     rows.forEach((u) => {
       const status = unlockStatus(deps.data, meta, u.id);
-      const cost = unlockCost(deps.data, u);
       const row = button(doc, `keeping-${u.id}`, '', `keeping-row is-${status}`);
       row.textContent = '';
       const text = h(doc, 'span', 'keeping-text');
@@ -182,13 +196,7 @@ export function createKeepingScreen(ctx: UiContext): Screen {
         h(doc, 'span', 'item-name', nameOf(u)),
         h(doc, 'span', 'keeping-kind dim', kindLabel(u)),
       );
-      const price =
-        status === 'owned'
-          ? t('ui.keeping.owned')
-          : armed === u.id
-            ? t('ui.common.press_again')
-            : `${t('ui.keeping.unlock')}  ${t('ui.common.silt', { n: cost })}`;
-      const side = h(doc, 'span', 'keeping-price', price);
+      const side = h(doc, 'span', 'keeping-price', priceText(u, status));
       if (armed === u.id) row.classList.add('is-armed');
       put(row, iconFor(u), text, side);
       list.appendChild(row);
@@ -227,8 +235,24 @@ export function createKeepingScreen(ctx: UiContext): Screen {
       detail.appendChild(h(doc, 'p', 'card-flavor keeping-flavor', t(e.flavorKey)));
   };
 
+  /** Detail panel Unlock (wireframe 09): shown while the focused Memento has a pack to buy. */
+  const fillUnlock = (btn: HTMLButtonElement, meta: MetaSave, e: MementoArchiveEntry): void => {
+    const u = mementoUnlock(deps.data, e.id);
+    const status = u === undefined ? 'unknown' : unlockStatus(deps.data, meta, u.id);
+    btn.hidden = u === undefined || status === 'owned' || status === 'unknown';
+    if (u === undefined || btn.hidden) return;
+    const label = btn.querySelector('.btn-label');
+    if (label !== null) label.textContent = priceText(u, status);
+    btn.classList.toggle('is-armed', armed === u.id);
+    btn.classList.toggle('is-idle', status === 'poor');
+    btn.setAttribute('aria-label', `${priceText(u, status)}, ${nameOf(u)}`);
+  };
+
   /** Mementos tab: found counter, icon grid, detail panel, plus the focus index to start on. */
-  const mementoBody = (meta: MetaSave): { body: HTMLElement; first: number } => {
+  const mementoBody = (
+    meta: MetaSave,
+    keepDetail: boolean,
+  ): { body: HTMLElement; first: number } => {
     const archive = mementoArchive(deps.data, meta.mementosFound);
     const unknown = t('ui.keeping.unknown_name');
     const count = h(
@@ -241,6 +265,14 @@ export function createKeepingScreen(ctx: UiContext): Screen {
     const grid = h(doc, 'div', 'keeping-grid');
     const detail = panel(ctx, 'keeping-detail', true);
     detail.dataset['ui'] = 'keeping-detail';
+    const info = h(doc, 'div', 'keeping-detail-info');
+    const unlockBtn = button(doc, 'keeping-detail-unlock', '', 'keeping-detail-unlock');
+    unlockBtn.hidden = true;
+    put(detail, info, put(h(doc, 'div', 'keeping-detail-bar'), unlockBtn));
+    const show = (e: MementoArchiveEntry): void => {
+      fillDetail(info, e);
+      fillUnlock(unlockBtn, meta, e);
+    };
     let first = -1;
     archive.entries.forEach((e) => {
       const name = e.nameKey === null ? unknown : t(e.nameKey);
@@ -260,23 +292,45 @@ export function createKeepingScreen(ctx: UiContext): Screen {
         el: cell,
         group: GROUP_BODY,
         activate: () => {
-          ctx.sound(e.found ? Cue.Confirm : Cue.Denied);
+          // Enter on a cell buys its Silt pack (same two presses as the Kept rows), so the
+          // keyboard never has to reach the detail button first.
+          mementoFocusId = e.id;
+          const u = mementoUnlock(deps.data, e.id);
+          const status = u === undefined ? 'unknown' : unlockStatus(deps.data, meta, u.id);
+          if (u !== undefined && status !== 'owned' && status !== 'unknown') buy(u);
+          else ctx.sound(e.found ? Cue.Confirm : Cue.Denied);
         },
         onFocus: () => {
           mementoFocusId = e.id;
-          fillDetail(detail, e);
+          show(e);
         },
       });
       if (first < 0 || e.id === mementoFocusId) first = i;
     });
     const shown = archive.entries.find((e) => e.id === mementoFocusId) ?? archive.entries[0];
-    if (shown === undefined) detail.appendChild(h(doc, 'p', 'info-text', t('ui.keeping.empty')));
-    else fillDetail(detail, shown);
+    if (shown === undefined) info.appendChild(h(doc, 'p', 'info-text', t('ui.keeping.empty')));
+    else show(shown);
+    const ui = focus.add({
+      el: unlockBtn,
+      group: GROUP_DETAIL,
+      activate: () => {
+        const u = mementoUnlock(deps.data, mementoFocusId);
+        if (u === undefined) {
+          ctx.sound(Cue.Denied);
+          return;
+        }
+        buy(u);
+      },
+    });
+    // Keep focus on Unlock across the rebuild of "Press again" and its timeout.
+    if (keepDetail && !unlockBtn.hasAttribute('hidden')) first = ui;
     const gridPanel = put(panel(ctx, 'keeping-grid-panel'), count, grid);
     return { body: put(h(doc, 'div', 'keeping-archive'), gridPanel, detail), first };
   };
 
   const build = (): void => {
+    const a = doc.activeElement;
+    const keepDetail = a instanceof HTMLElement && a.dataset['ui'] === 'keeping-detail-unlock';
     el.textContent = '';
     focus.reset();
     const meta = metaSave();
@@ -286,7 +340,7 @@ export function createKeepingScreen(ctx: UiContext): Screen {
     silt.dataset['ui'] = 'keeping-silt';
     put(head, titleBlock(ctx, t('ui.keeping.title')), silt);
     const tabs = tabBar();
-    const { body, first } = tab === 'kept' ? keptBody(meta) : mementoBody(meta);
+    const { body, first } = tab === 'kept' ? keptBody(meta) : mementoBody(meta, keepDetail);
     const backBtn = button(doc, 'archive-back', t('ui.common.back'));
     const backIndex = focus.add({ el: backBtn, group: GROUP_BAR, activate: back });
     put(el, put(safe, head, tabs, body, put(h(doc, 'div', 'bottom-bar'), backBtn)));

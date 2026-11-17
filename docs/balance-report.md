@@ -1,6 +1,6 @@
 # Laporan Balance (M2-01, vertical slice)
 
-Pemilik: Game Designer. Status: M2-01, 2026-11-17 (menggantikan draf M1-02). Sumber angka: `content/data/*.csv` (CSV menang bila berbeda dengan dokumen). Alat: `tools/balance/model.py` (model ekonomi, Python standar) dan `tools/balance/bot/` (bot yang memainkan sim asli).
+Pemilik: Game Designer. Status: M4-03, 2026-11-17 (bagian 9 baru: target kurva Tingkat B; bagian 1 sampai 8 dari M2-01). Sumber angka: `content/data/*.csv` (CSV menang bila berbeda dengan dokumen). Alat: `tools/balance/model.py` (model ekonomi, Python standar) dan `tools/balance/bot/` (bot yang memainkan sim asli).
 
 ## 1. Cara menjalankan
 
@@ -93,7 +93,7 @@ Bacaan:
 
 - `node tools/data/build-data.ts --tier B --out tests/out/game-data-b.json`: 0 error, 0 peringatan. Tingkat C juga 0 error.
 - Isi B: profil `run_b` 15 Pulse (Warden P4 `warden_hound`, P10 `warden_choir`, boss P15), 3 kelas (`lantern`, `bell` 60 Silt, `blade` 40 Silt, unlock lewat `meta_unlocks`), 8 senjata, 22 Memento, 6 tag dengan 18 ambang sinergi, 3 Rite, 14 kartu Temper, Silt dari Warden dan boss, 5 baris `meta_unlocks` B.
-- Bot `good`, 20 seed per kelas, `run_b`: `lantern` menang 80%, `bell` 55% (Warden 49 s, boss 103 s: lemah melawan target tunggal), `blade` 95%. Durasi run menang 14,6 sampai 15,9 menit (target B 15 sampai 20). Tidak ada timeout atau overflow. Angka ini hanya bukti data B bisa dimainkan; tuning B di M3 (HP boss B t15 sekitar 16150 [Asumsi], `bell` perlu daya satu target).
+- [Digantikan bagian 9] Bot `good`, 20 seed per kelas, `run_b`: `lantern` menang 80%, `bell` 55% (Warden 49 s, boss 103 s: lemah melawan target tunggal), `blade` 95%. Durasi run menang 14,6 sampai 15,9 menit (target B 15 sampai 20). Tidak ada timeout atau overflow. Angka ini hanya bukti data B bisa dimainkan; tuning B di M3 (HP boss B t15 sekitar 16150 [Asumsi], `bell` perlu daya satu target).
 
 ## 6. Kebutuhan ke peran lain
 
@@ -151,8 +151,153 @@ Total pembelian model: 22 (bot `good`: 18). `run_b` model: 37 pembelian; `run_c`
 
 Semua PASS: swarmer 1 tembakan sampai t6, pembelian 22 (16 sampai 22), Warden 18,3 s pada DPS referensi, boss 82 s, level akhir 12, Pulse 1 memberi 29 Glint (harga termurah 18).
 
-## 8. Pertanyaan terbuka
+## 8. Pertanyaan terbuka (M2-01)
 
 1. Boss mengalahkan 42% run bot `good` yang mencapainya, sedangkan Pulse biasa hampir tanpa luka bagi bot ini. Bila playtest manusia menunjukkan Pulse biasa sudah berat, turunkan HP boss dulu (2500 ke 2200) sebelum menyentuh Pulse.
 2. Target GDD 19 "HP tersisa sekitar 50% di Pulse 9" belum terpenuhi oleh bot `good`. Dipertahankan sebagai target manusia; diukur ulang dengan telemetri M4.
 3. Hasil bot perlu diulang setelah GP menyelesaikan M2-05 (knockback, affix, event) karena perilaku sim masih bergeser.
+
+## 9. Tingkat B: target kurva kesulitan dan hasil bot (M4-03)
+
+Build rilis 1.0 adalah Tingkat B (`run_b`, 15 Pulse, Warden P4 dan P10, boss P15) dengan Crack 0 saja. Crack bertingkat ikut Tingkat C (pasca 1.0), jadi Crack 0 harus sekaligus ramah pemain baru dan menguji keahlian.
+
+### 9.1 Target (per kelas, bot `good`, minimal 30 seed)
+
+| # | Metrik | Target | Alasan |
+|---|---|---|---|
+| T1 | Menang | 60 sampai 85% | Bot `good` hampir tidak terluka di Pulse biasa (median damage 0 sesudah P5), jadi angkanya batas atas untuk manusia terampil. Lebih tinggi dari target `run_a` (30 sampai 60%) karena kalah di P14 membuang 15 menit dan tidak ada Crack lebih mudah di bawahnya [Asumsi]. Dicek ulang dengan telemetri playtest |
+| T2 | Selisih menang antar kelas | maksimal 15 poin | Pilar 1: tidak ada kelas kelas dua |
+| T3 | Kematian di satu Pulse Warden (P4, P10) | maksimal 20% run | Warden P4 adalah ujian pertama yang disengaja, bukan tembok kelas |
+| T4 | Kematian di satu Pulse biasa | maksimal 10% run | Tekanan naik rata, tanpa lonjakan tersembunyi |
+| T5 | Kalah di boss P15 | maksimal 15% dari run yang mencapainya | Boss adalah puncak, bukan hukuman untuk run 14 Pulse |
+| T6 | Durasi run menang (perkiraan, bagian 2) | 12 sampai 16 menit | Brief M4. Waktu di Temper dan the Glazier tidak lagi menambah waktu sim (BUG-013), perkiraan tetap menambah 20 s per toko |
+| T7 | Waktu bunuh boss | median 35 sampai 100 s | Fase 2 sempat terlihat, tidak berlarut |
+| T8 | Glint terpungut | median 70% atau lebih di setiap Pulse non-boss | CD M3 polish 8 |
+| T9 | Pembelian per run | median 22 sampai 30 | Sekitar 2 per toko, 14 toko |
+| T10 | Unlit hidup maksimal, `poolOverflow` | di bawah 120, 0 | Anggaran LP |
+| T11 | Bot `naive` menang | maksimal 30% | Keahlian harus menentukan hasil. Pengecualian Vintner: bagian 9.4 |
+
+### 9.2 Perubahan angka M4-03
+
+| Angka | Sebelum | Sesudah | Alasan |
+|---|---|---|---|
+| `affixes.csv` `brood` tier | B | C | BUG-012: pemakai `brood` hanya Warden C (`warden_bulwark`) dan pool acak Crack 2 ke atas, keduanya pasca 1.0. Memasangnya ke Warden B akan mempertebal Warden P4, yang sudah menjadi tembok Chorister, tanpa data playtest. Kode affix tetap utuh untuk C |
+| `pickup_radius_base` | 2,0 u | 2,25 u | CD M3 polish 8 (Glint tercecer di akhir Pulse panjang). Glint terpungut Chorister turun ke 68 sampai 69% di P6 dan P12 sebelum perubahan. Dipilih radius, bukan menarik semua Glint saat Pulse ditutup: kepadatan butir terjadi selama Pulse, sedangkan penyapuan akhir Pulse sudah menghapus semua butir lantai. 2,5 u juga diuji: lolos target tetapi memberi pemain pasif terlalu banyak Glint (bagian 9.5) |
+| Hand Bell (`echo_bell`) dmg, jeda | 7, 2,2 s | 8, 2,0 s | Chorister mati 33% di Warden P4 (target T3 20%). Daya satu target naik sekitar 25% (4,8 ke 6,0 DPS termasuk gema), tetap jauh di bawah Lantern Bolt (10,8 tanpa Burn). 9 dmg juga diuji: membuat Chorister pasif (bot QA `dodgerRandom`) bertahan di overtime Warden P4 selama 43 menit pada satu seed |
+
+### 9.3 Hasil final (contentHash `f3e7a350`, bot `good` seed 1 sampai 60, `naive` seed 1 sampai 30)
+
+| Metrik | Lamplighter | Chorister | Vintner | Target |
+|---|---|---|---|---|
+| Menang `good` | 82% (49/60) | 75% (45/60) | 85% (51/60) | T1 60 sampai 85%; T2 selisih 10 poin |
+| Kematian Pulse Warden | P4 17%, P10 2% | P4 13%, P10 12% | P4 7% | T3 maksimal 20% |
+| Kematian Pulse biasa | 0% | 0% | 0% | T4 maksimal 10% |
+| Kalah di boss P15 | 0% | 0% | 9% (5/56) | T5 maksimal 15% |
+| Durasi menang (perkiraan) | 14,4 menit (sim 8,6) | 15,4 menit (sim 9,6) | 14,5 menit (sim 8,6) | T6 12 sampai 16 |
+| Waktu bunuh boss median | 44 s | 85 s | 41 s | T7 35 sampai 100 s |
+| Glint terpungut, Pulse non-boss terendah | 74% | 74% | 84% | T8 70% |
+| Pembelian median | 26 | 23 | 26 | T9 22 sampai 30 |
+| Unlit hidup maks, overflow | 94, 0 | 101, 0 | 84, 0 | T10 |
+| Menang `naive` | 13% | 30% | 70% | T11 maksimal 30% |
+
+Sebelum M4-03 (contentHash `2008c1b6`, seed 1 sampai 30): Lamplighter 83%, Chorister 67% (P4 33%, Warden 39 s), Vintner 80%; Glint terpungut Chorister terendah 68%. Bot `naive` dengan data lama sama persis dengan tabel QA M3 6.1, jadi perubahan sim BUG-013 tidak menggeser hasil bot.
+
+Putusan: ketiga kelas memenuhi T1 sampai T10. T11 lolos untuk Lamplighter dan Chorister (Chorister tepat di batas); Vintner gagal (bagian 9.4).
+
+### 9.4 Vintner dan bot `naive`
+
+Vintner `naive` menang 70% (sama dengan M3). Run menangnya lambat (perkiraan 21,5 menit, sim 15,5 menit, karena Warden dan boss bertahan lama), jadi keahlian terlihat dari waktu, belum dari hasil. Diuji tiga varian (pemulihan maks 3 ke 2 dan ke 1 HP per detik, Max HP 38 ke 32): semuanya menurunkan bot `good` sama banyak dengan `naive` (`good` 60 sampai 70%), jadi tidak memperlebar jarak keahlian dan tidak dipakai. Kemungkinan penyebab: bot `good` menjaga jarak dari tubuh Unlit, cara main yang kurang cocok untuk senjata jarak dekat. Tindak lanjut: playtest manusia Vintner, atau perilaku bot jarak dekat, sebelum menyentuh angka Vintner.
+
+### 9.5 P1-c ragam build: gagal sejak M3 (temuan GD)
+
+`run-bots.ts` kini mencatat tag dominan di toko terakhir (`--class all --all-unlocks`, kelas bergilir per seed seperti QA B-6). Bot `good` memilih secara wajar (tag kelas, lalu tag terbanyak), sesuai definisi P1-c di `docs/pillars.md`.
+
+| Data | Bot | Tag dominan (50 run, seed 1001 sampai 1050) |
+|---|---|---|
+| Sebelum M4-03 (`2008c1b6` setara) | `good` | edge 54%, flame 26%, shard 10%, echo 8%, ward 2% |
+| Sebelum M4-03 | `naive` | edge 40%, flame 34%, shard 16% |
+| Final M4-03 (`f3e7a350`) | `good` | edge 56%, flame 26%, shard 12%, echo 6% |
+| Final, uji QA B-6 (`dodgerRandom`) | QA | edge 54% (M3: 38%) |
+
+Bacaan: Edge sudah melewati batas 40% sebelum tugas ini. B-6 lolos tipis di M3 karena bot acak QA sering mati di Pulse 3 sampai 5, sehingga build masih kecil dan tag senjata awal kelas yang menentukan (QA mencatatnya di M3-report 6). Setiap perubahan yang membuat run pasif bertahan lebih lama membuat B-6 gagal di 44 sampai 56%: diuji radius 2,5 saja (48%), Hand Bell 9 saja (44%), radius 2,25 dengan Hand Bell 8 jeda lama (50%), dan kombinasi final (54%). Akar masalah ada di komposisi pool: Edge 9 item (terbanyak, plus senjata awal Vintner), Echo dan Ward 6. Ini risiko yang sudah dicatat CD M3 3.1. Perbaikan butuh keputusan desain pool tag (misalnya menambah item Echo dan Ward, atau mengganti tag kedua satu sampai dua item Edge), di luar M4-03. Tes B-6 tidak dilemahkan dan tetap merah sampai keputusan itu diambil (diselesaikan M4-04, bagian 10).
+
+Bot `naive` M4-03 setelah semua perubahan: Chorister bertahan lebih lama di overtime Warden (hingga beberapa menit) karena overtime tidak punya batas. Dengan Hand Bell 8 tidak ada timeout di 50 run B-6 maupun 90 run `naive`; dengan 9 ada satu (43 menit).
+
+### 9.6 Cara mengulang
+
+```
+npm run data:build
+node tools/balance/bot/run-bots.ts --bot good --profile run_b --class lantern --seeds 1-60
+node tools/balance/bot/run-bots.ts --bot naive --profile run_b --class blade --seeds 1-30
+node tools/balance/bot/run-bots.ts --bot good --profile run_b --class all --all-unlocks --seeds 1001-1050
+```
+Ulangi untuk `bell` dan `blade`. Data default build sudah Tingkat B. Sekitar 20 s per 60 seed.
+
+## 10. M4-04: ragam build (P1-c) dan batas overtime Warden
+
+### 10.1 Perubahan data (P1-c)
+
+Akar masalah bagian 9.5 adalah komposisi pool Tingkat B, bukan angka kekuatan: Edge 9 item, Echo dan Ward 6, dan Echo tidak punya Memento Plain sehingga hampir tidak muncul di toko awal. Pool Rare berisi 3 item Edge dari 5.
+
+| Perubahan | Sebelum | Sesudah | Alasan desain |
+|---|---|---|---|
+| `splinter_comb` tag | shard, edge | shard, echo | Efeknya serpih yang memantul ke Unlit lain, yaitu gema dari satu hit (sejalan dengan Music Box). Edge tetap memiliki pemicu kritikal lewat sinergi |
+| `tuning_fork` rarity | fine | plain | Setiap tag kini punya minimal satu Memento Plain, jadi Echo hadir di toko awal seperti Ward (`iron_thimble`) |
+| `music_box`, `patched_cloak` | Tingkat C, paket 3 dan 4 | Tingkat B, paket 2 | Menambah item Echo dan Ward murni ke rilis. Paket 2 di B dulu hanya berisi `grinding_wheel` (biaya 10); kini isinya lengkap dengan biaya penuh 25. `pyre_bell` pindah ke paket 3, `wick_charm` ke paket 4 (biaya C tetap) |
+
+Pool Tingkat B dengan semua unlock (32 item): Flame 7, Shard 8, Edge 8, Echo 8, Ward 7, Trade 6. Teks efek tidak berubah karena string tidak menyebut tag. Ikon kedua Memento baru dibuat sebagai `placeholder` (`art/sprites/icon-memento-music-box.json`, `icon-memento-patched-cloak.json`) agar `art:check` lulus; AD perlu versi final.
+
+### 10.2 Batas overtime Warden
+
+Tanpa batas, bot `naive` Chorister menahan Warden P4 sampai 1020 s (17 menit, seed 1 sampai 60). Aturan baru (`config.csv`, dibaca `src/sim/systems/run.ts`):
+
+| Kunci | Nilai | Arti |
+|---|---|---|
+| `warden_overtime_decay_s` | 60 | Detik waktu tambahan sebelum Warden meluruh (setelah haste di 20 s). 0 = tanpa batas (default schema) |
+| `warden_overtime_decay_len_s` | 15 | Batas atas HP Warden turun linear dari HP maks ke 0. Penyembuhan tidak bisa mengejar |
+
+Di 0 Warden mati sebagai kill Warden biasa: peti hadiah dan Glint tetap diberikan (GDD 3.3: Warden tidak kabur, hadiah selalu bisa diraih), tanpa efek `on_kill` dan tanpa sumber. Pulse Warden paling lama 75 s melewati timer. Dipilih meluruh, bukan Pulse ditutup tanpa hadiah, karena pemain yang bertahan 60 s melawan Warden hasted sudah membayar dengan waktu dan risiko; menghukum dua kali hanya memukul build lemah.
+
+Pengaruh: bot `good` tidak pernah mencapai peluruhan (Warden terlama 77 s sejak muncul), hasil `good` identik. Bot `naive` Chorister seed 1 sampai 60: tanpa batas menang 22% (Warden maks 1020 s); mulai 45 s 23%; 60 s 27% (maks 103 s); 90 s 20%. Selisihnya di dalam derau 60 seed.
+
+### 10.3 Hasil (contentHash `977ff134`)
+
+P1-c, tag dominan di toko terakhir (`--class all --all-unlocks`):
+
+| Bot dan seed | Sebelum (`f3e7a350`) | Sesudah |
+|---|---|---|
+| QA B-6 `dodgerRandom`, 1001 sampai 1050 | edge 54% | edge 36%, flame 26%, echo 20%, shard 14%, ward 2%, trade 2% |
+| `good`, 1001 sampai 1050 | edge 56% | flame 34%, edge 32%, echo 32%, shard 2% |
+| `good`, 2001 sampai 2100 | edge 48% | echo 37%, edge 29%, flame 28%, shard 5%, ward 1% |
+
+Matriks `run_b` default unlock (paket terkunci, jadi hanya `splinter_comb` dan `tuning_fork` berpengaruh), bot `good` seed 1 sampai 120:
+
+| Metrik | Lamplighter | Chorister | Vintner | Target |
+|---|---|---|---|---|
+| Menang `good` | 80% | 78% | 85% | T1 60 sampai 85%; T2 selisih 7 poin |
+| Kematian Pulse Warden | P4 14%, P10 5% | P4 18%, P10 3% | P4 3% | T3 maksimal 20% |
+| Kematian Pulse biasa | P5 1% | P12 1% | 0% | T4 maksimal 10% |
+| Kalah di boss P15 | 0% | 1% | 12% (14/116) | T5 maksimal 15% |
+| Durasi menang (perkiraan) | 14,4 menit | 15,3 menit | 14,5 menit | T6 12 sampai 16 |
+| Waktu bunuh boss median | 43 s | 84 s | 39 s | T7 35 sampai 100 s |
+| Glint terpungut terendah (non-boss) | 74% | 74% | 83% | T8 70% |
+| Pembelian median | 26,5 | 23 | 26 | T9 22 sampai 30 |
+| Unlit hidup maks, overflow | 81, 0 | 111, 0 | 99, 0 | T10 |
+| Menang `naive` (seed 1 sampai 30) | 23% | 30% | 77% | T11 maksimal 30% (Vintner: 9.4) |
+
+Semua T1 sampai T10 lolos. Catatan derau: dengan seed 1 sampai 60 saja, Vintner kalah di boss 19% (11/58); data lama (`f3e7a350`) pada seed 61 sampai 180 dan data baru memberi angka yang sama (8 kekalahan boss dari 115), jadi 60 seed terlalu sedikit untuk T5. Tabel ini memakai 120 seed.
+
+Catatan ukur B-6: bot acak sering mati di Pulse 3 sampai 5, dan seri dipecah menurut urutan data tag (flame, shard, edge, echo, ward, trade). Pada set seed lain (4001 sampai 4075, 7001 sampai 7075) Flame tetap 44 sampai 49% untuk bot acak, terutama dari run Lamplighter yang mati dini dan seri yang dimenangkan Flame. Tes B-6 (seed tetap) lolos dengan margin 2 run; perubahan konten berikutnya bisa menggesernya lagi (lihat pertanyaan terbuka di laporan).
+
+Uji QA M3-02 (setiap pola boss muncul) juga peka terhadap kekuatan build acak: varian tanpa promosi Tingkat C butuh seed tambahan sampai 40 (batas tes 25); varian final butuh sampai 21.
+
+### 10.4 Cara mengulang
+
+```
+npm run data:build
+node tools/balance/bot/run-bots.ts --bot good --profile run_b --class all --all-unlocks --seeds 1001-1050
+node tools/balance/bot/run-bots.ts --bot good --profile run_b --class lantern --seeds 1-120
+node tools/balance/bot/run-bots.ts --bot naive --profile run_b --class bell --seeds 1-30
+npx vitest run tests/unit/qa/content-b.test.ts -t B-6
+npx vitest run tests/unit/sim/warden-overtime.test.ts
+```

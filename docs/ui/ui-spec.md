@@ -1,6 +1,14 @@
 # Shardfall: Spesifikasi UI
 
-Pemilik: UI Programmer (UI). Status: versi 1.2 (M2-06, 2026-11-17), UI final vertical slice. Reviewer: CD (rasa dan gaya), LP (teknis dan kontrak), QA (aksesibilitas).
+Pemilik: UI Programmer (UI). Status: versi 1.3 (M4-02, 2026-11-17), polish dan aksesibilitas. Reviewer: CD (rasa dan gaya), LP (teknis dan kontrak), QA (aksesibilitas).
+
+**Perubahan versi 1.3 (M4-02: BUG-008, BUG-009, BUG-010, QA A-08 dan A-09, review `docs/reviews/M3-cd.md` 7 butir 10):**
+- Navigasi panah (8.2, BUG-010): kandidat yang segaris dengan fokus (kotaknya bertumpang di sumbu silang, "beam") selalu menang atas kandidat yang lebih dekat tapi menyamping; membalik langkah yang keluar grup kembali ke elemen asal (memori satu langkah, hilang saat fokus pindah di dalam grup, hover, atau rebuild); elemen tersembunyi (kotak kosong) dilewati. Tes `tests/unit/ui/focus-nav.test.ts` memakai geometri Glazier 1080p nyata.
+- Akhir run (S08): kembali dari The Keeping tidak memasang kunci 500 ms dan fokus kembali ke tombol terakhir (BUG-009). Saldo berlabel "Silt Held" sebagai baris statistik. Daftar build yang tidak muat bisa di-scroll (roda mouse, atau panah atas dan bawah saat daftar difokus) dengan tanda "More below" atau "More above"; daftar hanya menjadi titik fokus bila memang tidak muat.
+- HUD (S03): banner Warden atau boss dan elemen sesaat lain dibersihkan saat run baru dimulai (jam sim kembali ke 0), dan banner yang berakhir lebih dari 2,5 detik di depan tidak pernah tampil (BUG-008). Padanan visual A-09: baris Lv berkedip emas saat naik level, bar HP menyala putih saat kena hit (durasi dalam tick, membeku saat jeda).
+- Kontras A-08: teks kecil yang langsung di atas arena (subjudul, Felled by, label Pulse, Lv, timer, Glint, petunjuk tombol Rite, versi, saldo Silt judul dan The Keeping, baris info toko) memakai pelat `--plate` (ink 90%). Angka tag di panel Tag memakai `bone`, bukan warna tag (Echo biru hanya 4,0:1).
+- The Keeping (S09): tombol Unlock di panel detail Memento bila ada paket Silt yang membukanya (pola "Press again" sama, fokus tetap di tombol).
+- Judul (S01): kiri bawah petunjuk kontrol dari binding aktif (`ui.title.controls`) dan baris kredit (`ui.title.credit_line`). Font tim mendapat glyph titik tengah U+00B7.
 
 **Perubahan versi 1.2 (M2-06, review `docs/reviews/M1-cd.md` 4 dan `docs/reviews/M1-lp.md` MINOR UI, BUG-003, BUG-005):**
 - Font bitmap tim "Shardfall Pixel" aktif (7.2): glyph 5x7 dalam sel 6x9 sebagai data di `src/ui/pixel-font.ts`, dirakit menjadi TrueType kecil saat boot dan didaftarkan lewat `FontFace`. Cadangan monospace bila browser menolak.
@@ -165,6 +173,7 @@ Aturan alur:
 - Begin saat ada autosave: run lama ditimpa. Karena tidak bisa dibatalkan, Begin memakai pola "Press again" (lihat S09) bila autosave ada.
 - Pojok kanan atas: saldo Silt (hanya bila Silt aktif, Tingkat B).
 - Pojok kanan bawah: nomor versi build (label kecil `dust`).
+- Pojok kiri bawah (M4-02): petunjuk kontrol run dari binding aktif ("WASD Move · Space Rite · Esc Pause") dan baris kredit ("v1.0 · made by an AI team · assets procedural").
 - Fokus awal: Continue bila ada, selain itu Begin.
 
 ### S02 Pilih Kept
@@ -288,7 +297,8 @@ Empat tab dalam satu layar: Graphics, Audio, Controls, Accessibility. Perubahan 
 - Build akhir: ikon senjata dengan tier, ikon Memento, 1 sampai 2 tag dominan.
 - Silt didapat: angka naik dari 0 dalam sekitar 800 ms (langsung bila kurangi efek), saldo baru. Bila ada yang kini bisa dibuka, label "New unlock available" dengan tombol ke The Keeping.
 - Tombol: Try Again (kelas sama, fokus awal), Choose Kept, The Keeping (Tingkat B), Title.
-- Kunci input 500 ms saat layar muncul, agar tombol yang ditekan saat mati tidak langsung memulai run baru.
+- Kunci input 500 ms saat layar muncul, agar tombol yang ditekan saat mati tidak langsung memulai run baru. Kembali dari The Keeping tidak dikunci dan fokus kembali ke tombol terakhir (BUG-009).
+- Saldo Silt setelah run sebagai baris berlabel "Silt Held" (CD M3 10). Daftar build yang tidak muat: scroll di dalam panel, tanda "More below" atau "More above" di bawah daftar, panah atas dan bawah menggulir saat daftar difokus lalu keluar ke tombol di tepinya.
 
 ### S09 The Keeping (identifier `archive`)
 - Dua tab: Kept dan Mementos. Saldo Silt di kanan atas.
@@ -296,6 +306,7 @@ Empat tab dalam satu layar: Graphics, Audio, Controls, Accessibility. Perubahan 
 - Tab Mementos: grid ikon semua Memento. Yang sudah ditemukan tampil penuh; yang belum tampil sebagai siluet dengan "Not yet found". Panel detail di kanan: ikon besar, nama, efek, tag, flavor. Memento yang bisa dibuka dengan Silt (aturan GD) punya tombol Unlock.
 - **Konfirmasi belanja Silt tanpa dialog:** tekan Unlock sekali, tombol berubah menjadi "Press again" selama 3 detik; tekan lagi untuk membuka. Satu pola, ramah keyboard dan pembaca layar.
 - Penghitung "12/30 found" di atas grid.
+- M4-02: tombol Unlock di bawah teks panel detail Memento, tampil hanya bila Memento yang difokus dibuka oleh paket Silt (`meta_unlocks` jenis `memento_pack`) yang belum dimiliki. Kanan dari grid memfokus tombol itu; label "Unlock  20 Silt", lalu "Press again"; redup bila Silt kurang.
 
 ## 6. Komponen bersama
 
@@ -399,6 +410,7 @@ Wadah teks diukur dalam piksel layar dari skala font, bukan dari satuan UI, kare
 
 ### 8.2 Model fokus (navigasi keyboard penuh)
 - Setiap layar dibagi menjadi **grup fokus** (misalnya toko: tawaran, inventaris, panel Tag, bar bawah). Panah bergerak secara spasial di dalam grup; di tepi grup, panah pindah ke grup tetangga sesuai arah. Tab dan Shift+Tab melompat antar grup.
+- Aturan spasial (M4-02, BUG-010): kandidat harus berada penuh di luar tepi fokus ke arah itu; yang segaris (beam) menang atas yang menyamping; skor sisanya jarak utama plus 2 kali jarak silang. Membalik langkah yang keluar grup kembali ke elemen asal. Elemen tersembunyi tidak pernah menjadi tujuan.
 - Fokus selalu terlihat: bingkai `kept-gold`. Tidak ada keadaan tanpa fokus di layar menu.
 - Hover mouse memindahkan fokus. Mouse keluar dari elemen tidak menghapus fokus.
 - Setiap layar mendefinisikan fokus awal (tercantum di bagian 5) dan mengingat fokus terakhir saat kembali dari sub-layar (misalnya Pengaturan ke Jeda).
@@ -453,7 +465,8 @@ UI memancarkan id cue lewat `UiDeps.sound.play(cueId)` (app meneruskan ke `Audio
 | Jeda saat tidak fokus | Default On |
 | Pembaca layar | Menu memakai tombol asli dengan label teks. Live region mengumumkan hasil aksi toko ("Bought Ember Ring. 12 Glint left.", "Not enough Glint."). HUD `aria-hidden` saat Pulse agar tidak membanjiri pembaca layar. Ini dukungan dasar, bukan target sertifikasi |
 | Navigasi keyboard penuh | Bagian 8.2. Semua layar bisa diselesaikan tanpa mouse |
-| Kontras teks | `bone` pada `night` 13.9:1, `dust` pada `night` minimal 4.5:1 (QA ukur). Tidak ada teks penting dengan `dust` opasitas 50% |
+| Kontras teks | `bone` pada `night` 13.9:1, `dust` pada `night` minimal 4.5:1 (QA ukur). Tidak ada teks penting dengan `dust` opasitas 50%. M4-02: kasus terburuk dihitung UI di atas arena putih penuh: panel (night 90% di atas redup 50 sampai 60%) `dust` 5,5:1, `bone` 12:1, `kept-blue` 4,0:1 (karena itu tidak dipakai untuk teks); teks tanpa panel memakai pelat ink 90% (`dust` 5,1:1, `bone` 11:1, `kept-gold` 9:1). Judul besar tanpa pelat di atas redup 60%: `bone` 3,9:1, `kept-gold` 3,2:1 (ambang 3:1) |
+| Padanan visual suara (A-09) | Naik level: baris Lv emas sesaat. Kena hit: bar HP putih sesaat (plus kilat tepi VFX). Pulse hampir habis: timer emas. Boss atau Warden datang: banner. Dapat Memento: layar hadiah. Telegraf bahaya: render (AD, GP) |
 
 QA memiliki `docs/qa/accessibility.md`; spec ini adalah sisi implementasi UI.
 
@@ -625,16 +638,20 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.credits.body` | Made by the Shardfall team. Full credits come later. | Ada |
 | `ui.credits.title` | Credits | Ada |
 | `ui.end.again` | Try Again | Ada |
+| `ui.end.build` | Final build | Ada (M4-02, label pembaca layar daftar build) |
 | `ui.end.choose` | Choose Kept | Ada |
 | `ui.end.felled_by` | Felled by {name} | Ada |
 | `ui.end.glint` | Glint Gathered | Ada |
 | `ui.end.keeping` | The Keeping | Ada (belum dipakai M1) |
 | `ui.end.lost` | Kept Lost | Ada |
 | `ui.end.lost_sub` | Another wakes beneath the glass. | Ada |
+| `ui.end.more_above` | More above | Ada (M4-02) |
+| `ui.end.more_below` | More below | Ada (M4-02) |
 | `ui.end.new_unlock` | New unlock available | Ada (belum dipakai M1) |
 | `ui.end.next_vitrine` | Next Vitrine | Ada (belum dipakai M1) |
 | `ui.end.pulse_reached` | Pulse {n} of {total} | Ada |
 | `ui.end.silt` | Silt Earned | Ada |
+| `ui.end.silt_held` | Silt Held | Ada (M4-02, CD M3 10) |
 | `ui.end.steady` | Vitrine Steady | Ada (belum dipakai M1) |
 | `ui.end.steady_sub` | The last crack seals. The light stops pulsing and simply shines. | Ada (belum dipakai M1) |
 | `ui.end.time` | Time | Ada |
@@ -741,6 +758,8 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.tier.4` | IV | Ada |
 | `ui.title.begin` | Begin | Ada |
 | `ui.title.continue` | Continue | Ada |
+| `ui.title.controls` | {move} Move · {rite} Rite · {pause} Pause | Ada (M4-02) |
+| `ui.title.credit_line` | v1.0 · made by an AI team · assets procedural | Ada (M4-02) |
 | `ui.title.credits` | Credits | Ada |
 | `ui.title.keeping` | The Keeping | Ada |
 | `ui.title.name` | Shardfall | Ada |

@@ -27,6 +27,10 @@ import type { CueTable } from './cue-data.ts';
 import type { TriggerList } from './triggers.ts';
 
 type CueRef = string | null;
+interface RiteRoute {
+  readonly cast: CueRef;
+  readonly impact: CueRef;
+}
 interface StartResolve {
   readonly start: CueRef;
   readonly resolve: CueRef;
@@ -54,9 +58,9 @@ export interface Routes {
     readonly hurtBoss: string;
   };
   readonly rites: {
-    readonly byArchetype: Readonly<
-      Record<string, { readonly cast: CueRef; readonly impact: CueRef }>
-    >;
+    /** Per-Rite override (CD M3 polish 12: Great Toll and Glass Step sound like themselves). */
+    readonly byId?: Readonly<Record<string, RiteRoute>>;
+    readonly byArchetype: Readonly<Record<string, RiteRoute>>;
     readonly ready: string;
     readonly readySuppressAfterPulseStartMs: number;
   };
@@ -220,6 +224,14 @@ function weaponFire(routes: Routes, w: { id: string; archetype: string }): { cue
   return { cue, semis: 0, via: cue === null ? 'declared-silent' : 'fallback' };
 }
 
+function riteRoute(routes: Routes, r: { id: string; archetype: string }): { route: RiteRoute; via: CoverageRow['via'] } {
+  const byId = routes.rites.byId?.[r.id];
+  const route = byId ?? routes.rites.byArchetype[r.archetype];
+  if (route === undefined) throw new Error(`routes.json: no cue for rite archetype "${r.archetype}"`);
+  const silent = route.cast === null && route.impact === null;
+  return { route, via: silent ? 'declared-silent' : byId !== undefined ? 'id' : 'fallback' };
+}
+
 function enemyDeath(routes: Routes, e: { id: string; sizeClass: string }): { cue: CueRef; via: CoverageRow['via'] } {
   const byId = routes.enemies.deathById[e.id];
   if (byId !== undefined) return { cue: byId, via: byId === null ? 'declared-silent' : 'id' };
@@ -273,9 +285,8 @@ export function describeCoverage(data: GameData, routes: Routes): CoverageRow[] 
   for (const w of data.weapons) rows.push({ table: 'weapons', id: w.id, ...pick(weaponFire(routes, w)) });
   for (const e of data.enemies) rows.push({ table: 'enemies', id: e.id, ...enemyDeath(routes, e) });
   for (const r of data.rites) {
-    const route = routes.rites.byArchetype[r.archetype];
-    if (route === undefined) throw new Error(`routes.json: no cue for rite archetype "${r.archetype}"`);
-    rows.push({ table: 'rites', id: r.id, cue: route.cast, via: route.cast === null ? 'declared-silent' : 'fallback' });
+    const { route, via } = riteRoute(routes, r);
+    rows.push({ table: 'rites', id: r.id, cue: route.cast ?? route.impact, via });
   }
   for (const e of data.effects) rows.push({ table: 'effects', id: e.id, ...procCue(routes, e) });
   for (const p of data.bossPatterns) {
@@ -327,9 +338,9 @@ export function createEventMap(
   const rCast = new Int32Array(data.rites.length);
   const rImpact = new Int32Array(data.rites.length);
   data.rites.forEach((r, i) => {
-    const route = routes.rites.byArchetype[r.archetype];
-    rCast[i] = cue(route?.cast ?? null, `rite ${r.id}`);
-    rImpact[i] = cue(route?.impact ?? null, `rite ${r.id} impact`);
+    const { route } = riteRoute(routes, r);
+    rCast[i] = cue(route.cast, `rite ${r.id}`);
+    rImpact[i] = cue(route.impact, `rite ${r.id} impact`);
   });
   const affixAction = new Int32Array(16).fill(NONE);
   for (const [name, code] of Object.entries(AffixAction)) {
