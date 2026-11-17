@@ -1,0 +1,40 @@
+
+Running 5 tests using 1 worker
+
+browser chromium-gpu 156.0.8078.4
+url http://127.0.0.1:4180/shardfall/
+title in 1764 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+  ok 1 tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chromium-gpu (9.1s)
+browser chrome 157.0.8103.40
+url http://127.0.0.1:4180/shardfall/
+title in 805 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+  ok 2 tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: chrome (8.4s)
+browser msedge 157.0.4341.60
+url http://127.0.0.1:4180/shardfall/
+title in 810 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems []
+  ok 3 tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: msedge (7.9s)
+browser firefox 157.0
+url http://127.0.0.1:4180/shardfall/
+title in 1159 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 5, outside base path []
+problems ["console.warning: [JavaScript Warning: \"WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.\" {file: \"http://127.0.0.1:4180/shardfall/assets/index-C8h3F9F1.js\" line: 4993}]"]
+  ok 4 tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: firefox (9.4s)
+browser webkit-fallback 27.2
+url http://127.0.0.1:4180/shardfall/
+title in 871 ms
+facts {"hooks":false,"webgl2":true,"title":"Shardfall","foot":""}
+responses 4, outside base path []
+problems ["console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')","console.warning: [app] audio unlock failed TypeError: undefined is not a constructor (evaluating 'new window.AudioContext({latencyHint:`interactive`})')"]
+  ok 5 tests\e2e\m5-prod.spec.ts:74:3 › M5 production build smoke: webkit-fallback (7.5s)
+
+  5 passed (42.9s)

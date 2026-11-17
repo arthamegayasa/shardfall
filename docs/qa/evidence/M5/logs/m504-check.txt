@@ -1,0 +1,231 @@
+
+> shardfall@1.0.0 check
+> npm run data:check && npm run art:check && npm run levels:check && npm run audio:check && npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build && npm run bundle:check
+
+
+> shardfall@1.0.0 data:check
+> node tools/data/build-data.ts --check
+
+info  content/data/bosses.csv:5 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/bosses.csv:6 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/bosses.csv:7 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/bosses.csv:8 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/bosses.csv:9 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:9 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:10 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:11 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:12 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:13 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:14 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:15 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:16 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:17 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:18 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:19 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:20 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:21 dropped: boss_id "boss_vine" is above content tier B
+info  P1-a: 6 of 24 Mementos are flat (25%)
+0 error(s), 0 warning(s); contentHash 977ff134, tier B
+strings: 0 error(s), 0 warning(s)
+content/generated is up to date
+
+> shardfall@1.0.0 art:check
+> node tools/art/check-sprites.ts --no-preview
+
+ok   fx-burn                        vfx-kept           h=  3px f= 3
+ok   fx-digits                      vfx-kept           h=  8px f=20
+ok   fx-ember                       vfx-kept           h=  2px f= 2
+ok   fx-flare                       vfx-kept           h=  9px f= 4
+ok   fx-glass-shard                 vfx-kept           h=  3px f= 4
+ok   fx-glint-trail                 vfx-kept           h=  2px f= 2
+ok   fx-glint                       glint              h=  5px f= 2
+ok   fx-mote                        vfx-danger         h=  2px f= 2
+ok   fx-rise                        vfx-kept           h=  3px f= 2
+ok   fx-shard                       vfx-danger         h=  3px f= 4
+ok   fx-shot-arc-blade              vfx-kept           h= 13px f= 3
+ok   fx-shot-chain-spark            projectile-kept    h=  5px f= 2
+ok   fx-shot-danger                 projectile-danger  h=  7px f= 1
+ok   fx-shot-kept                   projectile-kept    h=  4px f= 1
+ok   fx-shot-lantern-bolt           projectile-kept    h=  5px f= 2
+ok   fx-shot-orbit-shards           projectile-kept    h=  5px f= 2
+ok   fx-shot-returning-glaive       projectile-kept    h=  5px f= 2
+ok   fx-shot-splinter-shot          projectile-kept    h=  5px f= 4
+ok   fx-spark                       vfx-kept           h=  3px f= 3
+ok   fx-spawn-crack                 vfx-danger         h=  9px f= 4
+ok   fx-star                        vfx-kept           h=  7px f= 3
+ok   fx-trail                       vfx-kept           h=  2px f= 2
+ok   icon-glint                     icon               h=  7px f= 1
+ok   icon-memento-ashen-crown       icon               h= 13px f= 1
+ok   icon-memento-coal-locket       icon               h= 16px f= 1
+ok   icon-memento-collector-pin     icon               h= 15px f= 1
+ok   icon-memento-duelist-ribbon    icon               h= 14px f= 1
+ok   icon-memento-dust-hourglass    icon               h= 13px f= 1
+ok   icon-memento-glass-aegis       icon               h= 15px f= 1
+ok   icon-memento-glass-marble      icon               h= 14px f= 1
+ok   icon-memento-grinding-wheel    icon               h= 16px f= 1
+ok   icon-memento-haggler-seal      icon               h= 14px f= 1
+ok   icon-memento-headsman-hook     icon               h= 16px f= 1
+ok   icon-memento-iron-thimble      icon               h= 14px f= 1
+ok   icon-memento-kindling-jar      icon               h= 16px f= 1
+ok   icon-memento-lucky-button      icon               h= 14px f= 1
+ok   icon-memento-magpie-tin        icon               h= 13px f= 1
+ok   icon-memento-music-box         icon               h= 14px f= 1
+ok   icon-memento-patched-cloak     icon               h= 15px f= 1
+ok   icon-memento-prism-lens        icon               h= 13px f= 1
+ok   icon-memento-rite-chime        icon               h= 15px f= 1
+ok   icon-memento-shard-pouch       icon               h= 15px f= 1
+ok   icon-memento-smolder-boots     icon               h= 14px f= 1
+ok   icon-memento-splinter-comb     icon               h= 11px f= 1
+ok   icon-memento-torch-glove       icon               h= 15px f= 1
+ok   icon-memento-tuning-fork       icon               h= 15px f= 1
+ok   icon-memento-whetstone         icon               h= 12px f= 1
+ok   icon-portrait-glazier          portrait           h= 48px f= 1
+ok   icon-rite-flare-lantern        icon               h= 16px f= 1
+ok   icon-rite-glass-step           icon               h= 15px f= 1
+ok   icon-rite-great-toll           icon               h= 15px f= 1
+ok   icon-silt                      icon               h=  6px f= 1
+ok   icon-stat-area-pct             icon               h= 14px f= 1
+ok   icon-stat-armor                icon               h= 14px f= 1
+ok   icon-stat-attack-speed-pct     icon               h= 14px f= 1
+ok   icon-stat-crit-chance          icon               h= 15px f= 1
+ok   icon-stat-damage-pct           icon               h= 15px f= 1
+ok   icon-stat-dodge                icon               h= 14px f= 1
+ok   icon-stat-hp-regen             icon               h= 13px f= 1
+ok   icon-stat-leech                icon               h= 16px f= 1
+ok   icon-stat-luck                 icon               h= 15px f= 1
+ok   icon-stat-max-hp               icon               h= 15px f= 1
+ok   icon-stat-move-speed           icon               h= 11px f= 1
+ok   icon-stat-pickup-radius-pct    icon               h= 15px f= 1
+ok   icon-stat-range-pct            icon               h= 15px f= 1
+ok   icon-stat-rite-haste           icon               h= 10px f= 1
+ok   icon-tag-echo                  icon               h=  8px f= 1
+ok   icon-tag-edge                  icon               h=  8px f= 1
+ok   icon-tag-flame                 icon               h=  8px f= 1
+ok   icon-tag-shard                 icon               h=  8px f= 1
+ok   icon-tag-trade                 icon               h=  8px f= 1
+ok   icon-tag-ward                  icon               h=  7px f= 1
+ok   icon-weapon-arc-blade          icon               h= 15px f= 1
+ok   icon-weapon-chain-spark        icon               h= 14px f= 1
+ok   icon-weapon-echo-bell          icon               h= 13px f= 1
+ok   icon-weapon-lantern-bolt       icon               h= 15px f= 1
+ok   icon-weapon-orbit-shards       icon               h= 15px f= 1
+ok   icon-weapon-returning-glaive   icon               h= 14px f= 1
+ok   icon-weapon-splinter-shot      icon               h= 16px f= 1
+ok   icon-weapon-tithe-coin         icon               h= 14px f= 1
+ok   kept-bell                      kept               h= 22px f=10 highlight 23.6%
+ok   kept-blade                     kept               h= 21px f=10 highlight 25.7%
+ok   unlit-exploder                 unlit-medium       h= 15px f= 1
+ok   unlit-summoner                 unlit-medium       h= 17px f= 1
+ok   warden-choir                   warden             h= 34px f= 1
+ok   boss-lantern                   boss               h= 84px f= 9
+ok   kept-lantern                   kept               h= 22px f=12 highlight 19.6%
+ok   unlit-charger                  unlit-medium       h= 16px f= 8
+ok   unlit-shooter                  unlit-medium       h= 18px f= 6
+ok   unlit-swarmer                  unlit-small        h= 11px f= 8
+ok   unlit-tank                     unlit-large        h= 25px f= 8
+ok   warden-hound                   warden             h= 32px f= 9
+ok   tile-floor                     tile               h= 16px f= 2
+93 sprites, 0 failing
+
+> shardfall@1.0.0 levels:check
+> node tools/levels/check-arena.ts
+
+PASS  content/levels/arena_cloister.json
+  area_u2=622  boss_start_gap_u=4  spawn_band_u=1 to 2.5  spawn_to_start_u=7.5  obstacles=3  coverage_pct=1.27  decor=31  decor_animated=4  decor_min_gap_u=1  lights=7
+PASS  content/levels/arena_market.json
+  area_u2=622  boss_start_gap_u=4  spawn_band_u=1 to 2.5  spawn_to_start_u=7.5  obstacles=3  coverage_pct=1.71  decor=61  decor_animated=12  decor_min_gap_u=1.2  lights=7
+PASS  content/levels/arena_proto.json
+  area_u2=622  boss_start_gap_u=4  spawn_band_u=1 to 2.5  spawn_to_start_u=7.5  obstacles=0  coverage_pct=0  decor=0  decor_animated=0  lights=0
+PASS  content/levels/arena_vineyard.json
+  area_u2=622  boss_start_gap_u=4  spawn_band_u=1 to 2.5  spawn_to_start_u=7.5  obstacles=4  coverage_pct=1.63  decor=30  decor_animated=6  decor_min_gap_u=1.35  lights=7
+4 arena(s), 0 error(s), 0 warning(s)
+
+> shardfall@1.0.0 audio:check
+> node tools/audio/validate.ts
+
+audio:check ok: 14 songs, audio data gzip 11.5 KB (target 15 KB)
+
+> shardfall@1.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> shardfall@1.0.0 typecheck
+> tsc -p tsconfig.json && tsc -p tsconfig.sim.json && tsc -p tsconfig.tools.json
+
+
+> shardfall@1.0.0 lint
+> eslint .
+
+
+> shardfall@1.0.0 test
+> vitest run
+
+
+ RUN  v5.1.0 D:/T3 Projects/Shardfall
+
+
+ Test Files  72 passed (72)
+      Tests  668 passed (668)
+   Start at  11:36:32
+   Duration  69.02s (tests 83%, import 12%, transform 4%, worker 1%)
+
+
+> shardfall@1.0.0 build
+> npm run data && vite build
+
+
+> shardfall@1.0.0 data
+> node tools/data/build-data.ts
+
+info  content/data/bosses.csv:5 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/bosses.csv:6 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/bosses.csv:7 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/bosses.csv:8 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/bosses.csv:9 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:9 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:10 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:11 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:12 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:13 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:14 dropped: boss_id "boss_bell" is above content tier B
+info  content/data/boss_patterns.csv:15 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:16 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:17 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:18 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:19 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:20 dropped: boss_id "boss_vine" is above content tier B
+info  content/data/boss_patterns.csv:21 dropped: boss_id "boss_vine" is above content tier B
+info  P1-a: 6 of 24 Mementos are flat (25%)
+0 error(s), 0 warning(s); contentHash 977ff134, tier B
+strings: 0 error(s), 0 warning(s)
+wrote content/generated/game-data.json, content/generated/strings.json
+[36mvite v8.3.5 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 324 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.71 kB │ gzip:   0.43 kB
+dist/third-party-licenses.txt              3.98 kB │ gzip:   1.04 kB
+dist/assets/render-worker-D-9kRk5f.js     10.42 kB
+dist/assets/index-C-mPsUCh.css            32.35 kB │ gzip:   6.22 kB
+dist/assets/id-BjNOE9FS.js                23.60 kB │ gzip:   8.16 kB
+dist/assets/audio-S_9SPuGb.js            124.73 kB │ gzip:  31.65 kB
+dist/assets/index-C8h3F9F1.js          1,072.48 kB │ gzip: 286.63 kB
+
+[32m✓ built in 325ms[39m
+
+> shardfall@1.0.0 bundle:check
+> node tools/bundle/check-bundle.ts
+
+   30.5 KB  assets/audio-S_9SPuGb.js  (lazy)
+    7.9 KB  assets/id-BjNOE9FS.js  (lazy)
+    6.0 KB  assets/index-C-mPsUCh.css
+  277.2 KB  assets/index-C8h3F9F1.js
+    4.6 KB  assets/render-worker-D-9kRk5f.js  (worker)
+    0.4 KB  index.html
+    1.0 KB  third-party-licenses.txt  (file)
+initial JS gzip 277.2 KB (target 300.0 KB, fail 400.0 KB)
+first page gzip 283.6 KB (target 400.0 KB, fail 600.0 KB)
+lazy chunks and workers gzip 43.0 KB (loaded after the first page)

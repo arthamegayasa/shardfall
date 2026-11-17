@@ -7,6 +7,12 @@
 // every circle it draws (uMerge, uMergeCount); a fill texel already covered by an earlier circle is
 // skipped and an edge texel inside another circle becomes fill, so stacked zones read as one fill with
 // one outline instead of growing denser (style-guide 1.8).
+//
+// M5 (LP, BUG-016): hazard pattern (aMode.z = 2, colour vision modes only, danger areas only). The edge is
+// 2 virtual px and striped every 3 px between a pale tint of the edge colour and the edge colour; the
+// fill alternates 4 px diagonal bands between HAZARD_FILL_HI (capped at the stacked fill limit, 35%) and
+// HAZARD_FILL_LO times the style alpha. Bands are laid on absolute virtual px, so stacked telegraphs
+// stripe in phase. Player zones never use it: stripes mean danger even when hue cannot (protan, deutan).
 
 /** Per-instance layout, in floats. Keep in sync with vfx/area-batch.ts. */
 export const AREA_INSTANCE_ATTRIBUTES = {
@@ -21,6 +27,18 @@ export const AREA_INSTANCE_ATTRIBUTES = {
   /** Edge colour (linear rgb) and alpha. */
   aEdge: 4,
 } as const;
+
+import { STACKED_FILL_MAX_ALPHA } from '../pipeline/danger-rules.ts';
+
+/** Hazard pattern constants (BUG-016). Fill bands: high = min(alpha + HI_ADD, MAX), low = alpha * LO. */
+export const HAZARD_EDGE_PX = 2;
+export const HAZARD_STRIPE_PX = 3;
+export const HAZARD_BAND_PX = 4;
+export const HAZARD_FILL_HI_ADD = 0.05;
+export const HAZARD_FILL_MAX = STACKED_FILL_MAX_ALPHA;
+export const HAZARD_FILL_LO = 0.6;
+/** Share of white mixed into the edge colour for the pale stripes (close to danger-core). */
+export const HAZARD_PALE_MIX = 0.75;
 
 /** Max circles a merged batch can test against (uMerge array length). */
 export const AREA_MERGE_MAX = 64;
@@ -92,7 +110,9 @@ float turnDiff(float a, float b) {
 void main() {
   float shape = vMode.x;
   float progress = vMode.y;
-  bool dashed = vMode.z > 0.5;
+  bool hazard = vMode.z > 1.5;
+  bool dashed = vMode.z > 0.5 && !hazard;
+  float ew = hazard ? ${HAZARD_EDGE_PX.toFixed(1)} : 1.0;
   vec2 rel = vWorld - vGeo.xy;
   vec2 relPx = rel * PX;
   bool inside = false;
@@ -105,7 +125,7 @@ void main() {
     float q = length(rel) / r;
     float fw = max(fwidth(q), 1e-5);
     inside = q <= 1.0;
-    edge = inside && (1.0 - q) < fw;
+    edge = inside && (1.0 - q) < fw * ew;
     filled = q <= progress;
     // Approximate arc length in px (13 px per u is the mean of 16 and 10).
     along = atan(relPx.y, relPx.x) * r * 13.0;
@@ -114,7 +134,7 @@ void main() {
       float qi = length(rel) / max(vShape.y, 1e-4);
       float fwi = max(fwidth(qi), 1e-5);
       if (qi < 1.0) inside = false;
-      edge = inside && (edge || (qi - 1.0) < fwi);
+      edge = inside && (edge || (qi - 1.0) < fwi * ew);
       filled = inside;
       if (vShape.w > 0.0 && abs(turnDiff(vShape.z, atan(rel.y, rel.x) / TAU)) < vShape.w) inside = false;
     } else if (shape > 2.5) {
@@ -124,7 +144,7 @@ void main() {
       float side = (vShape.y - d) * TAU * length(relPx);
       float fws = max(fwidth(side), 1e-5);
       if (d > vShape.y) inside = false;
-      edge = inside && (edge || side < fws);
+      edge = inside && (edge || side < fws * ew);
     }
   } else {
     // Line from (x, y) to (x2, y2), half width p0.
@@ -139,7 +159,7 @@ void main() {
     float fwd = max(fwidth(d), 1e-5);
     float fws = max(fwidth(sPx), 1e-5);
     inside = t >= 0.0 && t <= 1.0 && d <= hw;
-    edge = inside && ((hw - d) < fwd || sPx < fws || (lenPx - sPx) < fws);
+    edge = inside && ((hw - d) < fwd * ew || sPx < fws * ew || (lenPx - sPx) < fws * ew);
     filled = t <= progress;
     // Direction dashes on the centre line: 3 px on, 3 px off (art-direction 8.2).
     if (inside && d < fwd && mod(sPx, 6.0) < 3.0) edge = true;
@@ -167,7 +187,15 @@ void main() {
   }
   vec4 c = vec4(0.0);
   if (filled) c = vFill;
+  if (hazard && filled && !edge) {
+    vec2 wp = floor(vWorld * PX);
+    bool hi = mod(wp.x + wp.y, ${(HAZARD_BAND_PX * 2).toFixed(1)}) < ${HAZARD_BAND_PX.toFixed(1)};
+    c.a = hi ? min(vFill.a + ${HAZARD_FILL_HI_ADD.toFixed(2)}, ${HAZARD_FILL_MAX.toFixed(2)}) : vFill.a * ${HAZARD_FILL_LO.toFixed(2)};
+  }
   if (edge) c = vEdge;
+  if (edge && hazard && mod(floor(along), ${(HAZARD_STRIPE_PX * 2).toFixed(1)}) < ${HAZARD_STRIPE_PX.toFixed(1)}) {
+    c.rgb = mix(vEdge.rgb, vec3(1.0), ${HAZARD_PALE_MIX.toFixed(2)});
+  }
   if (c.a <= 0.0) discard;
   gl_FragColor = c;
 }

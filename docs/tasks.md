@@ -10,8 +10,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | M1 Prototipe main loop | SELESAI | Run 10 Pulse playable, determinisme terbukti, 17 e2e lulus, review LP LOLOS |
 | M2 Vertical slice HD-2D | SELESAI | CD: SETUJU rasa HD-2D (docs/reviews/M3-cd.md), performa p95 8.2 ms di GPU terintegrasi |
 | M3 Konten penuh | SELESAI (Tingkat B) | Build default Tingkat B: 3 kelas, 15 Pulse, 8 senjata, 22 Memento, 6 tag, Silt dan unlock. Tingkat C (3 bioma) ditunda setelah 1.0 |
-| M4 Polish dan QA | BERJALAN | Bug MAYOR BUG-007, BUG-010 dan polish CD M3 |
-| M5 Rilis | BELUM | |
+| M4 Polish dan QA | SELESAI | Nol BLOCKER dan MAYOR terbuka, aksesibilitas A-01 sampai A-12, lolos Chromium/Chrome/Edge/Firefox, WebKit proksi Safari |
+| M5 Rilis | SELESAI | v1.0.0 di GitHub Pages. LP SIAP, QA: semua MAYOR ditutup (BUG-017 ditutup Producer dengan alat QA), known issues BUG-006 dan BUG-015 |
 
 ## Mode kerja
 
@@ -93,3 +93,13 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | 2026-11-17 | Biaya unlock Vintner tier B = 6 Silt (asumsi LP) diterima | Producer | Pemain baru bisa membuka kelas kedua dalam 1 sampai 2 run |
 | 2026-11-17 | Judul rilis: Shardfall (cadangan: Under the Pane). Cek web dan merek dagang oleh Dok sebelum rilis komersial | CD | docs/narrative/title-candidates.md |
 | 2026-11-17 | Butir QA yang butuh manusia (uji 1 detik manusia, uji telinga audio, rasa input, cek web nama) dicatat sebagai sisa untuk Dok | Producer | Tidak bisa dilakukan agen |
+| 2026-11-17 | Known issues 1.0: BUG-006 (jeda frame Pulse pertama di profil baru) dan BUG-015 (1 checkpoint replay dari 14 berbeda, hasil run sama). Target durasi resmi 12 sampai 16 menit untuk 15 Pulse | Producer | MINOR, tidak menghalangi main |
+| 2026-11-17 | BUG-017 diperbaiki Producer (satu nilai palet Protanopia) dan diverifikasi dengan alat QA m5_cvd.py | Producer | Integrasi kecil; ambang A-04 tidak dilonggarkan |
+| 2026-11-17 | Rilis v1.0.0 (tag git) dan deploy GitHub Pages | Producer | Mandat Dok |
+
+## Sisa untuk Dok (tidak bisa dilakukan agen)
+
+- Main sendiri satu run (rasa input, keseimbangan Vintner, uji 1 detik manusia).
+- Dengarkan audio (uji telinga, orisinalitas melodi) di `audio/preview/` atau di game.
+- Cek web dan merek dagang untuk judul "Shardfall" dan istilah utama sebelum rilis komersial.
+- Pilih lisensi bila ingin repo terbuka (saat ini hak cipta, all rights reserved).

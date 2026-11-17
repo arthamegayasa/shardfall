@@ -199,3 +199,107 @@ Lolos: semua uji ulang kecuali BUG-006 (6 DITUTUP termasuk kedua MAYOR M3), chec
 3. Producer dan GD: target durasi run resmi untuk keluar M4: 12 sampai 16 menit (GD T6) atau 15 sampai 20 menit (HANDOFF 4.1, test-plan M4-05)? Bot rata-rata 14,7 menit.
 4. LP: diagnosis BUG-015 (nilai ber-hash yang sempat berbeda satu checkpoint) dan BUG-006 (program shader yang belum ikut pre-warm).
 5. Producer: izinkan unduh WebKit Playwright revisi 2370 agar proksi Safari tidak memakai build cadangan?
+
+---
+
+## Uji ulang M5-04
+
+Tugas: M5-04 (uji ulang fokus). Penguji: QA Lead. Tanggal: 2026-11-17. Build: kerja lokal setelah perubahan LP M5-03 (`focus-nav.ts`, `cvd-palette.ts`, pola bahaya), `package.json` 1.0.0, contentHash 977ff134, tingkat B. Mesin, Node, Playwright sama dengan bagian 1. Keputusan Producer yang dipakai: BUG-006, BUG-014 (bila belum beres), BUG-015 diterima sebagai known issues 1.0; target durasi resmi 12 sampai 16 menit untuk 15 Pulse; A-04 langkah 5 diuji di mode yang sesuai.
+
+### M5-04.1 Putusan
+
+**Putusan rilis QA: TIDAK SIAP.** Kriteria M4: **GAGAL** (M4-02, M4-04). Kriteria M5: **GAGAL** (M5-06, M5-08). Satu-satunya penghalang: **BUG-017 (MAYOR, baru)**: di mode Protanopia, selisih CIEDE2000 badan proyektil pemain vs cincin proyektil musuh 19,0 (`kept-cyan`) dan 19,4 (`kept-blue`), sedangkan ambang A-04 langkah 3 adalah 20. Selisihnya kecil, tetapi ambang tertulis dan QA tidak melonggarkannya setelah hasil keluar.
+
+BUG-016 DITUTUP dan BUG-014 DITUTUP. Semua tes otomatis rilis lolos.
+
+Jalan tercepat ke SIAP (keputusan Producer): (a) LP atau AD mengganti satu nilai, `danger-magenta` mode Protanopia di `src/render/pipeline/cvd-palette.ts` (QA menemukan 347 kandidat di keluarga merah sampai violet yang memenuhi ambang; pilihan nilai milik AD), lalu QA menjalankan `m5_cvd.py` dan uji 1 detik protan (sekitar 10 menit); atau (b) Producer memberi pengecualian tertulis untuk A-04 langkah 3 mode Protanopia (selisih sekitar 1 satuan, pembeda non-warna proyektil tetap ada). Dengan (b) QA menulis A-04 sebagai LOLOS DENGAN PENGECUALIAN dan putusan menjadi SIAP.
+
+### M5-04.2 Uji ulang bug
+
+| Id | Hasil | Bukti |
+|---|---|---|
+| BUG-016 (MAYOR) | **DITUTUP.** Dunia kini berubah per mode (0,75 sampai 1,23% piksel berubah di G3 dan G4 dibanding Off; telegraf jadi pita bergaris pucat), state hash sama di semua mode (7c7dfee6). A-04 langkah 5 di mode Deuteranopia dengan bingkai tangkapan QA sendiri (`QA_CV=deutan`) dan simulasi deuteranopia, satu proksi baru tanpa konteks: **4 dari 5** (ambang 4). G3 boss dan G4 tumpukan X yang gagal di M5 kini lolos (galat ancaman 7,5 dan 13,3 px). Gagal: G5, Unlit menempel tepat di pemain (0,8 px), jawaban 30,8 px (radius 30) | `m504-a04-glance.json`, `m504-glance-deutan-boss.png` |
+| BUG-014 (MINOR) | **DITUTUP.** A-07 by search: 13 layar, 0 tak terjangkau, 0 jebakan, 0 pelanggaran arah, balik 158 dari 158 (dulu 12 gagal dari 175); Glazier 34/34, Controls 60/60 | `logs/m504-a07-search.txt` |
+| BUG-006 (MINOR) | Tidak diuji ulang (tidak ada perubahan kode). DIKETAHUI sesuai keputusan Producer | bagian 3 |
+| BUG-015 (MINOR) | Tidak diuji ulang (belum diperbaiki). DIKETAHUI sesuai keputusan Producer. Di suite e2e M5-04, E-13 3 seed dan D-8 cocok di Node | `logs/m504-e2e-chromium.txt` |
+
+### M5-04.3 A-04 per mode
+
+Langkah 3 (`m5_cvd.py`, kini membaca palet tiap mode dari `cvd-palette.ts`), simulasi jenis yang sama dengan mode:
+
+| Mode | Inti bahaya vs lantai (ambang 4,5) | Badan proyektil pemain vs musuh: cyan / biru / putih (ambang 20) | Langkah 5 uji 1 detik proksi |
+|---|---|---|---|
+| Off (3 simulasi) | 4,84 sampai 6,48 | tidak diwajibkan (protan 31,8 / 16,2 / 40,1) | M5: kontrol normal 5 dari 5 |
+| Protanopia | 4,84 dan 6,28 | **19,0 / 19,4 / 26,6 GAGAL** (BUG-017) | 4 dari 5 (indikatif) |
+| Deuteranopia | 4,92 dan 6,48 | 26,2 / 35,5 / 27,5 | **4 dari 5 (resmi)** |
+| Tritanopia | 4,84 dan 6,33 | 76,5 / 71,6 / 38,9 | 5 dari 5 (indikatif) |
+
+Indikatif: sesi 2 dan 3 dari proksi yang sama (hanya satu subagent diizinkan), jadi tata letak adegan sudah pernah dilihat. Langkah 4 (UI non-warna) tidak berubah sejak M3, lolos. Rarity Plain vs Fine di simulasi deutan 9,5 tetap punya pip (sama dengan M5). Putusan A-04: **GAGAL**, hanya karena langkah 3 mode Protanopia.
+
+### M5-04.4 Tes rilis
+
+| Perintah | Hasil |
+|---|---|
+| `npm run check` | Kode 0 (putaran kedua; putaran pertama gagal di `format:check` karena edit QA di `m3-visual.spec.ts`, diperbaiki dengan Prettier): data B 0 error (977ff134), string 0 error, sprite, 4 arena, audio 11,5 KB, format, typecheck, lint, 72 file 668 tes, build, bundle JS awal 277,2 KB gzip (target 300), halaman pertama 283,6 KB. `logs/m504-check.txt` |
+| `npm run test:e2e` (Chromium) | **52 tes: 40 lulus, 12 dilewati (opt-in), 0 gagal** (13,0 menit). Termasuk E-13 3 seed, D-5, D-8, full run dengan Continue, A-07 by search, BUG-008, BUG-009, A-08, A-09, smoke Chrome, Edge, Firefox, WebKit. `logs/m504-e2e-chromium.txt`. Suite penuh di Chrome, Edge, Firefox tidak diulang (13 menit per browser; perubahan hanya render dan fokus UI, smoke tiap browser lolos di suite ini dan di produksi) |
+| `QA_CV=<mode> npx playwright test tests/e2e/m3-visual.spec.ts -g "glance frames"` untuk deutan, protan, tritan | 3 dari 3 lulus, 0 masalah konsol |
+| Smoke produksi `m5-prod.spec.ts` (`vite preview --outDir dist --base /shardfall/ --port 4180`) | **5 dari 5 lulus**: Chromium GPU, Chrome 157, Edge 157, Firefox 157, WebKit cadangan. Judul interaktif 805 sampai 1764 ms, 0 error konsol, 0 permintaan di luar base path, hook e2e tidak ada, WebGL2 ada. Hanya peringatan: Firefox `WEBGL_debug_renderer_info`, WebKit tanpa `AudioContext` (sama dengan M5). Putaran pertama gagal 5 dari 5 karena Git Bash mengubah argumen `--base /shardfall/` menjadi path Windows (alat QA, bukan build); diulang dengan `MSYS_NO_PATHCONV=1`. Server dimatikan. `logs/m504-prod-smoke.txt` |
+
+### M5-04.5 Kriteria akhir
+
+| ID | Putusan M5-04 | Catatan |
+|---|---|---|
+| M4-01 | LOLOS dengan catatan | Tidak berubah dari bagian 5 |
+| M4-02 | **GAGAL** | BLOCKER 0, MAYOR terbuka 1: BUG-017 (BUG-016 DITUTUP) |
+| M4-03 | LOLOS | Tidak berubah; smoke 5 browser lolos ulang |
+| M4-04 | **GAGAL** | A-04 langkah 3 mode Protanopia (BUG-017); butir wajib lain lolos, A-07 kini tanpa catatan (BUG-014 DITUTUP) |
+| M4-05 | LOLOS | Target resmi 12 sampai 16 menit (keputusan Producer); bot rata-rata 14,7 menit (Lamplighter 14,4, Chorister 15,3, Vintner 14,5). Waktu toko 20 s tetap asumsi GD |
+| M4-06 | LOLOS (proksi) | Tidak berubah; mode Off tidak disentuh perbaikan |
+| M4-07 | LOLOS sebagian | Tidak berubah (CW-3 tidak punya alat) |
+| M4-08 | TIDAK DIUKUR ULANG | Draw call peak 21 sama di semua mode warna |
+| M4-09 | LOLOS | BUG-014 dan BUG-016 diverifikasi dengan tes regresi |
+| M5-01 | LOLOS | check kode 0, e2e Chromium 0 gagal |
+| M5-02 | LOLOS | Replay emas di `npm test`; D-5, D-8, E-13 cocok |
+| M5-03 | LOLOS | `bundle:check` lolos, smoke produksi tanpa hook |
+| M5-04 | LOLOS | Smoke produksi 5 browser |
+| M5-05 | LOLOS (skrip QA) | Tidak berubah; tidak ada aset baru |
+| M5-06 | **GAGAL** | Daftar final terisi, tetapi syarat nol MAYOR gagal (BUG-017) |
+| M5-07 | LOLOS | `data:check` string 0 error |
+| M5-08 | **GAGAL** | Putusan TIDAK SIAP |
+
+### M5-04.6 Daftar known issues final
+
+Sesuai keputusan Producer, status DIKETAHUI di `docs/qa/bugs.md`:
+
+| Id | Ringkasan |
+|---|---|
+| BUG-006 | Jeda sekitar 0,5 s di Pulse pertama setelah browser baru dibuka; tombol yang ditekan saat itu bisa hilang |
+| BUG-015 | Replay dev: satu checkpoint jarang tidak cocok walau hasil run sama; tidak berdampak ke pemain |
+
+BUG-014 tidak masuk daftar (DITUTUP). BUG-017 tidak boleh masuk daftar (MAYOR) kecuali Producer memberi pengecualian tertulis.
+
+Batas pengujian yang diketahui: tetap seperti bagian 10, ditambah: uji 1 detik protan dan tritan hanya indikatif (proksi yang sama), dan bingkai uji 1 detik tidak memuat proyektil musuh.
+
+### M5-04.7 Perubahan tes
+
+Tidak ada ambang yang dilonggarkan, tidak ada tes yang dihapus, kode produksi tidak diubah.
+- `tests/e2e/m3-visual.spec.ts`: opsi `QA_CV=<mode>` di tes glance (Color Vision diset ke mode itu, nama `cv-<mode>-glance-*`). Tanpa variabel, perilaku sama dengan sebelumnya.
+- `tests/e2e/support/m5_glance_cvd.py`: opsi `--sim`, `--prefix`, `--tag`, `--seed`, dan path keluaran skor. Default sama dengan M5.
+- `tests/e2e/support/m5_cvd.py`: juga mengukur palet dunia tiap mode (`mode-<nama>`) dan jarak terkecil token bahaya ke token pemain.
+- `docs/qa/accessibility.md` versi 1.3: A-04 langkah 5 di mode Deuteranopia.
+
+### M5-04.8 Daftar file
+
+- Dokumen: `docs/qa/M5-report.md` (bagian ini), `docs/qa/bugs.md` (BUG-014 dan BUG-016 DITUTUP, BUG-006 dan BUG-015 DIKETAHUI, BUG-017 baru, daftar known issues final), `docs/qa/accessibility.md` (1.3).
+- Bukti: `docs/qa/evidence/M5/m504-a04-glance.json`, `m504-a04-cvd-tokens.json`, `m504-glance-deutan-boss.png`, `logs/m504-a07-search.txt`, `logs/m504-check.txt`, `logs/m504-e2e-chromium.txt`, `logs/m504-prod-smoke.txt`.
+- Tes: `tests/e2e/m3-visual.spec.ts`, `tests/e2e/support/m5_glance_cvd.py`, `tests/e2e/support/m5_cvd.py`.
+
+### M5-04.9 Ringkasan lolos dan gagal
+
+Lolos: BUG-016 (A-04 langkah 5 Deuteranopia 4 dari 5, dunia berubah per mode), BUG-014, check, e2e Chromium tanpa kegagalan, smoke produksi 5 browser, durasi run dalam target resmi. Gagal: A-04 langkah 3 mode Protanopia (BUG-017, MAYOR), sehingga M4-02, M4-04, M5-06, M5-08 gagal.
+
+### M5-04.10 Pertanyaan terbuka
+
+1. Producer: BUG-017 diperbaiki (satu nilai palet oleh AD dan LP, lalu QA uji ulang sekitar 10 menit) atau diberi pengecualian tertulis?
+2. AD: nilai palet mode di `cvd-palette.ts` masih usul LP [Asumsi]; disetujui atau dipindah ke `art/palette.json`?
+3. Producer: perlu uji 1 detik protan dan tritan dengan proksi baru masing-masing (bukan indikatif)? A-04 tidak mewajibkannya.

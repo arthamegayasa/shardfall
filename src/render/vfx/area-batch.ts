@@ -23,6 +23,16 @@ export interface AreaStyle {
   readonly fill: readonly [number, number, number, number];
   readonly edge: readonly [number, number, number, number];
   readonly dashed: boolean;
+  /**
+   * Hazard pattern (BUG-016, colour vision modes): 2 px edge striped pale and edge colour, diagonal
+   * stripes in the fill. Danger areas only. Wins over dashed.
+   */
+  readonly hazard?: boolean;
+}
+
+/** aMode.z value for an area style: 0 solid edge, 1 dashed edge, 2 hazard pattern (shaders/area.ts). */
+export function areaEdgeMode(style: AreaStyle): number {
+  return style.hazard === true ? 2 : style.dashed ? 1 : 0;
 }
 
 export interface AreaBatch {
@@ -127,7 +137,7 @@ export function createAreaBatch(
       sh[i + 3] = p2;
       mo[i] = shape;
       mo[i + 1] = progress;
-      mo[i + 2] = style.dashed ? 1 : 0;
+      mo[i + 2] = areaEdgeMode(style);
       mo[i + 3] = n;
       if (merge && n < AREA_MERGE_MAX) {
         // Circles only (shape 0); other shapes never cover anything.

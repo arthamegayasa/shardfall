@@ -1,6 +1,6 @@
 # Shardfall: Checklist Aksesibilitas
 
-Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.2 (2026-11-17, M5): A-07 langkah 3 kini diukur dengan pencarian keterjangkauan per layar (`tests/e2e/m5-release.spec.ts`, A-07 by search: semua kontrol dari fokus awal lewat panah, Tab, Shift+Tab, tanpa jebakan, arah dan balik dicek), A-08 dengan `tests/e2e/m5-a11y.spec.ts` + `tests/e2e/support/m5_contrast.py`, A-09 langkah 1 dengan `m5-a11y.spec.ts`, A-04 langkah 3 dan 5 dengan `tests/e2e/support/m5_cvd.py` dan `m5_glance_cvd.py`. Hasil terakhir di `docs/qa/M5-report.md`. Versi 1.1: hook dan lokasi tes diselaraskan dengan architecture v2.2; hasil audit M1 di `docs/qa/M1-report.md`.
+Pemilik: QA Lead. Reviewer: Producer. Status: versi 1.3 (2026-11-17, M5-04): A-04 langkah 5 diuji di mode Deuteranopia; `m5_cvd.py` kini juga mengukur palet dunia tiap mode (`mode-<nama>`). Versi 1.2 (2026-11-17, M5): A-07 langkah 3 kini diukur dengan pencarian keterjangkauan per layar (`tests/e2e/m5-release.spec.ts`, A-07 by search: semua kontrol dari fokus awal lewat panah, Tab, Shift+Tab, tanpa jebakan, arah dan balik dicek), A-08 dengan `tests/e2e/m5-a11y.spec.ts` + `tests/e2e/support/m5_contrast.py`, A-09 langkah 1 dengan `m5-a11y.spec.ts`, A-04 langkah 3 dan 5 dengan `tests/e2e/support/m5_cvd.py` dan `m5_glance_cvd.py`. Hasil terakhir di `docs/qa/M5-report.md`. Versi 1.1: hook dan lokasi tes diselaraskan dengan architecture v2.2; hasil audit M1 di `docs/qa/M1-report.md`.
 Implementasi: UI Programmer (pengaturan, menu, fokus), Art Director (palet mode buta warna, efek), Gameplay Programmer (jeda, efek di sim), Audio Director (volume). QA menguji.
 Dokumen terkait: `docs/qa/test-plan.md` (hook tes, format bukti), `docs/style-guide.md` (1.3, 1.7, 1.8, 2.3), `docs/pillars.md` (Pilar 2).
 
@@ -92,7 +92,7 @@ Semua uji di bawah memakai build tes dengan hook `window.__shardfall` dari `npm 
    - Selisih warna (CIEDE2000) antara proyektil pemain dan proyektil musuh minimal 20 [Asumsi], diukur dari sampel 3x3 di pusat objek.
    - Selisih warna antar bingkai rarity yang bersebelahan (Plain dan Fine, Fine dan Rare, Rare dan Fabled) minimal 10 [Asumsi], atau bila kurang, ada pembeda non-warna yang terlihat di screenshot.
 4. Audit manual daftar elemen UI berwarna: untuk tiap elemen catat pembeda non-warnanya. Elemen tanpa pembeda non-warna = gagal.
-5. Uji 1 detik versi proksi (test-plan bagian 10) pada 5 screenshot hasil simulasi deuteranopia di mode Off.
+5. Uji 1 detik versi proksi (test-plan bagian 10) pada 5 screenshot hasil simulasi deuteranopia di mode Deuteranopia (keputusan Producer M5-04: mode yang sesuai, bukan mode Off; tangkapan `QA_CV=deutan` di `m3-visual.spec.ts`). Mode Protanopia dan Tritanopia boleh diuji dengan cara yang sama sebagai data tambahan.
 
 **Lolos bila:** langkah 3 lolos untuk semua mode pada mode yang sesuai (mode Deuteranopia diuji dengan simulasi deuteranopia, dan seterusnya), mode Off lolos kontras inti bahaya di ketiga simulasi, langkah 4 tanpa elemen gagal, langkah 5 minimal 4 dari 5.
 

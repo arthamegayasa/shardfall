@@ -1,4 +1,4 @@
-// Credits (and the M1 Keeping placeholder): title, short body, Back. The Keeping itself is
+// Credits (and the M1 Keeping placeholder): title, short credit summary, Back. The Keeping itself is
 // screens/keeping.ts since M2-09; the full two-tab S09 screen (wireframe 09) stays with UI.
 
 import { button, h, put } from '../dom.ts';
@@ -22,14 +22,12 @@ export function createInfoScreen(ctx: UiContext, kind: 'archive' | 'credits'): S
       focus.reset();
       const title = kind === 'archive' ? t('ui.keeping.title') : t('ui.credits.title');
       const body = panel(ctx, 'info-body');
-      body.appendChild(
-        h(
-          doc,
-          'p',
-          'info-text',
-          kind === 'archive' ? t('ui.keeping.unknown') : t('ui.credits.body'),
-        ),
-      );
+      // Credits (M5-03): made by, procedural assets, third-party notices; one paragraph each.
+      const lines =
+        kind === 'archive'
+          ? ['ui.keeping.unknown']
+          : ['ui.credits.body', 'ui.credits.assets', 'ui.credits.licenses'];
+      for (const key of lines) body.appendChild(h(doc, 'p', 'info-text', t(key)));
       const backBtn = button(doc, `${kind}-back`, t('ui.common.back'));
       focus.add({ el: backBtn, group: 0, activate: back });
       put(

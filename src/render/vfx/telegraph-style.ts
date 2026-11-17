@@ -5,6 +5,10 @@
 // Decals (L1): ink blob shadow under every actor, kept-cyan foot ring for the player, Warden aura in
 // danger-violet (ring 70% plus fill 14%).
 //
+// M5 (LP, BUG-016): createAreaStyles takes a hazard flag (every colour vision mode, pipeline/cvd-palette.ts):
+// telegraph, boss, and spawn styles then draw the hazard pattern (striped edge and fill, shaders/area.ts).
+// Player zones and decals never do, so the stripes alone mark danger when hue cannot.
+//
 // M4 (AD, M4-01, CD M3 polish 3): player zone fills are set by their EFFECTIVE fill on the floor, not by
 // shader alpha. The scene blends in linear light and is shown in sRGB, so shader alpha 0.25 read as 36 to
 // 39% over the floor (CD M3 measured 37%). effectiveFillAlpha() solves the shader alpha that gives the
@@ -123,22 +127,30 @@ function style(
   edgeToken: string,
   edgeAlpha: number,
   dashed: boolean,
+  hazard = false,
 ): AreaStyle {
   return {
     fill: [...linearRgb(palette, fillToken), fillAlpha],
     edge: [...linearRgb(palette, edgeToken), edgeAlpha],
     dashed,
+    hazard,
   };
 }
 
-export function createAreaStyles(palette: PaletteDef): AreaStyles {
+export interface AreaStyleOptions {
+  /** Hazard pattern on danger areas (colour vision modes, BUG-016). */
+  readonly hazard?: boolean;
+}
+
+export function createAreaStyles(palette: PaletteDef, opts: AreaStyleOptions = {}): AreaStyles {
+  const hz = opts.hazard === true;
   const riteFill = zoneFillAlpha(palette, 'kept-gold', PLAYER_ZONE_NOMINAL_FILL);
   const trailFill = zoneFillAlpha(palette, 'kept-gold', TRAIL_ZONE_FILL);
   const riteZone = style(palette, 'kept-gold', riteFill, 'kept-cyan', 1, false);
   return {
-    danger: style(palette, 'danger-red', 0.3, 'danger-red', 1, false),
-    bossDanger: style(palette, 'danger-magenta', 0.3, 'danger-magenta', 1, false),
-    spawn: style(palette, 'danger-violet', 0.14, 'danger-violet', 1, false),
+    danger: style(palette, 'danger-red', 0.3, 'danger-red', 1, false, hz),
+    bossDanger: style(palette, 'danger-magenta', 0.3, 'danger-magenta', 1, false, hz),
+    spawn: style(palette, 'danger-violet', 0.14, 'danger-violet', 1, false, hz),
     riteZone,
     trailZone: style(palette, 'kept-gold', trailFill, 'kept-gold', 0, false),
     playerZone: riteZone,

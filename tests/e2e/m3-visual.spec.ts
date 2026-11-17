@@ -57,15 +57,24 @@ async function ring(page: Page, enemyId: string, n: number, r: number): Promise<
   );
 }
 
+// QA M5-04 (A-04 step 5 per mode): QA_CV=protan|deutan|tritan captures the same five glance scenes with
+// Color Vision set to that mode, under the names cv-<mode>-glance-*. Unset: mode Off, original names.
+const GLANCE_CV = process.env['QA_CV'] ?? 'off';
+const glanceName = (name: string): string =>
+  GLANCE_CV === 'off' ? name : `cv-${GLANCE_CV}-${name}`;
+
 test('M3 glance frames (1920x1080, High)', async ({ page }) => {
   test.setTimeout(180_000);
   const problems = watchProblems(page);
-  await bootWith(page, { graphics: { quality: 'high' }, access: { reduceEffects: false } });
-  console.log(`[m3-visual] GPU: ${await gpuName(page)}`);
+  await bootWith(page, {
+    graphics: { quality: 'high' },
+    access: { reduceEffects: false, colorVision: GLANCE_CV },
+  });
+  console.log(`[m3-visual] GPU: ${await gpuName(page)} colour vision: ${GLANCE_CV}`);
 
   // G1 crowded Pulse: last normal Pulse composition and a late build.
   await peakScene(page);
-  const g1 = await capture(page, 'glance-1-peak');
+  const g1 = await capture(page, glanceName('glance-1-peak'));
 
   // G2 Warden Pulse 4 (index 3) with the Warden on screen and a telegraph if one comes.
   await freshRun(page, 21);
@@ -81,7 +90,7 @@ test('M3 glance frames (1920x1080, High)', async ({ page }) => {
       h.step(1);
     }
   });
-  const g2 = await capture(page, 'glance-2-warden');
+  const g2 = await capture(page, glanceName('glance-2-warden'));
 
   // G3 boss Pulse 15 (index 14) during a pattern with telegraphs.
   await freshRun(page, 31);
@@ -97,7 +106,7 @@ test('M3 glance frames (1920x1080, High)', async ({ page }) => {
       h.step(1);
     }
   });
-  const g3 = await capture(page, 'glance-3-boss');
+  const g3 = await capture(page, glanceName('glance-3-boss'));
 
   // G4 telegraphs stacked on the player (K3, S-4): chargers and shooters close around the player.
   await freshRun(page, 41);
@@ -105,7 +114,7 @@ test('M3 glance frames (1920x1080, High)', async ({ page }) => {
   await ring(page, 'charger', 6, 2.6);
   await ring(page, 'shooter', 4, 4);
   const found = await stepUntilNear(page, 900, 2, 110);
-  const g4 = await capture(page, 'glance-4-stack');
+  const g4 = await capture(page, glanceName('glance-4-stack'));
 
   // G5 late Pulse 13 (index 12) after 20 s with the starter build: the crowd builds up.
   await freshRun(page, 51);
@@ -118,7 +127,7 @@ test('M3 glance frames (1920x1080, High)', async ({ page }) => {
       h.step(10);
     }
   });
-  const g5 = await capture(page, 'glance-5-late');
+  const g5 = await capture(page, glanceName('glance-5-late'));
 
   for (const g of [g1, g2, g3, g4, g5])
     console.log(

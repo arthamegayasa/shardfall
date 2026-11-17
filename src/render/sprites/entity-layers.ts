@@ -107,6 +107,12 @@ export interface EntityLayers {
   readonly playerSprite: PlayerSpriteHook;
   resize(frame: VirtualFrame): void;
   applySettings(s: Settings): void;
+  /**
+   * Colour vision mode (BUG-016): rebuild danger colours (telegraph, boss, spawn, aura, windup outline)
+   * from a palette, with or without the hazard pattern. Sprite texels follow the atlas (recolored by the
+   * renderer). Player colours are not read again: colour vision palettes never change them.
+   */
+  setPalette(palette: PaletteDef, hazard: boolean): void;
   update(frame: RenderFrame): void;
   /** Instances dropped because a batch was full, last frame (debug overlay, tests). */
   overflow(): number;
@@ -233,7 +239,7 @@ export function createEntityLayers(
   const windupB = linearRgb(palette, WINDUP_OUTLINE_PULSE_TOKEN);
   const outlineRgb: [number, number, number] = [0, 0, 0];
   const hitFlash = createHitFlashTracker();
-  const styles = createAreaStyles(palette);
+  let styles = createAreaStyles(palette);
 
   const W = manifest.width;
   const H = manifest.height;
@@ -336,6 +342,15 @@ export function createEntityLayers(
     applySettings(s) {
       numbers.setEnabled(s.access.damageNumbers);
       vfx.setReduced(s.access.reduceEffects);
+    },
+    setPalette(p, hazard) {
+      styles = createAreaStyles(p, { hazard });
+      const a = linearRgb(p, WINDUP_OUTLINE_TOKEN);
+      const b = linearRgb(p, WINDUP_OUTLINE_PULSE_TOKEN);
+      for (let k = 0; k < 3; k++) {
+        windupA[k] = a[k] ?? 0;
+        windupB[k] = b[k] ?? 0;
+      }
     },
     update(f) {
       const v = f.view;

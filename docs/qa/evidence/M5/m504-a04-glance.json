@@ -1,0 +1,542 @@
+{
+ "method": "M5-04 retest. Glance frames captured by m3-visual.spec.ts with QA_CV=<mode> (Color Vision set to that mode, dist-e2e contentHash 977ff134, Chromium GPU RTX 3060, 1920x1080 High), Machado 2009 simulation of the matching type (severity 1.0), 480x270, blur 0.6, shuffled per mode (seeds 5401 deutan, 5402 protan, 5403 tritan). One fresh proxy subagent, no colour named, three sessions in order: deutan (official A-04 step 5), then protan and tritan (indicative: same scene layouts seen again). Pass = player and nearest threat within 30 px.",
+ "proxy_raw": {
+  "s1": {
+   "a": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     240,
+     115
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Fan-shaped telegraph right above the hero; it's hard to pick out among the enemy swarm."
+   },
+   "b": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     212,
+     137
+    ],
+    "conf": [
+     2,
+     2
+    ],
+    "note": "Hero merges with a dark blob; dashed lanes are unclear. Telegraph or projectile?"
+   },
+   "c": {
+    "player": [
+     240,
+     182
+    ],
+    "threat": [
+     240,
+     180
+    ],
+    "conf": [
+     3,
+     3
+    ],
+    "note": "White rings overlap the hero below the boss; the hero is hard to isolate."
+   },
+   "d": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     240,
+     150
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Cross-shaped marker sits on the hero; four enemies surround it closely."
+   },
+   "e": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     258,
+     174
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Hero is clear in open space; a dashed lane and small enemy sit just below-right."
+   }
+  },
+  "s2": {
+   "a": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     212,
+     137
+    ],
+    "conf": [
+     2,
+     2
+    ],
+    "note": "Busy cluster at center; the hero is unclear between the dark sprite and white lanes."
+   },
+   "b": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     240,
+     115
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Fan telegraph above the hero; the swarm ring adds a lot of noise."
+   },
+   "c": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     258,
+     174
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Isolated hero; the white lane telegraph below is readable but could pass as floor."
+   },
+   "d": {
+    "player": [
+     240,
+     142
+    ],
+    "threat": [
+     240,
+     150
+    ],
+    "conf": [
+     4,
+     3
+    ],
+    "note": "Cross telegraph centered on the hero; the white-on-white overlap hurts the hero's visibility."
+   },
+   "e": {
+    "player": [
+     240,
+     182
+    ],
+    "threat": [
+     240,
+     180
+    ],
+    "conf": [
+     3,
+     3
+    ],
+    "note": "Rings around the hero; boss above; the white rings hide the hero sprite."
+   }
+  },
+  "s3": {
+   "a": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     240,
+     115
+    ],
+    "conf": [
+     5,
+     5
+    ],
+    "note": "Cyan hero and pink fan telegraph make an instantly clear contrast."
+   },
+   "b": {
+    "player": [
+     240,
+     183
+    ],
+    "threat": [
+     240,
+     180
+    ],
+    "conf": [
+     5,
+     4
+    ],
+    "note": "Cyan hero stands out; pink rings show the danger clearly."
+   },
+   "c": {
+    "player": [
+     240,
+     143
+    ],
+    "threat": [
+     222,
+     138
+    ],
+    "conf": [
+     4,
+     4
+    ],
+    "note": "Cyan hero is visible; pink lanes read as attacks, though the cluster is still busy."
+   },
+   "d": {
+    "player": [
+     240,
+     143
+    ],
+    "threat": [
+     255,
+     175
+    ],
+    "conf": [
+     5,
+     5
+    ],
+    "note": "Cyan hero and pink lane telegraph are easy to separate."
+   },
+   "e": {
+    "player": [
+     240,
+     146
+    ],
+    "threat": [
+     240,
+     148
+    ],
+    "conf": [
+     5,
+     5
+    ],
+    "note": "Pink cross on the cyan hero reads as danger at once."
+   }
+  }
+ },
+ "deutan": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-1-peak",
+    "b": "glance-5-late",
+    "c": "glance-3-boss",
+    "d": "glance-4-stack",
+    "e": "glance-2-warden"
+   },
+   "sim": "deutan",
+   "prefix": "cv-deutan-",
+   "seed": 5401
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-1-peak",
+     "player_err": 4.0,
+     "threat_err": 9.4,
+     "pass": true
+    },
+    "b": {
+     "scene": "glance-5-late",
+     "player_err": 8.0,
+     "threat_err": 30.8,
+     "pass": false
+    },
+    "c": {
+     "scene": "glance-3-boss",
+     "player_err": 5.5,
+     "threat_err": 7.5,
+     "pass": true
+    },
+    "d": {
+     "scene": "glance-4-stack",
+     "player_err": 8.0,
+     "threat_err": 13.3,
+     "pass": true
+    },
+    "e": {
+     "scene": "glance-2-warden",
+     "player_err": 8.0,
+     "threat_err": 4.6,
+     "pass": true
+    }
+   },
+   "both_correct": 4
+  }
+ },
+ "protan": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-5-late",
+    "b": "glance-1-peak",
+    "c": "glance-2-warden",
+    "d": "glance-4-stack",
+    "e": "glance-3-boss"
+   },
+   "sim": "protan",
+   "prefix": "cv-protan-",
+   "seed": 5402
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-5-late",
+     "player_err": 8.0,
+     "threat_err": 30.8,
+     "pass": false
+    },
+    "b": {
+     "scene": "glance-1-peak",
+     "player_err": 4.0,
+     "threat_err": 9.4,
+     "pass": true
+    },
+    "c": {
+     "scene": "glance-2-warden",
+     "player_err": 8.0,
+     "threat_err": 4.6,
+     "pass": true
+    },
+    "d": {
+     "scene": "glance-4-stack",
+     "player_err": 8.0,
+     "threat_err": 13.3,
+     "pass": true
+    },
+    "e": {
+     "scene": "glance-3-boss",
+     "player_err": 5.5,
+     "threat_err": 7.5,
+     "pass": true
+    }
+   },
+   "both_correct": 4
+  }
+ },
+ "tritan": {
+  "key": {
+   "radius_px_480": 30.0,
+   "answers": {
+    "a": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      239.01983472282816,
+      105.67923732373092
+     ]
+    ],
+    "b": [
+     [
+      240.0,
+      187.5
+     ],
+     [
+      240.0,
+      187.5
+     ]
+    ],
+    "c": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      240.30765131895959,
+      149.21521368831642
+     ]
+    ],
+    "d": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      262.4489905034238,
+      175.0788872048285
+     ]
+    ],
+    "e": [
+     [
+      240.0,
+      150.0
+     ],
+     [
+      229.43937532276817,
+      158.00254809402617
+     ]
+    ]
+   },
+   "scenes": {
+    "a": "glance-1-peak",
+    "b": "glance-3-boss",
+    "c": "glance-5-late",
+    "d": "glance-2-warden",
+    "e": "glance-4-stack"
+   },
+   "sim": "tritan",
+   "prefix": "cv-tritan-",
+   "seed": 5403
+  },
+  "score": {
+   "scores": {
+    "a": {
+     "scene": "glance-1-peak",
+     "player_err": 4.0,
+     "threat_err": 9.4,
+     "pass": true
+    },
+    "b": {
+     "scene": "glance-3-boss",
+     "player_err": 4.5,
+     "threat_err": 7.5,
+     "pass": true
+    },
+    "c": {
+     "scene": "glance-5-late",
+     "player_err": 7.0,
+     "threat_err": 21.5,
+     "pass": true
+    },
+    "d": {
+     "scene": "glance-2-warden",
+     "player_err": 7.0,
+     "threat_err": 7.4,
+     "pass": true
+    },
+    "e": {
+     "scene": "glance-4-stack",
+     "player_err": 4.0,
+     "threat_err": 14.5,
+     "pass": true
+    }
+   },
+   "both_correct": 5
+  }
+ }
+}

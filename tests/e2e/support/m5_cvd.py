@@ -3,8 +3,10 @@
 # Reports per simulation: WCAG contrast of the danger core and the player highlights against both
 # floor tokens, CIEDE2000 between the player projectile and the enemy projectile (sprite colours
 # weighted by pixel count), and between neighbouring rarity colours.
+# M5-04: also evaluates each colour vision mode's world palette (danger overrides read from
+# src/render/pipeline/cvd-palette.ts, BUG-016) under its matching simulation, keys 'mode-<name>'.
 # Usage: python tests/e2e/support/m5_cvd.py [out.json]
-import json, math, sys
+import json, math, re, sys
 
 PAL = json.load(open('art/palette.json', encoding='utf8'))['core']
 SPR = 'art/sprites/{}.json'
@@ -91,18 +93,27 @@ def de2000(c1, c2):
     return math.sqrt((dLp / Sl) ** 2 + (dCp / Sc) ** 2 + (dHp / Sh) ** 2 + Rt * (dCp / Sc) * (dHp / Sh))
 
 
-def sprite_mean(name, m):
+def sprite_mean(name, m, pal=PAL):
     """Mean simulated colour of a projectile sprite's opaque texels (first frame)."""
     d = json.load(open(SPR.format(name), encoding='utf8'))
     keys = {'c': 'kept-cyan', 'w': 'kept-white', 'B': 'kept-blue', 'm': 'danger-magenta', 'p': 'danger-core'}
     frame = next(iter(d['animations'].values()))['frames'][0]
-    cols = [sim(hexrgb(PAL[keys[ch]]), m) for row in frame for ch in row if ch in keys]
+    cols = [sim(hexrgb(pal[keys[ch]]), m) for row in frame for ch in row if ch in keys]
     return [sum(c[i] for c in cols) / len(cols) for i in range(3)]
 
 
-out = {}
-for name, m in MACHADO.items():
-    t = {k: sim(hexrgb(v), m) for k, v in PAL.items() if isinstance(v, str)}
+def mode_overrides():
+    src = open('src/render/pipeline/cvd-palette.ts', encoding='utf8').read()
+    body = src[src.index('CVD_OVERRIDES'):]
+    body = body[body.index('= {') + 3:body.index('};')]
+    res = {}
+    for mode, inner in re.findall(r"(\w+): \{([^}]*)\}", body):
+        res[mode] = dict(re.findall(r"'([\w-]+)': '(#[0-9A-Fa-f]{6})'", inner))
+    return res
+
+
+def evaluate(pal, m):
+    t = {k: sim(hexrgb(v), m) for k, v in pal.items() if isinstance(v, str)}
     r = {
         'danger-core vs floor-mid': round(contrast(t['danger-core'], t['floor-mid']), 2),
         'danger-core vs floor-lit': round(contrast(t['danger-core'], t['floor-lit']), 2),
@@ -110,13 +121,27 @@ for name, m in MACHADO.items():
         'kept-cyan vs floor-lit': round(contrast(t['kept-cyan'], t['floor-lit']), 2),
         'dE00 kept-cyan vs danger-magenta': round(de2000(t['kept-cyan'], t['danger-magenta']), 1),
         'dE00 shot sprites kept vs danger (mean colour)': round(
-            de2000(sprite_mean('fx-shot-kept', m), sprite_mean('fx-shot-danger', m)), 1),
+            de2000(sprite_mean('fx-shot-kept', m, pal), sprite_mean('fx-shot-danger', m, pal)), 1),
         'dE00 lantern bolt vs danger shot': round(
-            de2000(sprite_mean('fx-shot-lantern-bolt', m), sprite_mean('fx-shot-danger', m)), 1),
+            de2000(sprite_mean('fx-shot-lantern-bolt', m, pal), sprite_mean('fx-shot-danger', m, pal)), 1),
     }
     for a, b in (('plain', 'fine'), ('fine', 'rare'), ('rare', 'fabled')):
         r[f'dE00 rarity {a} vs {b}'] = round(de2000(t[f'rarity-{a}'], t[f'rarity-{b}']), 1)
-    out[name] = r
+    player = ('kept-blue', 'kept-blue-deep', 'kept-cyan', 'kept-white', 'kept-gold', 'glint')
+    for d in ('danger-red', 'danger-magenta', 'danger-violet'):
+        near = min((de2000(t[d], t[k]), k) for k in player if k in t)
+        r[f'dE00 min {d} vs player tokens'] = [round(near[0], 1), near[1]]
+    return r
+
+
+out = {}
+for name, m in MACHADO.items():
+    out[name] = evaluate(PAL, m)
+for mode, over in mode_overrides().items():
+    if mode == 'off':
+        continue
+    pal = {**PAL, **over}
+    out[f'mode-{mode}'] = {'overrides': over, **evaluate(pal, MACHADO[mode])}
 print(json.dumps(out, indent=1))
 if len(sys.argv) > 1:
     with open(sys.argv[1], 'w', encoding='utf8') as f:

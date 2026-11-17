@@ -4,6 +4,12 @@
 // Visual order (QA A-07, BUG-010): a candidate in line with the focus (its box overlaps the focus
 // on the cross axis, the "beam") always wins over one off to the side, and reversing a move that
 // left a group returns to the control it came from.
+//
+// BUG-014 (A-07): a horizontal move leaves its group only for a control in or near the same row: in
+// the beam, or less than SIDE_EXIT_ROWS times the focus height away on the cross axis (the Glazier lock
+// column beside the slot grid). At the left or right edge with nothing near, Left and Right stay put
+// instead of jumping to a bottom bar button. Reversing a move that left a group returns to its origin even when the landing
+// group has its own candidate that way (Down from Pause 2 to Fuse 1, then Up, goes back to Pause 2).
 
 export const Dir = { Up: 0, Down: 1, Left: 2, Right: 3 } as const;
 export type Dir = (typeof Dir)[keyof typeof Dir];
@@ -26,6 +32,8 @@ export interface NavMemory {
 
 /** Secondary-axis offset weighs more than distance, so moves stay in a row or column. */
 const CROSS_AXIS_WEIGHT = 2;
+/** Horizontal moves leave a group only for targets within this many focus heights of its row. */
+const SIDE_EXIT_ROWS = 2;
 /** Overlap allowed at an edge (sub-pixel layout rounding). */
 const EDGE_TOLERANCE = 1;
 
@@ -55,7 +63,18 @@ function inBeam(cur: NavRect, r: NavRect, dir: Dir): boolean {
   return r.x < cur.x + cur.w - EDGE_TOLERANCE && r.x + r.w > cur.x + EDGE_TOLERANCE;
 }
 
-function bestIn(rects: readonly NavRect[], current: number, dir: Dir, sameGroup: boolean): number {
+/** Vertical gap between two boxes (0 when they overlap in y). */
+function crossGap(a: NavRect, b: NavRect): number {
+  return Math.max(0, b.y - (a.y + a.h), a.y - (b.y + b.h));
+}
+
+function bestIn(
+  rects: readonly NavRect[],
+  current: number,
+  dir: Dir,
+  sameGroup: boolean,
+  nearRowOnly = false,
+): number {
   const cur = rects[current];
   if (cur === undefined) return -1;
   const cx = cur.x + cur.w * 0.5;
@@ -75,6 +94,7 @@ function bestIn(rects: readonly NavRect[], current: number, dir: Dir, sameGroup:
     const cross = horizontal ? Math.abs(ry - cy) : Math.abs(rx - cx);
     const score = main + cross * CROSS_AXIS_WEIGHT;
     const beam = inBeam(cur, r, dir);
+    if (nearRowOnly && !beam && crossGap(cur, r) > cur.h * SIDE_EXIT_ROWS) continue;
     if ((beam && !bestBeam) || (beam === bestBeam && score < bestScore)) {
       best = i;
       bestBeam = beam;
@@ -96,8 +116,6 @@ export function findNeighbor(
 ): number {
   if (rects.length === 0) return -1;
   if (current < 0 || current >= rects.length) return 0;
-  const inGroup = bestIn(rects, current, dir, true);
-  if (inGroup >= 0) return inGroup;
   const cur = rects[current];
   const back = memory === null ? undefined : rects[memory.from];
   if (
@@ -112,7 +130,9 @@ export function findNeighbor(
   ) {
     return memory.from;
   }
-  return bestIn(rects, current, dir, false);
+  const inGroup = bestIn(rects, current, dir, true);
+  if (inGroup >= 0) return inGroup;
+  return bestIn(rects, current, dir, false, dir === Dir.Left || dir === Dir.Right);
 }
 
 /** First item of the next (delta 1) or previous (delta -1) group, cycling. -1 when empty. */

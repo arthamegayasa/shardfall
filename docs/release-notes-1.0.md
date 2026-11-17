@@ -41,9 +41,11 @@ Semua bug terbuka berstatus MENUNGGU UJI ULANG: perbaikan sudah ada dan punya te
 - Safari asli belum diuji: WebKit Playwright dipakai sebagai proksi (Keputusan 2026-11-16).
 - Bila localStorage diblokir (mode privat tertentu, cookie dimatikan), progres Silt, pengaturan, dan autosave hilang saat tab ditutup. Tidak ada pesan ke pemain tentang hal ini.
 - Crack (tingkat kesulitan) belum ada; 1.0 hanya Crack 0.
-- Layar Credits di dalam game masih berisi teks singkat ("Full credits come later."); daftar lengkap ada di `docs/credits.md` dan `third-party-licenses.txt`.
+- Layar Credits di dalam game berisi ringkasan singkat; daftar lengkap ada di `docs/credits.md` dan `third-party-licenses.txt`.
+- Determinisme: BUG-015 (1 checkpoint replay dari 14 berbeda di Node, hasil akhir run tetap sama) masih terbuka. Penyebab belum ditemukan.
+- Frame Pulse pertama bisa tertahan sekitar 0,5 detik pada profil browser baru (BUG-006, MINOR).
 - Dua ikon Memento (Music Box, Patched Cloak) masih versi sementara buatan GD; beberapa sprite proyektil dan FX berstatus `placeholder` di data art meski sudah dipakai sejak M1.
-- Durasi run menang diperkirakan 14 sampai 16 menit dari simulasi bot; target M4 adalah 15 sampai 20 menit. Belum dikonfirmasi dengan run manusia.
+- Durasi run menang diperkirakan 14 sampai 16 menit dari simulasi bot; target resmi untuk 15 Pulse adalah 12 sampai 16 menit (Keputusan Producer; target handoff 15 sampai 20 menit berlaku untuk 20 Pulse Tingkat C). Belum dikonfirmasi dengan run manusia.
 - Keseimbangan Vintner: bot `naive` menang 70%, run menangnya lambat (sekitar 21 menit). Butuh playtest manusia.
 
 ## 3. Yang belum diuji manusia

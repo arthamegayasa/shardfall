@@ -1249,6 +1249,11 @@
   flex: 1;
 }
 
+/* Credits (M5-03): one paragraph per line of the summary, spaced apart. */
+.sf-ui .info-body .info-text + .info-text {
+  margin-top: calc(var(--u) * 4);
+}
+
 /* HUD (ui-spec S03): edges only, 8 unit margins, never in the centre. */
 .sf-ui .screen-hud {
   pointer-events: none;

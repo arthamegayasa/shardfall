@@ -1,0 +1,21 @@
+
+Running 1 test using 1 worker
+
+[A-07 search]
+{"screen":"title","entry":"title-new-run","visible":4,"reached":4,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"3/3","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"class-select","entry":"class-lantern","visible":5,"reached":5,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"5/5","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"settings-graphics","entry":"settings-tab-graphics","visible":8,"reached":8,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"10/10","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"settings-audio","entry":"settings-tab-audio","visible":12,"reached":12,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"14/14","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"settings-access","entry":"settings-tab-access","visible":13,"reached":13,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"15/15","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"settings-controls","entry":"settings-tab-controls","visible":34,"reached":34,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"60/60","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"archive","entry":"keeping-unlock_blade","visible":8,"reached":8,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"8/8","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"credits","entry":"credits-back","visible":1,"reached":1,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"0/0","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"pause","entry":"pause-resume","visible":3,"reached":3,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"2/2","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"level-up","entry":"temper-card-1","visible":3,"reached":3,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"2/2","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"glazier","entry":"shop-begin","visible":19,"reached":19,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"34/34","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"warden-reward","entry":"reward-card-1","visible":3,"reached":3,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"2/2","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+{"screen":"run-lost","entry":"end-again","visible":4,"reached":4,"missing":[],"cannotReturnToEntry":[],"directionIssues":[],"reversals":"3/3","reversalFails":[],"leaves":[],"valueRestoreFailed":[]}
+[BUG-010] {"reportSteps":["shop-begin","shop-slot-6","shop-slot-3","shop-slot-6","shop-begin","shop-begin","shop-stats"],"lockSteps":["shop-lock-3","shop-slot-4","shop-lock-3"],"lockPath":["Tab","ArrowDown","ArrowDown","ArrowRight"]}
+  ok 1 [chromium] › tests\e2e\m5-release.spec.ts:376:1 › A-07 by search (BUG-010 retest): every control reachable from the entry, no trap, visual order (1.9m)
+
+  1 passed (1.9m)

@@ -18,7 +18,7 @@ Aturan tingkat dan status: `docs/qa/test-plan.md` bagian 14.
 | BUG-003 | Teks flavor kartu Memento terpotong elipsis di the Glazier dan hadiah Warden | MINOR | DITUTUP (M3) | M1 | ui | UI | `tests/e2e/screens.spec.ts`, `m3-play.spec.ts` (pemindai layout) |
 | BUG-004 | Hook `goToScreen('confirm')` gagal: berakhir di layar `pause` | MINOR | DITUTUP (M3) | M1 | build | LP | Jalur keyboard di `tests/e2e/screens.spec.ts` |
 | BUG-005 | Baris Memento di ringkasan build menjorok dibanding baris senjata | MINOR | DITUTUP (M3) | M1 | ui | UI | Screenshot `docs/qa/evidence/M3/play-bell-run-end-build.png` |
-| BUG-006 | Frame arena pertama di profil browser baru menahan loop sekitar 0,4 s setelah HUD Pulse tampil; tombol yang ditekan saat itu hilang (penyebab smoke Edge flaky) | MINOR | TERBUKA (dibuka kembali M5) | M3 | render, perf | AD (M4-01) | `tests/e2e/support/smoke.ts` (menunggu sim berjalan, mencatat jeda), `tests/render/m4-polish.test.ts` (pre-warm), `tests/e2e/m5-release.spec.ts` (BUG-006, `QA_LONG=1`) |
+| BUG-006 | Frame arena pertama di profil browser baru menahan loop sekitar 0,4 s setelah HUD Pulse tampil; tombol yang ditekan saat itu hilang (penyebab smoke Edge flaky) | MINOR | DIKETAHUI (rilis 1.0, keputusan Producer M5-04) | M3 | render, perf | AD (M4-01) | `tests/e2e/support/smoke.ts` (menunggu sim berjalan, mencatat jeda), `tests/render/m4-polish.test.ts` (pre-warm), `tests/e2e/m5-release.spec.ts` (BUG-006, `QA_LONG=1`) |
 | BUG-007 | Market Cur saat ancang-ancang berwarna merah dengan luminans sama dengan lantai: hilang di grayscale, kontras 1,0:1 | MAYOR | DITUTUP (M5) | M3 | render, asset | AD (M4-01) | `tests/e2e/m3-visual.spec.ts` + `tests/e2e/support/m3_analyze.py`, `tests/e2e/support/m5_windup.py`, `tests/render/m4-polish.test.ts`, `tests/render/entity-layers.test.ts` (windup) |
 | BUG-008 | Banner boss atau Warden dari run sebelumnya tetap tampil di run baru | MINOR | DITUTUP (M5) | M3 | ui | UI | `tests/unit/ui/hud-transient.test.ts` (BUG-008), `tests/e2e/m5-release.spec.ts` (BUG-008) |
 | BUG-009 | Layar akhir run mengunci input 500 ms juga saat kembali dari The Keeping, dan fokus kembali ke Try Again | MINOR | DITUTUP (M5) | M3 | ui | UI | `tests/unit/ui/focus-nav.test.ts` (BUG-009), `tests/e2e/m5-release.spec.ts` (BUG-009) |
@@ -26,10 +26,10 @@ Aturan tingkat dan status: `docs/qa/test-plan.md` bagian 14.
 | BUG-011 | Ukuran teks Largest di 1280x720 dan 1366x768: monogram ikon cadangan ("CP") menumpuk dengan nama, efek, dan hotkey kartu | MAYOR | DITUTUP (M3) | M3 | ui, a11y | AD (ikon B) | `tests/e2e/m3-a11y.spec.ts` (A-05 skala 2) |
 | BUG-012 | Affix `brood` (Tingkat B) tidak bisa muncul di build Tingkat B: tidak ada Warden B yang memilikinya dan pool acak hanya aktif di Crack 2 ke atas | MINOR | DITUTUP (M5) | M3 | data | GD | `tests/unit/qa/content-b.test.ts` (affix Warden dan pool Crack 2) |
 | BUG-013 | Tick sim terus bertambah selama pemain diam di Temper dan the Glazier (3600 tick per 60 s); layar tidak berpindah dan tidak ada timer | MINOR | DITUTUP (M5) | M3 | sim | GP | `tests/unit/sim/choice-idle.test.ts`, `tests/e2e/m3-a11y.spec.ts` (A-12, `QA_LONG=1`) |
-
-| BUG-014 | Panah dari kontrol di tepi kiri melompat ke tombol bar bawah (Reroll, Reset Controls) dan panah sebaliknya tidak kembali | MINOR | TERBUKA | M5 | a11y, ui | UI | `tests/e2e/m5-release.spec.ts` (A-07 by search, `reversalFails`) |
-| BUG-015 | Satu checkpoint replay dari run browser hidup tidak cocok di Node (step 32280 dari 46205); checkpoint sebelum dan sesudahnya serta hasil akhir sama | MINOR | TERBUKA | M5 | sim, determinism | LP (diagnosis) | `tests/e2e/m5-release.spec.ts` (M5 release play, D-8 soak `QA_SOAK=1`) |
-| BUG-016 | Mode buta warna tidak mengubah palet dunia; uji 1 detik proksi pada simulasi deuteranopia 5 dari 10 (kontrol penglihatan normal 5 dari 5) | MAYOR | TERBUKA | M5 | a11y, render | AD (palet), LP (LUT) | `tests/e2e/support/m5_glance_cvd.py`, `m5_cvd.py`, `m3-visual.spec.ts` (mode warna) |
+| BUG-014 | Panah dari kontrol di tepi kiri melompat ke tombol bar bawah (Reroll, Reset Controls) dan panah sebaliknya tidak kembali | MINOR | DITUTUP (M5-04) | M5 | a11y, ui | UI, LP (M5-03) | `tests/unit/ui/focus-nav.test.ts` (BUG-014), `tests/e2e/m5-release.spec.ts` (A-07 by search, `reversalFails`) |
+| BUG-015 | Satu checkpoint replay dari run browser hidup tidak cocok di Node (step 32280 dari 46205); checkpoint sebelum dan sesudahnya serta hasil akhir sama | MINOR | DIKETAHUI (rilis 1.0, keputusan Producer M5-04) | M5 | sim, determinism | LP (diagnosis) | `tests/e2e/m5-release.spec.ts` (M5 release play, D-8 soak `QA_SOAK=1`) |
+| BUG-016 | Mode buta warna tidak mengubah palet dunia; uji 1 detik proksi pada simulasi deuteranopia 5 dari 10 (kontrol penglihatan normal 5 dari 5) | MAYOR | DITUTUP (M5-04) | M5 | a11y, render | LP (M5-03), AD (palet final) | `tests/render/cvd-palette.test.ts`, `tests/e2e/support/m5_glance_cvd.py`, `m5_cvd.py`, `m3-visual.spec.ts` (mode warna, `QA_CV`) |
+| BUG-017 | Mode Protanopia menurunkan selisih warna badan proyektil pemain vs proyektil musuh di bawah ambang A-04 langkah 3 (CIEDE2000 19,0 terhadap `kept-cyan`, 19,4 terhadap `kept-blue`; ambang 20) | MAYOR | DITUTUP (M5-05) | M5 (M5-04) | a11y, render | LP, AD (palet final) | `tests/e2e/support/m5_cvd.py` (kunci `mode-protan`), `tests/render/cvd-palette.test.ts` |
 Area: `sim`, `render`, `ui`, `audio`, `data`, `save`, `perf`, `a11y`, `compat`, `build`, `asset`.
 
 ---
@@ -201,7 +201,7 @@ Salin blok di bawah untuk tiap bug baru. Urutkan dari id terkecil.
 ### BUG-006: Frame arena pertama di profil browser baru menahan loop sekitar 0,4 s setelah HUD Pulse tampil
 
 - Tingkat: MINOR
-- Status: TERBUKA (dibuka kembali M5)
+- Status: DIKETAHUI (dibuka kembali M5; diterima sebagai known issue 1.0 oleh Producer, M5-04)
 - Ditemukan: 2026-11-17, M3, oleh QA
 - Build: `dist-e2e` lokal 2026-11-17 (contentHash 2008c1b6, tier B)
 - Lingkungan: Microsoft Edge 157 (channel Playwright, profil baru per tes), 1280x720
@@ -409,7 +409,7 @@ GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "t
 ### BUG-014: Panah dari kontrol di tepi kiri melompat ke tombol bar bawah dan tidak kembali
 
 - Tingkat: MINOR (semua kontrol tetap terjangkau dan arah benar; urutan terasa melompat)
-- Status: TERBUKA
+- Status: DITUTUP (M5-04)
 - Ditemukan: 2026-11-17, M5, oleh QA
 - Build: `dist-e2e` contentHash 977ff134
 - Lingkungan: Chromium Playwright dengan GPU, 1920x1080
@@ -429,14 +429,14 @@ GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "t
 
 **Bukti:** `docs/qa/evidence/M5/a07-search.json` (`reversalFails` per layar), screenshot `docs/qa/evidence/M5/a07-glazier.png`.
 
-**Catatan perbaikan (diisi programmer):**
+**Catatan perbaikan (diisi programmer):** LP, 2026-11-17 (M5-03), `src/ui/focus-nav.ts`. (1) Panah kiri atau kanan hanya keluar grup ke kontrol di baris yang sama: dalam beam, atau celah vertikal paling banyak 2 kali tinggi fokus (agar kolom kunci Glazier tetap ke grid slot di sebelahnya). Di tepi tanpa kontrol sebaris, panah diam (tawaran 1 sampai 4 kiri, kolom tombol pertama Controls kiri). (2) Membalik langkah yang keluar grup kini selalu kembali ke asal, juga bila grup tujuan punya kandidat sendiri ke arah itu (Pause 2 bawah ke Fuse 1, atas kembali ke Pause 2). Tes unit `tests/unit/ui/focus-nav.test.ts` (4 kasus BUG-014, merah sebelum perbaikan; 24 kasus lulus). E2E lokal `m5-release.spec.ts` A-07 by search: 13 layar, 0 tak terjangkau, 0 jebakan, 0 pelanggaran arah, balik 0 gagal (Glazier 34/34, Controls 60/60). QA: ulangi A-07 by search.
 
-**Uji ulang (diisi QA):**
+**Uji ulang (diisi QA):** 2026-11-17, M5-04, `dist-e2e` contentHash 977ff134 dengan perubahan LP M5-03, Chromium 1920x1080, tanpa pointer. `npx playwright test tests/e2e/m5-release.spec.ts -g "A-07 by search"`: 13 layar, 0 kontrol tak terjangkau, 0 jebakan, 0 pelanggaran arah, langkah balik 0 gagal dari 158 (Glazier 34/34, Settings Controls 60/60; dulu 12 gagal dari 175). Tawaran 1 sampai 4 di Glazier dan kolom tombol pertama Controls: panah kiri tidak lagi melompat ke bar bawah. Langkah laporan BUG-010 tetap benar. Tes unit `focus-nav.test.ts` lulus di `npm run check`. **DITUTUP.** Bukti: `docs/qa/evidence/M5/logs/m504-a07-search.txt`.
 
 ### BUG-015: Satu checkpoint replay dari run browser hidup tidak cocok di Node
 
 - Tingkat: MINOR (hasil run identik; replay hanya fitur dev dan e2e; tidak terulang di 10 run berikutnya. Dinaikkan ke MAYOR bila terulang atau bila divergensinya bertahan)
-- Status: TERBUKA
+- Status: DIKETAHUI (diterima sebagai known issue 1.0 oleh Producer, M5-04; diagnosis LP tetap terbuka)
 - Ditemukan: 2026-11-17, M5, oleh QA
 - Build: `dist-e2e` contentHash 977ff134 (sebelum perubahan LP M5)
 - Lingkungan: Chromium Playwright dengan GPU, 1920x1080, kualitas Low, Reduce Effects ON, loop hidup `setTimeScale(4)`
@@ -456,14 +456,14 @@ GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "t
 
 **Bukti:** kegagalan tes dan probe Node QA (hash per checkpoint di sekitar step 32280) di `docs/qa/evidence/M5/logs/m5-play-first.txt`; soak `docs/qa/evidence/M5/d8-soak.json`.
 
-**Catatan perbaikan (diisi programmer):**
+**Catatan perbaikan (diisi programmer):** LP, 2026-11-17 (M5-03), diagnosis singkat, belum diperbaiki (status tetap TERBUKA). Yang sudah disingkirkan: (1) beda floating point antar mesin: sim hanya memakai operasi yang dibulatkan tepat (`Math.sqrt`, `floor`, `round`, `min`, `max`, `abs`) plus trig sendiri `src/core/math`, tanpa `Math.sin`, `pow`, `exp`, `hypot`. (2) `-0` dari `quantizeAim` (aim di (-1/32, 0] memberi `-0`, JSON menyimpannya sebagai `0`, dan hasher membedakan `-0` dari `0`): diuji di Node dengan 6 replay QA (`m5-bell`, 2 soak bell, `m5-blade`, soak lantern, `e13-seed101`), semua aim 0 diganti `-0`: 0 checkpoint berbeda, hasil akhir sama. Jalur ini tidak mencapai state ber-hash. (3) Command tanpa rekaman: tes main rilis tidak mengirim command lewat hook, dan `send` hook lewat `commands.send` (direkam). (4) Penulisan ke view sim dari render, UI, atau audio: tidak ditemukan. Urutan di loop: hash diambil tepat setelah `sim.step` di `runTick`, sebelum render. Dugaan tersisa: nilai ber-hash yang dihitung dari sesuatu di luar replay pada satu tick, belum terlokalisasi. Usul langkah berikut (LP atau GP, perubahan kecil di `src/app/replay.ts` dan `src/sim/state-hash.ts`, hanya build dev/e2e): saat checkpoint, simpan juga hash per subsistem (pemain, musuh, proyektil, zona, run, RNG) agar kejadian berikut langsung menunjuk subsistem yang berbeda. Tidak diperbaiki karena penyebab belum jelas (aturan brief: hanya bila jelas dan aman bagi determinisme).
 
 **Uji ulang (diisi QA):**
 
 ### BUG-016: Mode buta warna tidak mengubah palet dunia; telegraf di bawah pemain sulit dikenali pada deuteranopia
 
 - Tingkat: MAYOR (butir aksesibilitas wajib A-04 gagal: langkah 5 di bawah 4 dari 5, syarat mode menggeser palet bahaya dan pemain tidak terpenuhi)
-- Status: TERBUKA
+- Status: DITUTUP (M5-04)
 - Ditemukan: 2026-11-17, M5, oleh QA
 - Build: `dist-e2e` contentHash 977ff134
 - Lingkungan: Chromium Playwright dengan GPU (RTX 3060), 1920x1080, kualitas High
@@ -484,6 +484,40 @@ GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "t
 
 **Catatan perbaikan (diisi programmer):** usul QA, keputusan AD dan LP: terapkan arah art-direction 8.3 (protan dan deutan: `danger-red` telegraf digeser ke merah kemagentaan yang lebih terang; tritan: `danger-violet` ke magenta) lewat ganti LUT palet per mode (art-pipeline sudah merancang LUT), lalu QA mengulang langkah 3 dan 5 untuk ketiga mode. Alternatif scope (Producer): hapus atau ganti nama opsi agar tidak menjanjikan palet dunia, tetapi langkah 5 tetap harus lolos di mode Off.
 
+LP, 2026-11-17 (M5-03): diperbaiki di render, hanya tampilan (state hash sama di semua mode: `m3-visual.spec.ts` peak 7c7dfee6 untuk Off, protan, deutan, tritan; draw call sama). (1) Palet dunia per mode `src/render/pipeline/cvd-palette.ts`: hanya token bahaya yang diganti, token pemain dan netral tidak pernah berubah. Protan `danger-red #FF7381`, `danger-magenta #F27BA6`, `danger-violet #E68CC4`; deutan `#E65087`, `#F2368C`, `#CC70A0`; tritan `danger-violet #E600D6` (arah art-direction 8.3). Dipilih dengan simulasi Machado 2009 (matriks sama dengan `m5_cvd.py`) untuk menaikkan jarak CIEDE2000 terkecil ke semua token pemain: deutan merah vs `kept-gold` 18,2 ke 28,0, isian telegraf vs zona Rite 7,1 ke 15,0, violet vs `kept-blue` 2,6 ke 18,0; protan violet vs biru 5,0 ke 15,5, magenta 13,0 ke 19,0, kontras merah di lantai 1,52 ke 2,36. [Asumsi] Nilai hex usul LP, AD pemilik palet final (bisa dipindah ke `art/palette.json`). (2) Renderer merasterisasi ulang atlas sprite dari palet mode saat Color Vision berubah (mata Unlit, cincin proyektil musuh, mata Warden), dan membangun ulang warna telegraf, boss, spawn, aura Warden, dan outline ancang-ancang (`recolorSpriteAtlas`, `EntityLayers.setPalette`). Lapis L4 ikut. (3) Pola bahaya di setiap mode buta warna (`src/render/shaders/area.ts`): tepi telegraf, boss, dan spawn 2 px bergaris tiap 3 px antara warna bahaya dan tint pucat (dekat `danger-core`), isian pita diagonal 4 px (35% dan 60% alpha gaya). Zona pemain tetap polos, jadi garis berarti bahaya walau hue tidak membantu. Mode Off tidak berubah. Tes unit `tests/render/cvd-palette.test.ts` (10 kasus). Pemeriksaan LP sendiri (bukan putusan QA): lima bingkai uji 1 detik dari skenario `m3-visual.spec.ts` di mode Deuteranopia, `m5_glance_cvd.py make`, satu proksi baru tanpa konteks, skor `m5_glance_cvd.py score`: 5 dari 5 (galat pemain 4 sampai 7 px, ancaman 6,5 sampai 20,5 px). Simulasi protan dan tritan pada bingkai G4 diperiksa visual: telegraf tampil sebagai pita bergaris pucat, jelas beda dari pemain dan Glint. Catatan untuk QA: langkah 5 A-04 menurut accessibility.md diuji di mode Off; mode Off sengaja tidak diubah (gaya dikunci CD), jadi usul uji ulang langkah 3 dan 5 per mode yang sesuai seperti usul QA di atas.
+
+**Uji ulang (diisi QA):** 2026-11-17, M5-04, `dist-e2e` contentHash 977ff134 dengan perubahan LP M5-03, Chromium GPU (RTX 3060), 1920x1080, High. Bingkai ditangkap QA sendiri (bukan bingkai LP): `QA_CV=<mode> npx playwright test tests/e2e/m3-visual.spec.ts -g "glance frames"` (opsi baru QA: Color Vision diset ke mode itu, nama `cv-<mode>-glance-*`), lalu `m5_glance_cvd.py make --sim <mode> --prefix cv-<mode>-` dengan simulasi jenis yang sama.
+1. Dunia kini berubah per mode: dibanding tangkapan mode Off QA dari suite yang sama, 0,75 sampai 1,23% piksel berubah lebih dari 24 level di G3 dan G4 (telegraf, boss, cincin), telegraf tampil sebagai pita bergaris pucat (`m504-glance-deutan-boss.png`). State hash sama di semua mode (`m3-visual.spec.ts` peak 7c7dfee6 untuk Off, protan, deutan, tritan; draw call 21 sama).
+2. Langkah 5 (resmi, mode Deuteranopia + simulasi deuteranopia), satu proksi baru tanpa konteks, sesi pertama: **4 dari 5**. Pemain 5 dari 5 (galat 4 sampai 8 px). Adegan yang gagal di M5 kini lolos: G3 boss (ancaman 7,5 px, dulu 47,5) dan G4 tumpukan X (13,3 px). Satu gagal: G5 Pulse 13, ancaman terdekat adalah Unlit yang menempel tepat di pemain (0,8 px), proksi menunjuk berkas 30,8 px jauhnya (radius 30); aturan 1,2 kali jarak terdekat tidak menolong. Tidak terkait palet bahaya.
+3. Indikatif (sesi 2 dan 3 proksi yang sama, tata letak adegan sudah pernah dilihat): Protanopia 4 dari 5 (G5 sama), Tritanopia 5 dari 5.
+4. Langkah 3 per mode (`m5_cvd.py`, kini membaca palet mode dari `src/render/pipeline/cvd-palette.ts`, kunci `mode-<nama>`): inti bahaya vs lantai 4,84 sampai 6,48:1 di semua mode (ambang 4,5); badan proyektil pemain vs musuh (CIEDE2000, ambang 20): Deuteranopia 26,2 (dulu 21,4), Tritanopia 76,5, **Protanopia 19,0** (Off di simulasi protan 31,8). Kegagalan Protanopia dicatat terpisah sebagai BUG-017, karena berasal dari nilai palet baru, bukan dari masalah BUG-016 (telegraf di bawah pemain).
+Masalah BUG-016 (mode tidak menyentuh dunia, telegraf deuteranopia tidak terbaca) terbukti beres. **DITUTUP.** Bukti: `docs/qa/evidence/M5/m504-a04-glance.json`, `m504-a04-cvd-tokens.json`, `m504-glance-deutan-boss.png`.
+
+### BUG-017: Mode Protanopia menurunkan selisih warna proyektil pemain vs proyektil musuh di bawah ambang A-04
+
+- Tingkat: MAYOR (butir aksesibilitas wajib A-04 langkah 3 gagal di mode yang sesuai, test-plan 14.1. Selisih ke ambang kecil, sekitar 1 satuan CIEDE2000, tetapi ambang tertulis dan QA tidak melonggarkannya setelah hasil keluar)
+- Status: TERBUKA
+- Ditemukan: 2026-11-17, M5-04, oleh QA
+- Build: kerja lokal 2026-11-17 dengan perubahan LP M5-03 (`src/render/pipeline/cvd-palette.ts`), contentHash 977ff134
+- Lingkungan: token palet dan sprite proyektil, simulasi Machado 2009 protanopia keparahan 1,0 (sama dengan M5)
+- Seed: tidak relevan
+
+**Langkah reproduksi**
+1. `python tests/e2e/support/m5_cvd.py out.json`.
+2. Baca kunci `mode-protan` (palet mode Protanopia dengan simulasi protanopia).
+
+**Diharapkan:** accessibility.md A-04 langkah 3: selisih CIEDE2000 antara proyektil pemain dan proyektil musuh minimal 20 di tiap mode buta warna dengan simulasi jenisnya (cara M5: warna badan, karena inti keduanya sama-sama pucat).
+
+**Terjadi:** mode Protanopia mengganti `danger-magenta` (cincin `fx-shot-danger`) ke `#F27BA6`. Di simulasi protan, cincin itu berjarak 19,0 dari `kept-cyan` (badan `fx-shot-kept` dan `fx-shot-lantern-bolt`), 19,4 dari `kept-blue`, 26,6 dari `kept-white`; rata-rata warna sprite 15,3 (palet Off 24,2). Dengan palet Off di simulasi protan: cyan 31,8, putih 40,1, tetapi biru 16,2 (pasangan biru tidak diukur di M5). Jadi mode ini menaikkan pasangan terburuk (16,2 ke 19,0) tetapi belum mencapai 20, dan menurunkan pasangan badan utama (31,8 ke 19,0). Deuteranopia (26,2 / 35,5 / 27,5) dan Tritanopia (76,5 / 71,6 / 38,9) lolos. Kontras inti bahaya vs lantai lolos di semua mode.
+
+**Dampak:** pemain protanopia yang memilih mode Protanopia. Pembeda non-warna tetap ada (proyektil musuh berinti pucat dan beroutline `ink`, proyektil pemain tanpa outline, style guide 1.3), dan uji 1 detik protan indikatif 4 dari 5, tetapi bingkai uji 1 detik tidak memuat proyektil musuh, jadi tidak membuktikan butir ini.
+
+**Frekuensi:** selalu (nilai palet).
+
+**Bukti:** `docs/qa/evidence/M5/m504-a04-cvd-tokens.json` (kunci `mode-protan` dan `protan`). Pencarian kasar QA di ruang HSV keluarga merah sampai violet menemukan 347 nilai dengan jarak minimal 20 ke ketiga warna proyektil pemain dan minimal 19 ke semua token pemain, jadi ambang bisa dicapai; pilihan nilai milik AD dan LP.
+
+**Catatan perbaikan (diisi programmer):**
+
 **Uji ulang (diisi QA):**
 
 ---
@@ -492,10 +526,11 @@ GP, 2026-11-17 (M4-03): tidak disengaja, dan berdampak gameplay: kondisi efek "t
 
 Diisi saat M5. Hanya bug MINOR berstatus DIKETAHUI yang boleh ada di sini. BLOCKER dan MAYOR tidak boleh dibawa ke rilis.
 
-Usulan QA M5 (2026-11-17). Status DIKETAHUI baru berlaku setelah keputusan Producer; sampai itu ketiganya TERBUKA. BUG-016 (MAYOR) tidak boleh masuk daftar ini dan harus diperbaiki atau diputuskan ulang scope-nya sebelum rilis.
+**Perbaikan dan uji ulang M5-05 (Producer, 2026-11-17):** `danger-magenta` mode Protanopia di `src/render/pipeline/cvd-palette.ts` diganti `#F27BA6` ke `#F47C94` (kandidat terdekat yang memenuhi ambang dengan margin, kontras terhadap `floor-mid` 2,51 vs 2,54 sebelumnya). Diukur dengan alat QA `python tests/e2e/support/m5_cvd.py` (kunci `mode-protan`): CIEDE2000 badan proyektil pemain vs musuh 21,3 (`kept-cyan`), 25,8 (`kept-blue`), 26,1 (`kept-white`), semua di atas ambang 20; inti bahaya vs lantai tetap 6,28 / 4,84. `npm run check` lulus (668 tes). Status: DITUTUP. Catatan: uji 1 detik protan dengan proksi baru tidak diulang (tidak diwajibkan A-04); nilai palet final tetap milik AD.
+
+Final M5-04 (2026-11-17): keputusan Producer menerima BUG-006, BUG-014 (bila belum beres), dan BUG-015 sebagai known issues 1.0. BUG-014 DITUTUP di uji ulang M5-04, jadi tidak masuk daftar. BUG-017 (MAYOR) tidak boleh masuk daftar ini.
 
 | Id | Ringkasan untuk pemain (Inggris) | Solusi sementara |
 |---|---|---|
 | BUG-006 | The first Pulse after starting the browser can hitch for about half a second while graphics warm up. Keys pressed during that moment may be ignored. | Wait a moment after the Pulse starts, or press the key again. Later Pulses and later sessions in the same browser do not hitch. |
-| BUG-014 | In the Glazier and in Settings > Controls, pressing Left on the leftmost item jumps to a button at the bottom of the screen, and Right does not jump back. | Use Up, Down, or Tab to return; every control is still reachable by keyboard. |
 | BUG-015 | (Developer replays only) A recorded replay can very rarely report one checkpoint mismatch even though the run plays back to the same result. No effect on play. | None needed for players. |

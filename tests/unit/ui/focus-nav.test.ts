@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Dir, findNeighbor, nextGroupIndex } from '../../../src/ui/focus-nav.ts';
+import { Dir, findNeighbor, nextGroupIndex, opposite } from '../../../src/ui/focus-nav.ts';
 import type { NavMemory, NavRect } from '../../../src/ui/focus-nav.ts';
 import { choiceLockApplies, menuIntent } from '../../../src/ui/menu-keys.ts';
 import { defaultSettings } from '../../../src/app/settings.ts';
@@ -232,5 +232,54 @@ describe('Glazier arrow order follows the layout (BUG-010, A-07)', () => {
   it('skips items without a box (hidden controls)', () => {
     const rects = [r(0, 0, 0), r(0, 20, 0, 0, 0), r(0, 40, 0)];
     expect(findNeighbor(rects, 0, Dir.Down)).toBe(2);
+  });
+});
+
+// BUG-014 (A-07 reversal check, M5): Left from the leftmost offers jumped to Reroll in the bottom bar
+// and Right then went on to Sell; in Settings > Controls Left from the first key column jumped to Reset
+// Controls, and Down from Pause 2 to Fuse 1 came back Up to Stats 1.
+describe('edge moves stay in line and reverse to their origin (BUG-014, A-07)', () => {
+  it('Left from each Glazier offer stays put instead of jumping to Reroll', () => {
+    for (const offerIndex of [0, 2, 4, 6])
+      expect(findNeighbor(GLAZIER, offerIndex, Dir.Left)).toBe(-1);
+    // Leaving a group sideways still works when a control is in the same row.
+    expect(findNeighbor(GLAZIER, G.lock3, Dir.Right)).toBe(G.slot4);
+    expect(findNeighbor(GLAZIER, G.slot4, Dir.Left)).toBe(3);
+  });
+
+  // Settings > Controls sketch: key table (group 0) left, a second table (group 1) right, bottom bar.
+  const CONTROLS: NavRect[] = [
+    r(300, 100, 0, 120, 30), // 0 Move Up 1
+    r(300, 140, 0, 120, 30), // 1 Move Down 1
+    r(300, 400, 0, 120, 30), // 2 Pause 2 (last row of the left table)
+    r(460, 380, 1, 120, 30), // 3 Stats 1
+    r(460, 440, 1, 120, 30), // 4 Fuse 1
+    r(20, 1000, 2, 200, 40), // 5 Reset Controls
+    r(1600, 1000, 2, 200, 40), // 6 Back
+  ];
+
+  it('Left from the first key column stays put instead of jumping to Reset Controls', () => {
+    expect(findNeighbor(CONTROLS, 0, Dir.Left)).toBe(-1);
+    expect(findNeighbor(CONTROLS, 1, Dir.Left)).toBe(-1);
+  });
+
+  it('Up after Down from Pause 2 to Fuse 1 returns to Pause 2, not to Stats 1', () => {
+    const w = walker(CONTROLS, 2);
+    expect(w.press(Dir.Down)).toBe(4);
+    expect(w.press(Dir.Up)).toBe(2);
+    // Without the memory the plain spatial choice inside the table still applies.
+    expect(findNeighbor(CONTROLS, 4, Dir.Up)).toBe(3);
+  });
+
+  it('every reversal of a group-leaving arrow move returns to its origin (Glazier, Controls)', () => {
+    const dirs = [Dir.Up, Dir.Down, Dir.Left, Dir.Right];
+    for (const rects of [GLAZIER, CONTROLS, SHOP])
+      for (let start = 0; start < rects.length; start++)
+        for (const d of dirs) {
+          const w = walker(rects, start);
+          const to = w.press(d);
+          if (to === start || rects[to]?.group === rects[start]?.group) continue;
+          expect(w.press(opposite(d)), `${start} ${d} -> ${to}`).toBe(start);
+        }
   });
 });

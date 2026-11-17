@@ -635,7 +635,9 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.confirm.reset_controls` | Reset all controls? | Ada |
 | `ui.confirm.reset_yes` | Reset | Ada |
 | `ui.confirm.stay` | Stay | Ada |
-| `ui.credits.body` | Made by the Shardfall team. Full credits come later. | Ada |
+| `ui.credits.assets` | All art, music, and sound were made by the team in code: procedural pixel art, low-poly scenes, and synthesized audio. No outside assets. | Ada (M5-03) |
+| `ui.credits.body` | Shardfall was made by a team of AI agents. | Ada (M5-03, teks final) |
+| `ui.credits.licenses` | Notices for third-party software are in third-party-licenses.txt. | Ada (M5-03) |
 | `ui.credits.title` | Credits | Ada |
 | `ui.end.again` | Try Again | Ada |
 | `ui.end.build` | Final build | Ada (M4-02, label pembaca layar daftar build) |

@@ -3,6 +3,9 @@
 // Frame: lights and environment update -> (static decor shadow map if dirty) -> scene L0-L3 ->
 // danger L4 into its own target -> player mask -> bloom -> tilt-shift -> composite -> canvas.
 // Quality (Low, Medium, High) and reduce effects come from Settings via applySettings.
+// M5 (LP, BUG-016): Color Vision recolours the world too. A mode change re-rasterizes the sprite atlas
+// from the mode's palette (pipeline/cvd-palette.ts) and rebuilds danger area and windup colours with
+// the hazard pattern. Render only: the sim and its state hash never see it.
 
 import { Color, DoubleSide, Scene, ShaderMaterial, WebGLRenderer } from 'three';
 import {
@@ -17,6 +20,7 @@ import {
 import type {
   ArenaDef,
   AtlasFrameRect,
+  ColorVisionMode,
   PaletteBiomeDef,
   Settings,
   VirtualFrame,
@@ -29,9 +33,10 @@ import { createPostPipeline } from '../post/post-pipeline.ts';
 import { SCENE_LIGHTING_GLSL } from '../shaders/lighting.ts';
 import { PLAYER_MASK_FRAGMENT } from '../shaders/player-mask.ts';
 import { spriteVertex } from '../shaders/sprite.ts';
-import { createSpriteAtlas } from '../sprites/atlas-texture.ts';
+import { createSpriteAtlas, recolorSpriteAtlas } from '../sprites/atlas-texture.ts';
 import { createEntityLayers } from '../sprites/entity-layers.ts';
 import { createSpriteBatch } from '../sprites/sprite-batch.ts';
+import { cvdPalette, hazardPatternFor } from './cvd-palette.ts';
 import { playerCoveredByDanger } from './danger-rules.ts';
 import { prewarmKey, scheduleIdle, takePrewarmed } from './prewarm.ts';
 import type { PrewarmSlot } from './prewarm.ts';
@@ -127,6 +132,15 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
   const maskScene = new Scene();
   maskScene.add(maskBatch.mesh);
   const playerHook: PlayerSpriteState = entities.playerSprite;
+  let colorVision: ColorVisionMode = 'off';
+  /** Switch the world palette to a colour vision mode (BUG-016). No-op when unchanged. */
+  const applyColorVision = (mode: ColorVisionMode): void => {
+    if (mode === colorVision) return;
+    colorVision = mode;
+    const p = cvdPalette(palette, mode);
+    recolorSpriteAtlas(atlas, assets.sprites, p);
+    entities.setPalette(p, hazardPatternFor(mode));
+  };
 
   let env: ArenaEnvironment | null = null;
   let currentArena: ArenaDef | null = null;
@@ -335,6 +349,7 @@ export const createRenderer: CreateRenderer = (canvas, assets, data): Renderer =
     },
     applySettings(s: Settings) {
       entities.applySettings(s);
+      applyColorVision(s.access.colorVision);
       baseQuality = qualityProfile(s);
       quality = effective(override === null ? baseQuality : { ...baseQuality, ...override });
       applyQuality();

@@ -56,13 +56,46 @@ export function markEmissive(
   return n;
 }
 
+/** Rasterize and pack every game sprite with a palette (layout depends on sprite sizes only). */
+function rasterize(
+  sprites: readonly SpriteSheetDef[],
+  palette: PaletteDef,
+): {
+  pixels: Uint8Array;
+  width: number;
+  height: number;
+  manifest: AtlasManifest;
+  issues: string[];
+} {
+  const compiled = sprites.filter((s) => !isUiArt(s)).map((s) => compileSprite(s, palette));
+  const packed = packAtlas(compiled, palette);
+  markEmissive(packed.pixels, packed.width, compiled, packed.manifest, palette);
+  return { ...packed, issues: compiled.flatMap((c) => c.issues) };
+}
+
+/**
+ * Re-rasterize the atlas with another palette into the same texture (BUG-016: colour vision modes).
+ * Palettes differ in colours only, so the layout is identical; a different layout throws, because the
+ * manifest every batch holds would no longer match the pixels.
+ */
+export function recolorSpriteAtlas(
+  atlas: SpriteAtlas,
+  sprites: readonly SpriteSheetDef[],
+  palette: PaletteDef,
+): void {
+  const r = rasterize(sprites, palette);
+  const img = atlas.texture.image as { data: Uint8Array; width: number; height: number };
+  if (r.width !== img.width || r.height !== img.height || r.pixels.length !== img.data.length)
+    throw new Error('render: recoloured atlas changed size');
+  img.data.set(r.pixels);
+  atlas.texture.needsUpdate = true;
+}
+
 export function createSpriteAtlas(
   sprites: readonly SpriteSheetDef[],
   palette: PaletteDef,
 ): SpriteAtlas {
-  const compiled = sprites.filter((s) => !isUiArt(s)).map((s) => compileSprite(s, palette));
-  const packed = packAtlas(compiled, palette);
-  markEmissive(packed.pixels, packed.width, compiled, packed.manifest, palette);
+  const packed = rasterize(sprites, palette);
   const texture = new DataTexture(
     packed.pixels,
     packed.width,
@@ -77,5 +110,5 @@ export function createSpriteAtlas(
   // Row 0 of the pixel buffer is the top of the atlas; keep it at v = 0 and flip in the UVs.
   texture.flipY = false;
   texture.needsUpdate = true;
-  return { texture, manifest: packed.manifest, issues: compiled.flatMap((c) => c.issues) };
+  return { texture, manifest: packed.manifest, issues: packed.issues };
 }
