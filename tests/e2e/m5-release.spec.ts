@@ -412,13 +412,14 @@ test('A-07 by search (BUG-010 retest): every control reachable from the entry, n
     await frames(page, 1);
     seq.push(await focused(page));
   }
-  // The second half of the report: offer 3, right to lock 3, right to slot 4, left back to lock 3.
+  // The second half of the report: lock 3, a move to the right, Left back to lock 3.
   const glazier = full.find((e) => e.screen === 'glazier');
   const lockSeq: string[] = [];
   if (glazier !== undefined) {
-    // Offer 1 by Tab, Down twice to offer 3, Right to lock 3 (the route the report describes).
+    // UI 1.1 Shop: offers in a 2 x 2 grid, each Lock across its pane's foot under the card.
+    // Offer 1 by Tab, Down to lock 1, Down to offer 3, Down to lock 3.
     await resetTo(page, 'glazier');
-    for (const k of ['Tab', 'ArrowDown', 'ArrowDown', 'ArrowRight']) {
+    for (const k of ['Tab', 'ArrowDown', 'ArrowDown', 'ArrowDown']) {
       await page.keyboard.press(k);
       await frames(page, 1);
     }

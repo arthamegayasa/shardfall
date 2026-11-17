@@ -449,6 +449,10 @@ export async function boot(doc: Document): Promise<void> {
 
   if (__E2E__) {
     const hooks = await import('./e2e/hooks.ts');
+    // E2e flows press Title > New run > Begin on fresh storage; the first-run How to play screen
+    // (UI 1.1) would sit in between. Mark it seen before the hooks exist (every helper waits for
+    // them); goToScreen('how-to') still opens it.
+    if (!settings.seenHowTo) app.applySettings({ ...settings, seenHowTo: true });
     hooks.installE2eHooks({
       data,
       strings,

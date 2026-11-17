@@ -25,7 +25,7 @@ test('The Keeping unlocks the second class and the class select starts it', asyn
   for (let i = 0; i < 4 && (await focused(page)) !== 'class-blade'; i++)
     await page.keyboard.press('ArrowDown');
   expect(await focused(page)).toBe('class-blade');
-  await expect(page.locator('[data-ui="class-begin"]')).toHaveText('Unlock in The Keeping');
+  await expect(page.locator('[data-ui="class-begin"]')).toHaveText('Locked: buy in Unlocks');
 
   // Silt from the hook, then Enter on the locked class opens The Keeping.
   await page.evaluate(() => {

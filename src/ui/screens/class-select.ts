@@ -1,12 +1,16 @@
-// S02 Choose Your Kept (ui-spec 5). Tier A shows one class (Lamplighter) so the flow never changes.
-// Left: class list with portraits; locked classes show a lock and their Silt price. Right: detail of
-// the focused class. Bottom: Begin, Back. On a locked class Begin reads "Unlock in The Keeping" and
-// opens The Keeping (ui-spec S02; LP M2-09 tier B activation).
+// S02 Choose your hero (ui-spec 5, redesign-1.1 3.4). Tier A shows one class (Lamplighter) so the
+// flow never changes. Left: hero list with portraits; locked heroes show a lock and their Silt price.
+// Right: the focused hero with a large portrait, then weapon, skill, and passive as three labelled
+// rows. Bottom: Back, Begin. On a locked hero Begin reads "Locked: buy in Unlocks" and opens
+// Unlocks (ui-spec S02; LP M2-09 tier B activation).
 
 import { isClassOpen } from '../../content/index.ts';
 import type { ClassDef } from '../../content/index.ts';
 import { button, h, put, setText } from '../dom.ts';
 import { ceilSeconds, formatStatValue } from '../format.ts';
+import { menuIntent } from '../menu-keys.ts';
+import { overflows, scrollStep } from '../scroll.ts';
+import type { ScrollMetrics } from '../scroll.ts';
 import { classPassiveParams, weaponParams } from '../presenters/content.ts';
 import { iconBox, panel, titleBlock } from './components.ts';
 import { classPriceText } from './keeping.ts';
@@ -21,38 +25,48 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
   let classes: ClassDef[] = [];
 
   const detail = h(doc, 'div', 'class-detail panel');
+  detail.dataset['ui'] = 'class-detail';
+  detail.setAttribute('role', 'region');
+  const metrics = (): ScrollMetrics => ({
+    top: detail.scrollTop,
+    client: detail.clientHeight,
+    height: detail.scrollHeight,
+  });
   const dPortrait = h(doc, 'div', 'class-portrait-big');
   const dLock = h(doc, 'p', 'class-lock');
   const dWeaponIcon = h(doc, 'span', 'class-item-icon');
   const dRiteIcon = h(doc, 'span', 'class-item-icon');
-  const dName = h(doc, 'h2', 'class-name');
+  const dPassiveIcon = h(doc, 'span', 'class-item-icon');
+  const dName = h(doc, 'h2', 'class-name t-title');
   const dRole = h(doc, 'p', 'class-role');
   const dDesc = h(doc, 'p', 'class-desc dim');
-  const dWeaponLabel = h(doc, 'p', 'label');
   const dWeaponName = h(doc, 'p', 'item-name');
   const dWeaponDesc = h(doc, 'p', 'item-effect');
-  const dRiteLabel = h(doc, 'p', 'label');
   const dRiteName = h(doc, 'p', 'item-name');
   const dRiteDesc = h(doc, 'p', 'item-effect');
   const dRiteCd = h(doc, 'p', 'dim');
-  const dPassiveLabel = h(doc, 'p', 'label');
   const dPassive = h(doc, 'p', 'item-effect');
+  /** One labelled row (redesign-1.1 3.4): label, icon, then name and what it does. */
+  const traitRow = (labelKey: string, icon: HTMLElement, ...text: HTMLElement[]): HTMLElement =>
+    put(
+      h(doc, 'div', 'class-trait'),
+      h(doc, 'p', 'label class-trait-label', t(labelKey)),
+      icon,
+      put(h(doc, 'div', 'class-trait-text'), ...text),
+    );
   put(
     detail,
-    dPortrait,
-    dLock,
-    dName,
-    dRole,
-    dDesc,
-    dWeaponLabel,
-    put(h(doc, 'div', 'class-item'), dWeaponIcon, dWeaponName),
-    dWeaponDesc,
-    dRiteLabel,
-    put(h(doc, 'div', 'class-item'), dRiteIcon, dRiteName),
-    dRiteDesc,
-    dRiteCd,
-    dPassiveLabel,
-    dPassive,
+    put(
+      h(doc, 'div', 'class-hero'),
+      dPortrait,
+      put(h(doc, 'div', 'class-hero-text'), dName, dRole, dDesc, dLock),
+    ),
+    put(
+      h(doc, 'div', 'class-traits'),
+      traitRow('ui.class.weapon', dWeaponIcon, dWeaponName, dWeaponDesc),
+      traitRow('ui.class.rite', dRiteIcon, dRiteName, dRiteDesc, dRiteCd),
+      traitRow('ui.class.passive', dPassiveIcon, dPassive),
+    ),
   );
 
   const isLocked = (c: ClassDef): boolean => !isClassOpen(deps.data, deps.meta().unlocked, c.id);
@@ -78,10 +92,8 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
     setText(dName, t(c.nameKey));
     setText(dRole, t(`class.${c.id}.role`));
     setText(dDesc, t(c.descKey));
-    setText(dWeaponLabel, t('ui.class.weapon'));
     setText(dWeaponName, weapon === undefined ? '' : t(weapon.nameKey));
     setText(dWeaponDesc, weapon === undefined ? '' : t(weapon.descKey, weaponParams(weapon)));
-    setText(dRiteLabel, t('ui.class.rite'));
     setText(dRiteName, rite === undefined ? '' : t(rite.nameKey));
     setText(
       dRiteDesc,
@@ -91,13 +103,13 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
       dRiteCd,
       rite === undefined ? '' : t('ui.class.cooldown', { s: ceilSeconds(rite.cooldownTicks) }),
     );
-    setText(dPassiveLabel, t('ui.class.passive'));
     setText(dPassive, t(`class.${c.id}.passive`, classPassiveParams(deps.data, c.id)));
     const locked = isLocked(c);
     detail.classList.toggle('is-locked', locked);
     dPortrait.textContent = '';
-    dPortrait.appendChild(portrait(c, 48));
-    setText(dLock, locked ? `${t('ui.class.locked')}  ${classPriceText(ctx, c.id)}` : '');
+    dPortrait.appendChild(portrait(c, 72));
+    const price = classPriceText(ctx, c.id);
+    setText(dLock, locked ? `${t('ui.class.locked')}${price === '' ? '' : `  ${price}`}` : '');
     dWeaponIcon.textContent = '';
     if (weapon !== undefined)
       dWeaponIcon.appendChild(
@@ -108,6 +120,12 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
       dRiteIcon.appendChild(
         iconBox(ctx, { kind: 'rite', id: rite.id }, t(rite.nameKey), [], 'small'),
       );
+    // Passive: the class tag's shape and colour (the tag its passive builds on).
+    dPassiveIcon.textContent = '';
+    const tagBox = h(doc, 'span', `icon icon-small class-tag tag-${c.tag}`);
+    tagBox.setAttribute('aria-hidden', 'true');
+    tagBox.appendChild(h(doc, 'span', 'tag-shape'));
+    dPassiveIcon.appendChild(tagBox);
     if (beginBtn !== null) {
       beginBtn.textContent = t(locked ? 'ui.class.locked' : 'ui.class.begin');
       beginBtn.classList.toggle('is-locked', locked);
@@ -186,6 +204,17 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
       ),
     );
     showDetail(initial);
+    // Large text: a detail taller than its panel scrolls and becomes a focus stop (arrows).
+    detail.scrollTop = 0;
+    if (overflows(metrics())) {
+      focus.add({
+        el: detail,
+        group: 2,
+        activate: () => {
+          ctx.sound(Cue.Denied);
+        },
+      });
+    }
     if (classes.length > 0) focus.focus(initial, true);
     else focus.focus(0, true);
   };
@@ -194,6 +223,15 @@ export function createClassSelectScreen(ctx: UiContext): Screen {
     el,
     focus,
     enter,
+    key(e) {
+      if (doc.activeElement !== detail) return false;
+      const intent = menuIntent(e.code, e.shiftKey, deps.settings().keybinds);
+      if (intent !== 'up' && intent !== 'down') return false;
+      const next = scrollStep(metrics(), intent === 'up' ? -1 : 1, detail.clientHeight / 3);
+      if (next === null) return false;
+      detail.scrollTop = next;
+      return true;
+    },
     back() {
       ctx.sound(Cue.Back);
       ctx.go('title');

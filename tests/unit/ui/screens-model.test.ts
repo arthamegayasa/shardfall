@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { encodeSource, SourceKind, TICK_RATE } from '../../../src/core/index.ts';
-import { buildLevelUpModel, buildRewardModel } from '../../../src/ui/presenters/choices.ts';
+import {
+  buildLevelUpModel,
+  buildRewardModel,
+  statValueText,
+} from '../../../src/ui/presenters/choices.ts';
 import { resolveScreenId } from '../../../src/ui/presenters/phase.ts';
-import { buildRunEndModel, killerNameKey } from '../../../src/ui/presenters/run-end.ts';
+import { buildRunEndModel, killerNameKey, statLines } from '../../../src/ui/presenters/run-end.ts';
 import { createFakeWorld } from '../../fixtures/fake-world.ts';
 import { fixtureGameData } from '../../support/fixture-data.ts';
 import { pl, pu } from './writable.ts';
@@ -15,6 +19,9 @@ describe('screen routing', () => {
     expect(resolveScreenId('classSelect', 'idle', false, false)).toBe('class-select');
     expect(resolveScreenId('settings', 'shop', false, false)).toBe('settings');
     expect(resolveScreenId('paused', 'pulse', false, false)).toBe('pause');
+    // How to play (redesign-1.1 3.4) is a menu screen over the title or a paused run.
+    expect(resolveScreenId('howTo', null, false, false)).toBe('how-to');
+    expect(resolveScreenId('howTo', 'pulse', false, false)).toBe('how-to');
   });
 
   it('derives run screens from the phase', () => {
@@ -71,6 +78,24 @@ describe('Temper (level-up) model', () => {
     expect(m.cards[0]?.rarityOrder).toBe(1);
     // Temper cards carry the stat icon (AD icon-stat-*), M2-06.
     expect(m.cards[0]?.icon).toEqual({ kind: 'stat', id: 'armor' });
+    // Percent stats read with their unit (redesign-1.1 3.3: "Damage 0% > 4%").
+    expect(m.cards[1]?.statChange).toEqual({
+      statKey: 'stat.damage_pct',
+      before: '0%',
+      after: '4%',
+    });
+    // The effect text keeps its own % sign, so the parameter stays the bare number.
+    expect(m.cards[1]?.descParams).toEqual({ value: '4' });
+    // One more level up waits behind this one ("1 more waiting").
+    expect(m.waiting).toBe(1);
+  });
+
+  it('formats stat values with their unit', () => {
+    expect(statValueText(12, 'pct')).toBe('12%');
+    expect(statValueText(0.35, 'per_s')).toBe('0.35/s');
+    expect(statValueText(4, 's')).toBe('4s');
+    expect(statValueText(1.5, 'flat')).toBe('1.5');
+    expect(statValueText(-0.001, 'flat')).toBe('0');
   });
 
   it('counts the second pick of a queue as 2 of 2', () => {
@@ -80,6 +105,7 @@ describe('Temper (level-up) model', () => {
     const m = buildLevelUpModel(w, data);
     expect(m.level).toBe(5);
     expect(m.queueIndex).toBe(2);
+    expect(m.waiting).toBe(0);
   });
 });
 
@@ -148,5 +174,18 @@ describe('run end model', () => {
     expect(m.won).toBe(true);
     expect(m.pulseReached).toBe(10);
     expect(m.killerKey).toBeNull();
+  });
+});
+
+describe('pause stat lines', () => {
+  it('lists shown stats with units and marks zero values', () => {
+    const w = createFakeWorld({ phase: 'pulse', statCount: data.stats.length });
+    const dmg = data.stats.findIndex((s) => s.id === 'damage_pct');
+    const armor = data.stats.findIndex((s) => s.id === 'armor');
+    (w.player.stats as Float64Array)[dmg] = 12;
+    const lines = statLines(w, data);
+    expect(lines.length).toBe(data.stats.filter((s) => s.showInUi).length);
+    expect(lines[dmg]).toEqual({ labelKey: 'stat.damage_pct', text: '12%', zero: false });
+    expect(lines[armor]).toEqual({ labelKey: 'stat.armor', text: '0', zero: true });
   });
 });

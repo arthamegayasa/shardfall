@@ -32,13 +32,14 @@ export const PREVIEW_DATA = {
     { id: 'warden_hound', role: 'warden', behavior: 'warden_hound', sizeClass: 'warden' },
     { id: 'boss_lantern', role: 'boss', behavior: 'boss_lantern', sizeClass: 'boss' },
   ],
+  // Tags, archetype, radius, and params as in weapons.csv: the weapon light and FX read them (redesign 1.1).
   weapons: [
-    { id: 'lantern_bolt' },
-    { id: 'splinter_shot' },
-    { id: 'arc_blade' },
-    { id: 'orbit_shards' },
-    { id: 'chain_spark' },
-    { id: 'returning_glaive' },
+    { id: 'lantern_bolt', tags: ['flame'], archetype: 'bolt_explode', radius: 1.3 },
+    { id: 'splinter_shot', tags: ['shard'], archetype: 'projectile', radius: null },
+    { id: 'arc_blade', tags: ['edge'], archetype: 'arc', radius: 2.2, params: { arc_deg: 120 } },
+    { id: 'orbit_shards', tags: ['shard', 'ward'], archetype: 'orbit', radius: 1.8 },
+    { id: 'chain_spark', tags: ['echo', 'flame'], archetype: 'chain', radius: null },
+    { id: 'returning_glaive', tags: ['edge', 'echo'], archetype: 'boomerang', radius: null },
   ],
 } as unknown as GameData;
 
@@ -111,15 +112,16 @@ export interface PreviewScene {
 }
 
 /** One frame of arbitrary events (type, x, y, a, b). */
-export function eventsOf(
-  list: readonly (readonly [number, number, number, number, number])[],
-): SimEventReader {
+/** type, x, y, a, b, and optional c (default: a lantern_bolt weapon source). */
+export type FakeEvent =
+  | readonly [number, number, number, number, number]
+  | readonly [number, number, number, number, number, number];
+
+export function eventsOf(list: readonly FakeEvent[]): SimEventReader {
   return events(list);
 }
 
-function events(
-  list: readonly (readonly [number, number, number, number, number])[],
-): SimEventReader {
+function events(list: readonly FakeEvent[]): SimEventReader {
   return {
     count: list.length,
     type: list.map((e) => e[0]),
@@ -127,7 +129,7 @@ function events(
     y: list.map((e) => e[2]),
     a: list.map((e) => e[3]),
     b: list.map((e) => e[4]),
-    c: list.map(() => encodeSource(SourceKind.Weapon, W.bolt)),
+    c: list.map((e) => e[5] ?? encodeSource(SourceKind.Weapon, W.bolt)),
   };
 }
 

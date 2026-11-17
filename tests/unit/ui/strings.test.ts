@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createTranslator } from '../../../src/ui/strings.ts';
-import { tierKey } from '../../../src/ui/presenters/content.ts';
+import { tagAbbrKey, tagNameKey, tierKey } from '../../../src/ui/presenters/content.ts';
 
 const ROOT = resolve(import.meta.dirname, '..', '..', '..');
 const UI_SRC = join(ROOT, 'src', 'ui');
@@ -75,6 +75,16 @@ describe('UI string keys', () => {
   it('lists the composed tier keys in Lampiran A', () => {
     const listed = appendixKeys();
     for (const tier of [1, 2, 3, 4]) expect(listed.has(tierKey(tier))).toBe(true);
+  });
+
+  it('labels tag chips with the full tag name, not a short code (redesign 1.1 section 1)', () => {
+    const en = JSON.parse(
+      readFileSync(join(ROOT, 'content', 'strings', 'en.json'), 'utf8'),
+    ) as Record<string, string>;
+    const { t } = createTranslator(en);
+    expect(tagAbbrKey('flame')).toBe(tagNameKey('flame'));
+    expect(t(tagAbbrKey('flame'))).toBe('Flame');
+    expect(t(tagAbbrKey('trade'))).toBe('Trade');
   });
 
   it('never writes the retired term keepsake in UI code (CD K1)', () => {

@@ -20,6 +20,8 @@ export interface HudModel {
   xpFrac: number;
   /** 1-based Pulse number. */
   pulseNumber: number;
+  /** Waves in this run profile ("Wave 3 of 15"); 0 when the view does not know it. */
+  pulseCount: number;
   timerMode: TimerMode;
   timerSecs: number;
   finalCountdown: boolean;
@@ -49,6 +51,7 @@ export function createHudModel(): HudModel {
     level: 0,
     xpFrac: 0,
     pulseNumber: 0,
+    pulseCount: 0,
     timerMode: TimerMode.Timer,
     timerSecs: 0,
     finalCountdown: false,
@@ -101,6 +104,7 @@ export function fillHudModel(
   out.level = p.level;
   out.xpFrac = frac01(p.xp, p.xpToNext);
   out.pulseNumber = pulse.index + 1;
+  out.pulseCount = pulse.count > 0 ? pulse.count : 0;
   out.glint = p.glint;
 
   out.foePending = false;

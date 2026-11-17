@@ -51,7 +51,9 @@ export interface SpriteBatch {
    * Add one sprite. (x, y) world floor u, h height u. anchorX/Y from the atlas entry.
    * dx, dy extra px offset (y up). flash rgb is linear. dissolve 0..1 breaks the sprite up in whole
    * texels; light = SpriteLight mode (0 none, 1 Unlit, 2 Kept). outline rgb (linear) and amount
-   * recolour the ink outline texels (0 = keep). Returns false when full.
+   * recolour the ink outline texels (0 = keep). scale is a whole-number size multiplier (redesign 1.1:
+   * player shots), 1 = native; the quad grows about the rect centre (shaders/sprite.ts). Returns false
+   * when full.
    */
   push(
     x: number,
@@ -74,6 +76,7 @@ export interface SpriteBatch {
     outlineG?: number,
     outlineB?: number,
     outlineAmount?: number,
+    scale?: number,
   ): boolean;
   end(): void;
   setResolution(width: number, height: number): void;
@@ -179,6 +182,7 @@ export function createSpriteBatch(
       outlineG = 0,
       outlineB = 0,
       outlineAmount = 0,
+      scale = 1,
     ) {
       if (n >= cap) {
         overflow++;
@@ -198,7 +202,9 @@ export function createSpriteBatch(
       off[p4 + 1] = anchorY + 1 - rect.oy;
       off[p4 + 2] = dx;
       off[p4 + 3] = dy;
-      params[p4] = flip < 0 ? -1 : 1;
+      // Flip sign times whole-number scale (shaders/sprite.ts).
+      const sc = scale > 1 ? Math.round(scale) : 1;
+      params[p4] = flip < 0 ? -sc : sc;
       params[p4 + 1] = alpha;
       params[p4 + 2] = dissolve;
       params[p4 + 3] = light;

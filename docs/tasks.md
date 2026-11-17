@@ -12,6 +12,7 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | M3 Konten penuh | SELESAI (Tingkat B) | Build default Tingkat B: 3 kelas, 15 Pulse, 8 senjata, 22 Memento, 6 tag, Silt dan unlock. Tingkat C (3 bioma) ditunda setelah 1.0 |
 | M4 Polish dan QA | SELESAI | Nol BLOCKER dan MAYOR terbuka, aksesibilitas A-01 sampai A-12, lolos Chromium/Chrome/Edge/Firefox, WebKit proksi Safari |
 | M5 Rilis | SELESAI | v1.0.0 di GitHub Pages. LP SIAP, QA: semua MAYOR ditutup (BUG-017 ditutup Producer dengan alat QA), known issues BUG-006 dan BUG-015 |
+| 1.1 Kejelasan dan restyle UI | SELESAI | Masukan Dok setelah main 1.0. Brief: docs/ui/redesign-1.1.md. Senjata ganda ditembakkan bergiliran, proyektil 2x dan berwarna per senjata, Arc/Chain/Echo kini terlihat, istilah layar sederhana, Toko, HUD (strip senjata), Level up, How to play baru |
 
 ## Mode kerja
 
@@ -96,6 +97,8 @@ Pemilik file: Producer. Hanya Producer yang menulis file ini.
 | 2026-11-17 | Known issues 1.0: BUG-006 (jeda frame Pulse pertama di profil baru) dan BUG-015 (1 checkpoint replay dari 14 berbeda, hasil run sama). Target durasi resmi 12 sampai 16 menit untuk 15 Pulse | Producer | MINOR, tidak menghalangi main |
 | 2026-11-17 | BUG-017 diperbaiki Producer (satu nilai palet Protanopia) dan diverifikasi dengan alat QA m5_cvd.py | Producer | Integrasi kecil; ambang A-04 tidak dilonggarkan |
 | 2026-11-17 | Rilis v1.0.0 (tag git) dan deploy GitHub Pages | Producer | Mandat Dok |
+| 2026-11-17 | 1.1: istilah di layar diganti kata sederhana (Pulse > Wave, Glint > gold, Temper > Level up, Fuse > Combine, Memento > Relic, Rite > Skill, Kept > Hero, The Keeping > Unlocks); nama lore tetap di teks flavor | Dok (opsi B) | Pemain bingung dengan istilah karangan |
+| 2026-11-17 | 1.1: How to play tampil sekali sebelum run pertama, juga untuk save 1.0 (`seenHowTo` default false) | Producer | Pemain lama juga belum pernah melihat penjelasan ini |
 
 ## Sisa untuk Dok (tidak bisa dilakukan agen)
 

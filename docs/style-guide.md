@@ -1,5 +1,7 @@
 # Shardfall: Style Guide
 
+> **UI 1.1 (2026-11-17):** `docs/ui/redesign-1.1.md` menggantikan dokumen ini bila bertentangan (istilah layar, tata letak Toko, HUD, Level up, How to play, token kaca).
+
 Pemilik: Creative Director (CD). Status: dikunci (versi 1.3, 2026-11-17). Daftar perubahan versi 1.1 (review M0), 1.2 (review rasa M1), dan 1.3 (review M3) ada di bagian 6, 7, dan 8.
 Berlaku untuk: Art Director, UI Programmer, Audio Director, Writer, Level Designer, Gameplay Programmer.
 Dasar: `docs/vision.md` dan `docs/pillars.md`. Bila bertentangan, pilar yang menang.

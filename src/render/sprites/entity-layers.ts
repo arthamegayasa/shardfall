@@ -14,6 +14,10 @@
 // impact hits, never by zone or Burn ticks (actor-flash.ts, CD M3 polish 1). Windup keeps the dark body
 // and turns the ink outline bright danger magenta (BUG-007). Rite VFX per archetype and the near-player
 // damage number cap live in vfx/.
+//
+// 1.1 (redesign 1.1 section 4): player shots draw at twice their size with a halo and a three-dot tail
+// in the weapon's tag light, plus muzzle flashes, arc sweeps, chain jumps, and ring pulses per weapon
+// (vfx/weapon-fx.ts). Render only: sim radii and state are untouched.
 
 import type { Object3D, Texture } from 'three';
 import {
@@ -40,6 +44,7 @@ import { createAreaBatch } from '../vfx/area-batch.ts';
 import { createDamageNumbers } from '../vfx/damage-numbers.ts';
 import { createVfx } from '../vfx/effects.ts';
 import type { VfxSystem } from '../vfx/effects.ts';
+import { createWeaponFx } from '../vfx/weapon-fx.ts';
 import { createAreaStyles, dangerStyleFor, linearRgb } from '../vfx/telegraph-style.ts';
 import {
   dir4Index,
@@ -172,7 +177,7 @@ const SHADOW_U_PER_PX = 0.42 / 16;
 const FOOT_RING_U = 0.55;
 /** Warden aura radius (art-direction 8.2). */
 const WARDEN_AURA_U = 1.75;
-/** Glint and player shot tails (render ticks of travel between dots). */
+/** Glint tails (render ticks of travel between dots); player shot tails live in vfx/weapon-fx.ts. */
 const TAIL_STEP_TICKS = 2;
 const TAIL_MIN_SPEED = 0.03;
 
@@ -217,7 +222,6 @@ export function createEntityLayers(
   const classRefs = data.classes.map((c) => must(resolveClassSpriteId(c.id, has)));
   const enemyRefs = data.enemies.map((e) => must(resolveEnemySpriteId(e, has)));
   const weaponRefs = data.weapons.map((w) => must(resolveWeaponSpriteId(w.id, has)));
-  const orbitWeapon = data.weapons.map((w) => w.id === 'orbit_shards');
   const playerFallback = must(FALLBACK_SPRITES.player);
   const playerShotFallback = must(FALLBACK_SPRITES.playerShot);
   const enemyFallback = must(FALLBACK_SPRITES.bySize.medium);
@@ -229,7 +233,6 @@ export function createEntityLayers(
   const crackEntry = must(FALLBACK_SPRITES.spawnCrack).entry;
   const crack = crackEntry.animations['grow'] ?? must(FALLBACK_SPRITES.spawnCrack).idle;
   const digits = must(FALLBACK_SPRITES.digits).entry;
-  const trailRef = refFor(manifest, 'fx-trail');
   const glintTrailRef = refFor(manifest, 'fx-glint-trail');
   const rites: readonly unknown[] = (data as { rites?: readonly unknown[] }).rites ?? [];
 
@@ -254,7 +257,7 @@ export function createEntityLayers(
     ...(lit === undefined ? {} : { lighting: lit }),
   });
   const effects = createSpriteBatch(atlasTexture, W, H, {
-    capacity: opts.effectCapacity ?? 2048,
+    capacity: opts.effectCapacity ?? 3072,
     depth: false,
     renderOrder: 3,
     emissiveGain,
@@ -268,10 +271,11 @@ export function createEntityLayers(
   });
   const zones = createAreaBatch(opts.areaCapacity ?? 64, 1, { merge: true });
   const decals = createAreaBatch(1024, 1.5);
-  const fxAreas = createAreaBatch(48, 1.6);
+  const fxAreas = createAreaBatch(96, 1.6);
   const dangerAreas = createAreaBatch(opts.areaCapacity ?? 128, 0);
   const numbers = createDamageNumbers(digits);
   const vfx: VfxSystem = createVfx(manifest, palette, rites);
+  const weaponFx = createWeaponFx(manifest, palette, data.weapons);
 
   // Timing views reused every frame (stable shape, no allocation in update).
   const t = { ticksPerFrame: 0, loop: true, frameCount: 1 };
@@ -342,6 +346,7 @@ export function createEntityLayers(
     applySettings(s) {
       numbers.setEnabled(s.access.damageNumbers);
       vfx.setReduced(s.access.reduceEffects);
+      weaponFx.setReduced(s.access.reduceEffects);
     },
     setPalette(p, hazard) {
       styles = createAreaStyles(p, { hazard });
@@ -360,6 +365,7 @@ export function createEntityLayers(
       // Render clock went backwards: a new run or a reload. Drop transient effects.
       if (now < lastTime - 0.5) {
         vfx.clear();
+        weaponFx.clear();
         numbers.clear();
         hitFlash.clear();
       }
@@ -385,6 +391,7 @@ export function createEntityLayers(
         Number.isNaN(lastPX) ? pX : lastPX,
         Number.isNaN(lastPY) ? pY : lastPY,
       );
+      weaponFx.ingest(f.events, now, pX, pY, p.facing);
       lastPX = pX;
       lastPY = pY;
       const ps0 = vfx.player;
@@ -640,14 +647,15 @@ export function createEntityLayers(
         }
       }
 
-      // Player shots (L3): sprite per weapon, dir4 orientation for line shots, flip by travel,
-      // a two-dot cyan tail behind fast shots (CD M1 review AD item 2).
+      // Player shots (L3): sprite per weapon, dir4 orientation for line shots, flip by travel, drawn at
+      // twice the size with a halo and a tail in the weapon's tag light (redesign 1.1, vfx/weapon-fx.ts).
       const shots = v.playerShots;
+      const gain = emissiveGain.value;
       for (let i = 0; i < shots.highWater; i++) {
         if (shots.alive[i] === 0) continue;
         const src = shots.sourceRef[i] ?? 0;
         const isWeapon = sourceKindOf(src) === SourceKind.Weapon;
-        const wi = sourceIndexOf(src);
+        const wi = isWeapon ? sourceIndexOf(src) : -1;
         const ref = isWeapon ? (weaponRefs[wi] ?? playerShotFallback) : playerShotFallback;
         const vx = shots.vx[i] ?? 0;
         const vy = shots.vy[i] ?? 0;
@@ -658,55 +666,26 @@ export function createEntityLayers(
         if (rect === undefined) continue;
         const x0 = shots.prevX[i] ?? 0;
         const y0 = shots.prevY[i] ?? 0;
-        const sx = x0 + ((shots.x[i] ?? 0) - x0) * a;
-        const sy = y0 + ((shots.y[i] ?? 0) - y0) * a;
-        if (
-          trailRef !== null &&
-          !(isWeapon && orbitWeapon[wi] === true) &&
-          vx * vx + vy * vy > TAIL_MIN_SPEED * TAIL_MIN_SPEED
-        ) {
-          for (let k = 2; k >= 1; k--) {
-            const tr = trailRef.idle.frames[k - 1];
-            if (tr === undefined) continue;
-            effects.push(
-              sx - vx * k * TAIL_STEP_TICKS,
-              sy - vy * k * TAIL_STEP_TICKS,
-              0,
-              tr,
-              trailRef.entry.anchor.x,
-              trailRef.entry.anchor.y - 2,
-              1,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              k === 1 ? 0.9 : 0.55,
-            );
-          }
-        }
-        effects.push(
-          sx,
-          sy,
-          0,
+        weaponFx.pushShot(
+          effects,
           rect,
           ref.entry.anchor.x,
           ref.entry.anchor.y,
           ref.dir4 === null && vx < 0 ? -1 : 1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1,
+          x0 + ((shots.x[i] ?? 0) - x0) * a,
+          y0 + ((shots.y[i] ?? 0) - y0) * a,
+          vx,
+          vy,
+          wi,
+          gain,
         );
       }
 
       // Particles, Rite flights, dying Unlit (L3), then damage numbers on top (rendered, never DOM).
       vfx.drawSprites(effects, now);
+      weaponFx.drawSprites(effects, now, pX, pY, gain);
       vfx.drawAreas(fxAreas, now);
+      weaponFx.drawAreas(fxAreas, now);
       numbers.ingest(f.events, now);
       numbers.draw(effects, now, pX, pY);
 

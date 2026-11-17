@@ -1,0 +1,814 @@
+/* Shared components: framed elements, panels, headings, buttons, row cards, pips, icons, tag chips,
+   Glint amounts, lock marks, build rows. Imported after base.css. */
+
+/* Small framed parts: night 90%, 1 unit frame, stair corners with the frame pixel on the inner
+   step, a faint glass sheen. --edge drives the frame and the corner pixels together. */
+.sf-ui .bar,
+.sf-ui .rite,
+.sf-ui .icon,
+.sf-ui .portrait,
+.sf-ui .tag-chip,
+.sf-ui .badge {
+  --edge: var(--frame);
+  border: var(--u) solid var(--edge);
+  background-color: var(--panel-bg);
+  background-image:
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    var(--sheen);
+  background-size:
+    var(--u) var(--u),
+    var(--u) var(--u),
+    var(--u) var(--u),
+    var(--u) var(--u),
+    100% 100%;
+  background-position:
+    0 0,
+    100% 0,
+    0 100%,
+    100% 100%,
+    0 0;
+  background-repeat: no-repeat;
+  clip-path: var(--cut);
+}
+
+/* Lead frame (UI 1.1, redesign-1.1.md 2): a 2 unit ink lead outside, a 1 unit inner line in --edge
+   (shadow by default; rarity, focus and state colours reuse it), night-glass fill, stair-cut
+   corners. --lead drives the outer frame and --fill the glass, so variants only swap variables. */
+.sf-ui .panel,
+.sf-ui .btn,
+.sf-ui .hud-banner,
+.sf-ui .pane {
+  --edge: var(--shadow);
+  --lead: var(--ink);
+  --fill: var(--panel-fill);
+  border: calc(var(--u) * 2) solid var(--lead);
+  background-color: transparent;
+  background-image:
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    linear-gradient(var(--edge), var(--edge)), linear-gradient(var(--edge), var(--edge)),
+    var(--sheen), var(--fill);
+  background-size:
+    100% var(--u),
+    100% var(--u),
+    var(--u) 100%,
+    var(--u) 100%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    0 0,
+    0 100%,
+    0 0,
+    100% 0,
+    0 0,
+    0 0;
+  background-repeat: no-repeat;
+  clip-path: var(--cut);
+}
+
+/* The lead is 1 unit thicker than the old frame; padding gives that unit back so content keeps
+   its place. */
+.sf-ui .panel {
+  padding: calc(var(--u) * 5);
+}
+
+/* Corner glint on main panels (style guide 2.1, off with reduce effects or solid panels). */
+.sf-ui .panel.glass {
+  position: relative;
+}
+
+.sf-ui .panel.glass::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--u) * 2);
+  top: calc(var(--u) * 2);
+  width: calc(var(--u) * 22);
+  height: calc(var(--u) * 22);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      135deg,
+      transparent calc(var(--u) * 9),
+      rgb(242 251 255 / 16%) calc(var(--u) * 9) calc(var(--u) * 10),
+      transparent calc(var(--u) * 10)
+    ),
+    linear-gradient(
+      135deg,
+      transparent calc(var(--u) * 13),
+      rgb(242 251 255 / 9%) calc(var(--u) * 13) calc(var(--u) * 14),
+      transparent calc(var(--u) * 14)
+    );
+}
+
+.sf-ui.reduce-effects .panel.glass::before,
+.sf-ui.solid-panels .panel.glass::before {
+  display: none;
+}
+
+.sf-ui .title-block {
+  text-align: center;
+}
+
+.sf-ui .heading {
+  margin: 0;
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  font-weight: normal;
+}
+
+/* Display-case label rule under screen titles: thin line with a small diamond. */
+.sf-ui .title-block .heading::after {
+  content: '';
+  display: block;
+  width: calc(var(--u) * 96);
+  height: calc(var(--u) * 5);
+  margin: calc(var(--u) * 3) auto 0;
+  background:
+    linear-gradient(var(--bone), var(--bone)) center / calc(var(--u) * 3) calc(var(--u) * 3)
+      no-repeat,
+    linear-gradient(var(--shadow), var(--shadow)) center / 100% var(--u) no-repeat;
+}
+
+.sf-ui .screen-sub,
+.sf-ui .dim,
+.sf-ui .label {
+  color: var(--dust);
+}
+
+.sf-ui .screen-sub {
+  margin: calc(var(--u) * 2) 0 0;
+}
+
+.sf-ui p {
+  margin: 0;
+}
+
+/* Section heading (UI 1.1): sentence case ("Your weapons"), Dust, body size. Never all caps. */
+.sf-ui .col-title,
+.sf-ui .section-title {
+  margin: 0 0 var(--gap-s);
+  font-size: calc(var(--f) * 9);
+  line-height: calc(var(--f) * 9);
+  color: var(--dust);
+  font-weight: normal;
+}
+
+/* Buttons (ui-spec 6.2, UI 1.1). .btn is the quiet secondary: lead frame, bone text. .primary
+   (alias .btn--primary) is the one main action per screen: gold fill and edge, ink text. Focus is
+   a kept-white lead with a kept-gold step inside, never colour alone and never the primary look. */
+.sf-ui .btn {
+  font: inherit;
+  color: var(--bone);
+  padding: calc(var(--u) * 2) calc(var(--u) * 5);
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  transition:
+    transform 80ms ease-out,
+    color 80ms;
+}
+
+.sf-ui .btn.is-focus {
+  --lead: var(--kept-white);
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .btn.primary,
+.sf-ui .btn.btn--primary {
+  --lead: var(--kept-gold);
+  --edge: var(--glint);
+  --fill: linear-gradient(var(--glint), var(--glint));
+  color: var(--ink);
+}
+
+.sf-ui .btn.primary.is-focus,
+.sf-ui .btn.btn--primary.is-focus {
+  --lead: var(--kept-white);
+  --edge: var(--ink);
+  box-shadow: inset 0 0 0 var(--u) var(--ink);
+}
+
+.sf-ui .btn.primary .key-hint,
+.sf-ui .btn.btn--primary .key-hint {
+  color: rgb(20 18 28 / 70%);
+}
+
+.sf-ui .btn:disabled,
+.sf-ui .btn.is-locked,
+.sf-ui .btn.is-idle {
+  color: var(--dust);
+}
+
+/* A primary that cannot act falls back to the quiet look: gold would promise an action. */
+.sf-ui .btn.primary:disabled,
+.sf-ui .btn.primary.is-locked,
+.sf-ui .btn.primary.is-idle,
+.sf-ui .btn.btn--primary:disabled,
+.sf-ui .btn.btn--primary.is-locked,
+.sf-ui .btn.btn--primary.is-idle {
+  --lead: var(--ink);
+  --edge: var(--shadow);
+  --fill: var(--panel-fill);
+}
+
+.sf-ui .btn.primary.is-focus:disabled,
+.sf-ui .btn.primary.is-focus.is-locked,
+.sf-ui .btn.primary.is-focus.is-idle,
+.sf-ui .btn.btn--primary.is-focus:disabled,
+.sf-ui .btn.btn--primary.is-focus.is-locked,
+.sf-ui .btn.btn--primary.is-focus.is-idle {
+  --lead: var(--kept-white);
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .key-hint {
+  margin-left: calc(var(--u) * 3);
+  color: var(--dust);
+  font-size: calc(var(--fs) * 9);
+}
+
+.sf-ui .menu {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 3);
+  min-width: calc(var(--u) * 140);
+}
+
+.sf-ui .bottom-bar {
+  margin-top: auto;
+  display: flex;
+  gap: calc(var(--u) * 4);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Row card (ui-spec 6.1): hotkey and pips, big icon, name and 2 effect lines, tags and price.
+   Flavor sits under the effect in the body column and may wrap once (BUG-003). */
+.sf-ui .card {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(var(--u) * 8) calc(var(--u) * 34) minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 4);
+  align-items: start;
+  width: calc(var(--u) * 344);
+  min-height: calc(var(--u) * 44);
+  padding: calc(var(--u) * 4);
+  animation: sf-rise 160ms ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.sf-ui .card.rarity-0 {
+  --edge: var(--rarity-0);
+}
+.sf-ui .card.rarity-1 {
+  --edge: var(--rarity-1);
+}
+.sf-ui .card.rarity-2 {
+  --edge: var(--rarity-2);
+}
+.sf-ui .card.rarity-3 {
+  --edge: var(--rarity-3);
+}
+
+.sf-ui .card.is-focus {
+  --edge: var(--kept-gold);
+  transform: translateY(calc(var(--u) * -2));
+}
+
+.sf-ui .card.is-locked {
+  --lead: var(--stone);
+  border-style: dashed;
+}
+
+.sf-ui .card-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --lead: var(--floor-mid);
+  color: var(--dust);
+  border-style: dotted;
+  animation: none;
+}
+
+.sf-ui .card-corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .card-hotkey {
+  color: var(--dust);
+}
+
+.sf-ui .card-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sf-ui .card-head {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  align-items: baseline;
+}
+
+.sf-ui .card-name {
+  color: var(--kept-white);
+  white-space: nowrap;
+}
+
+.sf-ui .card-tier {
+  color: var(--kept-gold);
+}
+
+.sf-ui .card-effect {
+  max-height: calc(var(--f) * 18);
+  overflow: hidden;
+}
+
+.sf-ui .card-note {
+  color: var(--kept-gold);
+}
+
+.sf-ui .card-flavor {
+  margin-top: var(--u);
+  color: var(--dust);
+  white-space: normal;
+  max-height: calc(var(--f) * 18);
+  overflow: hidden;
+}
+
+.sf-ui .card-side {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .card-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .card.is-unaffordable .card-name {
+  color: var(--dust);
+}
+
+/* Rarity pips: three slots, filled per rarity step (never colour alone). */
+.sf-ui .pips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--u);
+}
+
+.sf-ui .pips.is-row {
+  flex-direction: row;
+}
+
+.sf-ui .pip {
+  display: block;
+  width: calc(var(--u) * 2);
+  height: calc(var(--u) * 2);
+  background: var(--shadow);
+}
+
+.sf-ui .pip.is-on {
+  background: var(--edge, var(--bone));
+}
+
+.sf-ui .rarity-1 .pip.is-on {
+  background: var(--rarity-1);
+}
+.sf-ui .rarity-2 .pip.is-on {
+  background: var(--rarity-2);
+}
+.sf-ui .rarity-3 .pip.is-on {
+  background: var(--rarity-3);
+}
+
+/* Icons: AD art at an integer scale, or a monogram in the tag colour with the tag's shape. */
+.sf-ui .icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--kept-cyan);
+  background-color: rgb(62 58 70 / 85%);
+}
+
+.sf-ui .icon-big {
+  width: calc(var(--u) * 34);
+  height: calc(var(--u) * 34);
+}
+
+.sf-ui .icon-small {
+  width: calc(var(--u) * 18);
+  height: calc(var(--u) * 18);
+  font-size: calc(var(--fs) * 9);
+}
+
+.sf-ui .icon.has-art {
+  background-color: rgb(20 18 28 / 70%);
+}
+
+.sf-ui .px-art {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.sf-ui .icon-mono {
+  position: relative;
+}
+
+.sf-ui .icon-small .icon-mono {
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .icon-big .icon-mono {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .icon .tag-shape {
+  position: absolute;
+  right: calc(var(--u) * 2);
+  bottom: calc(var(--u) * 2);
+}
+
+.sf-ui .tag-flame {
+  color: var(--tag-flame);
+}
+.sf-ui .tag-shard {
+  color: var(--tag-shard);
+}
+.sf-ui .tag-edge {
+  color: var(--tag-edge);
+}
+.sf-ui .tag-echo {
+  color: var(--tag-echo);
+}
+.sf-ui .tag-ward {
+  color: var(--tag-ward);
+}
+.sf-ui .tag-trade {
+  color: var(--tag-trade);
+}
+
+/* Per-tag shapes (ui-spec 6.2: every tag has a different shape, not only a colour). */
+.sf-ui .tag-shape {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 5);
+  background: currentcolor;
+}
+.sf-ui .tag-flame .tag-shape {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sf-ui .tag-shard .tag-shape {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.sf-ui .tag-edge .tag-shape {
+  clip-path: polygon(60% 0, 100% 0, 40% 100%, 0 100%);
+}
+.sf-ui .tag-echo .tag-shape {
+  clip-path: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
+}
+.sf-ui .tag-ward .tag-shape {
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%);
+}
+.sf-ui .tag-trade .tag-shape {
+  clip-path: polygon(0 20%, 100% 20%, 100% 80%, 0 80%);
+}
+
+.sf-ui .tag-chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--u) * 2);
+}
+
+/* Tag chip (UI 1.1): the tag's shape glyph in the tag colour, then the full tag name in bone, on a
+   quiet ink plate with a shadow line. The shape stays the cue in every colour-vision mode. */
+.sf-ui .tag-chip {
+  --edge: var(--shadow);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  padding: 0 calc(var(--u) * 3) 0 calc(var(--u) * 2);
+  background-color: var(--plate);
+  white-space: nowrap;
+}
+
+.sf-ui .tag-abbr {
+  color: var(--bone);
+}
+
+.sf-ui .badge {
+  color: var(--kept-gold);
+  --edge: var(--kept-gold);
+  padding: 0 calc(var(--u) * 2);
+  white-space: nowrap;
+}
+
+.sf-ui .glint-amount {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  color: var(--glint);
+}
+
+/* Not enough Glint: grey with a struck Glint icon, never red (style guide 1.3). */
+.sf-ui .glint-amount.is-poor {
+  color: var(--dust);
+}
+
+.sf-ui .glint-icon {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 7);
+  background: var(--glint);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.sf-ui .glint-art {
+  display: inline-flex;
+  flex: none;
+}
+
+.sf-ui .is-poor .glint-art {
+  filter: grayscale(1) brightness(0.8);
+}
+
+.sf-ui .is-poor .glint-icon {
+  background: linear-gradient(
+    135deg,
+    var(--dust) 40%,
+    var(--ink) 40%,
+    var(--ink) 60%,
+    var(--dust) 60%
+  );
+}
+
+.sf-ui .lock-mark.is-closed::before,
+.sf-ui .lock-btn::before {
+  content: '';
+  display: inline-block;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 5);
+  border: var(--u) solid currentcolor;
+  border-top-width: calc(var(--u) * 3);
+}
+
+.sf-ui .lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--u) * 2);
+  width: calc(var(--u) * 14);
+  color: var(--dust);
+}
+
+.sf-ui .lock-btn.is-closed,
+.sf-ui .lock-mark {
+  color: var(--kept-gold);
+}
+
+.sf-ui .memento-list,
+.sf-ui .build-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+}
+
+/* Build rows (pause, run end) and Memento rows: fixed icon and pip columns (BUG-005). */
+.sf-ui .memento-row,
+.sf-ui .build-row {
+  display: grid;
+  grid-template-columns: calc(var(--u) * 18) calc(var(--u) * 8) minmax(0, 1fr) auto;
+  column-gap: calc(var(--u) * 3);
+  align-items: center;
+}
+
+.sf-ui .build-name,
+.sf-ui .memento-name {
+  min-width: 0;
+  white-space: normal;
+}
+
+.sf-ui .build-trail {
+  color: var(--kept-gold);
+}
+
+.sf-ui .stat-row {
+  display: flex;
+  gap: calc(var(--u) * 3);
+  align-items: center;
+}
+
+.sf-ui .stat-row .num {
+  margin-left: auto;
+}
+
+.sf-ui .btn .glint-amount {
+  margin-left: calc(var(--u) * 3);
+}
+
+.sf-ui .stat-list .stat-row {
+  break-inside: avoid;
+}
+
+.sf-ui.reduce-effects .card.is-focus {
+  transform: none;
+}
+
+/* A-08: small text with no panel behind it gets a plate (worst case over a white arena: dust
+   5.1:1, bone 11:1, gold 9:1). Large headings keep 3:1 on the screen dim without one. */
+.sf-ui .screen-sub {
+  background-color: var(--plate);
+  padding-left: calc(var(--u) * 2);
+  padding-right: calc(var(--u) * 2);
+}
+
+/* ---- UI 1.1 foundation (docs/ui/redesign-1.1.md 2, "Foundation API") ---- */
+
+/* Type scale: font-pixel multiples only, so the text-size setting (--f) scales every step.
+   Display 27f, title 18f, body 9f. Secondary lines use .t-dim (Dust), never a smaller size. */
+.sf-ui .t-display {
+  font-size: calc(var(--f) * 27);
+  line-height: calc(var(--f) * 27);
+}
+
+.sf-ui .t-title {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .t-body {
+  font-size: calc(var(--f) * 9);
+  line-height: calc(var(--f) * 9);
+}
+
+.sf-ui .t-dim {
+  color: var(--dust);
+}
+
+/* Generic chip: a short label on a quiet ink plate with a shadow line (hints, counts, states). */
+.sf-ui .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-s);
+  padding: 0 calc(var(--u) * 3);
+  color: var(--bone);
+  background: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+  clip-path: var(--cut);
+  white-space: nowrap;
+}
+
+/* Glass pane (the item card as a stained-glass pane): a lead-framed card whose header strip is
+   glass in the category colour, carrying the category word, its glyph, and an optional badge.
+   Built by pane() in screens/components.ts. The 1 unit padding keeps the inner --edge line (rarity,
+   focus step) visible around the strip. --cat picks the glass; --strip-text keeps the strip
+   text at 4.5:1 or more (bone on weapon and relic glass, ink on the light upgrade glass). */
+.sf-ui .pane {
+  --cat: var(--shadow);
+  --strip-text: var(--bone);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--u);
+  color: var(--bone);
+  text-align: left;
+}
+
+.sf-ui .pane--weapon {
+  --cat: var(--cat-weapon);
+}
+
+.sf-ui .pane--relic {
+  --cat: var(--cat-relic);
+}
+
+.sf-ui .pane--upgrade {
+  --cat: var(--cat-upgrade);
+  --strip-text: var(--ink);
+}
+
+.sf-ui .pane-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--u) var(--gap-s);
+  min-height: calc(var(--f) * 9 + var(--u) * 4);
+  padding: var(--u) calc(var(--u) * 3);
+  color: var(--strip-text);
+  background: color-mix(in srgb, var(--cat) 55%, var(--night));
+  border-bottom: var(--u) solid var(--ink);
+}
+
+.sf-ui .pane--upgrade .pane-strip {
+  background: color-mix(in srgb, var(--cat) 78%, var(--night));
+}
+
+.sf-ui .pane-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-s);
+  white-space: nowrap;
+}
+
+.sf-ui .pane-badge {
+  margin-left: auto;
+  padding: 0 calc(var(--u) * 2);
+  color: var(--bone);
+  background: var(--ink);
+  white-space: nowrap;
+}
+
+.sf-ui .pane-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  min-width: 0;
+  padding: var(--gap-m);
+}
+
+/* Category glyphs on a 7 x 7 unit grid (k/7 steps land on whole pixels at every UI scale), so
+   the category never rests on colour alone: weapon a sword, relic a flask, upgrade an arrow. */
+.sf-ui .cat-glyph {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 7);
+  background: currentcolor;
+}
+
+.sf-ui .cat-glyph.cat-weapon {
+  clip-path: polygon(
+    42.857% 0,
+    57.143% 0,
+    57.143% 57.143%,
+    85.714% 57.143%,
+    85.714% 71.429%,
+    57.143% 71.429%,
+    57.143% 100%,
+    42.857% 100%,
+    42.857% 71.429%,
+    14.286% 71.429%,
+    14.286% 57.143%,
+    42.857% 57.143%
+  );
+}
+
+.sf-ui .cat-glyph.cat-relic {
+  clip-path: polygon(
+    28.571% 0,
+    71.429% 0,
+    71.429% 28.571%,
+    100% 57.143%,
+    100% 100%,
+    0 100%,
+    0 57.143%,
+    28.571% 28.571%
+  );
+}
+
+.sf-ui .cat-glyph.cat-upgrade {
+  clip-path: polygon(
+    42.857% 0,
+    57.143% 0,
+    100% 42.857%,
+    100% 57.143%,
+    71.429% 57.143%,
+    71.429% 100%,
+    28.571% 100%,
+    28.571% 57.143%,
+    0 57.143%,
+    0 42.857%
+  );
+}
+
+/* One staggered entry (shop and level up): set --i per card. Instant under reduce effects (the
+   global rule in base.css) and under the system reduced-motion preference. */
+.sf-ui .reveal {
+  animation: sf-rise 160ms ease-out backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-ui .reveal {
+    animation: none;
+  }
+}

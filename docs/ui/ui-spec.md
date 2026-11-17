@@ -1,5 +1,7 @@
 # Shardfall: Spesifikasi UI
 
+> **UI 1.1 (2026-11-17):** `docs/ui/redesign-1.1.md` menggantikan dokumen ini bila bertentangan (istilah layar, tata letak Toko, HUD, Level up, How to play, token kaca).
+
 Pemilik: UI Programmer (UI). Status: versi 1.3 (M4-02, 2026-11-17), polish dan aksesibilitas. Reviewer: CD (rasa dan gaya), LP (teknis dan kontrak), QA (aksesibilitas).
 
 **Perubahan versi 1.3 (M4-02: BUG-008, BUG-009, BUG-010, QA A-08 dan A-09, review `docs/reviews/M3-cd.md` 7 butir 10):**
@@ -616,6 +618,7 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.action.sell` | Sell | Ada |
 | `ui.action.stats` | Stats | Ada |
 | `ui.banner.pulse_held` | Pulse {n} Held | Ada |
+| `ui.banner.warden` | Elite: {name} | Ada (1.1 HUD) |
 | `ui.class.begin` | Begin | Ada |
 | `ui.class.cooldown` | {s}s cooldown | Ada |
 | `ui.class.difficulty` | Crack {n} | Ada (belum dipakai M1) |
@@ -663,11 +666,14 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.end.won_sub` | The last crack seals. The light stops pulsing and simply shines. | Ada |
 | `ui.error.webgl2` | This game needs WebGL2. Please open it in a current browser. | Ada (belum dipakai M1) |
 | `ui.hud.held` | Held | Ada |
+| `ui.hud.hint_auto` | Weapons fire on their own | Ada (1.1 HUD) |
 | `ui.hud.hint_move` | {keys} Move | Ada |
 | `ui.hud.hint_rite` | {key} Rite | Ada |
 | `ui.hud.hp` | {hp}/{max} | Ada |
 | `ui.hud.level` | Lv {n} | Ada |
 | `ui.hud.pulse` | Pulse {n} | Ada |
+| `ui.hud.wave_of` | Wave {n} of {total} | Ada (1.1 HUD) |
+| `ui.hud.weapon_new` | New | Ada (1.1 HUD) |
 | `ui.keeping.found` | {n}/{total} found | Ada (tab Mementos M3) |
 | `ui.keeping.tab_kept` | Kept | Ada (tab M3) |
 | `ui.keeping.tab_mementos` | Mementos | Ada (tab M3) |
@@ -769,3 +775,60 @@ Kunci konten tidak tercantum di sini; UI memakai kolom data (`name_key`, `desc_k
 | `ui.title.settings` | Settings | Ada |
 | `ui.title.tagline` | The sky broke. The pieces kept us. Now we keep the light. | Ada |
 | `ui.title.version` | Build {version} | Ada |
+| `ui.choice.relic` | Relic | Ada (1.1) |
+| `ui.choice.upgrade` | Upgrade | Ada (1.1) |
+| `ui.end.no_relics` | No relics | Ada (1.1) |
+| `ui.end.stats_title` | Run stats | Ada (1.1) |
+| `ui.howto.move` | Move with {keys}. Your weapons attack on their own; most aim at the nearest enemy in range. | Ada (1.1) |
+| `ui.howto.move_title` | Move | Ada (1.1) |
+| `ui.howto.ok` | Got it | Ada (1.1) |
+| `ui.howto.shop` | Between waves, spend gold in the shop. More weapons means more attacks. Two copies of the same weapon and tier combine into the next tier. | Ada (1.1) |
+| `ui.howto.shop_title` | Shop | Ada (1.1) |
+| `ui.howto.skill` | {key} uses your skill. Its cooldown shows at the bottom of the screen. | Ada (1.1) |
+| `ui.howto.skill_title` | Skill | Ada (1.1) |
+| `ui.howto.title` | How to play | Ada (1.1) |
+| `ui.howto.wave` | Survive each wave until the timer runs out. Walk near gold to pick it up. Gold also fills your level bar. | Ada (1.1) |
+| `ui.howto.wave_title` | Waves | Ada (1.1) |
+| `ui.levelup.subtitle` | Choose 1 upgrade | Ada (1.1) |
+| `ui.levelup.waiting` | {n} more waiting | Ada (1.1) |
+| `ui.pause.howto` | How to play | Ada (1.1) |
+| `ui.pause.no_relics` | No relics yet. Relics are passive items from the shop. | Ada (1.1) |
+| `ui.pause.stats` | Your stats | Ada (1.1) |
+| `ui.pause.time` | Run time {time} | Ada (1.1) |
+| `ui.pause.wave` | Wave {n} of {total} | Ada (1.1) |
+| `ui.title.chip_move` | {keys} Move | Ada (1.1) |
+| `ui.title.chip_pause` | {key} Pause | Ada (1.1) |
+| `ui.title.chip_rite` | {key} Skill | Ada (1.1) |
+| `ui.title.howto` | How to play | Ada (1.1) |
+| `ui.shop.begin_n` | Start Wave {n} | Ada (1.1 Shop) |
+| `ui.shop.buy` | Buy | Ada (1.1 Shop) |
+| `ui.shop.cat_relic` | Relic | Ada (1.1 Shop) |
+| `ui.shop.cat_weapon` | Weapon | Ada (1.1 Shop) |
+| `ui.shop.combine_need` | Combine needs a 2nd copy of tier {tier} | Ada (1.1 Shop) |
+| `ui.shop.combine_ready` | Combine ready: makes tier {tier} | Ada (1.1 Shop) |
+| `ui.shop.combine_top` | Top tier: cannot combine | Ada (1.1 Shop) |
+| `ui.shop.fire_note` | Each weapon fires on its own | Ada (1.1 Shop) |
+| `ui.shop.for_sale` | For sale | Ada (1.1 Shop) |
+| `ui.shop.gold_left` | {n} gold left. | Ada (1.1 Shop) |
+| `ui.shop.gold_word` | gold | Ada (1.1 Shop) |
+| `ui.shop.hp` | HP {hp}/{max} | Ada (1.1 Shop) |
+| `ui.shop.locked` | Locked | Ada (1.1 Shop) |
+| `ui.shop.need_gold` | Need {n} more gold | Ada (1.1 Shop) |
+| `ui.shop.next_of` | Next: Wave {n} of {total} | Ada (1.1 Shop) |
+| `ui.shop.out_combine` | Slots full: combines to tier {tier} | Ada (1.1 Shop) |
+| `ui.shop.out_copy` | Adds another copy: both fire | Ada (1.1 Shop) |
+| `ui.shop.out_new_relic` | New relic | Ada (1.1 Shop) |
+| `ui.shop.out_new_weapon` | New weapon | Ada (1.1 Shop) |
+| `ui.shop.out_relic_stack` | You own {n}: stacks | Ada (1.1 Shop) |
+| `ui.shop.owned` | Owned | Ada (1.1 Shop) |
+| `ui.shop.relics_empty` | No relics yet. Relics are passive items sold here. | Ada (1.1 Shop) |
+| `ui.shop.slot_empty` | Empty slot | Ada (1.1 Shop) |
+| `ui.shop.slot_hint` | Select a weapon to see it, sell it, or combine it. | Ada (1.1 Shop) |
+| `ui.shop.slots_count` | {n} of {max} | Ada (1.1 Shop) |
+| `ui.shop.syn_empty` | No synergies yet. Items with the same tag unlock bonuses. | Ada (1.1 Shop) |
+| `ui.shop.syn_next` | At {n}: {effect} | Ada (1.1 Shop) |
+| `ui.shop.toast_added` | {name} added. You now have {n} weapons firing. | Ada (1.1 Shop) |
+| `ui.shop.toast_added_one` | {name} added. You now have 1 weapon firing. | Ada (1.1 Shop) |
+| `ui.shop.toast_combined` | {name} combined into tier {tier}. | Ada (1.1 Shop) |
+| `ui.shop.toast_relic` | {name} added to your relics. | Ada (1.1 Shop) |
+| `ui.shop.toast_relic_stack` | {name} stacked. You own {n}. | Ada (1.1 Shop) |

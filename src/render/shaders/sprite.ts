@@ -19,6 +19,10 @@
 // M4 (AD, BUG-007): Outline recolour. iOutline.rgb replaces texels equal to the outline key colour
 // (uOutlineKey, the palette `ink` of the 1 px actor outline) by iOutline.a, after light and hit flash, so
 // a winding-up Unlit keeps its dark body and shows a bright danger outline (style-guide 1.8).
+//
+// 1.1 (redesign 1.1 section 4): integer sprite scale. |iParams.x| is a whole-number scale (1 = native),
+// its sign the flip. The quad grows about the floor-snapped centre of the trimmed rect, so a scaled
+// sprite stays where the native one was and every texel still covers exactly scale x scale virtual px.
 
 /** Per-instance layout, in floats. Keep in sync with sprite-batch.ts. */
 export const SPRITE_INSTANCE_ATTRIBUTES = {
@@ -28,7 +32,7 @@ export const SPRITE_INSTANCE_ATTRIBUTES = {
   iRect: 4,
   /** left, top (px from feet, y up), extra offset dx, dy (px, y up). */
   iOff: 4,
-  /** flip (-1 or 1), alpha, dissolve 0..1, light mode (0 none, 1 Unlit, 2 Kept). */
+  /** flip sign times integer scale (1 = native), alpha, dissolve 0..1, light mode (0 none, 1 Unlit, 2 Kept). */
   iParams: 4,
   /** Flash colour (linear rgb) and amount 0..1. */
   iFlash: 4,
@@ -70,9 +74,14 @@ void main() {
   vec2 ndc = clip.xy / clip.w;
   // Feet pixel, y up, snapped to the nearest pixel corner.
   vec2 feet = floor((ndc * 0.5 + 0.5) * uRes + 0.5);
+  float sc = max(1.0, floor(abs(iParams.x) + 0.5));
   float lx = iOff.x + position.x * iRect.z;
+  float ly = iOff.y - iRect.w + position.y * iRect.w;
+  // Integer scale about the snapped centre of the rect (whole px in, whole px out).
+  vec2 pivot = floor(vec2(iOff.x + iRect.z * 0.5, iOff.y - iRect.w * 0.5));
+  lx = pivot.x + (lx - pivot.x) * sc;
+  float y = pivot.y + (ly - pivot.y) * sc;
   float x = iParams.x < 0.0 ? -lx : lx;
-  float y = iOff.y - iRect.w + position.y * iRect.w;
   vec2 p = feet + vec2(x, y) + iOff.zw;
   gl_Position = vec4(p / uRes * 2.0 - 1.0, clip.z / clip.w - uDepthBias, 1.0);
   // Atlas row 0 is v = 0 (flipY false): the top of the rect is iRect.y.

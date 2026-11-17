@@ -1,42 +1,104 @@
-// S06 Pause with read-only build summary, and S06b confirm dialog for Abandon Run (ui-spec 5).
-// Esc or P resumes. In the dialog Esc picks the safe option (Stay), which also has initial focus.
+// S06 Pause with read-only build summary, and S06b confirm dialog for Abandon run (ui-spec 5,
+// redesign-1.1 3.4). Menu left (Resume, How to play, Settings, Abandon run); right panel "Your
+// weapons", "Your relics", and the stats in two columns, zero values dimmed. At large text sizes
+// the panel scrolls (wheel, or arrows while it has focus) with a scroll mark. Esc or P resumes. In
+// the dialog Esc picks the safe option (Stay), which also has initial focus.
 
 import type { ScreenId } from '../../core/dom.ts';
 import { button, h, put } from '../dom.ts';
-import { formatClock, floorSeconds, formatStatValue } from '../format.ts';
-import { buildSummary } from '../presenters/run-end.ts';
+import { formatClock, floorSeconds } from '../format.ts';
+import { menuIntent } from '../menu-keys.ts';
+import { buildSummary, statLines } from '../presenters/run-end.ts';
+import { moreAbove, moreBelow, overflows, scrollStep } from '../scroll.ts';
+import type { ScrollMetrics } from '../scroll.ts';
 import { buildRow, panel, titleBlock } from './components.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
+
+/** Menu items that open a screen which returns here (focus comes back to them). */
+const RETURN_FOCUS: Readonly<Record<string, string>> = {
+  howTo: 'pause-howto',
+  settings: 'pause-settings',
+};
 
 export function createPauseScreen(ctx: UiContext): Screen {
   const { doc, t, deps } = ctx;
   const el = h(doc, 'div', 'screen screen-pause');
   const focus = ctx.newFocusList();
   let confirmOpen = false;
+  /** Scrollable summary and its scroll mark (null until built). */
+  let scrollBox: HTMLElement | null = null;
+  let scrollMark: HTMLElement | null = null;
+
+  const metrics = (b: HTMLElement): ScrollMetrics => ({
+    top: b.scrollTop,
+    client: b.clientHeight,
+    height: b.scrollHeight,
+  });
+
+  const syncMark = (): void => {
+    if (scrollBox === null || scrollMark === null) return;
+    const m = metrics(scrollBox);
+    const below = moreBelow(m);
+    const above = moreAbove(m);
+    scrollMark.hidden = !overflows(m);
+    scrollMark.classList.toggle('is-below', below);
+    scrollMark.classList.toggle('is-above', above && !below);
+    scrollMark.textContent = t(below ? 'ui.end.more_below' : 'ui.end.more_above');
+  };
+
+  /** Arrow up or down while the summary has focus scrolls it until its edge. */
+  const scrollKey = (e: KeyboardEvent): boolean => {
+    if (scrollBox === null || doc.activeElement !== scrollBox) return false;
+    const intent = menuIntent(e.code, e.shiftKey, deps.settings().keybinds);
+    if (intent !== 'up' && intent !== 'down') return false;
+    const row = scrollBox.querySelector('.stat-row');
+    const step = row instanceof HTMLElement ? row.offsetHeight * 3 : scrollBox.clientHeight / 2;
+    const next = scrollStep(metrics(scrollBox), intent === 'up' ? -1 : 1, step);
+    if (next === null) return false;
+    scrollBox.scrollTop = next;
+    syncMark();
+    return true;
+  };
 
   const resume = (): void => {
     ctx.sound(Cue.PauseClose);
     deps.app.resume();
   };
 
+  /** Right panel (redesign-1.1 3.4): weapons, relics, then stats in two columns. Scrolls. */
   const summary = (): HTMLElement => {
     const col = panel(ctx, 'pause-build', true);
     const view = ctx.view();
     if (view === null) return col;
+    const scroll = h(doc, 'div', 'pause-scroll');
+    scroll.dataset['ui'] = 'pause-build';
+    scroll.setAttribute('role', 'region');
+    scroll.setAttribute('aria-label', t('ui.pause.stats'));
     const b = buildSummary(view, deps.data);
-    col.appendChild(
-      h(
-        doc,
-        'p',
-        'dim',
-        `${t('ui.hud.pulse', { n: view.pulse.index + 1 })}  ${formatClock(floorSeconds(view.runStats.runTicks))}`,
+    scroll.appendChild(
+      put(
+        h(doc, 'p', 'pause-progress'),
+        h(
+          doc,
+          'span',
+          'chip',
+          t('ui.pause.wave', {
+            n: view.pulse.index + 1,
+            total: Math.max(1, view.pulse.count),
+          }),
+        ),
+        h(
+          doc,
+          'span',
+          'chip',
+          t('ui.pause.time', { time: formatClock(floorSeconds(view.runStats.runTicks)) }),
+        ),
       ),
     );
-    col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
-    const list = h(doc, 'div', 'build-list');
+    const weapons = h(doc, 'div', 'build-list');
     for (const w of b.weapons) {
-      list.appendChild(
+      weapons.appendChild(
         buildRow(
           ctx,
           { kind: 'weapon', id: w.item.id },
@@ -47,11 +109,9 @@ export function createPauseScreen(ctx: UiContext): Screen {
         ),
       );
     }
-    col.appendChild(list);
-    col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.mementos')));
-    const mlist = h(doc, 'div', 'build-list');
+    const relics = h(doc, 'div', 'build-list');
     for (const m of b.mementos) {
-      mlist.appendChild(
+      relics.appendChild(
         buildRow(
           ctx,
           { kind: 'memento', id: m.item.id },
@@ -62,34 +122,68 @@ export function createPauseScreen(ctx: UiContext): Screen {
         ),
       );
     }
-    col.appendChild(mlist);
-    col.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.stats')));
-    const stats = h(doc, 'div', 'stat-list');
-    deps.data.stats.forEach((s, i) => {
-      if (!s.showInUi) return;
+    if (b.mementos.length === 0)
+      relics.appendChild(h(doc, 'p', 'dim pause-empty', t('ui.pause.no_relics')));
+    const stats = h(doc, 'div', 'stat-list pause-stats');
+    for (const line of statLines(view, deps.data)) {
       put(
         stats,
         put(
-          h(doc, 'div', 'stat-row'),
-          h(doc, 'span', '', t(s.displayKey)),
-          h(doc, 'span', 'num', formatStatValue(view.player.stats[i] ?? s.base)),
+          h(doc, 'div', `stat-row${line.zero ? ' is-zero' : ''}`),
+          h(doc, 'span', 'stat-name', t(line.labelKey)),
+          h(doc, 'span', 'num', line.text),
         ),
       );
-    });
-    col.appendChild(stats);
+    }
+    put(
+      scroll,
+      put(
+        h(doc, 'div', 'pause-loadout'),
+        put(
+          h(doc, 'section', 'pause-group'),
+          h(doc, 'h3', 'col-title', t('ui.shop.weapons')),
+          weapons,
+        ),
+        put(
+          h(doc, 'section', 'pause-group'),
+          h(doc, 'h3', 'col-title', t('ui.shop.mementos')),
+          relics,
+        ),
+      ),
+      put(h(doc, 'section', 'pause-group'), h(doc, 'h3', 'col-title', t('ui.pause.stats')), stats),
+    );
+    const mark = h(doc, 'p', 'end-more');
+    mark.setAttribute('aria-hidden', 'true');
+    mark.hidden = true;
+    scroll.addEventListener('scroll', syncMark, { passive: true });
+    scrollBox = scroll;
+    scrollMark = mark;
+    put(col, scroll, mark);
     return col;
   };
 
-  const buildMenu = (): void => {
+  /** focusUi: data-ui of the menu button to focus ('' for Resume). */
+  const buildMenu = (focusUi = ''): void => {
     el.textContent = '';
     focus.reset();
+    scrollBox = null;
+    scrollMark = null;
     const safe = h(doc, 'div', 'safe pause-safe');
     const menu = h(doc, 'nav', 'menu panel glass');
-    const resumeBtn = button(doc, 'pause-resume', t('ui.pause.resume'));
+    const resumeBtn = button(doc, 'pause-resume', t('ui.pause.resume'), 'primary');
+    const howBtn = button(doc, 'pause-howto', t('ui.pause.howto'));
     const settingsBtn = button(doc, 'pause-settings', t('ui.pause.settings'));
     const abandonBtn = button(doc, 'pause-abandon', t('ui.pause.abandon'));
-    put(menu, resumeBtn, settingsBtn, abandonBtn);
+    put(menu, resumeBtn, howBtn, settingsBtn, abandonBtn);
     focus.add({ el: resumeBtn, group: 0, activate: resume });
+    focus.add({
+      el: howBtn,
+      group: 0,
+      activate: () => {
+        ctx.sound(Cue.Confirm);
+        ctx.openHowTo();
+      },
+    });
     focus.add({
       el: settingsBtn,
       group: 0,
@@ -106,15 +200,26 @@ export function createPauseScreen(ctx: UiContext): Screen {
         openConfirm(true);
       },
     });
+    const side = summary();
     put(
       el,
-      put(
-        safe,
-        titleBlock(ctx, t('ui.pause.title')),
-        put(h(doc, 'div', 'pause-cols'), menu, summary()),
-      ),
+      put(safe, titleBlock(ctx, t('ui.pause.title')), put(h(doc, 'div', 'pause-cols'), menu, side)),
     );
-    focus.focus(0, true);
+    // Large text: a summary taller than its panel scrolls and becomes a focus stop (arrows).
+    const box = side.querySelector<HTMLElement>('.pause-scroll');
+    if (box !== null && overflows(metrics(box))) {
+      focus.add({
+        el: box,
+        group: 1,
+        activate: () => {
+          ctx.sound(Cue.Denied);
+        },
+      });
+    }
+    syncMark();
+    const prev = focusUi === '' ? null : menu.querySelector(`[data-ui="${focusUi}"]`);
+    const i = prev === null ? -1 : focus.indexOf(prev);
+    focus.focus(i >= 0 ? i : 0, true);
   };
 
   const buildConfirm = (): void => {
@@ -164,14 +269,15 @@ export function createPauseScreen(ctx: UiContext): Screen {
     enter(id: ScreenId) {
       confirmOpen = id === 'confirm';
       if (confirmOpen) buildConfirm();
-      else buildMenu();
+      // Back from How to play or Settings: the button that opened it keeps the focus.
+      else buildMenu(RETURN_FOCUS[ctx.previous()] ?? '');
     },
     key(e) {
       if (!confirmOpen && ctx.matches('pause', e)) {
         resume();
         return true;
       }
-      return false;
+      return !confirmOpen && scrollKey(e);
     },
     back() {
       if (confirmOpen) {

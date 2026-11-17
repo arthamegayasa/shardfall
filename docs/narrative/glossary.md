@@ -235,3 +235,32 @@ Alasan singkat:
 - "Mote" tidak dipakai sebagai nama tampil karena "motes" sudah berarti partikel gelap saat Unlit hancur (bagian 2).
 - Warden memakai benda yang ia telan: tudung beludru penyanyi kor (Choir), kuk besi kuli kebun (Bulwark). Boss bioma 2 dan 3 memakai landmark dan lore bioma: lonceng yang masih berdentang (intro Vesper Steps), sulur induk yang tumbuh liar (Stillfire Vineyard, benang ke Pruning Hook dan Vintner).
 - Kata "Vesper" dipakai di bioma dan boss bioma 2, sama seperti pola The Moth Market dan Paper Sun.
+
+## 10. On-screen terms (1.1)
+
+Sumber: `docs/ui/redesign-1.1.md` bagian 1 (brief Producer, 2026-11-17). Bagian ini menimpa catatan pemakaian di bagian 1 sampai 4 untuk teks layar. Nama lore tetap dipakai di teks lore: baris flavor, ending, intro bioma, dan kutipan the Glazier (`glazier.*`), kecuali kata mata uang dan gelombang di kutipan itu ikut diganti. Semua label, tombol, judul, banner, petunjuk, nama stat, dan baris efek item memakai kata polos. Id data dan kunci string tidak berubah.
+
+| Lore (1.0) | Di layar EN (1.1) | Di layar ID (1.1) | Contoh dan catatan |
+|---|---|---|---|
+| Pulse | Wave | Gelombang | "Wave 3", "Next: Wave 3", "Start Wave", "Wave 3 of 15" |
+| Glint | gold | emas | Huruf kecil di tengah kalimat: "Not enough gold", "Sell for 6 gold". Kapital hanya di awal label: "Gold collected" |
+| Temper | Level up | Naik level | Judul "Level up!" |
+| Fuse | Combine | Gabung | Tombol "Combine", lencana "Combine to II" |
+| Memento(s) | Relic(s) | Relik | "Your relics", tab Unlocks "Relics", "Take a relic" |
+| Arms | Weapons | Senjata | "Your weapons", "Weapons fire on their own" |
+| Rite | Skill | Skill | "Space Skill", stat "Skill Haste", "Skill Charges"; baris efek "Your Skill ..." |
+| Kept (pemain) | Hero | Pahlawan | "Choose your hero", "Hero lost", tab "Heroes". "Kept" boleh tetap di flavor dan kutipan the Glazier |
+| Unlit | enemies / foes | musuh | "Enemies defeated". Nama musuh tidak berubah. Baris efek tetap "foes" |
+| Warden | Elite | Elite | "Elite: {name}", baris efek "Elites are spared." Nama diri (Brass Collar) tetap. Kutipan the Glazier tetap "Warden" |
+| The Glazier (layar) | Shop | Toko | Judul layar "Shop"; the Glazier tetap sebagai potret dan kutipan. Sinergi Trade: "At each shop visit" |
+| The Keeping | Unlocks | Buka Kunci | Judul layar meta, tombol di judul dan akhir run |
+| Silt | Silt | Endapan | Tidak berubah |
+| Kode tag (Fl, Sh, Ed, Ec, Wa, Tr) | nama tag penuh | nama tag penuh | Chip tag memakai `tag.<id>.name` (Flame, Shard, Edge, Echo, Ward, Trade). Kunci `tag.<id>.abbr` tetap ada tetapi tidak dipakai |
+
+Keputusan kecil di pass ini:
+- Overtime gelombang Elite (dulu "Held" dan banner "Pulse {n} Held"): timer habis tetapi Elite masih hidup, jadi gelombang belum selesai. Label slot timer "Overtime" (ID: Waktu tambahan), banner "Wave {n}: defeat the elite" (ID: "Gelombang {n}: kalahkan elite"). "Wave {n} cleared" disiapkan di `ui.banner.pulse_steady` (belum dipakai kode).
+- Banner kedatangan Elite: `ui.banner.warden` kini "Elite: {name}" agar layar HUD bisa memakainya. Banner saat ini masih menampilkan nama dan julukan langsung.
+- Judul akhir run menang "Light Kept" menjadi "Victory" (ID: Menang). "Vitrine Steady" tidak diubah (layar antar bioma Tingkat C, belum dipakai).
+- Kelas terkunci: tombol "Locked: buy in Unlocks" (ID: "Terkunci: beli di Buka Kunci").
+- Baris info toko saat fokus penawaran: "Unlocks: {effect}" menjadi "Activates: {effect}" agar tidak bentrok dengan nama layar Unlocks.
+- Kata wave, shop, gold, relic, elite, dan hero keluar dari daftar kata terlarang di `tools/data/lib/check-strings.ts`; style guide 4.3 dan baris "Ganti kata ..." di bagian 1 sampai 3 di atas berlaku hanya untuk teks lore.

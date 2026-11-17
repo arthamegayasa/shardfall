@@ -55,4 +55,9 @@ export interface Settings {
   };
   /** KeyboardEvent.code values, two bindings per action, null = empty. */
   readonly keybinds: Readonly<Record<ActionId, readonly [string | null, string | null]>>;
+  /**
+   * The How to play screen was shown (UI 1.1, additive): it opens once by itself before the first
+   * run. Saves from 1.0 lack the field and load as false (src/app/settings.ts).
+   */
+  readonly seenHowTo: boolean;
 }

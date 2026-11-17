@@ -44,6 +44,7 @@ export function defaultSettings(prefersReducedMotion: boolean): Settings {
       merge: ['KeyM', null],
       sell: ['KeyX', null],
     },
+    seenHowTo: false,
   };
 }
 
@@ -60,6 +61,8 @@ export function loadSettings(store: KeyValueStore, defaults: Settings): Settings
       audio: { ...defaults.audio, ...saved.audio },
       access: { ...defaults.access, ...saved.access },
       keybinds: { ...defaults.keybinds, ...saved.keybinds },
+      // Added in 1.1: older saves have no field and must still show How to play once.
+      seenHowTo: saved.seenHowTo === true,
     };
   } catch {
     return defaults;

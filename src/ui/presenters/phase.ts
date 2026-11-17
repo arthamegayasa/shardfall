@@ -12,6 +12,7 @@ const APP_SCREEN_IDS: Readonly<Record<Exclude<AppScreen, 'run'>, ScreenId>> = {
   runEnd: 'run-end',
   archive: 'archive',
   credits: 'credits',
+  howTo: 'how-to',
 };
 
 export function screenForPhase(phase: RunPhase): ScreenId {

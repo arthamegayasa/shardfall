@@ -17,6 +17,7 @@ import { computeUiScale } from './scale.ts';
 import { createChoiceScreen } from './screens/choice.ts';
 import { createClassSelectScreen } from './screens/class-select.ts';
 import { createGlazierScreen } from './screens/glazier.ts';
+import { createHowToScreen } from './screens/how-to.ts';
 import { createHudScreen } from './screens/hud.ts';
 import { createInfoScreen } from './screens/info.ts';
 import { createKeepingScreen } from './screens/keeping.ts';
@@ -26,7 +27,13 @@ import { createSettingsScreen } from './screens/settings.ts';
 import { createTitleScreen } from './screens/title.ts';
 import type { Screen, UiContext } from './screens/types.ts';
 import { createTranslator } from './strings.ts';
-import './ui.css';
+// Stylesheets in cascade order: later files rely on earlier ones (src/ui/css/base.css header).
+import './css/base.css';
+import './css/components.css';
+import './css/hud.css';
+import './css/shop.css';
+import './css/choice.css';
+import './css/screens.css';
 import { Cue } from './cues.ts';
 
 /** ui.focus at most once per 40 ms (ui-spec 8.5). */
@@ -82,6 +89,8 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     let appliedSettings: Settings | null = null;
     let sawReward = false;
     let sawTemper = false;
+    /** Where How to play's "Got it" continues; null returns to the screen that opened it. */
+    let howToThen: AppScreen | null = null;
     const icons = createIconArt(deps.art);
 
     const now = (): number => (win === null ? 0 : win.performance.now());
@@ -182,6 +191,11 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
         confirmOpen = open;
         route();
       },
+      openHowTo(then) {
+        howToThen = then ?? null;
+        setScreen('howTo');
+      },
+      howToNext: () => howToThen ?? (prevAppScreen === 'howTo' ? 'title' : prevAppScreen),
     };
 
     const screens = new Map<string, Screen>();
@@ -221,6 +235,9 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
         case 'credits':
           s = createInfoScreen(ctx, 'credits');
           break;
+        case 'how-to':
+          s = createHowToScreen(ctx);
+          break;
       }
       screens.set(id, s);
       return s;
@@ -243,7 +260,8 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
       if (id === 'pulse') sawReward = sawTemper = false;
       else if (id === 'warden-reward') sawReward = true;
       else if (id === 'level-up') sawTemper = true;
-      const fromMenu = fromId === 'pause' || fromId === 'confirm' || fromId === 'settings';
+      const fromMenu =
+        fromId === 'pause' || fromId === 'confirm' || fromId === 'settings' || fromId === 'how-to';
       if (!fromMenu && (id === 'pause' || id === 'settings')) pausedFrom = fromId;
       enteringFromMenu = (fromMenu && id === pausedFrom) || !choiceLockApplies(fromId);
       next.enter(id);
@@ -259,6 +277,8 @@ export function createUiWith(opts: CreateUiOptions): CreateUi {
     };
 
     function setScreen(screen: AppScreen): void {
+      // How to play read its "Got it" target on enter; any other screen clears it.
+      if (screen !== 'howTo') howToThen = null;
       if (screen !== appScreen) prevAppScreen = appScreen;
       appScreen = screen;
       if (screen !== 'paused') confirmOpen = false;

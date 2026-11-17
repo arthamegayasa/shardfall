@@ -10,7 +10,16 @@ import type { StringTable } from './strings.ts';
 import type { WorldView } from './world-view.ts';
 
 export type AppScreen =
-  'title' | 'classSelect' | 'run' | 'paused' | 'settings' | 'runEnd' | 'archive' | 'credits';
+  | 'title'
+  | 'classSelect'
+  | 'run'
+  | 'paused'
+  | 'settings'
+  | 'runEnd'
+  | 'archive'
+  | 'credits'
+  /** How to play (UI 1.1, additive): from the title, the pause menu, and once before the first run. */
+  | 'howTo';
 
 /** Test and DOM ids per ui-spec 3 (data-screen attribute). */
 export type ScreenId =
@@ -25,7 +34,8 @@ export type ScreenId =
   | 'settings'
   | 'run-end'
   | 'archive'
-  | 'credits';
+  | 'credits'
+  | 'how-to';
 
 export interface AppActions {
   /** App picks seed and profile. */

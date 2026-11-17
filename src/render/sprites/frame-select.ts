@@ -80,7 +80,8 @@ export interface MutableQuad {
 
 /**
  * Quad edges in virtual px relative to the snapped feet pixel, same maths as shaders/sprite.ts.
- * flip < 0 mirrors around the feet x. Every edge is an integer, so texels map 1:1 to pixels.
+ * flip < 0 mirrors around the feet x. scale (redesign 1.1) is rounded to a whole number >= 1 and grows the
+ * quad about the floor-snapped centre of the rect. Every edge is an integer, so texels map to whole pixels.
  */
 export function spriteQuad(
   anchorX: number,
@@ -88,18 +89,24 @@ export function spriteQuad(
   rect: FrameRectLike,
   flip: number,
   out: MutableQuad,
+  scale = 1,
 ): void {
-  const left = rect.ox - anchorX;
-  const top = anchorY + 1 - rect.oy;
+  const sc = Math.max(1, Math.round(Math.abs(scale)));
+  const left0 = rect.ox - anchorX;
+  const top0 = anchorY + 1 - rect.oy;
+  const px = Math.floor(left0 + rect.w * 0.5);
+  const py = Math.floor(top0 - rect.h * 0.5);
+  const left = px + (left0 - px) * sc;
+  const right = px + (left0 + rect.w - px) * sc;
   if (flip < 0) {
-    out.left = -(left + rect.w);
+    out.left = -right;
     out.right = -left;
   } else {
     out.left = left;
-    out.right = left + rect.w;
+    out.right = right;
   }
-  out.top = top;
-  out.bottom = top - rect.h;
+  out.top = py + (top0 - py) * sc;
+  out.bottom = py + (top0 - rect.h - py) * sc;
 }
 
 /** Feet pixel in a virtual frame: world floor point to px, rounded like the vertex shader. y DOWN. */

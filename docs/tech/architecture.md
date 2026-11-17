@@ -797,12 +797,14 @@ export type CreateRenderer = (canvas: HTMLCanvasElement, assets: RenderAssets, d
 
 ```ts
 // src/core/contracts/ui.ts
-export type AppScreen = 'title' | 'classSelect' | 'run' | 'paused' | 'settings' | 'runEnd' | 'archive' | 'credits';
+export type AppScreen = 'title' | 'classSelect' | 'run' | 'paused' | 'settings' | 'runEnd' | 'archive' | 'credits'
+  | 'howTo';   // UI 1.1, additive
 
 /** Test and DOM ids per ui-spec 3 (data-screen attribute). */
 export type ScreenId =
   | 'title' | 'class-select' | 'pulse' | 'level-up' | 'warden-reward' | 'glazier'
-  | 'pause' | 'confirm' | 'settings' | 'run-end' | 'archive' | 'credits';
+  | 'pause' | 'confirm' | 'settings' | 'run-end' | 'archive' | 'credits'
+  | 'how-to';   // UI 1.1, additive
 
 export interface AppActions {
   startRun(classId: string, difficulty: number): void;   // app picks seed and profile
@@ -1041,10 +1043,12 @@ export interface Settings {
   };
   /** KeyboardEvent.code values, two bindings per action, null = empty. */
   readonly keybinds: Readonly<Record<ActionId, readonly [string | null, string | null]>>;
+  /** UI 1.1, additive: How to play was shown; 1.0 saves without it load as false. */
+  readonly seenHowTo: boolean;
 }
 ```
 
-Default `Settings` (ditulis LP di `src/app/settings.ts`): kualitas `medium`, getar 100, layar penuh mati; volume master 80, music 70, sfx 100, ui 80 (nilai AU); mono mati, kurangi suara berulang mati, mute saat tidak fokus hidup; ukuran teks Normal, kurangi efek = `prefers-reduced-motion`, angka damage hidup, mode warna mati, jeda saat tidak fokus hidup, flavor hidup, panel solid mati, `shopTimer` `on`; keybind sesuai ui-spec 8.1.
+Default `Settings` (ditulis LP di `src/app/settings.ts`): kualitas `medium`, getar 100, layar penuh mati; volume master 80, music 70, sfx 100, ui 80 (nilai AU); mono mati, kurangi suara berulang mati, mute saat tidak fokus hidup; ukuran teks Normal, kurangi efek = `prefers-reduced-motion`, angka damage hidup, mode warna mati, jeda saat tidak fokus hidup, flavor hidup, panel solid mati, `shopTimer` `on`; keybind sesuai ui-spec 8.1; `seenHowTo` false (UI 1.1, `docs/ui/redesign-1.1.md`).
 
 ### 6.12 Hook tes e2e (hanya mode e2e) [Beku M1]
 

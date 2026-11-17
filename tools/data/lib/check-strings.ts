@@ -29,6 +29,8 @@ type Table = Readonly<Record<string, string>>;
 const DASHES = new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`);
 const MAX_LINE = 40;
 const MAX_LINES = 2;
+// 1.1 (docs/ui/redesign-1.1.md section 1): wave, shop, gold, relic, elite, and hero are now the plain
+// on-screen words and left this list.
 const FORBIDDEN = [
   'octopath',
   'brotato',
@@ -40,21 +42,15 @@ const FORBIDDEN = [
   'unkindled',
   'ashen',
   'hollow',
-  'wave',
-  'shop',
   'store',
-  'gold',
   'coin',
   'xp',
   'exp',
-  'relic',
-  'elite',
   'ultimate',
   'ancient evil',
   'chosen one',
   'destiny',
   'darkness falls',
-  'hero',
   'epic',
   'loot',
   'noob',

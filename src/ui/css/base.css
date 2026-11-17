@@ -1,0 +1,257 @@
+/* Shardfall UI base (ui-spec 2, 6, 7, 10; style guide 1.2 and 2): palette tokens, the .sf-ui root,
+   stair-cut corners, colour-vision and solid-panel overrides, screen shells, motion keyframes.
+   Imported first from ui-root.ts; the files below rely on this order for the cascade. */
+
+.sf-ui {
+  /* Palette tokens, style guide 1.2. */
+  --ink: #14121c;
+  --night: #1c1926;
+  --shadow: #3e3a46;
+  --floor-mid: #57515a;
+  --stone: #8a817a;
+  --dust: #a39a8c;
+  --bone: #ede6d8;
+  --kept-blue: #3d7dff;
+  --kept-blue-deep: #2449a8;
+  --kept-cyan: #4fe3f0;
+  --kept-white: #f2fbff;
+  --kept-gold: #ffc94a;
+  --glint: #ffd966;
+  --danger-red: #ff3b4e;
+  --danger-violet: #b44cff;
+  --rarity-0: #c9c2b6;
+  --rarity-1: #6fd08c;
+  --rarity-2: #3d7dff;
+  --rarity-3: #ffc94a;
+  /* Tag accents: player palette only (style guide 1.3), each tag also has its own shape. */
+  --tag-flame: #ffc94a;
+  --tag-shard: #4fe3f0;
+  --tag-edge: #f2fbff;
+  --tag-echo: #3d7dff;
+  --tag-ward: #a39a8c;
+  --tag-trade: #ffd966;
+  /* UI 1.1 (docs/ui/redesign-1.1.md 2): bottle-green relic glass and the item category roles.
+     Category colour is never the only cue: strips also carry the category word and a glyph. */
+  --relic-glass: #4fb08a;
+  --cat-weapon: var(--kept-blue);
+  --cat-relic: var(--relic-glass);
+  --cat-upgrade: var(--kept-cyan);
+  --panel-bg: rgb(28 25 38 / 90%);
+  /* Night glass: the panel fill is a faint vertical gradient, night to a lifted violet night. */
+  --panel-fill: linear-gradient(180deg, rgb(28 25 38 / 90%) 0%, rgb(36 31 51 / 90%) 100%);
+  /* Plate under text that sits straight on the arena (A-08): ink 90% keeps dust at 5:1 or more
+     even over the brightest floor or lantern. */
+  --plate: rgb(20 18 28 / 90%);
+  --frame: rgb(237 230 216 / 60%);
+  --sheen: linear-gradient(170deg, rgb(242 251 255 / 7%) 0%, rgb(242 251 255 / 0%) 38%);
+  --u: 2px;
+  --f: 2px;
+  --fs: 2px;
+  /* Spacing rhythm: 2u inside a group, 4u between groups, 8u between major blocks. */
+  --gap-s: calc(var(--u) * 2);
+  --gap-m: calc(var(--u) * 4);
+  --gap-l: calc(var(--u) * 8);
+
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  color: var(--bone);
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  font-size: calc(var(--f) * 9);
+  line-height: calc(var(--f) * 9);
+  font-weight: normal;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+  font-kerning: none;
+  letter-spacing: 0;
+}
+
+.sf-ui.has-pixel-font {
+  font-family: 'Shardfall Pixel', ui-monospace, Consolas, monospace;
+}
+
+/* Stair-stepped 1-pixel corner cut (style guide 2.1 "sudut terpotong", crisp at any UI scale). */
+.sf-ui {
+  --cut: polygon(
+    0 calc(var(--u) * 2),
+    var(--u) calc(var(--u) * 2),
+    var(--u) var(--u),
+    calc(var(--u) * 2) var(--u),
+    calc(var(--u) * 2) 0,
+    calc(100% - var(--u) * 2) 0,
+    calc(100% - var(--u) * 2) var(--u),
+    calc(100% - var(--u)) var(--u),
+    calc(100% - var(--u)) calc(var(--u) * 2),
+    100% calc(var(--u) * 2),
+    100% calc(100% - var(--u) * 2),
+    calc(100% - var(--u)) calc(100% - var(--u) * 2),
+    calc(100% - var(--u)) calc(100% - var(--u)),
+    calc(100% - var(--u) * 2) calc(100% - var(--u)),
+    calc(100% - var(--u) * 2) 100%,
+    calc(var(--u) * 2) 100%,
+    calc(var(--u) * 2) calc(100% - var(--u)),
+    var(--u) calc(100% - var(--u)),
+    var(--u) calc(100% - var(--u) * 2),
+    0 calc(100% - var(--u) * 2)
+  );
+}
+
+/* Colour vision (ui-spec 9, QA A-04): UI marker variants. Placeholder values until AD's palette;
+   rarity keeps its pips, focus its thick frame, low HP its crack mark. */
+.sf-ui[data-cv='protan'],
+.sf-ui[data-cv='deutan'] {
+  --rarity-1: #a8e4ff;
+  --rarity-2: #3d5bff;
+  --danger-red: #ff4fd8;
+  --tag-ward: #c9c2b6;
+}
+
+.sf-ui[data-cv='tritan'] {
+  --rarity-0: #8a817a;
+  --rarity-1: #ff9e6b;
+  --kept-cyan: #8fe8f0;
+  --tag-shard: #8fe8f0;
+  --tag-echo: #ff9e6b;
+}
+
+.sf-ui.solid-panels {
+  --panel-bg: var(--night);
+  --panel-fill: linear-gradient(var(--night), var(--night));
+  --sheen: linear-gradient(transparent, transparent);
+}
+
+.sf-ui * {
+  box-sizing: border-box;
+}
+
+.sf-ui .screen-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.sf-ui .screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.sf-ui .screen-pause,
+.sf-ui .screen-title,
+.sf-ui .screen-class,
+.sf-ui .screen-settings,
+.sf-ui .screen-run-end,
+.sf-ui .screen-archive,
+.sf-ui .screen-credits {
+  background: rgb(20 18 28 / 60%);
+}
+
+.sf-ui .screen-choice,
+.sf-ui .screen-glazier {
+  background: rgb(20 18 28 / 50%);
+}
+
+/* Menu safe area: 640 x 360 UI units, centred (ui-spec 7.1). */
+.sf-ui .safe {
+  position: relative;
+  width: calc(var(--u) * 640);
+  height: calc(var(--u) * 360);
+  padding: calc(var(--u) * 12);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 6);
+  overflow: hidden;
+  animation: sf-enter 120ms ease-out backwards;
+}
+
+/* Live region: visually hidden, read by screen readers. */
+.sf-ui .live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.sf-ui .small-window {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  color: var(--dust);
+  background: var(--night);
+}
+
+.sf-ui.is-too-small .small-window {
+  display: block;
+}
+
+/* Motion (ui-spec 10). Reduce effects turns every move off; state changes stay instant. */
+@keyframes sf-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 4));
+  }
+}
+
+@keyframes sf-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 4));
+  }
+}
+
+@keyframes sf-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+@keyframes sf-ready {
+  from {
+    box-shadow: inset 0 0 0 calc(var(--u) * 4) var(--kept-gold);
+  }
+}
+
+@keyframes sf-shake {
+  25% {
+    transform: translateX(calc(var(--u) * -2));
+  }
+  75% {
+    transform: translateX(calc(var(--u) * 2));
+  }
+}
+
+@keyframes sf-tick {
+  0% {
+    transform: translateY(calc(var(--u) * -1));
+  }
+  15% {
+    transform: none;
+  }
+}
+
+@keyframes sf-blink {
+  50% {
+    color: var(--bone);
+  }
+}
+
+.sf-ui.reduce-effects *,
+.sf-ui.reduce-effects *::before {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ---- M4-02: accessibility and polish ---- */
+
+.sf-ui [hidden] {
+  display: none !important;
+}

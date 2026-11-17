@@ -1,10 +1,23 @@
-// Temper (level-up) and Warden reward models (ui-spec S04, S04b). One row-card shape for both.
+// Level up (was Temper) and Elite reward models (ui-spec S04, S04b; redesign-1.1 3.3). One card
+// shape for both: the screen shows them as glass panes side by side.
 
-import type { GameData, TagId } from '../../content/index.ts';
+import type { GameData, StatDef, TagId } from '../../content/index.ts';
 import type { StringParams, WorldView } from '../../core/index.ts';
 import { formatStatValue } from '../format.ts';
 import type { IconRef } from '../icons.ts';
 import { enemyNameKey, mementoInfo } from './content.ts';
+
+/**
+ * A stat value with its unit, as the player reads it: percent stats "12%", per second "0.2/s",
+ * seconds "4s", flat and distance stats the bare number ("4", "1.5").
+ */
+export function statValueText(v: number, unit: StatDef['unit']): string {
+  const n = formatStatValue(v);
+  if (unit === 'pct') return `${n}%`;
+  if (unit === 'per_s' || unit === 'u_per_s') return `${n}/s`;
+  if (unit === 's') return `${n}s`;
+  return n;
+}
 
 export interface StatChange {
   readonly statKey: string;
@@ -23,7 +36,7 @@ export interface ChoiceCard {
   readonly rarityOrder: number;
   /** Stat icon for Temper cards, Memento icon for rewards. */
   readonly icon: IconRef | null;
-  /** Temper only: "Speed 110 > 118" preview (ui-spec S04). */
+  /** Level up only: "Damage 0% > 12%" preview with units (ui-spec S04, redesign-1.1 3.3). */
   readonly statChange: StatChange | null;
 }
 
@@ -34,6 +47,8 @@ export interface LevelUpModel {
   /** "1 of 2": position in this Pulse's queue, and its size. */
   readonly queueIndex: number;
   readonly queueTotal: number;
+  /** Level ups still queued after this one ("2 more waiting"), 0 when this is the last. */
+  readonly waiting: number;
   readonly cards: readonly ChoiceCard[];
 }
 
@@ -57,8 +72,8 @@ export function buildLevelUpModel(view: WorldView, data: GameData): LevelUpModel
       const before = view.player.stats[statIndex] ?? stat.base;
       statChange = {
         statKey: stat.displayKey,
-        before: formatStatValue(before),
-        after: formatStatValue(before + c.value),
+        before: statValueText(before, stat.unit),
+        after: statValueText(before + c.value, stat.unit),
       };
     }
     return {
@@ -78,6 +93,7 @@ export function buildLevelUpModel(view: WorldView, data: GameData): LevelUpModel
     level: Math.max(1, view.player.level - Math.max(lu.pending, 1) + 1),
     queueIndex: Math.min(total, total - Math.max(lu.pending, 1) + 1),
     queueTotal: total,
+    waiting: Math.max(0, lu.pending - 1),
     cards,
   };
 }

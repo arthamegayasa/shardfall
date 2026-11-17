@@ -1,6 +1,7 @@
 // UI preview harness (dev server only, never bundled: vite builds index.html alone).
 // Open http://localhost:5173/src/ui/dev/preview.html (optional ?screen=title|class|pulse|held|boss|
-// pending|warden|reward|levelup|queue|glazier|pause|settings|lost|won|archive, &text=0|1|2,
+// pending|warden|weapons|reward|levelup|queue|glazier|glazierfull|pause|settings|lost|won|archive|howto|
+// newrun|credits|confirm, &text=0|1|2,
 // &cv=protan|deutan|tritan, &reduce=1, &savelost=1). Runs every screen on a fake world driven by a tiny fake
 // sim, with real data, strings, and art when they build, else the test fixtures (ui-spec 12.3).
 
@@ -133,19 +134,32 @@ let settings: Settings = {
     merge: ['KeyM', null],
     sell: ['KeyX', null],
   },
+  // ?screen=newrun starts from a fresh device: New run shows How to play first.
+  seenHowTo: params.get('screen') !== 'newrun',
 };
 
 // ---- Fake events (only CommandRejected and ItemBought, enough for feedback) ----
 const ev = { count: 0, type: [0], x: [0], y: [0], a: [0], b: [0], c: [0] };
 const events: SimEventReader = ev;
-function emit(type: number, a: number, b = 0): void {
+function emit(type: number, a: number, b = 0, c = 0): void {
   ev.type[ev.count] = type;
   ev.a[ev.count] = a;
   ev.b[ev.count] = b;
   ev.x[ev.count] = 0;
   ev.y[ev.count] = 0;
-  ev.c[ev.count] = 0;
+  ev.c[ev.count] = c;
   ev.count++;
+}
+
+// HUD weapon strip (redesign 1.1 3.2): fake WeaponFired for the first two slots, the third idles.
+let fakeFire = false;
+function fireWeapons(): void {
+  if (!fakeFire || world.phase !== 'pulse') return;
+  const inv = world.shop.inventory;
+  for (const slot of [0, 1]) {
+    const wi = inv[slot]?.weaponIndex ?? -1;
+    if (wi >= 0 && (world.tick + slot * 9) % 18 === 0) emit(SimEventType.WeaponFired, wi, 1, slot);
+  }
 }
 
 // ---- Fake sim ----
@@ -173,9 +187,12 @@ function makeOffers(): ShopOfferView[] {
     const isWeapon = (i + rerolls) % 3 !== 2;
     const def = isWeapon ? (i + rerolls) % weaponCount : (i + rerolls) % mementoCount;
     const price = 8 + ((i * 5 + rerolls * 3) % 14);
-    const slot = isWeapon
-      ? world.shop.inventory.findIndex((s) => s.weaponIndex === def && s.tier === 1)
-      : -1;
+    // Like the sim: a copy combines only when every slot is full; full and no partner blocks.
+    const hasFree = world.shop.inventory.some((s) => s.weaponIndex < 0);
+    const slot =
+      isWeapon && !hasFree
+        ? world.shop.inventory.findIndex((s) => s.weaponIndex === def && s.tier === 1)
+        : -1;
     offers.push({
       kind: isWeapon ? OfferKind.Weapon : OfferKind.Memento,
       defIndex: def,
@@ -185,8 +202,10 @@ function makeOffers(): ShopOfferView[] {
       affordable: P.glint >= price,
       mergeSlot: slot,
       mergeToTier: slot >= 0 ? 2 : 0,
-      blockedNoSlot: false,
-      isNewId: isWeapon ? !owned.has(def) : true,
+      blockedNoSlot: isWeapon && !hasFree && slot < 0,
+      isNewId: isWeapon
+        ? !owned.has(def)
+        : !world.shop.mementos.some((m) => m.mementoIndex === def),
     });
   }
   return offers;
@@ -550,6 +569,7 @@ const initial: Record<string, () => void> = {
   },
   pulse: () => {
     app.startRun('', 0);
+    fakeFire = true;
   },
   held: () => {
     app.startRun('', 0);
@@ -576,7 +596,31 @@ function holdWarden(): void {
     enraged: true,
   };
 }
+function buyAndStartWave2(): void {
+  const first = world.shop.inventory[0]?.weaponIndex ?? 0;
+  const other = (first + 1) % weaponCount;
+  world.shop = {
+    ...world.shop,
+    inventory: world.shop.inventory.map((s, i) =>
+      i === 1
+        ? { ...s, weaponIndex: first, tier: 1 }
+        : i === 2
+          ? { ...s, weaponIndex: other, tier: 2 }
+          : s,
+    ),
+  };
+  refreshShop();
+  PU.index = 1;
+  emit(SimEventType.PulseStarted, 1);
+}
 const moreInitial: Record<string, () => void> = {
+  // Wave 2 after a shop visit: a second copy and a new weapon glow "New"; slot 3 never fires.
+  weapons: () => {
+    app.startRun('', 0);
+    fakeFire = true;
+    // After wave 1 started, so the HUD compares wave 2's weapons with wave 1's.
+    setTimeout(buyAndStartWave2, 300);
+  },
   archive: () => {
     previewMeta.silt = 42;
     previewMeta.mementosFound = data.mementos.filter((_, i) => i % 3 !== 2).map((m) => m.id);
@@ -641,6 +685,21 @@ const moreInitial: Record<string, () => void> = {
   glazier: () => {
     app.continueRun();
   },
+  /** Shop with all 6 slots full: offers that combine, one blocked, an owned relic, short gold. */
+  glazierfull: () => {
+    app.continueRun();
+    world.shop = {
+      ...world.shop,
+      inventory: world.shop.inventory.map((s, i) => ({
+        ...s,
+        weaponIndex: [0, 1, 2, 4, 5, 2][i] ?? 0,
+        tier: i === 2 ? 2 : 1,
+      })),
+      mementos: [{ mementoIndex: 2 % mementoCount, count: 1 }],
+    };
+    P.glint = 12;
+    refreshShop(makeOffers());
+  },
   pause: () => {
     app.continueRun();
     ownMementos();
@@ -649,6 +708,20 @@ const moreInitial: Record<string, () => void> = {
   },
   settings: () => {
     app.openSettings();
+  },
+  howto: () => {
+    ui.setScreen('howTo');
+  },
+  credits: () => {
+    ui.setScreen('credits');
+  },
+  confirm: () => {
+    app.continueRun();
+    app.pause();
+    document.querySelector<HTMLElement>('[data-ui="pause-abandon"]')?.click();
+  },
+  newrun: () => {
+    document.querySelector<HTMLElement>('[data-ui="title-new-run"]')?.click();
   },
   lost: () => {
     app.startRun('', 0);
@@ -686,6 +759,7 @@ function frame(now: number): void {
     world.runStats = { ...world.runStats, runTicks: world.runStats.runTicks + 1 };
     if (PU.ticksLeft === 0) endPulse();
   }
+  if (!held) fireWeapons();
   if (!held) ui?.update(world, events);
   ev.count = 0;
   // Events emitted by the jump reach the UI on the next frame, like real sim events.

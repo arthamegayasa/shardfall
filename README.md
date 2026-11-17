@@ -6,7 +6,7 @@ Shardfall is a browser arena-survival roguelike. You are one of the Kept, a figu
 
 **Play it in your browser: https://arthamegayasa.github.io/shardfall/**
 
-Version 1.0.0. Desktop browser with keyboard and mouse, WebGL2 required (current Chrome, Edge, or Firefox; Safari is only tested through a WebKit proxy).
+Version 1.1.0. Desktop browser with keyboard and mouse, WebGL2 required (current Chrome, Edge, or Firefox; Safari is only tested through a WebKit proxy).
 
 ## Controls
 
@@ -18,7 +18,9 @@ Version 1.0.0. Desktop browser with keyboard and mouse, WebGL2 required (current
 | Menus | Arrow keys and Enter, or the mouse; Esc or Backspace to go back |
 | Glazier shop | R reroll, L lock, M fuse, X sell, T stats, B begin the next Pulse |
 
-Weapons attack automatically. Every key can be remapped in Settings.
+Weapons attack automatically. Every key can be remapped in Settings. A short How to play screen opens before your first run and is always available from the title and pause menus.
+
+Version 1.1 uses plain words on screen: Wave (Pulse), gold (Glint), Level up (Temper), Combine (Fuse), Relic (Memento), Skill (Rite), Unlocks (The Keeping). The lore names below still appear in flavor text.
 
 ## Features
 

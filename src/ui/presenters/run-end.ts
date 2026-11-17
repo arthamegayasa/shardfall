@@ -4,6 +4,7 @@ import type { GameData } from '../../content/index.ts';
 import { SourceKind, sourceIndexOf, sourceKindOf } from '../../core/index.ts';
 import type { WorldView } from '../../core/index.ts';
 import { floorSeconds, formatClock } from '../format.ts';
+import { statValueText } from './choices.ts';
 import { mementoInfo, mementoRarityOrder, weaponInfo } from './content.ts';
 import type { ItemInfo } from './content.ts';
 
@@ -36,6 +37,28 @@ export function buildSummary(view: WorldView, data: GameData): BuildSummary {
       });
   }
   return { weapons, mementos };
+}
+
+/** One line of the pause stat list (redesign-1.1 3.4): zero values are dimmed. */
+export interface StatLine {
+  readonly labelKey: string;
+  readonly text: string;
+  readonly zero: boolean;
+}
+
+/** Shown player stats in data order, values with their units ("12%", "0.2/s"). */
+export function statLines(view: WorldView, data: GameData): StatLine[] {
+  const out: StatLine[] = [];
+  data.stats.forEach((s, i) => {
+    if (!s.showInUi) return;
+    const v = view.player.stats[i] ?? s.base;
+    out.push({
+      labelKey: s.displayKey,
+      text: statValueText(v, s.unit),
+      zero: Math.abs(v) < 0.005,
+    });
+  });
+  return out;
 }
 
 /**

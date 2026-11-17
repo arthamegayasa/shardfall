@@ -182,3 +182,63 @@ export function titleBlock(ctx: UiContext, title: string, subtitle = ''): HTMLEl
   if (subtitle !== '') wrap.appendChild(h(ctx.doc, 'p', 'screen-sub', subtitle));
   return wrap;
 }
+
+/** Item category of a glass pane (redesign-1.1 2): weapon blue, relic bottle green, upgrade cyan. */
+export type PaneKind = 'weapon' | 'relic' | 'upgrade';
+
+export const PANE_KINDS: readonly PaneKind[] = ['weapon', 'relic', 'upgrade'];
+
+/** Class names and texts of a pane, before any DOM (unit tested). */
+export interface PaneModel {
+  readonly rootClass: string;
+  readonly glyphClass: string;
+  readonly label: string;
+  /** Right-aligned strip badge ("New", "Owned 2"); null when there is none. */
+  readonly badge: string | null;
+}
+
+export function paneModel(kind: PaneKind, stripLabel: string, badge = ''): PaneModel {
+  const b = badge.trim();
+  return {
+    rootClass: `pane pane--${kind}`,
+    glyphClass: `cat-glyph cat-${kind}`,
+    label: stripLabel,
+    badge: b === '' ? null : b,
+  };
+}
+
+export interface PaneParts<T extends HTMLElement = HTMLElement> {
+  readonly root: T;
+  readonly strip: HTMLElement;
+  readonly body: HTMLElement;
+  readonly badge: HTMLElement | null;
+}
+
+/**
+ * Glass pane card (redesign-1.1 2): lead frame, a category-glass strip with glyph, category word
+ * and optional badge, then an empty body for the caller to fill. Pass `root` to make the pane out
+ * of an existing element (for example `button(doc, 'offer-0', '')` for a focusable card); its
+ * children are replaced and the pane classes are added to its own.
+ */
+export function pane<T extends HTMLElement = HTMLDivElement>(
+  doc: Document,
+  kind: PaneKind,
+  stripLabel: string,
+  badge = '',
+  root?: T,
+): PaneParts<T> {
+  const m = paneModel(kind, stripLabel, badge);
+  const el = (root ?? h(doc, 'div')) as T;
+  el.replaceChildren();
+  el.classList.add(...m.rootClass.split(' '));
+  const strip = h(doc, 'span', 'pane-strip');
+  const glyph = h(doc, 'span', m.glyphClass);
+  glyph.setAttribute('aria-hidden', 'true');
+  const cat = put(h(doc, 'span', 'pane-cat'), glyph, h(doc, 'span', 'pane-cat-label', m.label));
+  strip.appendChild(cat);
+  const badgeEl = m.badge === null ? null : h(doc, 'span', 'pane-badge', m.badge);
+  if (badgeEl !== null) strip.appendChild(badgeEl);
+  const body = h(doc, 'span', 'pane-body');
+  put(el, strip, body);
+  return { root: el, strip, body, badge: badgeEl };
+}

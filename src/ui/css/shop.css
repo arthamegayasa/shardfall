@@ -1,0 +1,931 @@
+/* Shop screen (redesign-1.1 3.1, was The Glazier, ui-spec S05) and its text-size variants.
+   Layout: header row, the Glazier strip, offers as glass panes in a 2-column grid on the left, the
+   inventory column on the right (weapons, relics, synergies), the action bar at the bottom. Gold
+   only marks prices and the one primary action. */
+
+.sf-ui .glazier-safe {
+  padding: calc(var(--u) * 6);
+  gap: var(--gap-m);
+}
+
+/* ---- Header: title, next Wave, HP, gold ---- */
+.sf-ui .shop-top {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-l);
+  min-width: 0;
+}
+
+.sf-ui .shop-top .heading {
+  color: var(--kept-white);
+  white-space: nowrap;
+}
+
+.sf-ui .shop-next,
+.sf-ui .shop-hp {
+  color: var(--bone);
+  white-space: nowrap;
+}
+
+.sf-ui .shop-glint {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-s);
+  white-space: nowrap;
+}
+
+.sf-ui .shop-glint .glint-amount {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+}
+
+.sf-ui .shop-glint .glint-icon {
+  width: calc(var(--u) * 11);
+  height: calc(var(--u) * 11);
+}
+
+.sf-ui .gold-word {
+  color: var(--glint);
+}
+
+/* ---- The Glazier strip: a face crop and one dim line ---- */
+.sf-ui .glazier-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-m);
+  margin-top: calc(var(--u) * -2);
+}
+
+.sf-ui .glazier-face {
+  position: relative;
+  flex: none;
+  width: calc(var(--u) * 24);
+  height: calc(var(--u) * 24);
+  overflow: hidden;
+  background-color: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+  clip-path: var(--cut);
+}
+
+.sf-ui .glazier-face .portrait-mask {
+  position: absolute;
+  left: calc(var(--u) * -3);
+  top: calc(var(--u) * -7);
+  transform: scale(0.5);
+}
+
+.sf-ui .glazier-line {
+  min-width: 0;
+  color: var(--dust);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-ui .glazier-strip.is-silent .glazier-line {
+  display: none;
+}
+
+/* Fallback mask: a cut-glass pane with two eye slits, team-made CSS until AD's portrait. */
+.sf-ui .portrait-mask {
+  position: relative;
+  width: calc(var(--u) * 30);
+  height: calc(var(--u) * 38);
+  background:
+    linear-gradient(var(--ink), var(--ink)) calc(var(--u) * 7) calc(var(--u) * 15) /
+      calc(var(--u) * 6) calc(var(--u) * 2) no-repeat,
+    linear-gradient(var(--ink), var(--ink)) calc(var(--u) * 17) calc(var(--u) * 15) /
+      calc(var(--u) * 6) calc(var(--u) * 2) no-repeat,
+    linear-gradient(var(--kept-cyan), var(--kept-cyan)) calc(var(--u) * 14) calc(var(--u) * 4) /
+      var(--u) calc(var(--u) * 30) no-repeat,
+    linear-gradient(160deg, var(--bone) 0%, var(--stone) 55%, var(--shadow) 100%);
+  clip-path: polygon(50% 0, 100% 18%, 92% 72%, 50% 100%, 8% 72%, 0 18%);
+}
+
+/* ---- Columns ---- */
+.sf-ui .shop-cols {
+  display: flex;
+  gap: calc(var(--u) * 6);
+  flex: 1;
+  min-height: 0;
+}
+
+.sf-ui .shop-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+}
+
+.sf-ui .shop-main > .col-title,
+.sf-ui .side-head .col-title {
+  margin: 0;
+}
+
+.sf-ui .shop-main > .col-title {
+  align-self: flex-start;
+}
+
+/* Offers: 2 columns of panes. Scrolls inside itself when the panes do not fit (Large and Largest
+   text, a fifth offer); the focused pane is kept in view by the screen. */
+.sf-ui .shop-offers {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--gap-m);
+  overflow: hidden auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--shadow) transparent;
+}
+
+/* Scroll cues (never colour alone: a dust arrow mark at the edge with more panes). */
+.sf-ui .shop-main.more-below::after,
+.sf-ui .shop-main.more-above::before {
+  content: '';
+  position: absolute;
+  right: calc(var(--u) * 2);
+  z-index: 2;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 4);
+  background: var(--bone);
+  pointer-events: none;
+}
+
+.sf-ui .shop-main.more-below::after {
+  bottom: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.sf-ui .shop-main.more-above::before {
+  top: calc(var(--f) * 9 + var(--u) * 2);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+/* ---- Offer pane ---- */
+.sf-ui .offer {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.sf-ui .offer.rarity-1 {
+  --edge: var(--rarity-1);
+}
+.sf-ui .offer.rarity-2 {
+  --edge: var(--rarity-2);
+}
+.sf-ui .offer.rarity-3 {
+  --edge: var(--rarity-3);
+}
+
+/* Focus on the card: the whole pane takes the focus frame (white lead, gold step). */
+.sf-ui .offer:has(> .pane-body > .offer-card.is-focus) {
+  --lead: var(--kept-white);
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+}
+
+.sf-ui .offer.is-locked {
+  --lead: var(--stone);
+}
+
+.sf-ui .offer-key {
+  padding: 0 calc(var(--u) * 2);
+  color: var(--bone);
+  background: var(--ink);
+}
+
+.sf-ui .offer .pane-body {
+  gap: var(--gap-s);
+  padding: calc(var(--u) * 3);
+}
+
+/* The card button is the body of the pane: no frame of its own (the pane carries it). */
+.sf-ui .btn.offer-card {
+  --lead: transparent;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--gap-s);
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  clip-path: none;
+  box-shadow: none;
+  color: var(--bone);
+  transition: none;
+}
+
+.sf-ui .offer-head {
+  display: flex;
+  gap: var(--gap-m);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.sf-ui .offer-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  min-width: 0;
+}
+
+.sf-ui .offer-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--gap-s);
+}
+
+.sf-ui .offer-name {
+  color: var(--kept-white);
+}
+
+.sf-ui .offer-tier {
+  padding: 0 calc(var(--u) * 2);
+  color: var(--kept-white);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+}
+
+.sf-ui .offer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-s);
+}
+
+.sf-ui .offer-desc {
+  white-space: normal;
+}
+
+.sf-ui .offer-flavor {
+  color: var(--dust);
+  white-space: normal;
+}
+
+/* The outcome line: what buying does, on an ink plate with a shape glyph per outcome. */
+.sf-ui .offer-outcome {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+  margin-top: auto;
+  padding: var(--u) calc(var(--u) * 2);
+  color: var(--kept-white);
+  background: var(--plate);
+  box-shadow: inset var(--u) 0 0 var(--cat, var(--shadow));
+}
+
+.sf-ui .out-glyph {
+  flex: none;
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 5);
+  background: currentcolor;
+}
+
+/* New: plus. Copy: two squares. Combine: up arrow. Stack: three bars. Blocked: a cross. */
+.sf-ui .is-new-weapon .out-glyph,
+.sf-ui .is-new-relic .out-glyph {
+  clip-path: polygon(
+    40% 0,
+    60% 0,
+    60% 40%,
+    100% 40%,
+    100% 60%,
+    60% 60%,
+    60% 100%,
+    40% 100%,
+    40% 60%,
+    0 60%,
+    0 40%,
+    40% 40%
+  );
+}
+
+.sf-ui .is-copy .out-glyph {
+  clip-path: polygon(0 0, 60% 0, 60% 40%, 100% 40%, 100% 100%, 40% 100%, 40% 60%, 0 60%);
+}
+
+.sf-ui .is-combine .out-glyph,
+.sf-ui .detail-combine.is-ready .out-glyph {
+  clip-path: polygon(50% 0, 100% 50%, 70% 50%, 70% 100%, 30% 100%, 30% 50%, 0 50%);
+}
+
+.sf-ui .is-relic-stack .out-glyph {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 20%,
+    0 20%,
+    0 40%,
+    100% 40%,
+    100% 60%,
+    0 60%,
+    0 80%,
+    100% 80%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.sf-ui .is-blocked .out-glyph,
+.sf-ui .detail-combine .out-glyph {
+  clip-path: polygon(
+    0 20%,
+    20% 0,
+    50% 30%,
+    80% 0,
+    100% 20%,
+    70% 50%,
+    100% 80%,
+    80% 100%,
+    50% 70%,
+    20% 100%,
+    0 80%,
+    30% 50%
+  );
+}
+
+.sf-ui .offer-outcome.is-blocked {
+  color: var(--dust);
+}
+
+.sf-ui .offer-foot {
+  display: flex;
+}
+
+.sf-ui .offer-cost {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--u) var(--gap-s);
+}
+
+/* The Buy pill reads as the card's button; the price inside it is gold (or dust when short). */
+.sf-ui .buy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  padding: calc(var(--u) * 3) calc(var(--u) * 6);
+  color: var(--bone);
+  background: var(--shadow);
+  box-shadow: inset 0 0 0 var(--u) var(--frame);
+  clip-path: var(--cut);
+  white-space: nowrap;
+}
+
+.sf-ui .offer:has(> .pane-body > .offer-card.is-focus) .buy-pill {
+  box-shadow: inset 0 0 0 var(--u) var(--kept-white);
+}
+
+.sf-ui .offer.is-unaffordable .buy-pill {
+  color: var(--dust);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+}
+
+.sf-ui .offer.is-blocked .offer-head .icon {
+  opacity: 0.6;
+}
+
+.sf-ui .need-gold {
+  color: var(--dust);
+}
+
+/* Lock toggle: a labelled strip across the pane's foot; Locked fills its plate and closes the
+   shackle. Full width keeps it straight under its card for arrow keys. */
+.sf-ui .btn.lock-toggle {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-s);
+  padding: 0 calc(var(--u) * 3);
+  color: var(--dust);
+}
+
+.sf-ui .btn.lock-toggle.is-focus {
+  color: var(--bone);
+}
+
+.sf-ui .btn.lock-toggle.is-closed {
+  --fill: linear-gradient(var(--shadow), var(--shadow));
+  color: var(--kept-white);
+}
+
+.sf-ui .lock-glyph {
+  flex: none;
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 6);
+  background: currentcolor;
+  /* Open shackle: the bow stands off to the right. */
+  clip-path: polygon(
+    0 50%,
+    100% 50%,
+    100% 100%,
+    0 100%,
+    0 50%,
+    20% 50%,
+    20% 0,
+    80% 0,
+    80% 15%,
+    40% 15%,
+    40% 50%
+  );
+}
+
+.sf-ui .is-closed .lock-glyph {
+  clip-path: polygon(
+    0 50%,
+    100% 50%,
+    100% 100%,
+    0 100%,
+    0 50%,
+    15% 50%,
+    15% 0,
+    85% 0,
+    85% 50%,
+    65% 50%,
+    65% 20%,
+    35% 20%,
+    35% 50%
+  );
+}
+
+.sf-ui .btn.lock-toggle.is-off {
+  visibility: hidden;
+}
+
+/* Taken and empty offers keep their place as a dotted empty pane. */
+.sf-ui .offer.is-empty {
+  display: flex;
+  min-height: calc(var(--u) * 40);
+}
+
+.sf-ui .offer.is-empty .lock-toggle {
+  position: absolute;
+}
+
+.sf-ui .btn.card-empty {
+  --lead: var(--floor-mid);
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-style: dotted;
+  color: var(--dust);
+  text-align: center;
+}
+
+/* Purchase motion: the bought pane flashes once, the icon flies to its slot. Instant (none) under
+   reduce effects (global rule) and the system reduced-motion preference. */
+@keyframes shop-flash {
+  from {
+    box-shadow: inset 0 0 0 calc(var(--u) * 200) rgb(242 251 255 / 70%);
+  }
+}
+
+.sf-ui .btn.card-empty.is-flash {
+  animation: shop-flash 250ms ease-out;
+}
+
+.sf-ui .shop-fly {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+}
+
+@keyframes shop-new {
+  from {
+    box-shadow: inset 0 0 0 calc(var(--u) * 4) var(--kept-white);
+  }
+}
+
+.sf-ui .slot.is-new,
+.sf-ui .relic-chip.is-new {
+  animation: shop-new 600ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-ui .btn.card-empty.is-flash,
+  .sf-ui .slot.is-new,
+  .sf-ui .relic-chip.is-new,
+  .sf-ui .shop-toast.is-on {
+    animation: none;
+  }
+}
+
+/* Screen-reader only text (the price of a card lives in its foot). */
+.sf-ui .shop-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Right column: weapons, relics, synergies ---- */
+.sf-ui .shop-side {
+  flex: none;
+  width: calc(var(--u) * 192);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sf-ui .side-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  min-width: 0;
+}
+
+.sf-ui .side-syn {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sf-ui .side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-s);
+}
+
+.sf-ui .slot-count {
+  color: var(--bone);
+}
+
+.sf-ui .slot-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap-s);
+}
+
+.sf-ui .slot {
+  position: relative;
+  height: calc(var(--u) * 26);
+  padding: 0 calc(var(--u) * 3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 3);
+}
+
+.sf-ui .slot.is-empty {
+  --lead: var(--floor-mid);
+  --fill: linear-gradient(rgb(20 18 28 / 50%), rgb(20 18 28 / 50%));
+  border-style: dotted;
+}
+
+.sf-ui .slot.rarity-1 {
+  --edge: var(--rarity-1);
+}
+.sf-ui .slot.rarity-2 {
+  --edge: var(--rarity-2);
+}
+.sf-ui .slot.rarity-3 {
+  --edge: var(--rarity-3);
+}
+
+/* Combine target of the focused offer and the selected slot: a white step (never colour alone,
+   the selected slot also opens its detail below). */
+.sf-ui .slot.is-fuse-target,
+.sf-ui .slot.is-selected {
+  --edge: var(--kept-white);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-white);
+}
+
+.sf-ui .slot.can-fuse::after {
+  content: '+';
+  position: absolute;
+  right: calc(var(--u) * 2);
+  top: 0;
+  color: var(--kept-white);
+}
+
+.sf-ui .slot .icon-small {
+  border: none;
+  background: none;
+}
+
+.sf-ui .slot-tier {
+  color: var(--kept-white);
+  font-size: calc(var(--f) * 9);
+  line-height: calc(var(--f) * 9);
+}
+
+.sf-ui .fire-note {
+  color: var(--dust);
+}
+
+.sf-ui .slot-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--u);
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  background: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+}
+
+.sf-ui .detail-hint {
+  color: var(--dust);
+}
+
+.sf-ui .detail-name {
+  display: flex;
+  gap: var(--gap-s);
+  align-items: center;
+}
+
+.sf-ui .detail-title {
+  color: var(--kept-white);
+}
+
+.sf-ui .detail-tier {
+  padding: 0 calc(var(--u) * 2);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+}
+
+.sf-ui .detail-desc {
+  color: var(--bone);
+}
+
+.sf-ui .detail-sell,
+.sf-ui .detail-combine {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+}
+
+.sf-ui .detail-sell .key-hint {
+  margin-left: 0;
+}
+
+.sf-ui .detail-combine {
+  color: var(--dust);
+}
+
+.sf-ui .detail-combine.is-ready {
+  color: var(--kept-white);
+}
+
+.sf-ui .side-empty {
+  color: var(--dust);
+}
+
+.sf-ui .relic-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-s);
+}
+
+.sf-ui .relic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--u);
+  padding-right: calc(var(--u) * 2);
+  background: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--shadow);
+}
+
+.sf-ui .relic-count {
+  color: var(--bone);
+}
+
+.sf-ui .tag-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+}
+
+.sf-ui .tag-row {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  column-gap: var(--gap-m);
+  row-gap: var(--u);
+  align-items: center;
+}
+
+.sf-ui .tag-row .tag-pips {
+  display: flex;
+  gap: var(--gap-s);
+}
+
+.sf-ui .tag-next {
+  grid-column: 1 / -1;
+  color: var(--dust);
+  white-space: normal;
+}
+
+.sf-ui .tag-row.is-unlock .tag-next {
+  color: var(--kept-white);
+}
+
+.sf-ui .tag-pip {
+  width: calc(var(--u) * 4);
+  height: calc(var(--u) * 4);
+  border: var(--u) solid var(--dust);
+}
+
+.sf-ui .tag-pip.is-full {
+  background: var(--bone);
+  border-color: var(--bone);
+}
+
+/* Preview of the focused offer: hollow white pips plus the count in white (shape, not hue). */
+.sf-ui .tag-pip.is-ghost {
+  border-color: var(--kept-white);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--kept-white) 0 var(--u),
+    transparent var(--u) calc(var(--u) * 2)
+  );
+}
+
+.sf-ui .tag-row .tag-count {
+  color: var(--bone);
+}
+
+.sf-ui .tag-row.is-preview .tag-count {
+  color: var(--kept-white);
+}
+
+.sf-ui .tag-row.is-preview .tag-count::after {
+  content: ' +';
+}
+
+/* Largest-text side view (T): inventory on the left, stats on the right; each scrolls itself
+   when it does not fit. */
+.sf-ui .shop-side.is-side {
+  flex: 1;
+  width: auto;
+  flex-direction: row;
+  gap: calc(var(--u) * 12);
+}
+
+.sf-ui .side-left,
+.sf-ui .side-stats {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-m);
+  overflow: hidden auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--shadow) transparent;
+}
+
+.sf-ui .side-stats {
+  gap: 0;
+}
+
+.sf-ui .side-stats.more-below::after,
+.sf-ui .side-stats.more-above::before {
+  content: '';
+  position: sticky;
+  z-index: 2;
+  flex: none;
+  align-self: flex-end;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 4);
+  background: var(--bone);
+}
+
+.sf-ui .side-stats.more-below::after {
+  bottom: 0;
+  margin-top: calc(var(--u) * -4);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.sf-ui .side-stats.more-above::before {
+  top: 0;
+  margin-bottom: calc(var(--u) * -4);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+/* ---- Bottom bar and the toast ---- */
+.sf-ui .shop-bar {
+  justify-content: flex-start;
+  gap: var(--gap-m);
+}
+
+.sf-ui .shop-bar .primary {
+  margin-left: auto;
+}
+
+.sf-ui .shop-bar .btn.is-on {
+  --edge: var(--kept-white);
+}
+
+.sf-ui .info-line {
+  flex: 1;
+  min-width: 0;
+  color: var(--bone);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-ui .free {
+  margin-left: calc(var(--u) * 3);
+  color: var(--glint);
+}
+
+@keyframes shop-toast {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(var(--u) * 4));
+  }
+}
+
+.sf-ui .shop-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 10;
+  width: max-content;
+  max-width: 96%;
+  padding: calc(var(--u) * 3) calc(var(--u) * 6);
+  color: var(--kept-white);
+  background: var(--ink);
+  box-shadow:
+    inset 0 0 0 var(--u) var(--kept-white),
+    inset 0 0 0 calc(var(--u) * 2) var(--ink);
+  clip-path: var(--cut);
+  transform: translateX(-50%);
+  white-space: normal;
+  text-align: center;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.sf-ui .shop-toast.is-on {
+  visibility: visible;
+  animation: shop-toast 160ms ease-out;
+}
+
+/* ---- Text size variants (ui-spec 7.3) ----
+   Large: same layout, a wider inventory column, the offers scroll when needed.
+   Largest: the offers take the whole width in one column and scroll; T swaps them for the
+   inventory and stats side view. Flavor lines and the Glazier strip step aside for room. */
+.sf-ui[data-text-scale='1'] .shop-side {
+  width: calc(var(--u) * 212);
+}
+
+.sf-ui[data-text-scale='1'] .shop-side .fire-note,
+.sf-ui[data-text-scale='2'] .offer-flavor,
+.sf-ui[data-text-scale='1'] .offer-flavor,
+.sf-ui[data-text-scale='2'] .glazier-strip {
+  display: none;
+}
+
+.sf-ui[data-text-scale='2'] .shop-offers {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.sf-ui[data-text-scale='2'] .shop-top {
+  gap: var(--gap-m);
+}
+
+.sf-ui .shop-bar .btn {
+  white-space: nowrap;
+}
+
+.sf-ui[data-text-scale='2'] .shop-bar {
+  gap: var(--gap-s);
+}
+
+.sf-ui[data-text-scale='2'] .shop-bar .btn {
+  padding-left: calc(var(--u) * 2);
+  padding-right: calc(var(--u) * 2);
+}
+
+.sf-ui[data-text-scale='2'] .shop-bar .key-hint {
+  margin-left: var(--u);
+}
+
+.sf-ui[data-text-scale='2'] .slot-row {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+/* A-08: small text with no panel behind it gets a plate (worst case over a white arena: dust
+   5.1:1, bone 11:1, gold 9:1). Large headings keep 3:1 on the screen dim without one. */
+.sf-ui .shop-next,
+.sf-ui .shop-hp,
+.sf-ui .shop-glint,
+.sf-ui .glazier-line,
+.sf-ui .shop-main > .col-title,
+.sf-ui .info-line:not(:empty) {
+  background-color: var(--plate);
+  padding-left: calc(var(--u) * 2);
+  padding-right: calc(var(--u) * 2);
+}

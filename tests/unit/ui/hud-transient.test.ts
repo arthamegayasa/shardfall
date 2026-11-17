@@ -22,6 +22,18 @@ import {
   hintStep,
   moveKeysText,
   PULSE_BANNER_TICKS,
+  createWeaponStrip,
+  stripFired,
+  stripHit,
+  stripIdle,
+  stripLit,
+  stripNew,
+  stripReset,
+  stripSync,
+  stripWaveStart,
+  WEAPON_IDLE_TICKS,
+  WEAPON_NEW_TICKS,
+  WEAPON_PULSE_TICKS,
 } from '../../../src/ui/presenters/hud-transient.ts';
 import { createFakeWorld } from '../../fixtures/fake-world.ts';
 import { pl, pu } from './writable.ts';
@@ -172,5 +184,132 @@ describe('Pulse 1 control hint', () => {
     expect(moveKeysText(['W', 'A', 'S', 'D'])).toBe('WASD');
     expect(moveKeysText(['Up', 'Left', 'Down', 'Right'])).toBe('Up/Left/Down/Right');
     expect(moveKeysText(['W', '', 'S', 'D'])).toBe('WSD');
+  });
+});
+
+describe('HUD weapon strip (redesign 1.1 3.2)', () => {
+  const inv = (...slots: [number, number][]): { weaponIndex: number; tier: number }[] =>
+    slots.map(([weaponIndex, tier]) => ({ weaponIndex, tier }));
+  const never = (): boolean => false;
+
+  it('mirrors the owned slots and their tiers', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 2], [-1, 0], [5, 1]), never, 0);
+    expect(s.slots).toBe(3);
+    expect(Array.from(s.weaponIndex.subarray(0, 3))).toEqual([3, -1, 5]);
+    expect(Array.from(s.tier.subarray(0, 3))).toEqual([2, 0, 1]);
+  });
+
+  it('starts a pulse on a fire event, at most one per pulse length', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1], [3, 1]), never, 0);
+    expect(stripFired(s, 1, 100)).toBe(true);
+    expect(s.pulseSeq[1]).toBe(1);
+    expect(s.pulseSeq[0]).toBe(0);
+    expect(stripLit(s, 1, 100)).toBe(true);
+    expect(stripLit(s, 1, 100 + WEAPON_PULSE_TICKS)).toBe(false);
+    // A second shot inside the running pulse keeps the weapon awake but does not restart it.
+    expect(stripFired(s, 1, 100 + WEAPON_PULSE_TICKS - 1)).toBe(false);
+    expect(s.pulseSeq[1]).toBe(1);
+    expect(stripFired(s, 1, 100 + WEAPON_PULSE_TICKS)).toBe(true);
+    expect(s.pulseSeq[1]).toBe(2);
+  });
+
+  it('ignores fire events for slots it does not show', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1]), never, 0);
+    expect(stripFired(s, 4, 10)).toBe(false);
+    expect(stripFired(s, -1, 10)).toBe(false);
+    expect(stripFired(s, 99, 10)).toBe(false);
+  });
+
+  it('dims a weapon after 2.5 s without firing and wakes it on the next shot', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1]), never, 0);
+    stripWaveStart(s, 50);
+    expect(stripIdle(s, 0, 50 + WEAPON_IDLE_TICKS - 1)).toBe(false);
+    expect(stripIdle(s, 0, 50 + WEAPON_IDLE_TICKS)).toBe(true);
+    stripFired(s, 0, 50 + WEAPON_IDLE_TICKS + 5);
+    expect(stripIdle(s, 0, 50 + WEAPON_IDLE_TICKS + 5)).toBe(false);
+    // Above the slowest base cooldown (echo_bell 2.0 s): a weapon firing normally never dims
+    // between its own shots, only when nothing is in range (spec review 1.1).
+    expect(WEAPON_IDLE_TICKS).toBeGreaterThan(2.0 * TICK_RATE);
+  });
+
+  it('counts timing in ticks, so a paused game neither dims nor ends a pulse', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1]), never, 0);
+    stripWaveStart(s, 0);
+    stripFired(s, 0, 10);
+    // Any amount of wall time at the same tick changes nothing.
+    expect(stripLit(s, 0, 10)).toBe(true);
+    expect(stripIdle(s, 0, 10)).toBe(false);
+  });
+
+  it('wakes contact weapons (orbit shards have no fire event) on their own hits', () => {
+    const s = createWeaponStrip();
+    const orbit = (wi: number): boolean => wi === 7;
+    stripSync(s, inv([7, 1], [3, 1], [7, 2]), orbit, 0);
+    stripWaveStart(s, 0);
+    stripHit(s, 7, WEAPON_IDLE_TICKS + 1);
+    expect(stripIdle(s, 0, WEAPON_IDLE_TICKS + 1)).toBe(false);
+    expect(stripIdle(s, 2, WEAPON_IDLE_TICKS + 1)).toBe(false);
+    expect(stripIdle(s, 1, WEAPON_IDLE_TICKS + 1)).toBe(true);
+    expect(s.pulseSeq[0]).toBe(1);
+    // A hit from a weapon that fires normally is not a contact hit.
+    stripHit(s, 3, WEAPON_IDLE_TICKS + 2);
+    expect(s.pulseSeq[1]).toBe(0);
+  });
+
+  it('marks slots that changed since the last wave start as new for 2 s', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1], [-1, 0], [-1, 0]), never, 0);
+    // First wave of the run: the starting weapon is not new.
+    expect(stripWaveStart(s, 0)).toBe(0);
+    expect(stripNew(s, 0, 0)).toBe(false);
+    // Bought in the shop: a second copy in slot 1 and a new weapon in slot 2.
+    stripSync(s, inv([3, 1], [3, 1], [5, 1]), never, 900);
+    expect(stripWaveStart(s, 1000)).toBe(2);
+    expect(stripNew(s, 0, 1000)).toBe(false);
+    expect(stripNew(s, 1, 1000)).toBe(true);
+    expect(stripNew(s, 2, 1000 + WEAPON_NEW_TICKS - 1)).toBe(true);
+    expect(stripNew(s, 2, 1000 + WEAPON_NEW_TICKS)).toBe(false);
+    expect(WEAPON_NEW_TICKS).toBe(TICK_RATE * 2);
+    // Nothing bought before the next wave: nothing is new.
+    expect(stripWaveStart(s, 3000)).toBe(0);
+    expect(stripNew(s, 1, 3000)).toBe(false);
+  });
+
+  it('marks a combined slot (higher tier) but not the slot that was emptied', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1], [3, 1]), never, 0);
+    stripWaveStart(s, 0);
+    stripSync(s, inv([3, 2], [-1, 0]), never, 500);
+    expect(stripWaveStart(s, 600)).toBe(1);
+    expect(stripNew(s, 0, 600)).toBe(true);
+    expect(stripNew(s, 1, 600)).toBe(false);
+  });
+
+  it('forgets the previous run on reset: wave 1 of the next run shows nothing new', () => {
+    const s = createWeaponStrip();
+    stripSync(s, inv([3, 1]), never, 0);
+    stripWaveStart(s, 0);
+    stripFired(s, 0, 20000);
+    stripReset(s);
+    stripSync(s, inv([5, 1]), never, 0);
+    expect(stripWaveStart(s, 0)).toBe(0);
+    expect(stripNew(s, 0, 0)).toBe(false);
+    expect(stripLit(s, 0, 0)).toBe(false);
+    expect(s.pulseSeq[0]).toBe(0);
+  });
+
+  it('never allocates per frame: the same typed arrays are reused', () => {
+    const s = createWeaponStrip();
+    const arrays = [s.weaponIndex, s.lastFired, s.pulseSeq, s.newUntil];
+    stripSync(s, inv([3, 1], [4, 1]), never, 0);
+    stripWaveStart(s, 0);
+    stripFired(s, 1, 3);
+    expect([s.weaponIndex, s.lastFired, s.pulseSeq, s.newUntil]).toEqual(arrays);
+    expect(s.weaponIndex).toBe(arrays[0]);
   });
 });

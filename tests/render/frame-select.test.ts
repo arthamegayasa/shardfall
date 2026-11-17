@@ -100,6 +100,27 @@ describe('spriteQuad', () => {
     expect(q.top).toBe(5);
     expect(q.bottom).toBe(-4);
   });
+  it('scales by a whole number about the snapped rect centre (redesign 1.1, player shots)', () => {
+    // fx-shot-kept: frame 8 x 8, anchor (4, 7), trimmed 4 x 4 at ox 2, oy 2. Native: left -2..2, top 6..2.
+    spriteQuad(4, 7, { w: 4, h: 4, ox: 2, oy: 2 }, 1, q, 2);
+    expect(q).toEqual({ left: -4, right: 4, top: 8, bottom: 0 });
+    // Odd sizes keep whole px: 5 x 5 at ox 2, oy 2 -> native left -2..3, top 6..1, pivot (0, 3).
+    spriteQuad(4, 7, { w: 5, h: 5, ox: 2, oy: 2 }, 1, q, 2);
+    expect(q).toEqual({ left: -4, right: 6, top: 9, bottom: -1 });
+    expect(q.right - q.left).toBe(10);
+    expect(q.top - q.bottom).toBe(10);
+    // Flip mirrors the scaled quad around the feet.
+    spriteQuad(4, 7, { w: 5, h: 5, ox: 2, oy: 2 }, -1, q, 2);
+    expect(q).toEqual({ left: -6, right: 4, top: 9, bottom: -1 });
+  });
+  it('treats scale 1 and fractional or missing scales as native size', () => {
+    const a = { left: 0, right: 0, top: 0, bottom: 0 };
+    spriteQuad(12, 23, { w: 18, h: 21, ox: 3, oy: 3 }, 1, a, 1);
+    spriteQuad(12, 23, { w: 18, h: 21, ox: 3, oy: 3 }, 1, q);
+    expect(a).toEqual(q);
+    spriteQuad(12, 23, { w: 18, h: 21, ox: 3, oy: 3 }, 1, a, 0.4);
+    expect(a).toEqual(q);
+  });
 });
 
 describe('feetPixel', () => {

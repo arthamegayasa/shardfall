@@ -77,9 +77,12 @@ export function tagNameKey(tag: string): string {
   return `tag.${tag}.name`;
 }
 
-/** Two-letter tag abbreviation key (WR pattern tag.<id>.abbr). */
+/**
+ * Tag chip label key. Since 1.1 chips show the full tag name, never the two-letter code
+ * (docs/ui/redesign-1.1.md section 1); the tag.<id>.abbr strings stay in the table but are unused.
+ */
 export function tagAbbrKey(tag: string): string {
-  return `tag.${tag}.abbr`;
+  return tagNameKey(tag);
 }
 
 /** Roman tier label key, ui.tier.1 .. ui.tier.4. */

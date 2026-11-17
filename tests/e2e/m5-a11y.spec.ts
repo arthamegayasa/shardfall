@@ -282,7 +282,7 @@ test('A-09: with Master at 0 every informative sound has a visual sign', async (
       if (h === undefined) return -1;
       for (let t = 0; t < 4000; t++) {
         const txt = document.querySelector('.hud-banner .banner-main')?.textContent ?? '';
-        if (txt !== '' && !/^Pulse/.test(txt)) return t;
+        if (txt !== '' && !/^Wave/.test(txt)) return t;
         h.send({ type: 'debug.setHp', hp: h.getSnapshot().maxHp });
         h.step(1);
         h.step(0);

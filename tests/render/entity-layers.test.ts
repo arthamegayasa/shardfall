@@ -11,7 +11,9 @@ import {
   DAMAGE_RANK_SHIFT,
   EnemyRank,
   HitKind,
+  encodeSource,
   SimEventType,
+  SourceKind,
 } from '../../src/core/index.ts';
 import type { Settings } from '../../src/core/index.ts';
 import type { RenderFrame } from '../../src/core/dom.ts';
@@ -27,6 +29,7 @@ import {
   UNLIT_HIT_FLASH_ALPHA,
 } from '../../src/render/sprites/actor-flash.ts';
 import { DASH_AFTERIMAGES } from '../../src/render/vfx/effects.ts';
+import { PLAYER_SHOT_SCALE, SHOT_HALO_SCALE, SHOT_TAIL } from '../../src/render/vfx/weapon-fx.ts';
 import { linearRgb } from '../../src/render/vfx/telegraph-style.ts';
 import { createPreviewScene, eventsOf, playerOf, PREVIEW_DATA } from './fake-scene.ts';
 import type { PreviewScene } from './fake-scene.ts';
@@ -74,9 +77,10 @@ describe('entity layers', () => {
     expect(count(actors)).toBe(1 + 13 + w.pickups.highWater);
     // L1 decals: one blob shadow per actor except Glint, the player foot ring, the Warden aura.
     expect(count(decals)).toBe(1 + 13 + 1 + 1);
-    // L3: 10 shots + 7 fast shots x 2 tail dots + 2 magnetized Glint x 2 tail dots + 2 Burn flames
+    // L3: 10 shots x (halo + body) + 9 moving shots (7 fast + 2 orbiting) x 3 tail dots
+    // + 2 magnetized Glint x 2 tail dots + 2 Burn flames
     // + damage glyphs (6, 14, 8 -> 1 + 2 + 1) + 3 sparks per projectile hit.
-    expect(count(effects)).toBe(10 + 14 + 4 + 2 + 4 + 9);
+    expect(count(effects)).toBe(20 + 27 + 4 + 2 + 4 + 9);
     // Areas: 4 telegraphs + 3 spawn rings (L4), trail + Rite zone (L3).
     expect(count(danger)).toBe(4 + 3);
     expect(count(zones)).toBe(2);
@@ -415,5 +419,123 @@ describe('entity layers', () => {
       expect(Number.isInteger(off[i * 4 + 3])).toBe(true);
       expect(rects[i * 4 + 2]).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('player weapon readability (redesign 1.1 section 4)', () => {
+  /** Effects instances of one draw: |iParams.x| scale, flash rgb and amount, alpha. */
+  const instances = (): { scale: number; rgb: number[]; tint: number; alpha: number }[] => {
+    const params = attr(effects, 'iParams');
+    const flash = attr(effects, 'iFlash');
+    const out: { scale: number; rgb: number[]; tint: number; alpha: number }[] = [];
+    for (let i = 0; i < count(effects); i++)
+      out.push({
+        scale: Math.abs(params[i * 4] ?? 0),
+        rgb: [flash[i * 4] ?? 0, flash[i * 4 + 1] ?? 0, flash[i * 4 + 2] ?? 0],
+        tint: flash[i * 4 + 3] ?? 0,
+        alpha: params[i * 4 + 1] ?? 0,
+      });
+    return out;
+  };
+  const only = (w: number): void => {
+    // Keep one moving shot of weapon w in slot 0; drop the rest of the scene's shots.
+    const ps = scene.world.playerShots as unknown as {
+      alive: Uint8Array;
+      sourceRef: Int32Array;
+      highWater: number;
+    };
+    ps.alive.fill(0);
+    ps.alive[0] = 1;
+    ps.sourceRef[0] = encodeSource(SourceKind.Weapon, w);
+    ps.highWater = 1;
+  };
+  const hue = (rgb: number[]): string => rgb.map((c) => (c > 0.5 ? 'h' : 'l')).join('');
+
+  it('draws every player shot at the larger whole-number scale with a halo behind it', () => {
+    expect(PLAYER_SHOT_SCALE).toBeGreaterThanOrEqual(1.5);
+    expect(Number.isInteger(PLAYER_SHOT_SCALE)).toBe(true);
+    layers.update(frame(scene, 1));
+    const scales = instances().map((i) => i.scale);
+    // 10 bodies and 10 halos; native-size effects (sparks, glyphs, Burn) stay at 1.
+    expect(scales.filter((s) => s === PLAYER_SHOT_SCALE)).toHaveLength(10 + 9 * 2);
+    expect(scales.filter((s) => s === SHOT_HALO_SCALE)).toHaveLength(10);
+  });
+
+  it('colours each weapon by its tag so two weapons read apart (flame amber vs shard cyan)', () => {
+    only(0); // lantern_bolt: flame
+    layers.update(frame(scene, 1, NO_EVENTS));
+    const bolt = instances();
+    only(1); // splinter_shot: shard
+    layers.update(frame(scene, 1.02, NO_EVENTS));
+    const splinter = instances();
+    // One shot: tail dots (far first), halo, body, after the Glint tails and Burn flames.
+    const haloAt = (xs: typeof bolt): number => xs.findIndex((x) => x.scale === SHOT_HALO_SCALE);
+    const body = (xs: typeof bolt) => xs[haloAt(xs) + 1];
+    const halo = (xs: typeof bolt) => xs[haloAt(xs)];
+    const tailOf = (xs: typeof bolt) => xs.slice(haloAt(xs) - SHOT_TAIL.length, haloAt(xs));
+    expect(tailOf(bolt).map((x) => x.scale)).toEqual(SHOT_TAIL.map((d) => d.scale).reverse());
+    expect(body(bolt)?.scale).toBe(PLAYER_SHOT_SCALE);
+    expect(halo(bolt)?.scale).toBe(SHOT_HALO_SCALE);
+    const gold = linearRgb(art.palette, 'kept-gold');
+    const cyan = linearRgb(art.palette, 'kept-cyan');
+    expect(hue(body(bolt)?.rgb ?? [])).toBe(hue(gold));
+    expect(hue(body(splinter)?.rgb ?? [])).toBe(hue(cyan));
+    expect(hue(body(bolt)?.rgb ?? [])).not.toBe(hue(body(splinter)?.rgb ?? []));
+    // The body keeps its sprite (partial tint) but is pushed past 1.0 so it blooms; the halo is all light.
+    expect(body(bolt)?.tint).toBeGreaterThan(0);
+    expect(body(bolt)?.tint).toBeLessThan(1);
+    expect(Math.max(...(body(bolt)?.rgb ?? []))).toBeGreaterThan(1);
+    expect(halo(bolt)?.tint).toBe(1);
+  });
+
+  it('flashes the hero on WeaponFired in the weapon light, and not with reduce effects', () => {
+    only(1);
+    layers.update(frame(scene, 2, NO_EVENTS));
+    const quiet = count(effects);
+    const fired = eventsOf([[SimEventType.WeaponFired, 0, 0, 1, 1, 0]]);
+    layers.update(frame(scene, 2.02, fired));
+    expect(count(effects)).toBe(quiet + 1);
+    layers.update(frame(scene, 2.2, NO_EVENTS));
+    expect(count(effects), 'flash gone after its life').toBe(quiet);
+    layers.applySettings(settings(true, true));
+    layers.update(frame(scene, 2.25, NO_EVENTS));
+    const reducedQuiet = count(effects);
+    layers.update(frame(scene, 2.3, fired));
+    // Reduce effects: no flicker, but the shot keeps its size, halo, and tail.
+    expect(count(effects)).toBe(reducedQuiet);
+    expect(instances().filter((i) => i.scale === SHOT_HALO_SCALE)).toHaveLength(1);
+  });
+
+  it('shows the arc sweep, chain jumps, and ring pulses on the floor (fx areas)', () => {
+    const fxAreas = (layers.sceneObjects as Mesh[])[2];
+    layers.update(frame(scene, 3, NO_EVENTS));
+    const base = count(fxAreas);
+    const melee =
+      (HitKind.Melee << DAMAGE_HIT_KIND_SHIFT) | (EnemyRank.Normal << DAMAGE_RANK_SHIFT);
+    const chainB = HitKind.Chain << DAMAGE_HIT_KIND_SHIFT;
+    const arcSrc = encodeSource(SourceKind.Weapon, 2);
+    const chainSrc = encodeSource(SourceKind.Weapon, 4);
+    layers.update(
+      frame(
+        scene,
+        3.02,
+        eventsOf([
+          [SimEventType.EnemyDamaged, 1.5, 0.5, 10, melee, arcSrc],
+          [SimEventType.WeaponFired, 0, 0, 2, 1, 0],
+          [SimEventType.EnemyDamaged, 3, 0, 8, chainB, chainSrc],
+          [SimEventType.EnemyDamaged, 4, 1, 8, chainB, chainSrc],
+          [SimEventType.EnemyDamaged, 5, 0, 8, chainB, chainSrc],
+          [SimEventType.WeaponFired, 0, 0, 4, 1, 1],
+        ]),
+      ),
+    );
+    // One cone + three chain lines (hero to first target, then two jumps).
+    expect(count(fxAreas)).toBe(base + 1 + 3);
+    const mode = attr(fxAreas, 'aMode');
+    const shapes: number[] = [];
+    for (let i = base; i < count(fxAreas); i++) shapes.push(mode[i * 4] ?? -1);
+    expect(shapes).toEqual([3, 2, 2, 2]);
+    layers.update(frame(scene, 3.5, NO_EVENTS));
+    expect(count(fxAreas)).toBe(base);
   });
 });

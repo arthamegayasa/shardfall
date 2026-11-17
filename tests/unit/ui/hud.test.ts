@@ -28,6 +28,16 @@ describe('HUD model', () => {
     expect(m.pulseNumber).toBe(7);
   });
 
+  it('carries the run total wave count for "Wave 3 of 15" (redesign 1.1 3.2)', () => {
+    const w = createFakeWorld();
+    pu(w).index = 2;
+    pu(w).count = 15;
+    const m = createHudModel();
+    fillHudModel(w, false, m);
+    expect(m.pulseNumber).toBe(3);
+    expect(m.pulseCount).toBe(15);
+  });
+
   it('shows the timer and highlights only the last seconds', () => {
     const w = createFakeWorld();
     const m = createHudModel();

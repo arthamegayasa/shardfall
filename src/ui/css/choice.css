@@ -1,0 +1,131 @@
+/* Level up (was Temper) and Elite reward choice (redesign-1.1 3.3): three glass panes side by side
+   across the width. Upgrade cyan for level up, relic green for the reward (pane kinds from
+   components.css); rarity shows only as pips and the inner frame line, never the strip colour. */
+
+.sf-ui .choice-safe {
+  justify-content: center;
+  gap: var(--gap-l);
+}
+
+.sf-ui .choice-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-s);
+  text-align: center;
+}
+
+.sf-ui .choice-title {
+  color: var(--kept-white);
+}
+
+/* A-08: small text over the arena dim gets a plate. */
+.sf-ui .choice-sub {
+  color: var(--bone);
+  background-color: var(--plate);
+  padding: 0 calc(var(--u) * 2);
+}
+
+.sf-ui .choice-waiting {
+  color: var(--kept-cyan);
+}
+
+.sf-ui .choice-row {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+  gap: var(--gap-l);
+  align-items: stretch;
+}
+
+.sf-ui .choice-card {
+  min-height: calc(var(--u) * 150);
+  cursor: pointer;
+}
+
+.sf-ui .choice-card.rarity-0 {
+  --edge: var(--shadow);
+}
+.sf-ui .choice-card.rarity-1 {
+  --edge: var(--rarity-1);
+}
+.sf-ui .choice-card.rarity-2 {
+  --edge: var(--rarity-2);
+}
+.sf-ui .choice-card.rarity-3 {
+  --edge: var(--rarity-3);
+}
+
+/* Focus after the rarity lines (same specificity): white lead, gold step, a 2 unit lift. */
+.sf-ui .choice-card.is-focus {
+  --lead: var(--kept-white);
+  --edge: var(--kept-gold);
+  transform: translateY(calc(var(--u) * -2));
+}
+
+.sf-ui.reduce-effects .choice-card.is-focus {
+  transform: none;
+}
+
+.sf-ui .choice-card .pane-badge {
+  min-width: calc(var(--f) * 6 + var(--u) * 4);
+  text-align: center;
+}
+
+.sf-ui .choice-card .pane-body {
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--gap-m);
+  padding: calc(var(--u) * 6) var(--gap-m);
+  text-align: center;
+}
+
+.sf-ui .choice-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-s);
+}
+
+.sf-ui .choice-name {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+  overflow-wrap: anywhere;
+}
+
+.sf-ui .choice-effect {
+  white-space: pre-line;
+}
+
+/* Level up: the effect is the big plain line, in upgrade glass. */
+.sf-ui .screen-temper .choice-effect {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-cyan);
+}
+
+.sf-ui .choice-change {
+  margin-top: auto;
+}
+
+.sf-ui .choice-card .tag-chips {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sf-ui .choice-flavor {
+  margin-top: auto;
+}
+
+/* Large text: the title-size lines drop to body size so three panes still fit side by side. */
+.sf-ui[data-text-scale='2'] .screen-temper .choice-effect,
+.sf-ui[data-text-scale='2'] .choice-name {
+  font-size: calc(var(--f) * 9);
+  line-height: calc(var(--f) * 9);
+}
+
+.sf-ui[data-text-scale='2'] .choice-card .pane-body {
+  gap: var(--gap-s);
+  padding: var(--gap-m) var(--gap-s);
+}

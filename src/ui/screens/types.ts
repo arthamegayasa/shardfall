@@ -45,6 +45,13 @@ export interface UiContext {
   setConfirmOpen(open: boolean): void;
   /** What happened between the last Pulse and this Glazier visit (picks the Glazier line). */
   visit(): VisitFlags;
+  /**
+   * Open How to play (redesign-1.1 3.4). `then`: where its "Got it" continues (the first-run
+   * auto show goes on to class select); omitted, it returns where it was opened.
+   */
+  openHowTo(then?: AppScreen): void;
+  /** Read by How to play on enter: the screen "Got it" leads to. */
+  howToNext(): AppScreen;
 }
 
 export interface VisitFlags {

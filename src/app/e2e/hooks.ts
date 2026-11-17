@@ -170,6 +170,9 @@ export function installE2eHooks(ctx: E2eAppContext): void {
       case 'credits':
         ctx.ui.setScreen('credits');
         return;
+      case 'how-to':
+        ctx.ui.setScreen('howTo');
+        return;
     }
   };
 

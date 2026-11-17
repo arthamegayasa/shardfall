@@ -1,8 +1,9 @@
-// S08 Run end (ui-spec 5): Kept Lost or Light Kept, "Felled by", short stats, final build, then
-// Try Again (initial focus), Choose Kept, The Keeping (tiers B and C), Title. Input lock 500 ms so a key held at death never
-// starts a new run. Back from The Keeping: no lock and the last focused button again (BUG-009).
-// A build list taller than its panel scrolls (wheel, or arrows while the list has focus) and shows
-// a scroll mark (CD M3 10).
+// S08 Run end (ui-spec 5, redesign-1.1 3.4): verdict at display size (Hero lost / Victory), the
+// cause line, run stats as a table, the final build, then Try again (the one primary, initial
+// focus), Choose hero, Unlocks (tiers B and C), Title. Panels are sized to their content. Input
+// lock 500 ms so a key held at death never starts a new run. Back from Unlocks: no lock and the
+// last focused button again (BUG-009). A build list taller than its panel scrolls (wheel, or
+// arrows while the list has focus) and shows a scroll mark (CD M3 10).
 
 import { unlockCost } from '../../content/index.ts';
 import type { WorldView } from '../../core/index.ts';
@@ -13,7 +14,7 @@ import type { ScrollMetrics } from '../scroll.ts';
 import { formatInt } from '../format.ts';
 import { buildRunEndModel } from '../presenters/run-end.ts';
 import type { RunEndModel } from '../presenters/run-end.ts';
-import { buildRow, panel, titleBlock } from './components.ts';
+import { buildRow, panel } from './components.ts';
 import { RUN_END_LOCK_MS } from './types.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
@@ -56,7 +57,11 @@ export function createRunEndScreen(ctx: UiContext): Screen {
   };
 
   const statRow = (labelKey: string, value: string): HTMLElement =>
-    put(h(doc, 'div', 'stat-row'), h(doc, 'span', '', t(labelKey)), h(doc, 'span', 'num', value));
+    put(
+      h(doc, 'div', 'stat-row end-row'),
+      h(doc, 'span', 'stat-name', t(labelKey)),
+      h(doc, 'span', 'num', value),
+    );
 
   const build = (view: WorldView): void => {
     const m = buildRunEndModel(view, deps.data);
@@ -65,34 +70,44 @@ export function createRunEndScreen(ctx: UiContext): Screen {
     focus.reset();
     el.classList.toggle('is-won', m.won);
     el.dataset['variant'] = m.won ? 'run-won' : 'run-lost';
-    const title = m.won
-      ? titleBlock(ctx, t('ui.end.won'), t('ui.end.won_sub'))
-      : titleBlock(ctx, t('ui.end.lost'), t('ui.end.lost_sub'));
-    if (m.killerKey !== null) {
-      title.appendChild(h(doc, 'p', 'felled-by', t('ui.end.felled_by', { name: t(m.killerKey) })));
-    }
+    // Verdict, then the cause: who felled the hero (or the flavor line), or the victory line.
+    const title = put(
+      h(doc, 'div', 'end-head'),
+      h(doc, 'h1', 'heading t-display end-verdict', t(m.won ? 'ui.end.won' : 'ui.end.lost')),
+    );
+    if (m.won) title.appendChild(h(doc, 'p', 'end-cause', t('ui.end.won_sub')));
+    else if (m.killerKey !== null) {
+      title.appendChild(
+        h(doc, 'p', 'end-cause felled-by', t('ui.end.felled_by', { name: t(m.killerKey) })),
+      );
+    } else title.appendChild(h(doc, 'p', 'end-cause', t('ui.end.lost_sub')));
     const stats = panel(ctx, 'end-stats', true);
-    put(
-      stats,
-      h(
-        doc,
-        'p',
-        'end-pulse',
-        t('ui.end.pulse_reached', { n: m.pulseReached, total: m.pulseCount }),
-      ),
+    const table = put(
+      h(doc, 'div', 'end-table'),
       statRow('ui.end.time', m.timeText),
       statRow('ui.end.unlit', formatInt(m.kills)),
       statRow('ui.end.glint', formatInt(m.glintEarned)),
     );
+    put(
+      stats,
+      h(doc, 'h3', 'col-title', t('ui.end.stats_title')),
+      h(
+        doc,
+        'p',
+        'end-pulse t-title',
+        t('ui.end.pulse_reached', { n: m.pulseReached, total: m.pulseCount }),
+      ),
+      table,
+    );
     const hasSilt = deps.data.meta.contentTier !== 'A';
     if (hasSilt) {
-      stats.appendChild(statRow('ui.end.silt', formatInt(m.silt)));
-      // Balance after this run and a pointer to The Keeping when an unlock is now affordable (S08).
+      table.appendChild(statRow('ui.end.silt', formatInt(m.silt)));
+      // Balance after this run and a pointer to Unlocks when an unlock is now affordable (S08).
       const meta = deps.meta();
-      // Labelled balance (CD M3 10): "Silt Held  161", not a bare "161 Silt".
+      // Labelled balance (CD M3 10): "Silt held  161", not a bare "161 Silt".
       const held = statRow('ui.end.silt_held', formatInt(meta.silt));
       held.classList.add('end-silt-total');
-      stats.appendChild(held);
+      table.appendChild(held);
       const canBuy = deps.data.metaUnlocks.some(
         (u) => !meta.unlocked.includes(u.id) && meta.silt >= unlockCost(deps.data, u),
       );
@@ -104,7 +119,8 @@ export function createRunEndScreen(ctx: UiContext): Screen {
     scroll.dataset['ui'] = 'end-build';
     scroll.setAttribute('role', 'region');
     scroll.setAttribute('aria-label', t('ui.end.build'));
-    scroll.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.weapons')));
+    scroll.appendChild(h(doc, 'h3', 'col-title', t('ui.end.build')));
+    scroll.appendChild(h(doc, 'p', 'end-group-label', t('ui.shop.weapons')));
     const wl = h(doc, 'div', 'build-list');
     for (const w of m.build.weapons) {
       wl.appendChild(
@@ -119,8 +135,9 @@ export function createRunEndScreen(ctx: UiContext): Screen {
       );
     }
     scroll.appendChild(wl);
-    scroll.appendChild(h(doc, 'h3', 'col-title', t('ui.shop.mementos')));
+    scroll.appendChild(h(doc, 'p', 'end-group-label', t('ui.shop.mementos')));
     const ml = h(doc, 'div', 'build-list');
+    if (m.build.mementos.length === 0) ml.appendChild(h(doc, 'p', 'dim', t('ui.end.no_relics')));
     for (const mm of m.build.mementos) {
       ml.appendChild(
         buildRow(

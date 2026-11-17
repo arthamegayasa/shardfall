@@ -1,0 +1,556 @@
+/* HUD (ui-spec S03, redesign 1.1 3.2): HP and XP bars, wave and timer, foe bar, banners, weapon
+   strip, control hint chips, Skill slot, resume countdown. */
+
+/* HUD (ui-spec S03): edges only, 8 unit margins, never in the centre. */
+.sf-ui .screen-hud {
+  pointer-events: none;
+  display: block;
+}
+
+.sf-ui .hud-tl {
+  position: absolute;
+  left: calc(var(--u) * 8);
+  top: calc(var(--u) * 8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-s);
+  /* Left label column shared by the heart and "Lv 3", so both bars start on one line. */
+  --hud-label-w: calc(var(--f) * 27 + var(--u) * 4);
+}
+
+.sf-ui .hud-hp,
+.sf-ui .hud-lv {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-s);
+}
+
+.sf-ui .hud-tc {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * 8);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--u);
+}
+
+.sf-ui .hud-tr {
+  position: absolute;
+  right: calc(var(--u) * 8);
+  top: calc(var(--u) * 8);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--glint);
+}
+
+.sf-ui .hud-tr .glint-icon {
+  width: calc(var(--u) * 11);
+  height: calc(var(--u) * 11);
+}
+
+.sf-ui .hud-bc {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * 8);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.sf-ui .bar-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+
+.sf-ui .bar-hp {
+  width: calc(var(--u) * 160);
+  height: calc(var(--f) * 9 + var(--u) * 4);
+}
+
+/* Heart: a 7 x 6 pixel heart on a plate, in the label column. */
+.sf-ui .hp-plate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--hud-label-w);
+  height: calc(var(--f) * 9 + var(--u) * 4);
+  background-color: var(--plate);
+  clip-path: var(--cut);
+}
+
+.sf-ui .hp-heart {
+  width: calc(var(--u) * 14);
+  height: calc(var(--u) * 12);
+  background: var(--danger-red);
+  clip-path: polygon(
+    14.2857% 0,
+    42.8571% 0,
+    42.8571% 16.6667%,
+    57.1429% 16.6667%,
+    57.1429% 0,
+    85.7143% 0,
+    85.7143% 16.6667%,
+    100% 16.6667%,
+    100% 50%,
+    85.7143% 50%,
+    85.7143% 66.6667%,
+    71.4286% 66.6667%,
+    71.4286% 83.3333%,
+    57.1429% 83.3333%,
+    57.1429% 100%,
+    42.8571% 100%,
+    42.8571% 83.3333%,
+    28.5714% 83.3333%,
+    28.5714% 66.6667%,
+    14.2857% 66.6667%,
+    14.2857% 50%,
+    0 50%,
+    0 16.6667%,
+    14.2857% 16.6667%
+  );
+}
+
+.sf-ui .bar-hp .bar-fill {
+  background: linear-gradient(var(--kept-blue) 60%, var(--kept-blue-deep) 60%);
+}
+
+.sf-ui .bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kept-white);
+}
+
+/* XP: "Lv 3" in the label column, then a bar as wide as the HP bar. Upgrade glass (cyan): gold
+   is kept for money (redesign 1.1 2). */
+.sf-ui .lv-text {
+  box-sizing: border-box;
+  min-width: var(--hud-label-w);
+  padding-top: var(--u);
+  padding-bottom: var(--u);
+  text-align: center;
+  color: var(--cat-upgrade);
+}
+
+.sf-ui .bar-xp {
+  --edge: color-mix(in srgb, var(--cat-upgrade) 55%, var(--frame));
+  width: calc(var(--u) * 160);
+  height: calc(var(--u) * 8);
+}
+
+.sf-ui .bar-xp .bar-fill {
+  background: linear-gradient(
+    var(--cat-upgrade) 60%,
+    color-mix(in srgb, var(--cat-upgrade) 60%, var(--ink)) 60%
+  );
+}
+
+/* Low HP: danger-red frame plus a crack mark (shape, not only colour). */
+.sf-ui .screen-hud.is-low .bar-hp {
+  --edge: var(--danger-red);
+  animation: sf-pulse 600ms ease-in-out infinite alternate;
+}
+
+.sf-ui .hp-crack {
+  display: none;
+}
+
+.sf-ui .screen-hud.is-low .hp-crack {
+  display: block;
+  position: absolute;
+  right: calc(var(--u) * 4);
+  top: 0;
+  bottom: 0;
+  width: calc(var(--u) * 2);
+  background: var(--danger-red);
+  transform: skewX(-20deg);
+}
+
+.sf-ui .pulse-label {
+  color: var(--bone);
+  padding-top: var(--u);
+  padding-bottom: var(--u);
+}
+
+.sf-ui .timer {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+}
+
+.sf-ui .screen-hud.is-final .timer {
+  color: var(--kept-gold);
+  animation: sf-tick 1s steps(1, end) infinite;
+}
+
+.sf-ui .foe {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--u);
+}
+
+.sf-ui .screen-hud.mode-boss .timer,
+.sf-ui .screen-hud.mode-held .timer {
+  display: none;
+}
+
+.sf-ui .screen-hud.mode-boss .foe,
+.sf-ui .screen-hud.mode-held .foe {
+  display: flex;
+}
+
+.sf-ui .foe-head {
+  display: flex;
+  gap: calc(var(--u) * 4);
+}
+
+.sf-ui .foe-label {
+  color: var(--kept-gold);
+}
+
+.sf-ui .foe-name {
+  color: var(--bone);
+}
+
+.sf-ui .foe-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+}
+
+.sf-ui .bar-foe {
+  width: calc(var(--u) * 180);
+  height: calc(var(--u) * 8);
+  --edge: var(--danger-violet);
+}
+
+.sf-ui .bar-foe .bar-fill {
+  background: var(--danger-violet);
+  transition: transform 600ms ease-out;
+}
+
+.sf-ui .screen-hud.is-pending .bar-foe {
+  --edge: var(--frame);
+}
+
+.sf-ui .foe-enraged {
+  display: none;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 6);
+  background: var(--danger-red);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.sf-ui .screen-hud.is-enraged .foe-enraged {
+  display: block;
+}
+
+/* Banner under the timer slot: Warden or boss arrival, "Pulse {n} Held", "Pulse {n}". */
+.sf-ui .hud-banner {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--u) * 3) calc(var(--u) * 10);
+  margin-top: calc(var(--u) * 4);
+  animation: sf-enter 160ms ease-out backwards;
+}
+
+.sf-ui .hud-banner.is-pulse,
+.sf-ui .hud-banner.is-foe {
+  display: flex;
+}
+
+.sf-ui .hud-banner.is-foe {
+  --edge: var(--danger-violet);
+}
+
+.sf-ui .banner-main {
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+}
+
+.sf-ui .banner-sub {
+  color: var(--dust);
+}
+
+.sf-ui .banner-sub:empty {
+  display: none;
+}
+
+/* Control hint in wave 1 (ui-spec S03): separate chips above the Skill slot, fades away. */
+.sf-ui .hud-hint {
+  display: flex;
+  gap: var(--gap-m);
+  color: var(--bone);
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.sf-ui .screen-hud.has-hint .hud-hint {
+  opacity: 1;
+}
+
+.sf-ui .hint-item {
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+}
+
+/* Weapon strip (redesign 1.1 3.2): bottom left, one weapon-glass icon per owned slot with its
+   tier numeral. Pulses on each shot, dims after a second without one, glows "New" once. */
+.sf-ui .hud-bl {
+  position: absolute;
+  left: calc(var(--u) * 8);
+  bottom: calc(var(--u) * 8);
+}
+
+.sf-ui .hud-weapons {
+  display: flex;
+  align-items: flex-end;
+  /* Grows with the text size so neighbouring "New" chips never touch. */
+  gap: calc(var(--u) * 2 + var(--f) * 3);
+}
+
+.sf-ui .hud-weapon {
+  position: relative;
+  display: flex;
+}
+
+.sf-ui .hud-weapon-art {
+  display: flex;
+  transform-origin: center;
+  transition: filter 250ms ease-out;
+}
+
+.sf-ui .hud-weapon .icon {
+  --edge: var(--cat-weapon);
+}
+
+.sf-ui .hud-weapon.fire-a .hud-weapon-art {
+  animation: sf-weapon-fire-a 120ms ease-out;
+}
+
+.sf-ui .hud-weapon.fire-b .hud-weapon-art {
+  animation: sf-weapon-fire-b 120ms ease-out;
+}
+
+/* Same frames under two names: the HUD switches names to restart the pulse on every shot. */
+@keyframes sf-weapon-fire-a {
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes sf-weapon-fire-b {
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* Idle (no enemy in range): dimmed, so the player learns weapons need a target nearby. */
+.sf-ui .hud-weapon.is-idle .hud-weapon-art {
+  filter: brightness(0.55) saturate(0.6);
+}
+
+.sf-ui .hud-weapon-tier {
+  position: absolute;
+  right: calc(var(--u) * -2);
+  bottom: calc(var(--u) * -2);
+  padding: 0 var(--u);
+  color: var(--bone);
+  background-color: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--cat-weapon);
+}
+
+.sf-ui .hud-weapon-tier:empty {
+  display: none;
+}
+
+.sf-ui .hud-weapon-new {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--u) * 2);
+  transform: translateX(-50%);
+  padding: var(--u) calc(var(--u) * 2);
+  white-space: nowrap;
+  color: var(--cat-upgrade);
+  background-color: var(--plate);
+  box-shadow: inset 0 0 0 var(--u) var(--cat-upgrade);
+  clip-path: var(--cut);
+}
+
+.sf-ui .hud-weapon.is-new .hud-weapon-new {
+  display: block;
+}
+
+.sf-ui .hud-weapon.is-new .icon {
+  --edge: var(--kept-white);
+}
+
+.sf-ui .hud-weapon.is-new {
+  box-shadow:
+    0 0 0 var(--u) var(--cat-upgrade),
+    0 0 0 calc(var(--u) * 2) rgb(79 227 240 / 30%);
+  animation: sf-weapon-new 700ms ease-out 2;
+}
+
+@keyframes sf-weapon-new {
+  from {
+    box-shadow:
+      0 0 0 var(--u) var(--cat-upgrade),
+      0 0 0 calc(var(--u) * 8) rgb(79 227 240 / 70%);
+  }
+}
+
+/* Reduce effects or the system reduced-motion preference: no scale pulse, a brief brightness
+   step instead (instant, it never moves). */
+.sf-ui.reduce-effects .hud-weapon.is-lit .hud-weapon-art {
+  filter: brightness(1.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-ui .hud-weapon.fire-a .hud-weapon-art,
+  .sf-ui .hud-weapon.fire-b .hud-weapon-art,
+  .sf-ui .hud-weapon.is-new {
+    animation: none;
+  }
+
+  .sf-ui .hud-weapon-art {
+    transition: none;
+  }
+
+  .sf-ui .hud-weapon.is-lit .hud-weapon-art {
+    filter: brightness(1.6);
+  }
+}
+
+.sf-ui .rite {
+  position: relative;
+  width: calc(var(--u) * 38);
+  height: calc(var(--u) * 38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sf-ui .rite-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-ui .rite-icon .icon {
+  border: none;
+  background: none;
+  clip-path: none;
+}
+
+.sf-ui .rite-fill {
+  position: absolute;
+  inset: 0;
+  background: rgb(20 18 28 / 72%);
+  transform-origin: center top;
+}
+
+.sf-ui .rite-secs {
+  position: relative;
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-white);
+}
+
+.sf-ui .rite-charges {
+  position: absolute;
+  right: calc(var(--u) * 2);
+  top: calc(var(--u) * 1);
+  color: var(--kept-gold);
+  font-size: calc(var(--fs) * 9);
+  line-height: calc(var(--fs) * 9);
+}
+
+.sf-ui .rite.is-ready {
+  --edge: var(--kept-gold);
+  box-shadow: inset 0 0 0 var(--u) var(--kept-gold);
+  animation: sf-ready 250ms ease-out;
+}
+
+.sf-ui .rite.is-denied {
+  animation: sf-shake 250ms steps(4, end);
+}
+
+.sf-ui .rite-key {
+  color: var(--bone);
+  padding-top: var(--u);
+  padding-bottom: var(--u);
+}
+
+/* Resume countdown in the timer slot (ui-spec S06, LP M1-09a). */
+.sf-ui .resume-countdown {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * 8 + var(--fs) * 9);
+  transform: translateX(-50%);
+  font-size: calc(var(--f) * 18);
+  line-height: calc(var(--f) * 18);
+  color: var(--kept-gold);
+  pointer-events: none;
+}
+
+.sf-ui.is-counting .resume-countdown {
+  display: block;
+}
+
+.sf-ui.is-counting .screen-hud .timer,
+.sf-ui.is-counting .screen-hud .foe {
+  visibility: hidden;
+}
+
+/* A-08: small text with no panel behind it gets a plate (worst case over a white arena: dust
+   5.1:1, bone 11:1, gold 9:1). Large headings keep 3:1 on the screen dim without one. */
+.sf-ui .pulse-label,
+.sf-ui .lv-text,
+.sf-ui .timer,
+.sf-ui .hud-tr,
+.sf-ui .rite-key,
+.sf-ui .foe-head,
+.sf-ui .resume-countdown {
+  background-color: var(--plate);
+  padding-left: calc(var(--u) * 2);
+  padding-right: calc(var(--u) * 2);
+}
+
+/* A-09: visual twin of the level-up cue (ui-spec S03, the XP row blinks once; cyan in 1.1). */
+.sf-ui .screen-hud.is-level-up .lv-text {
+  background-color: var(--cat-upgrade);
+  color: var(--ink);
+}
+
+.sf-ui .screen-hud.is-level-up .bar-xp {
+  --edge: var(--kept-white);
+}
+
+/* A-09: visual twin of the hurt cue: the lost part of the HP bar shows white (ui-spec S03 chip). */
+.sf-ui .screen-hud.is-hit .bar-hp {
+  --edge: var(--kept-white);
+  background-color: rgb(242 251 255 / 70%);
+}

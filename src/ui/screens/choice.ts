@@ -1,19 +1,19 @@
-// S04 Temper (level-up) and S04b Warden reward (ui-spec 5). Three row cards, keys 1..3, input lock
+// S04 Level up (was Temper) and S04b Elite reward (ui-spec 5, redesign-1.1 3.3). Three glass panes
+// side by side across the width: upgrade cyan for level up, relic green for the reward. Keys 1..3
+// pick, Left / Right follow the visual order and Up / Down step through the same row. Input lock
 // 300 ms. Esc opens pause (the pick is mandatory). DOM rebuilds only when the view revision changes.
 
 import type { ScreenId } from '../../core/dom.ts';
 import { SimEventType } from '../../core/index.ts';
 import type { WorldView } from '../../core/index.ts';
-import { h, put } from '../dom.ts';
+import { button, h, put } from '../dom.ts';
+import { menuIntent } from '../menu-keys.ts';
 import { buildLevelUpModel, buildRewardModel } from '../presenters/choices.ts';
 import type { ChoiceCard } from '../presenters/choices.ts';
-import { rowCard, titleBlock } from './components.ts';
+import { iconBox, pane, rarityPips, tagChips } from './components.ts';
 import { CHOICE_LOCK_MS } from './types.ts';
 import type { Screen, UiContext } from './types.ts';
 import { Cue } from '../cues.ts';
-
-/** Queue pips shown above "1 of 12"; longer queues show the counter text only. */
-const QUEUE_PIP_MAX = 8;
 
 export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): Screen {
   const { doc, t, deps } = ctx;
@@ -39,81 +39,98 @@ export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): 
     else deps.commands.send({ type: 'reward.pick', choice });
   };
 
+  /** One choice as a focusable glass pane: hotkey badge on the strip, big icon, name, effect. */
+  const card = (c: ChoiceCard): HTMLButtonElement => {
+    const upgrade = mode === 'levelUp';
+    const root = button(
+      doc,
+      `${upgrade ? 'temper' : 'reward'}-card-${String(c.choice + 1)}`,
+      '',
+      `choice-card rarity-${String(c.rarityOrder)} reveal`,
+    );
+    root.style.setProperty('--i', String(c.choice));
+    const p = pane(
+      doc,
+      upgrade ? 'upgrade' : 'relic',
+      t(upgrade ? 'ui.choice.upgrade' : 'ui.choice.relic'),
+      String(c.choice + 1),
+      root,
+    );
+    p.badge?.classList.add('choice-key');
+    const name = t(c.nameKey);
+    const top = put(
+      h(doc, 'span', 'choice-top'),
+      iconBox(ctx, c.icon, name, c.tags, 'big'),
+      rarityPips(ctx, c.rarityOrder, true),
+    );
+    const effect = h(doc, 'span', 'choice-effect', t(c.descKey, c.descParams));
+    put(p.body, top, h(doc, 'span', 'choice-name', name), effect);
+    if (c.statChange !== null) {
+      p.body.appendChild(
+        h(
+          doc,
+          'span',
+          'choice-change t-dim',
+          t('ui.levelup.stat_change', {
+            stat: t(c.statChange.statKey),
+            old: c.statChange.before,
+            new: c.statChange.after,
+          }),
+        ),
+      );
+    }
+    if (c.tags.length > 0) p.body.appendChild(tagChips(ctx, c.tags));
+    if (c.flavorKey !== null && deps.settings().access.showFlavor)
+      p.body.appendChild(h(doc, 'span', 'choice-flavor t-dim', t(c.flavorKey)));
+    return root;
+  };
+
   const build = (view: WorldView): void => {
     el.textContent = '';
     focus.reset();
     picked = false;
-    let title: HTMLElement;
     let cards: readonly ChoiceCard[];
+    const head = h(doc, 'div', 'choice-head');
     if (mode === 'levelUp') {
       const m = buildLevelUpModel(view, deps.data);
       revision = m.revision;
-      // "Lv 2" stays the big subtitle; the queue is a small separate counter (CD M1 4, LP M1).
-      title = titleBlock(ctx, t('ui.levelup.title'), t('ui.levelup.level', { n: m.level }));
-      if (m.queueTotal > 1) {
-        const q = h(doc, 'p', 'queue-chip');
-        const pips = h(doc, 'span', 'queue-pips');
-        const shownPips = m.queueTotal <= QUEUE_PIP_MAX ? m.queueTotal : 0;
-        for (let i = 0; i < shownPips; i++) {
-          const done = i < m.queueIndex - 1;
-          const now = i === m.queueIndex - 1;
-          pips.appendChild(h(doc, 'span', done ? 'qpip is-done' : now ? 'qpip is-now' : 'qpip'));
-        }
-        put(
-          q,
-          pips,
-          h(
-            doc,
-            'span',
-            'queue-text',
-            t('ui.levelup.queue', { i: m.queueIndex, total: m.queueTotal }),
-          ),
-        );
-        title.appendChild(q);
-      }
+      // "Choose 1 upgrade" plus how many level ups wait behind this one (no "Lv 2 / 1 of 2").
+      put(
+        head,
+        h(doc, 'h1', 'heading choice-title', t('ui.levelup.title')),
+        h(doc, 'p', 'choice-sub', t('ui.levelup.subtitle')),
+        m.waiting > 0
+          ? h(doc, 'p', 'chip choice-waiting', t('ui.levelup.waiting', { n: m.waiting }))
+          : null,
+      );
       cards = m.cards;
     } else {
       const m = buildRewardModel(view, deps.data);
       revision = m.revision;
-      const sub =
-        m.sourceNameKey === null ? '' : t('ui.reward.subtitle', { name: t(m.sourceNameKey) });
-      title = titleBlock(ctx, t('ui.reward.title'), sub);
+      put(
+        head,
+        h(doc, 'h1', 'heading choice-title', t('ui.reward.title')),
+        m.sourceNameKey === null
+          ? null
+          : h(doc, 'p', 'choice-sub', t('ui.reward.subtitle', { name: t(m.sourceNameKey) })),
+      );
       cards = m.cards;
     }
     count = cards.length;
-    const list = h(doc, 'div', 'card-list');
+    const list = h(doc, 'div', 'choice-row');
+    list.style.setProperty('--n', String(Math.max(1, count)));
     cards.forEach((c) => {
-      const note =
-        c.statChange === null
-          ? ''
-          : t('ui.levelup.stat_change', {
-              stat: t(c.statChange.statKey),
-              old: c.statChange.before,
-              new: c.statChange.after,
-            });
-      const card = rowCard(ctx, {
-        dataUi: `${mode === 'levelUp' ? 'temper' : 'reward'}-card-${String(c.choice + 1)}`,
-        nameKey: c.nameKey,
-        descKey: c.descKey,
-        descParams: c.descParams,
-        flavorKey: c.flavorKey,
-        tags: c.tags,
-        rarityOrder: c.rarityOrder,
-        icon: c.icon,
-        hotkey: c.choice + 1,
-        note,
-        order: c.choice,
-      });
-      list.appendChild(card);
+      const el2 = card(c);
+      list.appendChild(el2);
       focus.add({
-        el: card,
+        el: el2,
         group: 0,
         activate: () => {
           pick(c.choice);
         },
       });
     });
-    put(el, put(h(doc, 'div', 'safe choice-safe'), title, list));
+    put(el, put(h(doc, 'div', 'safe choice-safe'), head, list));
     focus.focus(0, true);
   };
 
@@ -151,6 +168,14 @@ export function createChoiceScreen(ctx: UiContext, mode: 'levelUp' | 'reward'): 
           pick(i);
           return true;
         }
+      }
+      // The cards are one row: Up / Down step to the previous / next card (Left / Right move
+      // spatially through the same order), so a vertical habit still reaches every card.
+      const intent = menuIntent(e.code, e.shiftKey, deps.settings().keybinds);
+      if ((intent === 'up' || intent === 'down') && count > 0) {
+        const next = Math.min(count - 1, Math.max(0, focus.index + (intent === 'down' ? 1 : -1)));
+        if (next !== focus.index) focus.focus(next);
+        return true;
       }
       return false;
     },

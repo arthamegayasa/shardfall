@@ -1,20 +1,40 @@
-// The Glazier model (ui-spec S05). Built only when shop.revision changes. The sim owns every rule:
-// prices, affordability, Fuse targets and blocked slots come from ShopView (K2). Tag previews use
-// the shared pure rule synergyTierFor (K3).
+// The Shop model (ui-spec S05, redesign-1.1 3.1). Built only when shop.revision changes. The sim
+// owns every rule: prices, affordability, Combine targets and blocked slots come from ShopView
+// (K2). Tag previews use the shared pure rule synergyTierFor (K3). The presenter only turns those
+// facts into plain lines: what a purchase does (outcome), what it did (toast), Combine status.
 
 import type { GameData, TagId } from '../../content/index.ts';
 import { synergyTierFor } from '../../content/index.ts';
 import { OfferKind } from '../../core/index.ts';
-import type { ShopOfferView, WorldView } from '../../core/index.ts';
+import type { ShopOfferView, ShopView, WorldView } from '../../core/index.ts';
 import type { StringParams } from '../../core/index.ts';
 import { mementoInfo, mementoRarityOrder, synergiesOf, weaponInfo } from './content.ts';
 import type { ItemInfo } from './content.ts';
 
 export type OfferState = 'empty' | 'weapon' | 'memento' | 'taken';
 
+/** What buying an offer does to the hero (redesign-1.1 3.1). */
+export type OfferOutcomeKind =
+  'new-weapon' | 'copy' | 'combine' | 'blocked' | 'new-relic' | 'relic-stack';
+
+/** One plain outcome line: string key plus its numbers ({n} owned relics, {tier} after Combine). */
+export interface OfferOutcome {
+  readonly kind: OfferOutcomeKind;
+  readonly key: string;
+  /** Relics of this id already owned (relic-stack), else 0. */
+  readonly count: number;
+  /** Tier after the purchase combines (combine), else 0. */
+  readonly tier: number;
+}
+
+/** Highest weapon tier (mirrors the sim's WEAPON_MAX_TIER; ui.tier.4 is the last label). */
+const WEAPON_TOP_TIER = 4;
+
 export interface OfferCard {
   readonly slot: number;
   readonly state: OfferState;
+  /** WeaponIndex or MementoIndex from the view (-1 meaning none is never sent by the sim). */
+  readonly defIndex: number;
   readonly item: ItemInfo | null;
   /** Weapon tier 1..4; for Mementos rarity order + 1. */
   readonly tier: number;
@@ -31,6 +51,8 @@ export interface OfferCard {
   readonly isNewId: boolean;
   /** Can be bought right now (not empty, not taken, affordable, not blocked). */
   readonly buyable: boolean;
+  /** What buying it does; null for empty and taken offers. */
+  readonly outcome: OfferOutcome | null;
 }
 
 export interface InventorySlot {
@@ -65,6 +87,11 @@ export interface ShopModel {
   readonly maxHp: number;
   /** 1-based number of the next Pulse. */
   readonly nextPulse: number;
+  /** Pulses in this run profile ("Wave 2 of 15"). */
+  readonly totalPulses: number;
+  /** Inventory slots holding a weapon, and all weapon slots ("2 of 6"). */
+  readonly weaponsOwned: number;
+  readonly weaponSlots: number;
   readonly rerollPrice: number;
   readonly freeRerolls: number;
   readonly canReroll: boolean;
@@ -82,7 +109,39 @@ function offerState(kind: number): OfferState {
   return 'empty';
 }
 
-function offerCard(data: GameData, o: ShopOfferView, slot: number): OfferCard {
+function outcome(kind: OfferOutcomeKind, key: string, count = 0, tier = 0): OfferOutcome {
+  return { kind, key, count, tier };
+}
+
+/**
+ * The purchase outcome of one offer, from the sim's facts only (redesign-1.1 3.1). Weapons: the
+ * sim blocks first, then combines when the slots are full (mergeSlot), else a free slot takes a new
+ * id or another copy (both copies fire). Relics: new, or a stack on the owned count.
+ */
+export function offerOutcome(
+  o: ShopOfferView,
+  ownedRelics: readonly { readonly mementoIndex: number; readonly count: number }[],
+): OfferOutcome | null {
+  if (o.kind === OfferKind.Weapon) {
+    if (o.blockedNoSlot) return outcome('blocked', 'ui.shop.slots_full');
+    if (o.mergeSlot >= 0) return outcome('combine', 'ui.shop.out_combine', 0, o.mergeToTier);
+    if (o.isNewId) return outcome('new-weapon', 'ui.shop.out_new_weapon');
+    return outcome('copy', 'ui.shop.out_copy');
+  }
+  if (o.kind === OfferKind.Memento) {
+    const owned = ownedRelics.find((m) => m.mementoIndex === o.defIndex)?.count ?? 0;
+    if (o.isNewId || owned <= 0) return outcome('new-relic', 'ui.shop.out_new_relic');
+    return outcome('relic-stack', 'ui.shop.out_relic_stack', owned);
+  }
+  return null;
+}
+
+function offerCard(
+  data: GameData,
+  o: ShopOfferView,
+  slot: number,
+  ownedRelics: ShopView['mementos'],
+): OfferCard {
   const state = offerState(o.kind);
   const isWeapon = state === 'weapon';
   const isMemento = state === 'memento';
@@ -93,6 +152,7 @@ function offerCard(data: GameData, o: ShopOfferView, slot: number): OfferCard {
   return {
     slot,
     state,
+    defIndex: o.defIndex,
     item,
     tier: o.tier,
     rarityOrder,
@@ -105,12 +165,13 @@ function offerCard(data: GameData, o: ShopOfferView, slot: number): OfferCard {
     blockedNoSlot: o.blockedNoSlot,
     isNewId: o.isNewId,
     buyable: (isWeapon || isMemento) && o.affordable && !o.blockedNoSlot,
+    outcome: offerOutcome(o, ownedRelics),
   };
 }
 
 export function buildShopModel(view: WorldView, data: GameData): ShopModel {
   const shop = view.shop;
-  const offers = shop.offers.map((o, i) => offerCard(data, o, i));
+  const offers = shop.offers.map((o, i) => offerCard(data, o, i, shop.mementos));
   const inventory = shop.inventory.map((s, i): InventorySlot => {
     const empty = s.weaponIndex < 0;
     return {
@@ -142,6 +203,9 @@ export function buildShopModel(view: WorldView, data: GameData): ShopModel {
     hp: view.player.hp,
     maxHp: view.player.maxHp,
     nextPulse: view.pulse.index + 2,
+    totalPulses: view.pulse.count,
+    weaponsOwned: inventory.filter((s) => !s.empty).length,
+    weaponSlots: inventory.length,
     rerollPrice: shop.rerollPrice,
     freeRerolls: shop.freeRerolls,
     canReroll: view.player.glint >= price,
@@ -197,4 +261,78 @@ export function initialOfferFocus(model: ShopModel): number {
 export function focusedSlotIndex(dataUi: string): number {
   const m = /^shop-slot-(\d+)$/.exec(dataUi);
   return m?.[1] === undefined ? -1 : Number(m[1]) - 1;
+}
+
+export interface ToastInput {
+  readonly isWeapon: boolean;
+  readonly nameKey: string;
+  /** Tier the purchase combined into, 0 when it took a free slot. */
+  readonly combinedTier: number;
+  /** Weapons owned after the purchase. */
+  readonly weaponsOwned: number;
+  /** Copies of the bought relic owned after the purchase. */
+  readonly relicCount: number;
+}
+
+export interface ToastLine {
+  readonly key: string;
+  readonly nameKey: string;
+  readonly count: number;
+  readonly tier: number;
+}
+
+/** The line shown after a purchase (redesign-1.1 3.1): what the hero has now. */
+export function purchaseToast(p: ToastInput): ToastLine {
+  const line = (key: string, count: number, tier = 0): ToastLine => ({
+    key,
+    nameKey: p.nameKey,
+    count,
+    tier,
+  });
+  if (!p.isWeapon) {
+    return p.relicCount > 1
+      ? line('ui.shop.toast_relic_stack', p.relicCount)
+      : line('ui.shop.toast_relic', p.relicCount);
+  }
+  if (p.combinedTier > 0) return line('ui.shop.toast_combined', p.weaponsOwned, p.combinedTier);
+  if (p.weaponsOwned === 1) return line('ui.shop.toast_added_one', 1);
+  return line('ui.shop.toast_added', p.weaponsOwned);
+}
+
+export interface SlotCombine {
+  readonly key: string;
+  /** Tier after a Combine when ready; the slot's own tier otherwise. */
+  readonly tier: number;
+  readonly ready: boolean;
+}
+
+/** Combine availability of an owned weapon slot, for the selected-slot detail. */
+export function slotCombine(s: InventorySlot): SlotCombine {
+  if (s.canFuse) return { key: 'ui.shop.combine_ready', tier: s.tier + 1, ready: true };
+  if (s.tier >= WEAPON_TOP_TIER) return { key: 'ui.shop.combine_top', tier: s.tier, ready: false };
+  return { key: 'ui.shop.combine_need', tier: s.tier, ready: false };
+}
+
+export interface TagStep {
+  readonly threshold: number;
+  readonly descKey: string;
+  readonly params: StringParams;
+  /** True when count already meets this (the highest) threshold. */
+  readonly reached: boolean;
+}
+
+/**
+ * What a tag does next at `count` copies (redesign-1.1 3.1, "hovering a tag shows what the synergy
+ * does"): the first threshold above count, or the highest one once reached. Null without synergies.
+ */
+export function tagNextStep(data: GameData, tag: TagId, count: number): TagStep | null {
+  const steps = synergiesOf(data, tag);
+  const next = steps.find((s) => s.threshold > count) ?? steps[steps.length - 1];
+  if (next === undefined) return null;
+  return {
+    threshold: next.threshold,
+    descKey: next.descKey,
+    params: next.params,
+    reached: count >= next.threshold,
+  };
 }
